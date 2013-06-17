@@ -6,7 +6,6 @@ Created on Jun 14, 2013
 from PyQt4 import QtGui
 from ui.flowlayout import FlowLayout
 
-
 class Window(QtGui.QWidget):
     def __init__(self):
         super(Window, self).__init__()
@@ -22,11 +21,31 @@ class Window(QtGui.QWidget):
         self.setWindowTitle("Flow Layout")
 
 
-if __name__ == '__main__':
 
-    import sys
+import unittest
+import sys
 
-    app = QtGui.QApplication(sys.argv)
-    mainWin = Window()
-    mainWin.show()
-    sys.exit(app.exec_())
+class Test(unittest.TestCase):
+
+    def test_flowlayout(self):
+        app = QtGui.QApplication(sys.argv)
+        mainWin = Window()
+        mainWin.show()
+        app.exec_()    
+       
+ 
+    def setUp(self):
+        pass
+
+
+    def tearDown(self):
+        pass
+
+
+    def testName(self):
+        pass
+
+
+if __name__ == "__main__":
+    # import sys;sys.argv = ['', 'Test.testName']
+    unittest.main()
