@@ -1,0 +1,433 @@
+{
+    "encoding": 	             {
+	"tpsDirectionEncoding"	 : [
+				    {
+					"value": 0,
+					    "text": "Normal"
+		                      	    },
+				    {
+					"value": 1,
+					    "text":"Reversed"
+		                      	    }
+				    ],
+	    "yesNoEncoding": [
+			      {
+				  "value": 0,
+				      "text": "No"
+				      },
+			      {
+				  "value": 1,
+				      "text":"Yes"
+				      }
+			      ],
+	    "onOffEncoding": [
+			      {
+				  "value": 0,
+				      "text": "Off"
+				      },
+			      {
+				  "value": 1,
+				      "text":"On"
+				      }
+			      ],
+	    "autoManualEncoding": [
+				   {
+				       "value":false,
+					   "text": "Automatic"
+					   },
+				   {
+				       "value":true,
+					   "text":"Manual"
+					   }
+				   ],
+	    "colorIndex": [
+			   {
+			       "value":0,
+				   "text":"Red"
+				   },
+			   {
+			       "value":1,
+				   "text":"Green"
+				   },
+			   {
+			       "value":2,
+				   "text":"Blue"
+				   } ],
+	    "controlModeEncoding": [
+				    {
+					"value":"CONTROL_MODE_MANUAL",
+					    "text":"Manual"
+					    },
+				    {
+					"value":"CONTROL_MODE_AUTO",
+					    "text":"Auto"
+					    },
+				    {
+					"value":"CONTROL_MODE_SWITCH_SHIFT",
+					    "text":"Switch"
+					    },
+				    {
+					"value":"CONTROL_MODE_DIAGNOSTIC",
+					    "text":"Diagnostic"
+					    } ],
+	    "gearsEncoding": [
+			      {
+				  "value":-1,
+				      "text":"Reverse"
+				      },
+			      {
+				  "value":0,
+				      "text":"Neutral"
+				      } ],
+	    "zeroIsDisabledEncoding"        : [
+					       {
+						   "value":0,
+						       "text":"Disabled"
+						       } ],
+	    "torqueSourceEncoding": [
+				     {
+					 "value":0,
+					     "text":"Throttle"
+					     },
+				     {
+					 "value":1,
+					     "text":"MAP"
+					     } ],
+	    "shiftConsolePositionEncoding": [
+					     {
+						 "value":"GEAR_INVALID",
+						     "text":"Invalid"
+						     },
+					     {
+						 "value":"GEAR_PARK",
+						     "text":"Park"
+						     },
+					     {
+						 "value":-1,
+						     "text":"Reverse"
+						     },
+					     {
+						 "value":0,
+						     "text":"Neutral"
+						     } ],
+	    "hgmShiftConsoleCalibrationXAxisEncoding": [
+							{
+							    "value":0,
+								"text":"Park"
+								},
+							{
+							    "value":1,
+								"text":"Reverse"
+								},
+							{
+							    "value":2,
+								"text":"Neutral"
+								} ],
+	    "unitTypeEncoding": [
+				 {
+				     "value":false,
+					 "text":"US"
+					 },
+				 {
+				     "value":true,
+					 "text":"Metric"
+					 } ],
+	    "controlModeConfigEncoding": [
+					  {
+					      "value":1,
+						  "text":"Manual"
+						  },
+					  {
+					      "value":0,
+						  "text":"Automatic"
+						  } ],
+	    "variationTypeEncoding": [
+				      {
+					  "value":"VARIATION_GASOLINE",
+					      "text":"Gasoline"
+					      },
+				      {
+					  "value":"VARIATION_LOW_SPEED_DIESEL",
+					      "text":"Low Speed Diesel"
+					      },
+				      {
+					  "value":"VARIATION_HIGH_SPEED_DIESEL",
+					      "text":"High Speed Diesel"
+					      } ],
+	    "pwmDriverModeEncoding": [
+				      {
+					  "value":0,
+					      "text":"Low side"
+					      },
+				      {
+					  "value":1,
+					      "text":"High side"
+					      }
+				      ],
+	    "transmissionTypeEncoding": [
+					 {
+					     "value": "TRANSMISSION_NULL",
+						 "text":"Unknown"
+						 },
+					 {
+					     "value": "TRANSMISSION_GM_4L60E",
+						 "text":"GM 4L60E"
+						 },
+					 {
+					     "value": "TRANSMISSION_GM_4L60ET",
+						 "text":"GM 4L60E Transaxle"
+						 },
+					 {
+					     "value": "TRANSMISSION_GM_4L80E",
+						 "text":"GM 4L80E"
+						 },
+					 {
+					     "value": "TRANSMISSION_GM_4T65E",
+						 "text":"GM 4T65E"
+						 },
+					 {
+					     "value": "TRANSMISSION_GM_4T80E",
+						 "text":"GM 4T80E"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_4R100",
+						 "text":"Ford 4R100 Non-PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_4R100_PWM_TCC",
+						 "text":"Ford 4R100 PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_4R70W",
+						 "text":"Ford 4R70W Non-PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_4R70W_PWM_TCC",
+						 "text":"Ford 4R70W PWM TCC "
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_4R75W",
+						 "text":"Ford 4R75W Non-PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_4R75W_PWM_TCC",
+						 "text":"Ford 4R75W PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_AODE",
+						 "text":"Ford AODE Non-PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_AODE_PWM_TCC",
+						 "text":"Ford AODE PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_E4OD",
+						 "text":"Ford E4OD Non-PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_E4OD_PWM_TCC",
+						 "text":"Ford E4OD PWM TCC"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_E4OD_RABS",
+						 "text":"Ford E4OD Non-PWM TCC RABS"
+						 },
+					 {
+					     "value": "TRANSMISSION_FORD_E4OD_PWM_TCC_RABS",
+						 "text":"Ford E4OD PWM TCC RABS"
+						 },
+					 {
+					     "value": "TRANSMISSION_ZF_4HP24_US",
+						 "text":"ZF 4HP24 US"
+						 },
+					 {
+					     "value": "TRANSMISSION_ZF_4HP24_EU",
+						 "text":"ZF 4HP24 EU"
+						 },
+					 {
+					     "value": "TRANSMISSION_ZF_4HP24_HGM",
+						 "text":"ZF 4HP24 w/HGM Lever Sensor"
+						 },
+					 {
+					     "value": "TRANSMISSION_STDENIS_DYNAMOMETER",
+						 "text":"St. Denis 3 Speed Dynamometer"
+						 },
+					 {
+					     "value": "TRANSMISSION_ZEROTRUCK",
+						 "text":"ZeroTruck St. Denis 3 Speed"
+						 },
+					 {
+					     "value": "TRANSMISSION_ALLISON_3000_G3",
+						 "text":"Allison 3000 Gen 3"
+						 },
+					 {
+					     "value": "TRANSMISSION_EBUS_ALLISON_3000_G3",
+						 "text":"Ebus Allison 3000 Gen 3 Powertrain"
+						 },
+					 {
+					     "value": "TRANSMISSION_NISSAN_RE4R03A",
+						 "text":"Nissan RE4R03A"
+						 },
+					 {
+					     "value": "TRANSMISSION_TOYOTA_442F",
+						 "text":"Toyota 442F"
+						 },
+					 {
+					     "value": "TRANSMISSION_NOMAD_NISSAN_RE4R03A",
+						 "text":"Nomad Nissan RE4R03A"
+						 },
+					 {
+					     "value": "TRANSMISSION_NOMAD_TOYOTA_442F",
+						 "text":"Nomad Toyota 442F"
+						 },
+					 {
+					     "value": "TRANSMISSION_NOMAD_GM_4L80E",
+						 "text":"Nomad GM 4L80E"
+						 } ],
+	    "switchMonitorIdEncoding": [
+					{
+					    "value":0,
+						"text": "SG0: Shift Lever 1"
+						},
+					{
+					    "value":1,
+						"text":"SG1: Shift Lever 2"
+						},
+					{
+					    "value":2,
+						"text":"SG2: Shift Lever 3"
+						},
+					{
+					    "value":3,
+						"text":"SG3: Shift Lever 4"
+						},
+					{
+					    "value":4,
+						"text":"SG4: Shift Lever 5"
+						},
+					{
+					    "value":5,
+						"text":"SG5: Neutral Switch"
+						},
+					{
+					    "value":6,
+						"text":"SG6: Reverse Switch"
+						},
+					{
+					    "value":7,
+						"text":"SG7: Transfer Case 1"
+						},
+					{
+					    "value":8,
+						"text":"SG8: Transfer Case 2"
+						},
+					{
+					    "value":9,
+						"text":"SG9: Mode 1 LED"
+						},
+					{
+					    "value":10,
+						"text":"SG10: Mode 2 LED"
+						},
+					{
+					    "value":11,
+						"text":"SG11: Pressure Sensor"
+						},
+					{
+					    "value":12,
+						"text": "SG12: OD Cancel LED"
+						},
+					{
+					    "value":13,
+						"text":"SG13: TCC LED"
+						},
+					{
+					    "value":14,
+						"text":"SP0: A-B Mode"
+						},
+					{
+					    "value":15,
+						"text":"SP1: Mode 1"
+						},
+					{
+					    "value":16,
+						"text":"SP2: Mode 2"
+						},
+					{
+					    "value":17,
+						"text":"SP3: OD Cancel"
+						},
+					{
+					    "value":18,
+						"text":"SP4: Manual TCC"
+						},
+					{
+					    "value":19,
+						"text":"SP5: Shift Up"
+						},
+					{
+					    "value":20,
+						"text":"SP6: Shift Down"
+						},
+					{
+					    "value":21,
+						"text":"SP7: A-B Mode LED"
+						}
+					],
+	    "onOffGaugeEncoding": [
+				   {
+				       "value": false,
+					   "text":"OFF"
+					   },
+				   {
+				       "value": true,
+					   "text":" ON"
+					   } ],
+	    "controlModeGaugeEncoding": [
+					 {
+					     "value": "CONTROL_MODE_MANUAL",
+						 "text":"M"
+						 },
+					 {
+					     "value": "CONTROL_MODE_AUTO",
+						 "text":"A"
+						 },
+					 {
+					     "value": "CONTROL_MODE_SWITCH_SHIFT",
+						 "text":"S"
+						 },
+					 {
+					     "value": "CONTROL_MODE_DIAGNOSTIC",
+						 "text":"D"
+						 }
+					 ],
+	    "transferCaseGearGaugeEncoding": [
+					      {
+						  "value": 0,
+						      "text":" "
+						      },
+					      {
+						  "value": 1,
+						      "text":"L"
+						      } ],
+	    "gearsGaugeEncoding": [
+				   {
+				       "value": "GEAR_INVALID",
+					   "text":"I"
+					   },
+				   {
+				       "value": "GEAR_PARK",
+					   "text":"P"
+					   },
+				   {
+				       "value": -1,
+					   "text":"R"
+					   },
+				   {
+				       "value": 0,
+					   "text":"N"
+		                      	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              } ]
+
+	}
+}

@@ -1,0 +1,1192 @@
+{
+	"parameters": [    
+	               {
+	            	   "id": "PARAMID_SHIFT_CONSOLE_GEAR", 
+	            	   "name": "Shift Lever Position", 
+	            	   "read": true,
+	            	   "write": false,
+	            	   "save": false,
+	            	   "reset": false,
+	            	   "confirm": false,
+	            	   "slots": [ "gearLever1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_CONSOLE_SENSOR_VOLTAGE", 
+	            	   "name": "Shift Lever Sensor Voltage", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_CURRENT_PERCENTAGE", 
+	            	   "name": "Current Pressure", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_MAIN_PRESSURE", 
+	            	   "name": "Transmission Main Pressure", 
+	            	   "slots": [ "pressure" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_CURRENT_STATE", 
+	            	   "name": "Current TCC State", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_INPUT_SHAFT_SPEED", 
+	            	   "name": "Transmission Input Shaft Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_OUTPUT_SHAFT_SPEED", 
+	            	   "name": "Transmission Output Shaft Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_SLIP", 
+	            	   "name": "Transmission Slip Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_SHAFT_SPEED_1", 
+	            	   "name": "Transmission Shaft 1 Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_TEMPERATURE", 
+	            	   "name": "Transmission Temperature", 
+	            	   "slots": [ "temperature1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_OIL_LEVEL", 
+	            	   "name": "Oil Level", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_CURRENT_GEAR", 
+	            	   "name": "Current Gear", 
+	            	   "slots": [ "gear1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SERIAL_NUMBER", 
+	            	   "name": "Serial Number", 
+	            	   "slots": [ "count1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_RESET_DEFAULTS", 
+	            	   "name": "Reset Factory Defaults", 
+	            	   "slots": [ "booleanYesNo1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_TYPE", 
+	            	   "name": "Transmission Type", 
+	            	   "slots": [ "transmissionType1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_VARIATION", 
+	            	   "name": "Engine type", 
+	            	   "slots": [ "variationTypes" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_R2L_BOOST_A", 
+	            	   "name": "R2L Pressure Boost A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_R2L_BOOST_B", 
+	            	   "name": "R2L Pressure Boost B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_DISPLAY_COLOR", 
+	            	   "name": "Display Color", 
+	            	   "slots": [ "colorIndex", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_DISPLAY_BRIGHTNESS", 
+	            	   "name": "Display Brightness", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_DISPLAY_CONTRAST", 
+	            	   "name": "Display Contrast", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_DOWNSHIFT_OFFSET_A", 
+	            	   "name": "Downshift Offset A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_DOWNSHIFT_OFFSET_B", 
+	            	   "name": "Downshift Offset B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_ENGINE_CYLINDERS", 
+	            	   "name": "Number of Engine Cylinders", 
+	            	   "slots": [ "countCylinders1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_FINAL_DRIVE_RATIO", 
+	            	   "name": "Final Drive Ratio", 
+	            	   "slots": [ "ratio1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_MANUAL_MODE_A", 
+	            	   "name": "Shift Control Mode A", 
+	            	   "slots": [ "booleanManualMode" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_MANUAL_MODE_B", 
+	            	   "name": "Shift Control Mode B", 
+	            	   "slots": [ "booleanManualMode" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_MANUAL_MODE_A", 
+	            	   "name": "TCC Control Mode A", 
+	            	   "slots": [ "booleanManualMode" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_MANUAL_MODE_B", 
+	            	   "name": "TCC Control Mode B", 
+	            	   "slots": [ "booleanManualMode" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_CONTROL_MODE", 
+	            	   "name": "Shift Control Mode", 
+	            	   "slots": [ "shiftControlModeGauge" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_CONTROL_MODE", 
+	            	   "name": "TCC Control Mode", 
+	            	   "slots": [ "shiftControlModeGauge" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_MAX_ENGINE_SPEED_A", 
+	            	   "name": "Max. Engine Speed A", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_MAX_ENGINE_SPEED_B", 
+	            	   "name": "Max. Engine Speed B", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_ADJUST_A", 
+	            	   "name": "Pressure Adjust A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_ADJUST_B", 
+	            	   "name": "Pressure Adjust B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_A_1", 
+	            	   "name": "Shift Pressure Gear 1 A", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_A_2", 
+	            	   "name": "Shift Pressure Gear 2 A", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_A_3", 
+	            	   "name": "Shift Pressure Gear 3 A", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_A_4", 
+	            	   "name": "Shift Pressure Gear 4 A", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_A_5", 
+	            	   "name": "Shift Pressure Gear 5 A", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_A_6", 
+	            	   "name": "Shift Pressure Gear 6 A", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_B_1", 
+	            	   "name": "Shift Pressure Gear 1 B", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_B_2", 
+	            	   "name": "Shift Pressure Gear 2 B", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_B_3", 
+	            	   "name": "Shift Pressure Gear 3 B", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_B_4", 
+	            	   "name": "Shift Pressure Gear 4 B", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_B_5", 
+	            	   "name": "Shift Pressure Gear 5 B", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_TABLES_B_6", 
+	            	   "name": "Shift Pressure Gear 6 B", 
+	            	   "slots": [ "percentage1", "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_SPEED_ADJUST_A", 
+	            	   "name": "Shift Speed Adjust A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_SPEED_ADJUST_B", 
+	            	   "name": "Shift Speed Adjust B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_A_1", 
+	            	   "name": "Shift Speed 1-2 A", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_A_2", 
+	            	   "name": "Shift Speed 2-3 A", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_A_3", 
+	            	   "name": "Shift Speed 3-4 A", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_A_4", 
+	            	   "name": "Shift Speed 4-5 A", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_A_5", 
+	            	   "name": "Shift Speed 5-6 A", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_B_1", 
+	            	   "name": "Shift Speed 1-2 B", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_B_2", 
+	            	   "name": "Shift Speed 2-3 B", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_B_3", 
+	            	   "name": "Shift Speed 3-4 B", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_B_4", 
+	            	   "name": "Shift Speed 4-5 B", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TABLES_B_5", 
+	            	   "name": "Shift Speed 5-6 B", 
+	            	   "slots": [ "percentage1", "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_DISABLE_TOSS_PERCENT_A", 
+	            	   "name": "TCC Disable Percentage A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_DISABLE_TOSS_PERCENT_B", 
+	            	   "name": "TCC Disable Percentage B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_ENABLE_GEAR_A", 
+	            	   "name": "TCC Enable Gear A", 
+	            	   "slots": [ "gear1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_ENABLE_GEAR_B", 
+	            	   "name": "TCC Enable Gear B", 
+	            	   "slots": [ "gear1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_ENABLE_TOSS_A", 
+	            	   "name": "TCC Enable Speed A", 
+	            	   "slots": [ "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_ENABLE_TOSS_B", 
+	            	   "name": "TCC Enable Speed B", 
+	            	   "slots": [ "tossRPMAsSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_MAX_THROTTLE_A", 
+	            	   "name": "TCC Max. Throttle A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_MAX_THROTTLE_B", 
+	            	   "name": "TCC Max. Throttle B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_MIN_THROTTLE_A", 
+	            	   "name": "TCC Min. Throttle A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_MIN_THROTTLE_B", 
+	            	   "name": "TCC Min. Throttle B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TIRE_DIAMETER", 
+	            	   "name": "Tire Diameter", 
+	            	   "slots": [ "length" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSFER_CASE_RATIO", 
+	            	   "name": "Transfer Case Ratio", 
+	            	   "slots": [ "ratio1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_VEHICLE_MASS", 
+	            	   "name": "Vehicle Weight", 
+	            	   "slots": [ "mass" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_TPS_ADC_COUNT", 
+	            	   "name": "Throttle Position Sensor", 
+	            	   "slots": [ "adcCountAsVoltage" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_TPS_IS_REVERSED", 
+	            	   "name": "TPS Direction", 
+	            	   "slots": [ "booleanSensorIsReversed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_TPS_HIGH_COUNT", 
+	            	   "name": "TPS High Calibration", 
+	            	   "slots": [ "adcCountAsVoltage" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_TPS_LOW_COUNT", 
+	            	   "name": "TPS Low Calibration", 
+	            	   "slots": [ "adcCountAsVoltage" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_TPS_GROUND_ENABLE", 
+	            	   "name": "TPS Ground", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_MAP_ADC_COUNT", 
+	            	   "name": "MAP Sensor", 
+	            	   "slots": [ "adcCountAsVoltage" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_MAP_HIGH_COUNT", 
+	            	   "name": "MAP Sensor High Calibration", 
+	            	   "slots": [ "adcCountAsVoltage" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_MAP_LOW_COUNT", 
+	            	   "name": "MAP Sensor Low Calibration", 
+	            	   "slots": [ "adcCountAsVoltage" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_MAP_GROUND_ENABLE", 
+	            	   "name": "MAP Sensor Ground", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_TEMP_BIAS_ENABLE", 
+	            	   "name": "Transmission Temp Sensor Bias", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_MAIN_PRESSURE_SENSOR_PRESENT", 
+	            	   "name": "Transmission Pressure Sensor", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CS2_ENGINE_TEMP_BIAS_ENABLE", 
+	            	   "name": "Engine Temp Sensor Bias", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_CONTROL_SOURCE", 
+	            	   "name": "Pressure Control Source", 
+	            	   "slots": [ "torqueSignalSource" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_CONSOLE_GEAR_VOLTAGES", 
+	            	   "name": "Shift Lever Gear Voltages", 
+	            	   "slots": [ "hgmShiftConsoleCalibrationXAxis", "hgmShiftConsoleCalibrationYAxis" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_USE_METRIC_UNITS", 
+	            	   "name": "System Units", 
+	            	   "slots": [ "measurementSystem" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SPEEDOMETER_CALIBRATION", 
+	            	   "name": "Speedometer Calibration", 
+	            	   "slots": [ "ratio1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSFER_CASE_TEMPERATURE", 
+	            	   "name": "Transfer Case Temperature", 
+	            	   "slots": [ "temperature1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_VOLTAGE", 
+	            	   "name": "Battery Voltage", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_VEHICLE_ACCELERATION", 
+	            	   "name": "Acceleration", 
+	            	   "slots": [ "acceleration1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSFER_CASE_GEAR", 
+	            	   "name": "Transfer Case Gear", 
+	            	   "slots": [ "gear1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_VEHICLE_SPEED", 
+	            	   "name": "Vehicle Speed", 
+	            	   "slots": [ "vehicleSpeed" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_DIFFERENTIAL_INPUT_SPEED", 
+	            	   "name": "Differential Input RPM", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_DIFFERENTIAL_OUTPUT_SPEED", 
+	            	   "name": "Differential Output RPM", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_DIFFERENTIAL_TEMPERATURE", 
+	            	   "name": "Differential Temp", 
+	            	   "slots": [ "temperature1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MAP_PERCENTAGE", 
+	            	   "name": "Manifold Pressure", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_ENGINE_SPEED", 
+	            	   "name": "Engine Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_ENGINE_TEMPERATURE", 
+	            	   "name": "Engine Temperature", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSFER_CASE_INPUT_SPEED", 
+	            	   "name": "Transfer Case Input Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSFER_CASE_OUTPUT_SPEED", 
+	            	   "name": "Transfer Case Output Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_THROTTLE_POSITION", 
+	            	   "name": "Throttle Position", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_TACH_INPUT_FREQUENCY", 
+	            	   "name": "Tach Input Frequency", 
+	            	   "slots": [ "frequency1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_TISS_INPUT_FREQUENCY", 
+	            	   "name": "TISS Input Frequency", 
+	            	   "slots": [ "frequency1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_TOSS_INPUT_FREQUENCY", 
+	            	   "name": "TOSS Input Frequency", 
+	            	   "slots": [ "frequency1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_SPARE_INPUT_FREQUENCY", 
+	            	   "name": "Spare Input Frequency", 
+	            	   "slots": [ "frequency1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_SPEED_TIMER_1_FREQUENCY", 
+	            	   "name": "Speed Timer 1 Frequency", 
+	            	   "slots": [ "frequency1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_SPEED_TIMER_2_FREQUENCY", 
+	            	   "name": "Speed Timer 2 Frequency", 
+	            	   "slots": [ "frequency1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_FREQUENCY", 
+	            	   "name": "PWM Driver Frequency", 
+	            	   "slots": [ "pwmDriverId", "frequency1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_DUTY_CYCLE", 
+	            	   "name": "PWM Driver Duty Cycle", 
+	            	   "slots": [ "pwmDriverId", "percentage2" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_MODE", 
+	            	   "name": "PWM Driver Mode", 
+	            	   "slots": [ "pwmDriverId", "pwmDriverMode" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_1", 
+	            	   "name": "PWM Driver 1", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_2", 
+	            	   "name": "PWM Driver 2", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_3", 
+	            	   "name": "PWM Driver 3", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_4", 
+	            	   "name": "PWM Driver 4", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_5", 
+	            	   "name": "PWM Driver 5", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_6", 
+	            	   "name": "PWM Driver 6", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_7", 
+	            	   "name": "PWM Driver 7", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_8", 
+	            	   "name": "PWM Driver 8", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_9", 
+	            	   "name": "PWM Driver 9", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_10", 
+	            	   "name": "PWM Driver 10", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_11", 
+	            	   "name": "PWM Driver 11", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_PWMDRIVER_SPN_12", 
+	            	   "name": "PWM Driver 12", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_SWITCH_STATE", 
+	            	   "name": "Switch Monitor Input", 
+	            	   "slots": [ "switchMonitorId", "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_SWITCH_CURRENT", 
+	            	   "name": "Switch Monitor Current", 
+	            	   "slots": [ "switchMonitorId", "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_SD_CARD_PRESENT", 
+	            	   "name": "SD Card Present", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_SD_CARD_WRITE_PROTECT", 
+	            	   "name": "SD Card Write Protect", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_MASTER_DRIVER_FAULT", 
+	            	   "name": "Master Driver Fault Signal", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_USB_POWER", 
+	            	   "name": "USB Power", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_THROTTLE_POSITION_SENSOR_VOLTAGE", 
+	            	   "name": "Throttle Position Sensor", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_MAP_SENSOR_VOLTAGE", 
+	            	   "name": "MAP Sensor", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_INTERNAL_TEMPERATURE_SENSOR_VOLTAGE", 
+	            	   "name": "Internal Temperature Sensor", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_INTERNAL_TEMPERATURE", 
+	            	   "name": "Internal Temperature", 
+	            	   "slots": []
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_ENGINE_TEMPERATURE_SENSOR_VOLTAGE", 
+	            	   "name": "Engine Temperature Sensor", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_TRANSMISSION_TEMPERATURE_SENSOR_VOLTAGE", 
+	            	   "name": "Transmission Temperature Sensor", 
+	            	   "slots": ["voltage1"]
+	               },
+
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_MULTIPLEXED_SENSOR_VOLTAGE", 
+	            	   "name": "Multiplexed Sensor", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_5_VOLT_BUS_VOLTAGE", 
+	            	   "name": "5 Volt Bus", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_3_3_VOLT_BUS_VOLTAGE", 
+	            	   "name": "3.3 Volt Bus", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_1_8_VOLT_BUS_VOLTAGE", 
+	            	   "name": "1.8 Volt Bus", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_12_VOLT_BUS_VOLTAGE", 
+	            	   "name": "12 Volt Bus", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_GREED_LED", 
+	            	   "name": "Green LED", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_RED_LED", 
+	            	   "name": "Red LED", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_TRANSMISSION_TEMPERATURE_SENSOR_BIAS", 
+	            	   "name": "Transmission Temp. Sensor Bias", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_ENGINE_TEMPERATURE_SENSOR_BIAS", 
+	            	   "name": "Engine Temp. Sensor Bias", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_THROTTLE_POSITION_SENSOR_GROUND", 
+	            	   "name": "TPS Ground", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_MAP_GROUND", 
+	            	   "name": "MAP Ground", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CONTROLLER_ACCLEROMETER", 
+	            	   "name": "Accelerometer", 
+	            	   "slots": [ "xyzIndex", "acceleration1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_PRESSURE_DIAGNOSTIC_PERCENTAGE", 
+	            	   "name": "Diagnostic Shift Pressure", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TCC_DIAGNOSTIC_TCC", 
+	            	   "name": "Diagnostic TCC", 
+	            	   "slots": [ "booleanOnOff1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_DIAGNOSTIC_GEAR", 
+	            	   "name": "Diagnostic Gear", 
+	            	   "slots": [ "gear1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_TRANSMISSION_MAIN_PRESSURE_SENSOR_VOLTAGE", 
+	            	   "name": "Transmission Pressure Sensor", 
+	            	   "slots": [ "voltage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MOTOR_MODBUS_ADDRESS", 
+	            	   "name": "Motor Modbus Address", 
+	            	   "slots": [ "count1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CLUTCH_APPLY_TIME", 
+	            	   "name": "Clutch Apply Time", 
+	            	   "slots": [ "count1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_CLUTCH_RELEASE_TIME", 
+	            	   "name": "Clutch Release Time", 
+	            	   "slots": [ "count1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_G_VALVE_STROKE_TIME", 
+	            	   "name": "G Valve Stroke Time", 
+	            	   "slots": [ "count1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_MOTOR_TORQUE_DURING_SPEED_MATCH", 
+	            	   "name": "Speed Match Motor Torque", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_MOTOR_TORQUE_DURING_CLUTCH_APPLY", 
+	            	   "name": "Clutch Apply Motor Torque", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_MOTOR_TORQUE_DURING_CLUTCH_RELEASE", 
+	            	   "name": "Clutch Release Motor Torque", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_SPEED_MATCH_TOLERANCE", 
+	            	   "name": "Shift Sync Tolerance", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_SHIFT_TIMEOUT_TIME", 
+	            	   "name": "Shift Sync Time Limit", 
+	            	   "slots": [ "count1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MOTOR_TORQUE_IDLE", 
+	            	   "name": "Motor Idle Torque", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MOTOR_SPEED_IDLE", 
+	            	   "name": "Motor Idle Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MOTOR_SPEED_MAX", 
+	            	   "name": "Motor Max. Speed", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MOTOR_TORQUE_REGEN_MAX_A", 
+	            	   "name": "Regen Torque Max. A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MOTOR_TORQUE_REGEN_MAX_B", 
+	            	   "name": "Regen Torque Max. B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MOTOR_TORQUE_MAX_A", 
+	            	   "name": "Motor Torque Max. A", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_MOTOR_TORQUE_MAX_B", 
+	            	   "name": "Motor Torque Max. B", 
+	            	   "slots": [ "percentage1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_REGEN_BASE_SPEED_A", 
+	            	   "name": "Regen Base Speed A", 
+	            	   "slots": [ "rpm1" ]
+	               },
+
+
+	               {
+	            	   "id": "PARAMID_REGEN_BASE_SPEED_B", 
+	            	   "name": "Regen Base Speed B", 
+	            	   "slots": [ "rpm1" ]
+	               }
+	               ]
+}
+
