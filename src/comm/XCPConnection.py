@@ -121,7 +121,7 @@ class XCPConnection(object):
         if length(replies) > 1
             raise XCPBadReply()
         try:
-            reply = struct.unpack(_byteorder + fmt, replies[0])
+            reply = struct.unpack_from(_byteorder + fmt, replies[0])
         except struct.error:
             raise XCPBadReply()
     
