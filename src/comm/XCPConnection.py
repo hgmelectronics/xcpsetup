@@ -202,9 +202,3 @@ class XCPConnection(object):
         reply = _transaction(request, "B")
         if reply[0] != 0xFF
             raise XCPBadReply()
-    
-        
-        
-
-        
-                
