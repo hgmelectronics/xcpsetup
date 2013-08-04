@@ -63,9 +63,13 @@ class ParamSpinBox(QtGui.QDoubleSpinBox):
         return QtGui.QDoubleSpinBox.valueFromText(self,text)
     
 
-class SpinBoxDelegate(QtGui.QItemDelegate):
+class SpinBoxDelegate(QtGui.QStyledItemDelegate):
+    def __init__(self, slot, parent=None, *args):
+        QtGui.QStyledItemDelegate.__init__(self, parent)
+        self.slot = slot
+    
     def createEditor(self, parent, option, index):
-        editor = ParamSpinBox
+        editor = ParamSpinBox(self.slot, parent)
         editor.setMinimum(0)
         editor.setMaximum(100)
 
@@ -73,7 +77,6 @@ class SpinBoxDelegate(QtGui.QItemDelegate):
 
     def setEditorData(self, spinBox, index):
         value = index.model().data(index, QtCore.Qt.EditRole)
-
         spinBox.setValue(value)
 
     def setModelData(self, spinBox, model, index):

@@ -15,6 +15,7 @@ from PyQt4.QtGui import QWidget, QVBoxLayout, QLabel, QTableView, QFont, \
 
 from paramtypes import SLOT,Param,ParamTraits
 from ui.paramtablemodel import ParamTableModel
+from spinbox import *
 import sys
     
 
@@ -42,15 +43,21 @@ class MyWindow(QWidget):
 
     def createParam(self):
         xslot = SLOT('percent1', '%', 1, 1, 0, 0, { 0:'Disabled' }, 0, 100)
-        yslot = SLOT('count1', '', 1, 1, 0, 0, { }, 0, 100)
-        traits = ParamTraits('curve', True, False, True, True, xslot, yslot)
-        param = Param(traits, [0] * 100)
+        yslot = SLOT('count1', '', 10, 1, 0, 0, { }, 0, 100)
+        traits = ParamTraits('curve', True, True, True, True, xslot, yslot)
+        param = Param(traits, ([[0]] * 11))
         return param
     
     def createTable(self):
         # create the view
         tv = QTableView()
-                
+        
+        self.param = self.createParam()
+        
+        # set the delegate to allow editing table entries
+        self.td = SpinBoxDelegate(self.param.traits.xslot)
+        tv.setItemDelegate(self.td)
+        
         tm = ParamTableModel(self.createParam(), self)
         tv.setModel(tm)
 
@@ -64,13 +71,13 @@ class MyWindow(QWidget):
         font = QFont("Courier New", 8)
         tv.setFont(font)
 
-        # hide vertical header
-        vh = tv.verticalHeader()
-        vh.setVisible(False)
-
-        # set horizontal header properties
+        # hide horizontal header
         hh = tv.horizontalHeader()
-        hh.setStretchLastSection(True)
+        hh.setVisible(False)
+
+        # set vertical header properties
+        vh = tv.verticalHeader()
+        #vh.setStretchLastSection(True)
 
         # set column width to fit contents
         tv.resizeColumnsToContents()

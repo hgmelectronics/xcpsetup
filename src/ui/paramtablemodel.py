@@ -27,10 +27,10 @@ class ParamTableModel(QAbstractTableModel):
         self.value = param.value
         
     def rowCount(self, parent): 
-        return 1; 
+        return len(self.value); 
  
     def columnCount(self, parent): 
-        return len(self.value)
+        return len(self.value[0])
  
     def toValue(self, slot, data):
         encoding = slot.encoding
@@ -38,6 +38,17 @@ class ParamTableModel(QAbstractTableModel):
             return encoding[data]
         else:
             return ((data * slot.numerator) / slot.denominator) - slot.offset
+    
+    def fromValue(self, slot, data):
+        try:
+          key = (key for key,value in slot.encoding.items() if value==data).next()
+          return key
+        except StopIteration:
+          raw = ((data + slot.offset) * slot.denominator) / slot.numerator
+          if raw < slot.min or raw > slot.max:
+            return None
+          else:
+            return raw
         
 # this needs to convert the index to an offset,
 # then call get on the parameter, then scale based on the xslot.
@@ -45,12 +56,24 @@ class ParamTableModel(QAbstractTableModel):
     def data(self, index, role): 
         if not index.isValid(): 
             return None
-        elif role != Qt.DisplayRole: 
+        elif not (role == Qt.DisplayRole or role == Qt.EditRole): 
             return None
-        return self.toValue(self.traits.xslot, self.value[index.column()]) 
+        return self.toValue(self.traits.xslot, self.value[index.row()][index.column()])
+    
+    def setData(self, index, value, role):
+        if not index.isValid(): 
+            return False
+        elif not (role == Qt.EditRole): 
+            return False
+        
+        raw = self.fromValue(self.traits.xslot, value)
+        if raw == None:
+          return false
+        self.value[index.row()][index.column()] = raw
+        return True
 
     def headerData(self, col, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+        if orientation == Qt.Vertical and role == Qt.DisplayRole:
             return self.toValue(self.traits.yslot, col)
         return None
 
