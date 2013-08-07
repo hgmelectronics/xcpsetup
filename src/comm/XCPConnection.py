@@ -9,19 +9,7 @@ import struct
 import time
 from CANInterface import *
 
-XCPPointer = namedtuple('addr', 'ext')
-
-class XCPSlaveCANAddr(object):
-    '''
-    XCP slave that exists on the CAN network.
-    '''
-    
-    def __init__(self, cmdId, resId):
-        self.cmdId = CANID(cmdId)
-        self.resId = CANID(cmdId)
-    
-    def description(self):
-        return "CAN %s / %s" % cmdId.getString() % resId.getString()
+XCPPointer = namedtuple('XCPPointer', ['addr', 'ext'])
 
 
 def XCPGetCANSlaves(interface, bcastId, timeout):
@@ -29,7 +17,7 @@ def XCPGetCANSlaves(interface, bcastId, timeout):
     interface.sendto(request, bcastId)
     time.sleep(timeout)
     slaves = []
-    for packet in interface.recv(0):
+    for packet in interface.receivePackets(0):
         try:
             data = struct.unpack("!BBBBL", packet.data)
             if data[0] == 0xFF and data[1] == 0x58 and data[2] == 0x43 and data[3] == 0x50:
@@ -115,7 +103,7 @@ class XCPConnection(object):
     
     def _transaction(self, request, fmt):
         _interface.send(request)
-        replies = _interface.recv(_timeout)
+        replies = _interface.receive(_timeout)
         if length(replies) < 1
             raise XCPTimeout()
         if length(replies) > 1
