@@ -14,10 +14,10 @@ XCPPointer = namedtuple('XCPPointer', ['addr', 'ext'])
 
 def XCPGetCANSlaves(interface, bcastId, timeout):
     request = struct.pack("BBBBBB", 0xF2, 0xFF, 0x58, 0x43, 0x50, 0x00)
-    interface.sendto(request, bcastId)
+    interface.transmitTo(request, bcastId)
     time.sleep(timeout)
     slaves = []
-    for packet in interface.receivePackets(0):
+    for packet in interface.receivePackets(0.0):
         try:
             data = struct.unpack("!BBBBL", packet.data)
             if data[0] == 0xFF and data[1] == 0x58 and data[2] == 0x43 and data[3] == 0x50:
@@ -54,139 +54,140 @@ class XCPConnection(object):
         Constructor - assumes interface is already connected (knows target device address)
         Performs XCP connection sequence
         '''
-        _interface = interface
-        _timeout = timeout
-        '''temporarily set byteorder to allow transaction'''
-        _byteorder = "@"
-        request = struct.pack("BB", [0xFF, 0x00])
-        reply = _transaction(request, "BBBBBBBB")
-        if reply[0] != 0xFF
+        self._interface = interface
+        self._timeout = timeout
+        #temporarily set byteorder to allow transaction
+        self._byteorder = "@"
+        request = struct.pack("BB", 0xFF, 0x00)
+        reply = self._transaction(request, "BBBBBBBB")
+        if reply[0] != 0xFF:
             raise XCPBadReply()
-        _calPage = reply[1] & 0x01
-        _daq = reply[1] & 0x04
-        _stim = reply[1] & 0x08
-        _pgm = reply[1] & 0x10
-        if not _calPage:
+        self._calPage = reply[1] & 0x01
+        self._daq = reply[1] & 0x04
+        self._stim = reply[1] & 0x08
+        self._pgm = reply[1] & 0x10
+        if not self._calPage:
             close()
             raise XCPBadReply()
         if reply[2] & 0x01:
-            _byteorder = ">"
-            _maxDTO = reply[4] << 8 | reply[5]
+            self._byteorder = ">"
+            self._maxDTO = reply[4] << 8 | reply[5]
         else:
-            _byteorder = "<"
-            _maxDTO = reply[5] << 8 | reply[4]
+            self._byteorder = "<"
+            self._maxDTO = reply[5] << 8 | reply[4]
         
         if (reply[2] & 0x06) == 0x00:
-            _addressGranularity = 1
-        else if (reply[2] & 0x06) == 0x02:
-            _addressGranularity = 2
-        else if (reply[2] & 0x06) == 0x04:
-            _addressGranularity = 4
-        else
+            self._addressGranularity = 1
+        elif (reply[2] & 0x06) == 0x02:
+            self._addressGranularity = 2
+        elif (reply[2] & 0x06) == 0x04:
+            self._addressGranularity = 4
+        else:
             close()
             raise XCPBadReply()
         
-        _maxCTO = reply[3]
+        self._maxCTO = reply[3]
         
-        if reply[6] != 0x01 or reply[7] != 0x01
+        if reply[6] != 0x01 or reply[7] != 0x01:
             close()
             raise XCPBadReply()
 
     def close(self):
-        request = struct.pack(_byteorder + "B", [0xFE])
+        request = struct.pack(self._byteorder + "B", [0xFE])
         try:
-            reply = _transaction(request, "BB")
-        '''expect no response, hence timeout'''
+            reply = self._transaction(request, "BB")
+				    #expect no response, hence timeout
         except XCPTimeout:
             return
         raise XCPBadReply()
     
     def _transaction(self, request, fmt):
-        _interface.send(request)
-        replies = _interface.receive(_timeout)
-        if length(replies) < 1
+        self._interface.transmit(request)
+        replies = self._interface.receive(self._timeout)
+        if len(replies) < 1:
             raise XCPTimeout()
-        if length(replies) > 1
+        if len(replies) > 1:
             raise XCPBadReply()
         try:
-            reply = struct.unpack_from(_byteorder + fmt, replies[0])
+            reply = struct.unpack_from(self._byteorder + fmt, replies[0])
+            return reply
         except struct.error:
             raise XCPBadReply()
     
     def _setMTA(self, ptr):
-        request = struct.pack(_byteorder + "BBBBL", [0xF6, 1, 0, ptr.ext, ptr.addr])
-        reply = _transaction(request, "B")
-        if reply[0] != 0xFF
+        request = struct.pack(self._byteorder + "BBBBL", 0xF6, 1, 0, ptr.ext, ptr.addr)
+        reply = self._transaction(request, "B")
+        if reply[0] != 0xFF:
             raise XCPBadReply()
     
-    def upload8(self, ptr, data):
-        if _addressGranularity == 1:
-            request = struct.pack(_byteorder + "BBBBL", [0xF4, 1, 0, ptr.ext, ptr.addr)
-            reply = _transaction(request, "BB")
-            if reply[0] != 0xFF
+    def upload8(self, ptr):
+        if self._addressGranularity == 1:
+            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 1, 0, ptr.ext, ptr.addr)
+            reply = self._transaction(request, "BB")
+            if reply[0] != 0xFF:
                 raise XCPBadReply()
             return reply[1]
         else:
             raise XCPInvalidOp()
 
-    def upload16(self, ptr, buffer):
-        if _addressGranularity == 1:
-            request = struct.pack(_byteorder + "BBBBL", [0xF4, 2, 0, ptr.ext, ptr.addr)
-            reply = _transaction(request, "BH")
-        else if _addressGranularity == 2:
-            request = struct.pack(_byteorder + "BBBBL", [0xF4, 1, 0, ptr.ext, ptr.addr)
-            reply = _transaction(request, "BxH")
+    def upload16(self, ptr):
+        if self._addressGranularity == 1:
+            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 2, 0, ptr.ext, ptr.addr)
+            reply = self._transaction(request, "BH")
+        elif self._addressGranularity == 2:
+            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 1, 0, ptr.ext, ptr.addr)
+            reply = self._transaction(request, "BxH")
         else:
             raise XCPInvalidOp()
-        if reply[0] != 0xFF
+        if reply[0] != 0xFF:
             raise XCPBadReply()
         return reply[1]
     
-    def upload32(self, ptr, buffer):
-        if _addressGranularity == 1:
-            request = struct.pack(_byteorder + "BBBBL", [0xF4, 4, 0, ptr.ext, ptr.addr)
-            reply = _transaction(request, "BL")
-        else if _addressGranularity == 2:
-            request = struct.pack(_byteorder + "BBBBL", [0xF4, 2, 0, ptr.ext, ptr.addr)
-            reply = _transaction(request, "BxL")
-        else if _addressGranularity == 4:
-            request = struct.pack(_byteorder + "BBBBL", [0xF4, 1, 0, ptr.ext, ptr.addr)
-            reply = _transaction(request, "BxxxL")
+    def upload32(self, ptr):
+        if self._addressGranularity == 1:
+            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 4, 0, ptr.ext, ptr.addr)
+            reply = self._transaction(request, "BL")
+        elif self._addressGranularity == 2:
+            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 2, 0, ptr.ext, ptr.addr)
+            reply = self._transaction(request, "BxL")
+        elif self._addressGranularity == 4:
+            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 1, 0, ptr.ext, ptr.addr)
+            reply = self._transaction(request, "BxxxL")
         else:
             raise XCPInvalidOp()
-        if reply[0] != 0xFF
+        if reply[0] != 0xFF:
             raise XCPBadReply()
         return reply[1]
 
     def download8(self, ptr, data):
-        if _addressGranularity > 1:
+        if self._addressGranularity > 1:
             raise XCPInvalidOp()
-        _setMTA(ptr)
-        request = struct.pack(_byteorder + "BBB", [0xF0, 1, data])
-        reply = _transaction(request, "B")
-        if reply[0] != 0xFF
+        self._setMTA(ptr)
+        request = struct.pack(self._byteorder + "BBB", 0xF0, 1, data)
+        reply = self._transaction(request, "B")
+        if reply[0] != 0xFF:
             raise XCPBadReply()
 
     def download16(self, ptr, data):
-        if _addressGranularity == 1:
-            request = struct.pack(_byteorder + "BBH", [0xF0, 2, data])
-        else if _addressGranularity == 2:
-            request = struct.pack(_byteorder + "BBH", [0xF0, 1, data])
+        if self._addressGranularity == 1:
+            request = struct.pack(self._byteorder + "BBH", 0xF0, 2, data)
+        elif self._addressGranularity == 2:
+            request = struct.pack(self._byteorder + "BBH", 0xF0, 1, data)
         else:
             raise XCPInvalidOp()
-        _setMTA(ptr)
-        reply = _transaction(request, "B")
-        if reply[0] != 0xFF
+        self._setMTA(ptr)
+        reply = self._transaction(request, "B")
+        if reply[0] != 0xFF:
             raise XCPBadReply()
 
     def download32(self, ptr, data):
-        if _addressGranularity == 1:
-            request = struct.pack(_byteorder + "BBL", [0xF0, 4, data])
-        else if _addressGranularity == 2:
-            request = struct.pack(_byteorder + "BBL", [0xF0, 2, data])
+        if self._addressGranularity == 1:
+            request = struct.pack(self._byteorder + "BBL", 0xF0, 4, data)
+        elif self._addressGranularity == 2:
+            request = struct.pack(self._byteorder + "BBL", 0xF0, 2, data)
         else:
-            request = struct.pack(_byteorder + "BBxxL", [0xF0, 1, data])
-        _setMTA(ptr)
-        reply = _transaction(request, "B")
-        if reply[0] != 0xFF
+            request = struct.pack(self._byteorder + "BBxxL", 0xF0, 1, data)
+        self._setMTA(ptr)
+        reply = self._transaction(request, "B")
+        if reply[0] != 0xFF:
             raise XCPBadReply()

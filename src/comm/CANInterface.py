@@ -19,8 +19,8 @@ class CANID(object):
         self.raw = raw
     
     def getString(self):
-        if rawid & 0x80000000:
-            return "x%x" % self.raw
+        if self.raw & 0x80000000:
+            return "x%x" % (self.raw ^ 0x80000000)
         else:
             return "%x" % self.raw
 
@@ -36,7 +36,7 @@ class XCPSlaveCANAddr(object):
         self.resId = CANID(resId)
     
     def description(self):
-        return "CAN %s / %s" % cmdId.getString() % resId.getString()
+        return "CAN %(cmd)s / %(res)s" % {'cmd': self.cmdId.getString(), 'res': self.resId.getString()}
 
 class CANError:
     pass
@@ -71,12 +71,23 @@ class SocketCANInterface(object):
     
     def connect(self, address):
         self._slaveAddr = address
+        filt = struct.pack("=II", self._slaveAddr.resId.raw, 0x9FFFFFFF)
+        self._s.setsockopt(socket.SOL_CAN_RAW, socket.CAN_RAW_FILTER, filt)
+        # Now flush any packets that were previously there
+        self._s.settimeout(0.001)
+        while 1:
+            try:
+                frame = self._s.recvfrom(16)[0]
+            except socket.timeout:
+                break
     
     def disconnect(self):
         self._slaveAddr = XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
+        filt = struct.pack("=II", 0, 0)
+        self._s.setsockopt(socket.SOL_CAN_RAW, socket.CAN_RAW_FILTER, filt)
     
     def transmit(self, data):
-        frame = self._build_frame(data, self._slaveAddr.cmdId)
+        frame = self._build_frame(data, self._slaveAddr.cmdId.raw)
         self._s.send(frame)
     
     def transmitTo(self, data, ident):
@@ -84,38 +95,45 @@ class SocketCANInterface(object):
         self._s.send(frame)
     
     def receive(self, timeout):
-        if self._slaveAddr.resID.raw == 0xFFFFFFFF:
+        if self._slaveAddr.resId.raw == 0xFFFFFFFF:
             return []
         
-        endTime = time.time() + timeout
-        msgs = []
+        self._s.settimeout(timeout)
+        try:
+            frame = self._s.recvfrom(16)[0]
+        except socket.timeout:
+            return []
+        
+        ident, data = self._decode_frame(frame)
+        msgs = [data]
+        
+        self._s.setblocking(0)
+        
         while 1:
-            newTimeout = endTime - time.time()
-            if newTimeout < 0:
-                newTimeout = 0
-            self._s.settimeout(newTimeout)
             try:
                 frame = self._s.recvfrom(16)[0]
-            except socket.timeout:
+            except BlockingIOError:
                 break
             ident, data = self._decode_frame(frame)
-            if ident == self._slaveAddr.resId.raw:
-                msgs.append(data)
+            msgs.append(data)
         return msgs
     
     def receivePackets(self, timeout):
-        endTime = time.time() + timeout
-        packets = []
+        self._s.settimeout(timeout)
+        try:
+            frame = self._s.recvfrom(16)[0]
+        except socket.timeout:
+            return []
+        ident, data = self._decode_frame(frame)
+        packets = [CANPacket(ident, data)]
+        
+        self._s.setblocking(0)
+        
         while 1:
-            newTimeout = endTime - time.time()
-            if newTimeout < 0:
-                newTimeout = 0
-            self._s.settimeout(newTimeout)
             try:
                 frame = self._s.recvfrom(16)[0]
-            except socket.timeout:
+            except BlockingIOError:
                 break
             ident, data = self._decode_frame(frame)
-            packet = CANPacket(ident, data)
-            packets.append(packet)
+            packets.append(CANPacket(ident, data))
         return packets
