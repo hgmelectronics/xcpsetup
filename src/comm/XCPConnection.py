@@ -49,13 +49,14 @@ class XCPConnection(object):
 
     
     '''
-    def __init__(self, interface, timeout):
+    def __init__(self, interface, timeout, nvWriteTimeout):
         '''
         Constructor - assumes interface is already connected (knows target device address)
         Performs XCP connection sequence
         '''
         self._interface = interface
         self._timeout = timeout
+        self._nvWriteTimeout = nvWriteTimeout
         #temporarily set byteorder to allow transaction
         self._byteorder = "@"
         request = struct.pack("BB", 0xFF, 0x00)
@@ -93,7 +94,7 @@ class XCPConnection(object):
             raise XCPBadReply()
 
     def close(self):
-        request = struct.pack(self._byteorder + "B", [0xFE])
+        request = struct.pack(self._byteorder + "B", 0xFE)
         try:
             reply = self._transaction(request, "BB")
 				    #expect no response, hence timeout
@@ -103,12 +104,14 @@ class XCPConnection(object):
     
     def _transaction(self, request, fmt):
         self._interface.transmit(request)
-        replies = self._interface.receive(self._timeout)
+        received = self._interface.receive(self._timeout)
+        replies = [rep for rep in received if rep[0] == 0xFF or rep[0] == 0xFE]
         if len(replies) < 1:
             raise XCPTimeout()
         if len(replies) > 1:
             raise XCPBadReply()
         try:
+            #print('Send ' + repr([hex(elem) for elem in request]) + ' Reply ' + repr([hex(elem) for elem in replies[0]]))
             reply = struct.unpack_from(self._byteorder + fmt, replies[0])
             return reply
         except struct.error:
@@ -191,3 +194,28 @@ class XCPConnection(object):
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
             raise XCPBadReply()
+    
+    def nvwrite(self):
+        request = struct.pack(self._byteorder + "BBH", 0xF9, 0x01, 0)
+        reply = self._transaction(request, "B")
+        if reply[0] != 0xFF:
+            raise XCPBadReply()
+        
+        # Fixed turndown ratio of 10
+        pollInterval = self._nvWriteTimeout / 10
+        
+        for i in range(10):
+            time.sleep(pollInterval)
+            request = struct.pack(self._byteorder + "B", 0xFD)
+            reply = self._transaction(request, "BBBBH")
+            if reply[0] == 0xFD:
+                if reply[1] == 0x03:
+                    # EV_STORE_CAL: we're done
+                    return
+            if reply[0] != 0xFF:
+                raise XCPBadReply()
+            if not (reply[1] & 0x01):
+                return
+                
+        # Exited loop due to timeout
+        raise XCPTimeout()
