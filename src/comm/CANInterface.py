@@ -38,10 +38,10 @@ class XCPSlaveCANAddr(object):
     def description(self):
         return "CAN %(cmd)s / %(res)s" % {'cmd': self.cmdId.getString(), 'res': self.resId.getString()}
 
-class CANError:
+class CANError(Exception):
     pass
 
-class CANConnectFailed:
+class CANConnectFailed(Exception):
     pass
 
 class SocketCANInterface(object):
@@ -66,8 +66,8 @@ class SocketCANInterface(object):
         return struct.pack("=IB3x8s", ident, can_dlc, data.ljust(8, b'\x00'))
     
     def _decode_frame(self, frame):
-        ident, data = struct.unpack("=I4x8s", frame)
-        return ident, data
+        ident, dlc, data = struct.unpack("=IB3x8s", frame)
+        return ident, data[0:dlc]
     
     def connect(self, address):
         self._slaveAddr = address
@@ -98,42 +98,49 @@ class SocketCANInterface(object):
         if self._slaveAddr.resId.raw == 0xFFFFFFFF:
             return []
         
-        self._s.settimeout(timeout)
-        try:
-            frame = self._s.recvfrom(16)[0]
-        except socket.timeout:
-            return []
-        
-        ident, data = self._decode_frame(frame)
-        msgs = [data]
-        
-        self._s.setblocking(0)
+        msgs = []
+        endTime = time.time() + timeout
         
         while 1:
+            if len(msgs):
+                self._s.setblocking(0)
+            else:
+                newTimeout = endTime - time.time()
+                if newTimeout < 0:
+                    self._s.setblocking(0)
+                else:
+                    self._s.settimeout(newTimeout)
+            
             try:
                 frame = self._s.recvfrom(16)[0]
-            except BlockingIOError:
+            except (socket.timeout, BlockingIOError):
                 break
+            
             ident, data = self._decode_frame(frame)
-            msgs.append(data)
+            if data[0] == 0xFF or data[0] == 0xFE:
+                msgs.append(data)
         return msgs
     
     def receivePackets(self, timeout):
-        self._s.settimeout(timeout)
-        try:
-            frame = self._s.recvfrom(16)[0]
-        except socket.timeout:
-            return []
-        ident, data = self._decode_frame(frame)
-        packets = [CANPacket(ident, data)]
-        
-        self._s.setblocking(0)
+        packets = []
+        endTime = time.time() + timeout
         
         while 1:
+            if len(packets):
+                self._s.setblocking(0)
+            else:
+                newTimeout = endTime - time.time()
+                if newTimeout < 0:
+                    self._s.setblocking(0)
+                else:
+                    self._s.settimeout(newTimeout)
+            
             try:
                 frame = self._s.recvfrom(16)[0]
-            except BlockingIOError:
+            except (socket.timeout, BlockingIOError):
                 break
+            
             ident, data = self._decode_frame(frame)
-            packets.append(CANPacket(ident, data))
+            if data[0] == 0xFF or data[0] == 0xFE:
+                packets.append(CANPacket(ident, data))
         return packets
