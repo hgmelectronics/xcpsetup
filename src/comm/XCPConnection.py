@@ -95,12 +95,8 @@ class XCPConnection(object):
 
     def close(self):
         request = struct.pack(self._byteorder + "B", 0xFE)
-        try:
-            reply = self._transaction(request, "BB")
-				    #expect no response, hence timeout
-        except XCPTimeout:
-            return
-        raise XCPBadReply()
+        if reply[0] != 0xFF:
+            raise XCPBadReply()
     
     def _transaction(self, request, fmt):
         self._interface.transmit(request)
