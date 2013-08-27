@@ -1,3 +1,4 @@
+#!/usr/bin/python3.3
 import CANInterface
 import XCPConnection
 import sys
@@ -9,10 +10,10 @@ def printUsage():
     print("Usage: ", sys.argv[0], "[-d <CAN device>] [-i <ID>] [-o <outputfile>]")
 
 def CastShortToS16(i):
-    return struct.unpack_from('h',struct.pack('H',i))[0]
+    return struct.unpack('h',struct.pack('H',i))[0]
 
 def CastIntToFloat(i):
-    return struct.unpack_from('f',struct.pack('L',i))[0]
+    return struct.unpack('f',struct.pack('I',i))[0]
    
 targetID = None
 outputPath = None
