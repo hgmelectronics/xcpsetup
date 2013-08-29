@@ -113,13 +113,35 @@ class XCPConnection(object):
         except struct.error:
             raise XCPBadReply()
     
+    def _synch(self):
+        request = struct.pack(self._byteorder + "B", 0xFC)
+        reply = self._transaction(request, "BB")
+        if reply[0] != 0xFE or reply[1] != 0x00:
+            raise XCPBadReply()
+    
+    def _query(self, action_func, *args):
+        failures = 0
+        maxFailures = 2
+        while failures <= maxFailures:
+            try:
+                return action_func(args) # Jumps out if the action succeeds
+            except XCPTimeout:
+                failures += 1
+                
+            while failures <= maxFailures:
+                try:
+                    self._synch()
+                except XCPTimeout:
+                    failures += 1 # If max number of failures is reached, inner loop exits, then so does outer loop
+        raise XCPTimeout()
+    
     def _setMTA(self, ptr):
         request = struct.pack(self._byteorder + "BBBBL", 0xF6, 1, 0, ptr.ext, ptr.addr)
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
             raise XCPBadReply()
     
-    def upload8(self, ptr):
+    def _action_upload8(self, ptr):
         if self._addressGranularity == 1:
             request = struct.pack(self._byteorder + "BBBBL", 0xF4, 1, 0, ptr.ext, ptr.addr)
             reply = self._transaction(request, "BB")
@@ -128,8 +150,11 @@ class XCPConnection(object):
             return reply[1]
         else:
             raise XCPInvalidOp()
+    
+    def upload8(self, ptr):
+        return self._query(_action_upload8, ptr)
 
-    def upload16(self, ptr):
+    def _action_upload16(self, ptr):
         if self._addressGranularity == 1:
             request = struct.pack(self._byteorder + "BBBBL", 0xF4, 2, 0, ptr.ext, ptr.addr)
             reply = self._transaction(request, "BH")
@@ -142,7 +167,10 @@ class XCPConnection(object):
             raise XCPBadReply()
         return reply[1]
     
-    def upload32(self, ptr):
+    def upload16(self, ptr):
+        return self._query(_action_upload16, ptr)
+    
+    def _action_upload32(self, ptr):
         if self._addressGranularity == 1:
             request = struct.pack(self._byteorder + "BBBBL", 0xF4, 4, 0, ptr.ext, ptr.addr)
             reply = self._transaction(request, "BL")
@@ -157,8 +185,11 @@ class XCPConnection(object):
         if reply[0] != 0xFF:
             raise XCPBadReply()
         return reply[1]
+    
+    def upload32(self, ptr):
+        return self._query(_action_upload32, ptr)
 
-    def download8(self, ptr, data):
+    def _action_download8(self, ptr, data):
         if self._addressGranularity > 1:
             raise XCPInvalidOp()
         self._setMTA(ptr)
@@ -166,8 +197,11 @@ class XCPConnection(object):
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
             raise XCPBadReply()
+    
+    def download8(self, ptr, data):
+        return self._query(_action_download8, ptr, data)
 
-    def download16(self, ptr, data):
+    def _action_download16(self, ptr, data):
         if self._addressGranularity == 1:
             request = struct.pack(self._byteorder + "BBH", 0xF0, 2, data)
         elif self._addressGranularity == 2:
@@ -178,8 +212,11 @@ class XCPConnection(object):
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
             raise XCPBadReply()
+    
+    def download16(self, ptr, data):
+        return self._query(_action_download16, ptr, data)
 
-    def download32(self, ptr, data):
+    def _action_download32(self, ptr, data):
         if self._addressGranularity == 1:
             request = struct.pack(self._byteorder + "BBL", 0xF0, 4, data)
         elif self._addressGranularity == 2:
@@ -191,7 +228,10 @@ class XCPConnection(object):
         if reply[0] != 0xFF:
             raise XCPBadReply()
     
-    def nvwrite(self):
+    def download32(self, ptr, data):
+        return self._query(_action_download32, ptr, data)
+    
+    def _action_nvwrite(self):
         request = struct.pack(self._byteorder + "BBH", 0xF9, 0x01, 0)
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
@@ -215,3 +255,6 @@ class XCPConnection(object):
                 
         # Exited loop due to timeout
         raise XCPTimeout()
+    
+    def nvwrite(self):
+        return self._query(_action_nvwrite)
