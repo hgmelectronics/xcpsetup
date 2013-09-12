@@ -96,7 +96,6 @@ try:
     data['cellTypeParam']['protParam']['highWarnT'] = CastIntToFloat(conn.upload32(XCPConnection.XCPPointer(280, 0)))
     data['cellTypeParam']['protParam']['safeMinT'] = CastIntToFloat(conn.upload32(XCPConnection.XCPPointer(284, 0)))
     data['cellTypeParam']['protParam']['lowWarnT'] = CastIntToFloat(conn.upload32(XCPConnection.XCPPointer(288, 0)))
-    conn.close()
     
     if outputPath:
         outFile = open(outputPath, "w+")
@@ -104,6 +103,8 @@ try:
         outFile.close()
     else:
         print(json.dumps(data))
+        
+    conn.close()
 except (OSError,CANInterface.CANConnectFailed):
     try:
         interface.close()
