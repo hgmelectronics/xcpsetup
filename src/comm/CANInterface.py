@@ -85,15 +85,28 @@ class SocketCANInterface(object):
         self._slaveAddr = XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
         filt = struct.pack("=II", 0, 0)
         self._s.setsockopt(socket.SOL_CAN_RAW, socket.CAN_RAW_FILTER, filt)
+       
+    def _sendFrame(self, frame):
+        self._s.setblocking(1)
+        while 1:
+            try:
+                self._s.send(frame)
+                break
+            except OSError as err:
+                if err.errno != 105:
+                    raise
+                else:
+                    # Need to repeatedly try to send frames if ENOBUFS (105) returned - shortcoming of SocketCAN
+                    time.sleep(0.010)
     
     def transmit(self, data):
         frame = self._build_frame(data, self._slaveAddr.cmdId.raw)
-        self._s.send(frame)
+        self._sendFrame(frame)
     
     def transmitTo(self, data, ident):
         frame = self._build_frame(data, ident)
-        self._s.send(frame)
-    
+        self._sendFrame(frame)
+        
     def receive(self, timeout):
         if self._slaveAddr.resId.raw == 0xFFFFFFFF:
             return []
