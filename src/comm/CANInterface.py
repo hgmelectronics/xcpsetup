@@ -163,10 +163,6 @@ class ICSCANInterface(object):
         if setBitrateResult != 1:
             raise CANConnectFailed()
 
-        #settings=_ICSSVCAN3Settings()
-        #sizeofSettings=ctypes.c_int(ctypes.sizeof(settings))
-        #self._dll.icsneoGetVCAN3Settings(self._neoObject, ctypes.byref(settings), sizeofSettings)
-
         self._slaveAddr = XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
 
     def __enter__(self):
@@ -212,6 +208,13 @@ class ICSCANInterface(object):
     
     def connect(self, address):
         self._slaveAddr = address
+
+            # Now flush the receive buffer
+        icsMsgs = (_ICSSpyMessage * 20000)()
+        icsNMsgs = ctypes.c_int()
+        icsNErrors = ctypes.c_int()
+
+        res = self._dll.icsneoGetMessages(self._neoObject, icsMsgs, ctypes.byref(icsNMsgs), ctypes.byref(icsNErrors))
     
     def disconnect(self):
         self._slaveAddr = XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
