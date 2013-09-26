@@ -8,7 +8,7 @@ import getopt
 import STCRC
 
 def printUsage():
-    print("Usage: ", sys.argv[0], "[-d <CAN device>] [-i <ID>] <inputfile>")
+    print("Usage: ", sys.argv[0], "[-d <CAN device>|ICS] [-i <ID>] <inputfile>")
 
 def CastShortToS16(i):
     return struct.unpack('h',struct.pack('H',i))[0]
@@ -50,26 +50,25 @@ print("Size: " + str(len(data)))
 print("CRC32-STM32: " + hex(dataCRC))
 
 try:
-    interface = CANInterface.SocketCANInterface(canDev)
-    if targetID == None:
-        slaves = XCPConnection.XCPGetCANSlaves(interface, 0x9F000000, 0.2)
-        for i in range(0, len(slaves)):
-            print(str(i) + ': ' + slaves[i].description())
-        index = int(input('Slave: '))
-        if index >= len(slaves):
-            exit
-        slave = slaves[index]
-    else:
-        slave = CANInterface.XCPSlaveCANAddr(0x9F000100 + 2*targetID, 0x9F000101 + 2*targetID)
-    interface.connect(slave)
-    conn = XCPConnection.XCPConnection(interface, 0.5, 2.0)
-    conn.program_app(XCPConnection.XCPPointer(0x08004000, 0), data, dataCRC)
+    with CANInterface.MakeInterface(canDev) as interface:
+        if targetID == None:
+            slaves = XCPConnection.XCPGetCANSlaves(interface, 0x9F000000, 0.2)
+            for i in range(0, len(slaves)):
+                print(str(i) + ': ' + slaves[i].description())
+            index = int(input('Slave: '))
+            if index >= len(slaves):
+                exit
+            slave = slaves[index]
+        else:
+            slave = CANInterface.XCPSlaveCANAddr(0x9F000100 + 2*targetID, 0x9F000101 + 2*targetID)
+        interface.connect(slave)
+        conn = XCPConnection.XCPConnection(interface, 0.5, 2.0)
+        conn.program_app(XCPConnection.XCPPointer(0x08004000, 0), data, dataCRC)
 except (OSError,CANInterface.CANConnectFailed):
     try:
         interface.close()
     except NameError:
         pass
-    print("Is interface up? Try \"sudo ip link set can0 up type can bitrate 250000\"")
     raise
 except:
     interface.close()
