@@ -16,7 +16,7 @@ def CastFloatToInt(i):
     return struct.unpack('I',struct.pack('f',i))[0]
    
 targetID = None
-canDev = "can0"
+canDev = None
 if len(sys.argv) < 2:
 	printUsage()
 	sys.exit(1)

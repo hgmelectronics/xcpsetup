@@ -17,7 +17,7 @@ def CastIntToFloat(i):
    
 targetID = None
 outputPath = None
-canDev = "can0"
+canDev = None
 try:
     opts, args = getopt.getopt(sys.argv[1:], "d:i:o:")
     for opt, arg in opts:
