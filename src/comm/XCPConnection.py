@@ -32,18 +32,40 @@ class XCPError(Exception):
 
 
 class XCPTimeout(XCPError):
-    pass
-
+    def __init__(self, value=None):
+        self._value = value
+    def __str__(self):
+        if self._value != None:
+            return 'Timeout in ' + self._value
+        else:
+            return 'Timeout'
 
 class XCPInvalidOp(XCPError):
-    pass
-
+    def __init__(self, value=None):
+        self._value = value
+    def __str__(self):
+        if self._value != None:
+            return 'Invalid operation attempted in ' + self._value
+        else:
+            return 'Invalid operation attempted'
 
 class XCPBadReply(XCPError):
-    pass
+    def __init__(self, value=None):
+        self._value = value
+    def __str__(self):
+        if self._value != None:
+            return 'Unexpected reply from slave in ' + self._value
+        else:
+            return 'Unexpected reply from slave'
 
 class XCPPacketLost(XCPError):
-    pass
+    def __init__(self, value=None):
+        self._value = value
+    def __str__(self):
+        if self._value != None:
+            return 'Block mode packet lost in ' + self._value
+        else:
+            return 'Block mode packet lost'
 
 class XCPConnection(object):
     '''
