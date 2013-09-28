@@ -52,6 +52,12 @@ class CANConnectFailed(Exception):
     def __str__(self):
         return repr(self._value)
 
+class CANInterfaceNotSupported(Exception):
+    def __init__(self, value=None):
+        self._value = value
+    def __str__(self):
+        return repr(self._value)
+
 _ICS_TYPE_TABLE = [(1,'NeoVI Blue'),\
                    (4,'DW ValueCAN'),\
                    (8,'NeoVI Fire'),\
@@ -124,7 +130,10 @@ def MakeInterface(name):
     if name == 'ICS':
         return ICSCANInterface()
     else:
-        return SocketCANInterface(name)
+        try:
+            return SocketCANInterface(name)
+        except CANInterfaceNotSupported: # doesn't seem to be a Linux system with SocketCAN; try Windows
+            return ICSCANInterface()
 
 class ICSCANInterface(object):
     '''
@@ -135,7 +144,13 @@ class ICSCANInterface(object):
     _BITRATE = 250000
 
     def __init__(self):
-        self._dll = ctypes.windll.icsneo40
+        if not hasattr(ctypes, 'windll'):
+            raise CANInterfaceNotSupported('Not a Windows system')
+        
+        try:
+            self._dll = ctypes.windll.icsneo40
+        except OSError:
+            raise CANConnectFailed('Loading icsneo40.dll failed')
         
         neoDevices = (_ICSNeoDevice * 1)()
         self._neoObject = None
@@ -156,7 +171,7 @@ class ICSCANInterface(object):
         tempNeoObject = ctypes.c_int()
         openResult = self._dll.icsneoOpenNeoDevice(ctypes.byref(neoDevices[0]), ctypes.byref(tempNeoObject), netIDs, 1, 0)
         if openResult != 1:
-            raise CANConnectFailed()
+            raise CANConnectFailed('Opening ICS device failed')
         self._neoObject = tempNeoObject.value
 
         setBitrateResult = self._dll.icsneoSetBitRate(self._neoObject, self._BITRATE, self._ICSNETID_HSCAN)
@@ -197,7 +212,7 @@ class ICSCANInterface(object):
         if frame.StatusBitField & 0x00000001:
             return 0x20000000, b''
 
-        if frame.StatusBitField & 0x00000002:   # extended ID?
+        if frame.StatusBitField & 0x00000004:   # extended ID?
             ident = frame.ArbIDOrHeader | 0x80000000
         else:
             ident = frame.ArbIDOrHeader
@@ -310,6 +325,9 @@ class SocketCANInterface(object):
     '''
     
     def __init__(self, name):
+        if not hasattr(socket, 'AF_CAN'):
+            raise CANInterfaceNotSupported('Socket module does not support CAN')
+        
         self._s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
         self._slaveAddr = XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
         if name == None:
