@@ -22,17 +22,20 @@ class UploadDelegate32:
         return connection.upload32(pointer)
 
 
+def hexInt(param):
+    return int(param,0)
+
 readTimeout = .2
 writeTimeout = 1.0
 
 parser = argparse.ArgumentParser(description="read data from an XCP slave at a given address")
 parser.add_argument('device', help='CAN device')
-parser.add_argument('commandId', help='command id', type=int)
-parser.add_argument('responseId', help='response id', type=int)
-parser.add_argument('address', help='address', type=int)
-parser.add_argument('-e', help='address extension', type=int, dest='extension', default=0)
+parser.add_argument('commandId', help='command id', type=hexInt)
+parser.add_argument('responseId', help='response id', type=hexInt)
+parser.add_argument('address', help='address', type=hexInt)
+parser.add_argument('-e', help='address extension', type=hexInt, dest='extension', default=0)
 parser.add_argument('size', help='word size', type=int, choices=[1,2,4])
-parser.add_argument('words', help='number of words to read', type=int)
+parser.add_argument('words', help='number of words to read', type=hexInt, default=1)
 args=parser.parse_args()
 
 if args.size == 1:
@@ -48,8 +51,10 @@ try:
         interface.connect(slave)
         connection = XCPConnection.XCPConnection(interface, readTimeout, writeTimeout)
 
-        pointer = XCPConnection.XCPPointer(args.address, args.extension)
-        print(uploadDelegate.upload(connection, pointer))
+        
+        for address in range(args.address, args.address+args.words):
+            pointer = XCPConnection.XCPPointer(address, args.extension)
+            print(uploadDelegate.upload(connection, pointer))
         connection.close()
         
         
