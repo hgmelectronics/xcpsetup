@@ -17,14 +17,14 @@ def CastIntToFloat(i):
     return struct.unpack('f',struct.pack('I',i))[0]
    
 targetIDs = None
-outputPath = None
+inputPath = None
 canDev = None
 if len(sys.argv) < 2:
 	printUsage()
 	sys.exit(1)
 inputPath = sys.argv[len(sys.argv)-1]
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "d:i:o:")
+    opts, args = getopt.getopt(sys.argv[1:], "d:i:")
     for opt, arg in opts:
         if opt == "-d":
             canDev = arg
@@ -42,8 +42,6 @@ try:
                 if targetIDs[0] < 0:
                     printUsage()
                     sys.exit(1)
-        elif opt == "-o":
-            outputPath = arg
 except (getopt.GetoptError,ValueError):
 	printUsage()
 	sys.exit(1)
