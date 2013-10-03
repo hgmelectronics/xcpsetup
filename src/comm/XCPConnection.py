@@ -108,7 +108,7 @@ class XCPConnection(object):
         elif (reply[2] & 0x06) == 0x04:
             self._addressGranularity = 4
         else:
-            close()
+            close(self)
             raise XCPBadReply()
         
         self._maxCTO = reply[3]
@@ -117,7 +117,7 @@ class XCPConnection(object):
         self._maxUploadPayload = self.byteToAG(self._maxCTO - 1) * self._addressGranularity
         
         if reply[6] != 0x01 or reply[7] != 0x01:
-            close()
+            close(self)
             raise XCPBadReply()
     
     def byteToAG(self, bytes):

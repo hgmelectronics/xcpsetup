@@ -209,7 +209,7 @@ class ICSCANInterface(object):
         return frame
     
     def _decode_frame(self, frame):
-        if frame.StatusBitField & 0x00000001:
+        if frame.StatusBitField & 0x00000001 or frame.StatusBitField & 0x00000002:
             return 0x20000000, b''
 
         if frame.StatusBitField & 0x00000004:   # extended ID?
