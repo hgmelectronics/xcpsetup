@@ -1,13 +1,10 @@
 #!/usr/bin/python3.3
-import CANInterface
-import XCPConnection
-import sys
-import struct
 import argparse
- 
-from comm.XCPConnection import XCPPointer
 
-    
+from comm import CANInterface
+from comm import XCPConnection
+
+
 class UploadDelegate8:
     def upload(self, connection, pointer):
         return connection.upload8(pointer)
@@ -23,7 +20,7 @@ class UploadDelegate32:
 
 
 def hexInt(param):
-    return int(param,0)
+    return int(param, 0)
 
 readTimeout = .2
 writeTimeout = 1.0
@@ -34,9 +31,9 @@ parser.add_argument('commandId', help='command id', type=hexInt)
 parser.add_argument('responseId', help='response id', type=hexInt)
 parser.add_argument('address', help='address', type=hexInt)
 parser.add_argument('-e', help='address extension', type=hexInt, dest='extension', default=0)
-parser.add_argument('size', help='word size', type=int, choices=[1,2,4])
+parser.add_argument('size', help='word size', type=int, choices=[1, 2, 4])
 parser.add_argument('words', help='number of words to read', type=hexInt, default=1)
-args=parser.parse_args()
+args = parser.parse_args()
 
 if args.size == 1:
     uploadDelegate = UploadDelegate8()
@@ -49,16 +46,16 @@ try:
     with CANInterface.MakeInterface(args.device) as interface:
         slave = CANInterface.XCPSlaveCANAddr(args.commandId, args.responseId)
         interface.connect(slave)
-        connection = XCPConnection.XCPConnection(interface, readTimeout, writeTimeout)
+        connection = XCPConnection.Connection(interface, readTimeout, writeTimeout)
 
         
-        for address in range(args.address, args.address+args.words):
-            pointer = XCPConnection.XCPPointer(address, args.extension)
+        for address in range(args.address, args.address + args.words):
+            pointer = XCPConnection.Pointer(address, args.extension)
             print(uploadDelegate.upload(connection, pointer))
         connection.close()
         
         
-except (OSError,CANInterface.CANConnectFailed):
+except (OSError, CANInterface.ConnectFailed):
     try:
         interface.close()
     except NameError:
@@ -67,4 +64,3 @@ except (OSError,CANInterface.CANConnectFailed):
 except:
     interface.close()
     raise
-interface.close()
