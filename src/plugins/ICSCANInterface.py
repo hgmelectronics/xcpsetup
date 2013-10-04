@@ -6,7 +6,7 @@ Created on Oct 3, 2013
 import array
 import ctypes
 import time
-from . import CANInterface
+from comm import CANInterface
 
 
 _ICS_TYPE_TABLE = [(1, 'NeoVI Blue'), \
@@ -85,7 +85,7 @@ class ICSCANInterface(CANInterface.Interface):
     _ICSNETID_HSCAN = 1
     _BITRATE = 250000
 
-    def __init__(self):
+    def __init__(self, name):
         if not hasattr(ctypes, 'windll'):
             raise CANInterface.InterfaceNotSupported('Not a Windows system')
         
@@ -255,8 +255,10 @@ class ICSCANInterface(CANInterface.Interface):
             for iMsg in range(icsNMsgs.value):
                 ident, data = self._decode_frame(icsMsgs[iMsg])
                 if len(data) > 0 and (data[0] == 0xFF or data[0] == 0xFE):
-                    packets.append(CANInterface.CANPacket(ident, data))
+                    packets.append(CANInterface.Packet(ident, data))
             
             if len(packets) != 0:
                 break
         return packets
+
+CANInterface.addInterface("ICS", ICSCANInterface)

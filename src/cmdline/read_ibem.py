@@ -1,42 +1,34 @@
 #!/usr/bin/python3.3
-import getopt
+import argparse
 import json
 import struct
 import sys
 
 from comm import CANInterface
 from comm import XCPConnection
+from util import plugins
 
-
-def printUsage():
-    print("Usage: ", sys.argv[0], "[-d <CAN device>|ICS] [-i <ID>] [-o <outputfile>]")
 
 def CastShortToS16(i):
     return struct.unpack('h', struct.pack('H', i))[0]
 
 def CastIntToFloat(i):
     return struct.unpack('f', struct.pack('I', i))[0]
-   
-targetID = None
-outputPath = None
-canDev = None
-try:
-    opts, args = getopt.getopt(sys.argv[1:], "d:i:o:")
-    for opt, arg in opts:
-        if opt == "-d":
-            canDev = arg
-        elif opt == "-i":
-            targetID = int(arg)
-        elif opt == "-o":
-            outputPath = arg
-except (getopt.GetoptError, ValueError):
-    printUsage()
-    sys.exit(1)
+
+plugins.load_plugins()
+
+
+parser = argparse.ArgumentParser(description="reads data from an IBEM")
+parser.add_argument('-t', help="CAN device type", dest="deviceType", default="socket")
+parser.add_argument('-d', help="CAN device name", dest="deviceName", default="can0")
+parser.add_argument('-i', help="targetId", dest="targetId", type=int)
+parser.add_argument('-o', help="outputFile", dest="outputFile", type=argparse.FileType('w'), default=sys.stdout)
+args = parser.parse_args()
 
 try:
-    with CANInterface.MakeInterface(canDev) as interface:
-        if targetID == None:
-            slaves = XCPConnection.XCPGetCANSlaves(interface, 0x9F000000, 0.2)
+    with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
+        if args.targetId == None:
+            slaves = XCPConnection.GetCANSlaves(interface, 0x9F000000, 0.2)
             for i in range(0, len(slaves)):
                 print(str(i) + ': ' + slaves[i].description())
             index = int(input('Slave: '))
@@ -44,9 +36,9 @@ try:
                 exit
             slave = slaves[index]
         else:
-            slave = CANInterface.XCPSlaveCANAddr(0x9F000100 + 2 * targetID, 0x9F000101 + 2 * targetID)
+            slave = CANInterface.XCPSlaveCANAddr(0x9F000100 + 2 * args.targetId, 0x9F000101 + 2 * args.targetId)
         interface.connect(slave)
-        conn = XCPConnection.XCPConnection(interface, 0.2, 1.0)
+        conn = XCPConnection.Connection(interface, 0.2, 1.0)
         data = {}
         data['boardID'] = conn.upload8(XCPConnection.Pointer(0, 0))
         data['afeCalib'] = {'zeroCts': [], 'scale': []}
@@ -98,16 +90,10 @@ try:
         data['cellTypeParam']['protParam']['highWarnT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(280, 0)))
         data['cellTypeParam']['protParam']['safeMinT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(284, 0)))
         data['cellTypeParam']['protParam']['lowWarnT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(288, 0)))
-        
-        if outputPath:
-            outFile = open(outputPath, "w+")
-            outFile.write(json.dumps(data))
-            outFile.close()
-        else:
-            print(json.dumps(data))
-            
+
+        args.outputFile.write(json.dumps(data))
         conn.close()
-except (OSError, CANInterface.CANConnectFailed):
+except (OSError, CANInterface.ConnectFailed):
     try:
         interface.close()
     except NameError:

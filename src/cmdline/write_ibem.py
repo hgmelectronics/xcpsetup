@@ -1,14 +1,13 @@
 #!/usr/bin/python3.3
-import getopt
 import json
 import struct
 import sys
+import argparse
+
 from comm import CANInterface
 from comm import XCPConnection
+from util import plugins
 
-
-def printUsage():
-    print("Usage: ", sys.argv[0], "[-d <CAN device>|ICS] [-i <ID>] <inputfile>")
 
 def CastS16ToShort(i):
     return struct.unpack('H', struct.pack('h', i))[0]
@@ -16,33 +15,20 @@ def CastS16ToShort(i):
 def CastFloatToInt(i):
     return struct.unpack('I', struct.pack('f', i))[0]
    
-targetID = None
-canDev = None
-if len(sys.argv) < 2:
-    printUsage()
-    sys.exit(1)
-inputPath = sys.argv[len(sys.argv) - 1]
-try:
-    opts, args = getopt.getopt(sys.argv[1:len(sys.argv) - 1], "d:i:")
-    for opt, arg in opts:
-        if opt == "-d":
-            canDev = arg
-        elif opt == "-i":
-            targetID = int(arg)
-except (getopt.GetoptError, ValueError):
-    printUsage()
-    sys.exit(1)
+plugins.load_plugins()
 
-if inputPath == "-":
-    data = json.loads(sys.stdin.read())
-else:
-    inputFile = open(inputPath, 'r')
-    data = json.loads(inputFile.read())
-    inputFile.close()
+parser = argparse.ArgumentParser(description="writes data to an IBEM")
+parser.add_argument('-t', help="CAN device type", dest="deviceType", default="socket")
+parser.add_argument('-d', help="CAN device name", dest="deviceName", default="can0")
+parser.add_argument('-i', help="targetId", dest="targetId", type=int)
+parser.add_argument('inputFile', type=argparse.FileType('r'), default=sys.stdin)
+args = parser.parse_args()
+
+data = json.loads(args.inputFile)
 
 try:
-    with CANInterface.MakeInterface(canDev) as interface:
-        if targetID == None:
+    with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
+        if args.targetId == None:
             slaves = XCPConnection.GetCANSlaves(interface, 0x9F000000, 0.2)
             for i in range(0, len(slaves)):
                 print(str(i) + ': ' + slaves[i].description())
@@ -51,9 +37,9 @@ try:
                 exit
             slave = slaves[index]
         else:
-            slave = CANInterface.XCPSlaveCANAddr(0x9F000100 + 2 * targetID, 0x9F000101 + 2 * targetID)
+            slave = CANInterface.XCPSlaveCANAddr(0x9F000100 + 2 * args.targetID, 0x9F000101 + 2 * args.targetID)
         interface.connect(slave)
-        conn = XCPConnection.XCPConnection(interface, 0.2, 1.0)
+        conn = XCPConnection.Connection(interface, 0.2, 1.0)
         if 'boardID' in data:
             conn.download8(XCPConnection.Pointer(0, 0), data['boardID'])
         if 'afeCalib' in data:

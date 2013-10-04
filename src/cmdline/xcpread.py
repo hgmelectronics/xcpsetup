@@ -3,6 +3,7 @@ import argparse
 
 from comm import CANInterface
 from comm import XCPConnection
+from util import plugins
 
 
 class UploadDelegate8:
@@ -22,11 +23,14 @@ class UploadDelegate32:
 def hexInt(param):
     return int(param, 0)
 
+plugins.load_plugins()
+
 readTimeout = .2
 writeTimeout = 1.0
 
 parser = argparse.ArgumentParser(description="read data from an XCP slave at a given address")
-parser.add_argument('device', help='CAN device')
+parser.add_argument('-t', help='CAN device type', dest='deviceType', default="socket")
+parser.add_argument('deviceName', help='CAN device name')
 parser.add_argument('commandId', help='command id', type=hexInt)
 parser.add_argument('responseId', help='response id', type=hexInt)
 parser.add_argument('address', help='address', type=hexInt)
@@ -43,7 +47,7 @@ elif args.size == 4:
     uploadDelegate = UploadDelegate32()
 
 try:
-    with CANInterface.MakeInterface(args.device) as interface:
+    with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         slave = CANInterface.XCPSlaveCANAddr(args.commandId, args.responseId)
         interface.connect(slave)
         connection = XCPConnection.Connection(interface, readTimeout, writeTimeout)

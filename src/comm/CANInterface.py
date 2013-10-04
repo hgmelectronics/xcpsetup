@@ -56,15 +56,13 @@ class InterfaceNotSupported(Exception):
 class Interface(object):
     pass
 
-def _get_subclasses(c):
-    subclasses = c.__subclasses__()
-    for d in list(subclasses):
-        subclasses.extend(_get_subclasses(d))
-    return subclasses
+_interfaceTypes = {}
 
-def MakeInterface(name):
-    types = _get_subclasses(Interface)
-    for cls in types:
-        if cls.__name__ == name:
-            return cls()
-    raise InterfaceNotSupported
+def addInterface(interfaceType, cls):
+    _interfaceTypes[interfaceType] = cls
+
+def MakeInterface(interfaceType, name):
+    cls = _interfaceTypes[interfaceType]
+    if cls == None:
+        raise InterfaceNotSupported
+    return cls(name)

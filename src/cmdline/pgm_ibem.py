@@ -6,6 +6,7 @@ import sys
 from comm import CANInterface
 from comm import XCPConnection
 from util import STCRC
+from util import plugins
 
 
 def printUsage():
@@ -17,6 +18,7 @@ def CastShortToS16(i):
 def CastIntToFloat(i):
     return struct.unpack('f', struct.pack('I', i))[0]
    
+plugins.load_plugins()
 targetIDs = None
 outputPath = None
 canDev = None
@@ -63,7 +65,7 @@ print("Size: " + str(len(data)))
 print("CRC32-STM32: " + hex(dataCRC))
 
 try:
-    with CANInterface.MakeInterface(canDev) as interface:
+    with CANInterface.MakeInterface("socket", canDev) as interface:
         if targetIDs == None:
             slaves = XCPConnection.GetCANSlaves(interface, 0x9F000000, 0.2)
             for i in range(0, len(slaves)):
@@ -92,7 +94,7 @@ try:
                 except XCPConnection.Error as err:
                     print('Program failure (' + str(err) + '), retry #' + str(retries + 1))
                     
-except (OSError, CANInterface.CANConnectFailed):
+except (OSError, CANInterface.ConnectFailed):
     try:
         interface.close()
     except NameError:

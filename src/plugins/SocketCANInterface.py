@@ -4,14 +4,11 @@ Created on Oct 3, 2013
 @author: gcardwel
 '''
 
-import array
-from collections import namedtuple
-import ctypes
 import socket
 import struct
 import sys
 import time
-from . import CANInterface
+from comm import CANInterface
 
 
 class SocketCANInterface(CANInterface.Interface):
@@ -138,5 +135,7 @@ class SocketCANInterface(CANInterface.Interface):
             
             ident, data = self._decode_frame(frame)
             if data[0] == 0xFF or data[0] == 0xFE:
-                packets.append(CANInterface.CANPacket(ident, data))
+                packets.append(CANInterface.Packet(ident, data))
         return packets
+
+CANInterface.addInterface("socket", SocketCANInterface)
