@@ -170,6 +170,7 @@ class Connection(object):
             while failures <= maxFailures:
                 try:
                     self._synch()
+                    break
                 except Timeout:
                     failures += 1  # If max number of failures is reached, inner loop exits, then so does outer loop
         raise Timeout()
@@ -508,16 +509,16 @@ class Connection(object):
                 self._program_packet(packetStartPtr, data[packetStartBytes:packetEndBytes])
                 remBytes -= packetBytes
     
-    def _action_program_verify(self, ptr, crc):
+    def _action_program_verify(self, crc):
         request = struct.pack(self._byteorder + "BBHL", 0xC8, 0x01, 0x0002, crc)
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
             raise BadReply()
 
-    def program_verify(self, ptr, crc):
+    def program_verify(self, crc):
         if not self._pgmStarted:
             raise InvalidOp()
-        return self._query(self._action_program_verify, ptr, crc)
+        return self._query(self._action_program_verify, crc)
         
     def _action_program_reset(self):
         request = struct.pack(self._byteorder + "B", 0xCF)
@@ -536,6 +537,15 @@ class Connection(object):
         self.program_start()
         self.program_clear(ptr, len(data))
         self.program_range(ptr, data)
-        self.program_verify(ptr, crc)
+        self.program_verify(crc)
         self.program_reset()
         pass
+    
+    def program_check(self, ptr, dataLength, crc):
+        self.program_start()
+        self._setMTA(Pointer(ptr.addr + dataLength, ptr.ext))
+        try:
+            self.program_verify(crc)
+            return True
+        except BadReply:
+            return False
