@@ -4,6 +4,8 @@ import json
 import struct
 import sys
 
+sys.path.append('..')
+
 from comm import CANInterface
 from comm import XCPConnection
 from util import plugins
@@ -16,7 +18,6 @@ def CastIntToFloat(i):
     return struct.unpack('f', struct.pack('I', i))[0]
 
 plugins.load_plugins()
-
 
 parser = argparse.ArgumentParser(description="reads data from an IBEM")
 parser.add_argument('-t', help="CAN device type", dest="deviceType", default="socket")

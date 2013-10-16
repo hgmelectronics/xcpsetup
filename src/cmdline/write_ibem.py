@@ -4,6 +4,8 @@ import struct
 import sys
 import argparse
 
+sys.path.append('..')
+
 from comm import CANInterface
 from comm import XCPConnection
 from util import plugins
@@ -24,7 +26,7 @@ parser.add_argument('-i', help="targetId", dest="targetId", type=int)
 parser.add_argument('inputFile', type=argparse.FileType('r'), default=sys.stdin)
 args = parser.parse_args()
 
-data = json.loads(args.inputFile)
+data = json.loads(args.inputFile.read())
 
 try:
     with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
@@ -37,7 +39,7 @@ try:
                 exit
             slave = slaves[index]
         else:
-            slave = CANInterface.XCPSlaveCANAddr(0x9F000100 + 2 * args.targetID, 0x9F000101 + 2 * args.targetID)
+            slave = CANInterface.XCPSlaveCANAddr(0x9F000100 + 2 * args.targetId, 0x9F000101 + 2 * args.targetId)
         interface.connect(slave)
         conn = XCPConnection.Connection(interface, 0.2, 1.0)
         if 'boardID' in data:
