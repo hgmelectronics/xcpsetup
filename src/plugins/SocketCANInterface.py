@@ -10,6 +10,8 @@ import sys
 import time
 from comm import CANInterface
 
+def SocketCANSupported():
+    return hasattr(socket, 'AF_CAN')
 
 class SocketCANInterface(CANInterface.Interface):
     '''
@@ -17,7 +19,7 @@ class SocketCANInterface(CANInterface.Interface):
     '''
     
     def __init__(self, name):
-        if not hasattr(socket, 'AF_CAN'):
+        if not SocketCANSupported():
             raise CANInterface.InterfaceNotSupported('Socket module does not support CAN')
         
         self._s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
@@ -138,4 +140,6 @@ class SocketCANInterface(CANInterface.Interface):
                 packets.append(CANInterface.Packet(ident, data))
         return packets
 
-CANInterface.addInterface("socket", SocketCANInterface)
+
+if SocketCANSupported():
+    CANInterface.addInterface("socket", SocketCANInterface)

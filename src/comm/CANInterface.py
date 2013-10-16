@@ -62,7 +62,16 @@ def addInterface(interfaceType, cls):
     _interfaceTypes[interfaceType] = cls
 
 def MakeInterface(interfaceType, name):
-    cls = _interfaceTypes[interfaceType]
-    if cls == None:
-        raise InterfaceNotSupported
-    return cls(name)
+    if interfaceType == None:
+        for interfaceType in _interfaceTypes:
+            try:
+                cls = _interfaceTypes[interfaceType]
+                return cls(name)
+            except (InterfaceNotSupported,ConnectFailed) as exc:
+                print('Connecting to ' + interfaceType + ' interface failed: ' + str(exc))
+        raise ConnectFailed('Could not connect to any available type of interface')
+    else:
+        cls = _interfaceTypes[interfaceType]
+        if cls == None:
+            raise InterfaceNotSupported
+        return cls(name)

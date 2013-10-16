@@ -20,8 +20,8 @@ def CastIntToFloat(i):
 plugins.load_plugins()
 
 parser = argparse.ArgumentParser(description="reads data from an IBEM")
-parser.add_argument('-t', help="CAN device type", dest="deviceType", default="socket")
-parser.add_argument('-d', help="CAN device name", dest="deviceName", default="can0")
+parser.add_argument('-t', help="CAN device type", dest="deviceType", default=None)
+parser.add_argument('-d', help="CAN device name", dest="deviceName", default=None)
 parser.add_argument('-i', help="targetId", dest="targetId", type=int)
 parser.add_argument('-o', help="outputFile", dest="outputFile", type=argparse.FileType('w'), default=sys.stdout)
 args = parser.parse_args()

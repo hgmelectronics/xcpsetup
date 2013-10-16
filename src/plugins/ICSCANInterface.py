@@ -8,7 +8,6 @@ import ctypes
 import time
 from comm import CANInterface
 
-
 _ICS_TYPE_TABLE = [(1, 'NeoVI Blue'), \
                    (4, 'DW ValueCAN'), \
                    (8, 'NeoVI Fire'), \
@@ -77,6 +76,17 @@ class _ICSSVCAN3Settings(ctypes.Structure):
                 ('misc_io_report_period', ctypes.c_ushort), \
                 ('misc_io_on_report_events', ctypes.c_ushort)]
 
+def ICSSupported():
+    if not hasattr(ctypes, 'windll'):
+        return False
+    
+    try:
+        dll = ctypes.windll.icsneo40
+    except OSError:
+        return False
+    
+    return True
+
 class ICSCANInterface(CANInterface.Interface):
     '''
     Interface using ICS NeoVI DLL
@@ -92,7 +102,7 @@ class ICSCANInterface(CANInterface.Interface):
         try:
             self._dll = ctypes.windll.icsneo40
         except OSError:
-            raise CANInterface.ConnectFailed('Loading icsneo40.dll failed')
+            raise CANInterface.InterfaceNotSupported('Loading icsneo40.dll failed')
         
         neoDevices = (_ICSNeoDevice * 1)()
         self._neoObject = None
@@ -261,4 +271,5 @@ class ICSCANInterface(CANInterface.Interface):
                 break
         return packets
 
-CANInterface.addInterface("ICS", ICSCANInterface)
+if ICSSupported():
+    CANInterface.addInterface("ICS", ICSCANInterface)
