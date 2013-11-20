@@ -25,9 +25,14 @@ parser.add_argument('-c', help="Force reprogram even if CRC matches what is alre
 parser.add_argument('inputFile', type=argparse.FileType('rb'), default=sys.stdin)
 args = parser.parse_args()
 
-# Determine if the user has specified a target slave or slaves
-
-IndexedBoardType = namedtuple("IndexedBoardType", ['broadcast', 'recoveryCmd', 'recoveryRes', 'cmdBase', 'resBase', 'pitch'])
+class ArgError(Exception):
+    def __init__(self, value=None):
+        self._value = value
+    def __str__(self):
+        if self._value != None:
+            return 'Invalid argument ' + self._value
+        else:
+            return 'Invalid argument'
 
 class IndexedBoardType(object):
     def __init__(self, broadcastID, recoveryCmdID, recoveryResID, cmdBaseID, resBaseID, idPitch, idRange, regularTimeout, nvWriteTimeout):
@@ -50,30 +55,30 @@ class IndexedBoardType(object):
         elif arg.find('-') >= 0:
             idStrs = arg.split('-')
             if len(idStrs) != 2:
-                print('Invalid ID argument \'' + arg + '\'')
-                raise ValueError
+                raise ArgError('ID=\'' + arg + '\'')
             firstID = int(idStrs[0])
             lastID = int(idStrs[1])
             if firstID < self._idRange[0] \
                 or firstID >= self._idRange[1] \
                 or lastID < self._idRange[0] \
                 or lastID >= self._idRange[1]:
-                print('Invalid ID argument \'' + arg + '\'')
-                raise ValueError
+                raise ArgError('ID=\'' + arg + '\'')
             targetIDs = range(int(idStrs[0]), int(idStrs[1]) + 1)
             return [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * id, self._resBaseID + self._idPitch * id), id) for id in targetIDs];
         else:
             try:
                 targetID = int(arg);
             except:
-                print('Invalid ID argument \'' + arg + '\'')
-                raise ValueError
+                raise ArgError('ID=\'' + arg + '\'')
             if targetID < self._idRange[0] or targetID >= self._idRange[1]:
-                print('Invalid ID argument \'' + arg + '\'')
-                raise ValueError
+                raise ArgError('ID=\'' + arg + '\'')
             return [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * targetID, self._resBaseID + self._idPitch * targetID), targetID)];
     
     def GetSlaves(self, intfc):
+        # Handle case of singleton devices
+        if self._broadcastID == None:
+            return CANInterface.XCPSlaveCANAddr(self._cmdBaseID, self._resBaseID)
+        
         slaves = XCPConnection.GetCANSlaves(intfc, self._broadcastID, self._broadcastTimeout)
         mySlaves = []
         for slave in slaves:
@@ -92,6 +97,25 @@ class IndexedBoardType(object):
         intfc.connect(slave[0])
         return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
 
+class SingletonBoardType(object):
+    def __init__(self, cmdID, resID, regularTimeout, nvWriteTimeout):
+        self._addr = CANInterface.XCPSlaveCANAddr(cmdID, resID)
+        self._regularTimeout = regularTimeout
+        self._nvWriteTimeout = nvWriteTimeout
+    
+    def SlaveListFromIDArg(self, arg):
+        if arg == None:
+            return [(self._addr, None)]
+        else:
+            raise ArgError('ID=\'' + arg + '\'')
+    
+    def GetSlaves(self, intfc):
+        return [(self._addr, None)]
+    
+    def Connect(self, intfc, slave):
+        intfc.connect(slave[0])
+        return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
+
 if args.targetType == 'ibem':
     boardType = IndexedBoardType(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0)
     maxAttempts=10
@@ -99,7 +123,7 @@ elif args.targetType == 'cda':
     boardType = IndexedBoardType(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000080, 0x9F000081, 2, (0,2), 0.5, 2.0)
     maxAttempts=10
 elif args.targetType == 'cs2':
-    boardType = IndexedBoardType(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000080, 0x9F000081, 2, (0,2), 2.0, 5.0) #FIXME
+    boardType = SingletonBoardType(0xDEADBEEF, 0xDEADBEF0, 2.0, 5.0) #FIXME
     maxAttempts=10
 elif args.targetType == None:
     # FIXME read information from user and/or more command line params
