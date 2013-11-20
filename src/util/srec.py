@@ -107,7 +107,8 @@ class ChecksumError(Error):
 
 def ReadFile(file):
     blocks = []
-    for srec in file:
+    for binsrec in file:
+        srec = binsrec.decode('ascii')
         srec = srec.strip('\n').strip('\r')
         
         if not validate_srec_checksum(srec):
