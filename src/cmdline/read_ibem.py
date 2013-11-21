@@ -72,6 +72,7 @@ try:
             interface.connect(target.slave)
             conn = XCPConnection.Connection(interface, 0.2, 1.0)
             data = {}
+            conn.set_cal_page(0, 0)
             data['boardID'] = conn.upload8(XCPConnection.Pointer(0, 0))
             data['afeCalib'] = {'zeroCts': [], 'scale': []}
             for i in range(0, 8):
@@ -123,7 +124,8 @@ try:
             data['cellTypeParam']['protParam']['safeMinT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(284, 0)))
             data['cellTypeParam']['protParam']['lowWarnT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(288, 0)))
 
-            target.file.write(json.dumps(data))
+            target.file.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')))
+            target.file.write('\n')
             conn.close()
 except (OSError, CANInterface.ConnectFailed):
     try:
