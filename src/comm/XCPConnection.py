@@ -370,6 +370,18 @@ class Connection(object):
             raise BadReply()
         return self._query(self._action_nvwrite)
     
+    def _action_set_cal_page(self, segment, page):
+        request = struct.pack(self._byteorder + "BBBB", 0xEB, 0x03, segment, page)  # Both slave device and application can access area
+        self._calcMTA = None  # standard does not define what happens to MTA
+        reply = self._transaction(request, "B", self._nvWriteTimeout)
+        if reply[0] != 0xFF:
+            raise BadReply()
+    
+    def set_cal_page(self, segment, page):
+        if not self._calPage:
+            raise InvalidOp()
+        return self._query(self._action_set_cal_page, segment, page)
+    
     def _action_program_start(self):
         request = struct.pack(self._byteorder + "B", 0xD2)
         reply = self._transaction(request, "BxBBBBB")
