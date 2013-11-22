@@ -176,7 +176,7 @@ class Connection(object):
         raise Timeout()
     
     def _setMTA(self, ptr):
-        request = struct.pack(self._byteorder + "BBBBL", 0xF6, 1, 0, ptr.ext, ptr.addr)
+        request = struct.pack(self._byteorder + "BxxBL", 0xF6, ptr.ext, ptr.addr)
         try:
             reply = self._transaction(request, "B")
         except Error:
@@ -189,7 +189,7 @@ class Connection(object):
     
     def _action_upload8(self, ptr):
         if self._addressGranularity == 1:
-            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 1, 0, ptr.ext, ptr.addr)
+            request = struct.pack(self._byteorder + "BBxBL", 0xF4, 1, ptr.ext, ptr.addr)
             
             try:
                 reply = self._transaction(request, "BB")
@@ -211,10 +211,10 @@ class Connection(object):
 
     def _action_upload16(self, ptr):
         if self._addressGranularity == 1:
-            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 2, 0, ptr.ext, ptr.addr)
+            request = struct.pack(self._byteorder + "BBxBL", 0xF4, 2, ptr.ext, ptr.addr)
             decodeFormat = "BH"
         elif self._addressGranularity == 2:
-            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 1, 0, ptr.ext, ptr.addr)
+            request = struct.pack(self._byteorder + "BBxBL", 0xF4, 1, ptr.ext, ptr.addr)
             decodeFormat = "BxH"
         else:
             raise InvalidOp()
@@ -237,13 +237,13 @@ class Connection(object):
     
     def _action_upload32(self, ptr):
         if self._addressGranularity == 1:
-            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 4, 0, ptr.ext, ptr.addr)
+            request = struct.pack(self._byteorder + "BBxBL", 0xF4, 4, ptr.ext, ptr.addr)
             decodeFormat = "BL"
         elif self._addressGranularity == 2:
-            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 2, 0, ptr.ext, ptr.addr)
+            request = struct.pack(self._byteorder + "BBxBL", 0xF4, 2, ptr.ext, ptr.addr)
             decodeFormat = "BxL"
         elif self._addressGranularity == 4:
-            request = struct.pack(self._byteorder + "BBBBL", 0xF4, 1, 0, ptr.ext, ptr.addr)
+            request = struct.pack(self._byteorder + "BBxBL", 0xF4, 1, ptr.ext, ptr.addr)
             decodeFormat = "BxxxL"
         else:
             raise InvalidOp()
@@ -263,6 +263,44 @@ class Connection(object):
     
     def upload32(self, ptr):
         return self._query(self._action_upload32, ptr)
+    
+    def _action_upload(self, ptr, size):
+        if self._calcMTA == ptr:
+            request = struct.pack(self._byteorder + "BB", 0xF5, size / self._addressGranularity)
+        else
+            request = struct.pack(self._byteorder + "BBxBL", 0xF4, size / self._addressGranularity, ptr.ext, ptr.addr)
+        
+        if self._addressGranularity == 1:
+            decodeFormat = "B7s"
+        elif self._addressGranularity == 2:
+            decodeFormat = "Bx6s"
+        elif self._addressGranularity == 4:
+            decodeFormat = "Bxxx4s"
+        else:
+            raise InvalidOp()
+        
+        try:
+            reply = self._transaction(request, decodeFormat)
+        except Error:
+            self._calcMTA = None
+            raise
+        
+        if reply[0] != 0xFF:
+            self._calcMTA = None
+            raise BadReply()
+        else:
+            self._calcMTA = Pointer(ptr.addr + self.byteToAG(size), ptr.ext)
+            return bytes(reply[1])
+    
+    def upload(self, ptr, size):
+        data = b''
+        remBytes = size
+        packetPtr = ptr
+        while remBytes > 0:
+            packetBytes = min(remBytes, self._maxUploadPayload)
+            data = data + self._query(self._action_upload, packetPtr, packetBytes)
+            packetPtr = Pointer(packetPtr.addr + self.byteToAG(packetBytes), ptr.ext)
+        return data
 
     def _action_download8(self, ptr, data):
         if self._addressGranularity > 1:
@@ -339,6 +377,43 @@ class Connection(object):
         if not self._calPage:
             raise BadReply()
         return self._query(self._action_download32, ptr, data)
+        
+    
+    def _action_download(self, ptr, data):
+        if len(data) > self._maxDownloadPayload or (len(data) % self._addressGranularity) != 0:
+            raise InvalidOp()
+        
+        if self._calcMTA != ptr:
+            self._setMTA(ptr)
+        
+        if self._addressGranularity < 4:
+            request = struct.pack(self._byteorder + "BB", 0xF0, len(data) / self._addressGranularity) + data
+        else
+            request = struct.pack(self._byteorder + "BBxx", 0xF4, len(data) / self._addressGranularity) + data
+        
+        decodeFormat = "B"
+        
+        try:
+            reply = self._transaction(request, decodeFormat)
+        except Error:
+            self._calcMTA = None
+            raise
+        
+        if reply[0] != 0xFF:
+            self._calcMTA = None
+            raise BadReply()
+        else:
+            self._calcMTA = Pointer(ptr.addr + self.byteToAG(len(data)), ptr.ext)
+    
+    def download(self, ptr, data):
+        remBytes = len(data)
+        dataStart = 0
+        packetPtr = ptr
+        while remBytes > 0:
+            packetBytes = min(remBytes, self._maxDownloadPayload)
+            self._query(self._action_download, packetPtr, data[dataStart:(dataStart + packetBytes)])
+            dataStart = dataStart + packetBytes
+            packetPtr = Pointer(packetPtr.addr + self.byteToAG(packetBytes), ptr.ext)
     
     def _action_nvwrite(self):
         request = struct.pack(self._byteorder + "BBH", 0xF9, 0x01, 0)
@@ -397,6 +472,10 @@ class Connection(object):
         self._pgmMaxDownloadPayload = self.byteToAG(self._pgmMaxCTO - 2) * self._addressGranularity
         self._calcMTA = None
         self._pgmStarted = True
+        # Compensate for erroneous implementations that gave BS as a number of bytes, not number of packets
+        if self._pgmMaxBS > (255/self._pgmMaxDownloadPayload):
+            self._pgmMaxBS = self._pgmMaxBS / self._pgmMaxDownloadPayload
+            
     
     def program_start(self):
         return self._query(self._action_program_start)
@@ -416,7 +495,7 @@ class Connection(object):
         return self._query(self._action_program_clear, ptr, length)
     
     def _action_program_block(self, ptr, data):
-        if (len(data) % self._addressGranularity != 0) or (self.byteToAG(len(data)) > self._pgmMaxBS):
+        if (len(data) % self._addressGranularity != 0) or (self.byteToAG(len(data)) > self._pgmMaxBS * self._pgmMaxDownloadPayload):
             raise InvalidOp()
         
         if self._calcMTA != ptr:
@@ -506,7 +585,7 @@ class Connection(object):
         remBytes = len(data)
         if self._pgmMasterBlockMode:
             while remBytes > 0:
-                blockBytes = min(remBytes, self._pgmMaxBS * self._addressGranularity)
+                blockBytes = min(remBytes, self._pgmMaxBS * self._pgmMaxDownloadPayload)
                 blockStartBytes = len(data) - remBytes
                 blockEndBytes = blockStartBytes + blockBytes
                 blockStartPtr = Pointer(ptr.addr + self.byteToAG(blockStartBytes), ptr.ext)
