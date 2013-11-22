@@ -3,9 +3,8 @@ Created on Aug 03, 2013
 
 @author: dbrunner
 '''
-
 from collections import namedtuple
-
+from urllib.parse import urlparse
 
 class ID(object):
     '''
@@ -54,16 +53,38 @@ class InterfaceNotSupported(Exception):
         return repr(self._value)
 
 class Interface(object):
-    pass
+    def __init__(self, parsedURL):
+        pass
+    
+    def close(self):
+        pass
+    
+    def connect(self, address):
+        pass
+    
+    def disconnect(self):
+        pass
 
+    def transmit(self, data):
+        pass
+        
+    def transmitTo(self, data, ident):
+        pass
+    
+    def receive(self, timeout):
+        pass
+        
+    def receivePackets(self, timeout):
+        pass
+    
 _interfaceTypes = {}
 
 def addInterface(interfaceType, cls):
     _interfaceTypes[interfaceType] = cls
 
-def MakeInterface(interfaceType, name):
-    if interfaceType == None:
-        for interfaceType in _interfaceTypes:
+def MakeInterface(url):
+    parsedURL = urllib.urlparse(url)
+    cls = _interfaceTypes[parsedURL.scheme]
             try:
                 cls = _interfaceTypes[interfaceType]
                 return cls(name)
@@ -71,7 +92,6 @@ def MakeInterface(interfaceType, name):
                 print('Connecting to ' + interfaceType + ' interface failed: ' + str(exc))
         raise ConnectFailed('Could not connect to any available type of interface')
     else:
-        cls = _interfaceTypes[interfaceType]
         if cls == None:
             raise InterfaceNotSupported
-        return cls(name)
+    return cls(parsedURL)

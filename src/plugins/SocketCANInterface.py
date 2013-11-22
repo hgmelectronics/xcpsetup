@@ -18,16 +18,15 @@ class SocketCANInterface(CANInterface.Interface):
     Interface using Linux SocketCAN
     '''
     
-    def __init__(self, name):
+    def __init__(self, parsedURL):
         if not SocketCANSupported():
             raise CANInterface.InterfaceNotSupported('Socket module does not support CAN')
-        
         self._s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
-        if name == None:
+        if parsedURL.path == None:
             dev = 'can0'
         else:
-            dev = name
+            dev = parsedURL.path
         try:
             self._s.bind((dev,))
         except socket.error:

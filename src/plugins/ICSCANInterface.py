@@ -6,6 +6,8 @@ Created on Oct 3, 2013
 import array
 import ctypes
 import time
+from urllib import parse
+
 from comm import CANInterface
 
 _ICS_TYPE_TABLE = [(1, 'NeoVI Blue'), \
@@ -91,11 +93,15 @@ class ICSCANInterface(CANInterface.Interface):
     '''
     Interface using ICS NeoVI DLL
     '''
-
     _ICSNETID_HSCAN = 1
-    _BITRATE = 250000
+    
+    _baudRate = 250000
+    _neoObject = None
+    _dll = None
+    _slaveAddr = None
 
-    def __init__(self, name):
+    def __init__(self, parsedURL):
+        
         if not hasattr(ctypes, 'windll'):
             raise CANInterface.InterfaceNotSupported('Not a Windows system')
         
@@ -121,16 +127,26 @@ class ICSCANInterface(CANInterface.Interface):
         for i in range(len(netIDs)):
             netIDs[i] = i
         tempNeoObject = ctypes.c_int()
+        
         openResult = self._dll.icsneoOpenNeoDevice(ctypes.byref(neoDevices[0]), ctypes.byref(tempNeoObject), netIDs, 1, 0)
         if openResult != 1:
             raise CANInterface.ConnectFailed('Opening ICS device failed')
         self._neoObject = tempNeoObject.value
 
-        setBitrateResult = self._dll.icsneoSetBitRate(self._neoObject, self._BITRATE, self._ICSNETID_HSCAN)
+        options = parse.parse_qs(parsedURL.query, keep_blank_values=False, strict_parsing=True)
+
+        if 'baudrate' in options:
+            try:
+                self._baudRate=int(options['baudRate'],0)
+            except:
+                raise CANInterface.ConnectFailed('Unable to parse baud rate')
+        
+        setBitrateResult = self._dll.icsneoSetBitRate(self._neoObject, self._baudRate, self._ICSNETID_HSCAN)
         if setBitrateResult != 1:
-            raise CANInterface.ConnectFailed()
+            raise CANInterface.ConnectFailed('Unable to set bit rate')
 
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
+
 
     def __enter__(self):
         return self
