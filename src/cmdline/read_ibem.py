@@ -9,6 +9,105 @@ sys.path.append('..')
 from comm import CANInterface
 from comm import XCPConnection
 from util import plugins
+import ctypes
+from util import ctypesdict
+
+class SeriesRDivVSensorCalib(ctypes.Structure):
+    _fields_ = [('zeroCts', ctypes.c_short * 8), \
+                ('scale', ctypes.c_float * 8)]
+
+class VocModelParam(ctypes.Structure):
+    _fields_ = [('soc', ctypes.c_float * 11), \
+                ('voc', ctypes.c_float * 11)]
+
+class PWLRiModelParam(ctypes.Structure):
+    _fields_ = [('socBreakpt', ctypes.c_float), \
+                ('rAtZeroSOC', ctypes.c_float), \
+                ('dRdSOCLow', ctypes.c_float), \
+                ('dRdSOCHigh', ctypes.c_float), \
+                ('rInterconn', ctypes.c_float), \
+                ('rDToRC', ctypes.c_float)]
+
+class SplineRiModelParam(ctypes.Structure):
+    _fields_ = [('chgSOC', ctypes.c_float * 11), \
+                ('chgR', ctypes.c_float * 11), \
+                ('dischSOC', ctypes.c_float * 11), \
+                ('dischR', ctypes.c_float * 11), \
+                ('tempcoTemp', ctypes.c_float * 11), \
+                ('tempcoRatio', ctypes.c_float * 11)]
+
+class ModelParam_SR(ctypes.Structure):
+    _fields_ = [('minR', ctypes.c_float), \
+                ('maxR', ctypes.c_float), \
+                ('srVarI', ctypes.c_float), \
+                ('srVarSOC', ctypes.c_float), \
+                ('srVarRPerI', ctypes.c_float), \
+                ('srVarRMinI', ctypes.c_float), \
+                ('srVarMeasV', ctypes.c_float), \
+                ('srMinBetaV', ctypes.c_float), \
+                ('nomCellCap', ctypes.c_float), \
+                ('nomCellR', ctypes.c_float), \
+                ('usableDischI', ctypes.c_float), \
+                ('usableChgI', ctypes.c_float), \
+                ('capEstHistLength', ctypes.c_float)]
+
+class ModelParam_FCL(ctypes.Structure):
+    _fields_ = [('minR', ctypes.c_float), \
+                ('maxR', ctypes.c_float), \
+                ('fclSOCGain', ctypes.c_float), \
+                ('fclRGain', ctypes.c_float), \
+                ('nomCellCap', ctypes.c_float), \
+                ('nomCellR', ctypes.c_float), \
+                ('usableDischI', ctypes.c_float), \
+                ('usableChgI', ctypes.c_float), \
+                ('capEstHistLength', ctypes.c_float)]
+
+class BalParam(ctypes.Structure):
+    _fields_ = [('qPerVSec', ctypes.c_float), \
+                ('minAccQ', ctypes.c_float), \
+                ('maxAccQ', ctypes.c_float), \
+                ('stopQ', ctypes.c_float)]
+
+class ProtParam(ctypes.Structure):
+    _fields_ = [('highTMaxV', ctypes.c_float), \
+                ('lowTMaxV', ctypes.c_float), \
+                ('highTForMaxV', ctypes.c_float), \
+                ('lowTForMaxV', ctypes.c_float), \
+                ('highTMinV', ctypes.c_float), \
+                ('lowTMinV', ctypes.c_float), \
+                ('highTForMinV', ctypes.c_float), \
+                ('lowTForMinV', ctypes.c_float), \
+                ('rForCellProt', ctypes.c_float), \
+                ('thermalMaxI', ctypes.c_float), \
+                ('zeroITemp', ctypes.c_float), \
+                ('safeMaxT', ctypes.c_float), \
+                ('highWarnT', ctypes.c_float), \
+                ('safeMinT', ctypes.c_float), \
+                ('lowWarnT', ctypes.c_float)]
+
+class CellTypeParam_1(ctypes.Structure):
+    _fields_ = [('vocParam', VocModelParam), \
+                ('riParam', PWLRiModelParam), \
+                ('modelParam', ModelParam_SR), \
+                ('balParam', BalParam), \
+                ('protParam', ProtParam)]
+
+class CellTypeParam_2(ctypes.Structure):
+    _fields_ = [('vocParam', VocModelParam), \
+                ('riParam', SplineRiModelParam), \
+                ('modelParam', ModelParam_FCL), \
+                ('balParam', BalParam), \
+                ('protParam', ProtParam)]
+
+class Config_1(ctypes.Structure):
+    _fields_ = [('boardID', ctypes.c_ubyte), \
+                ('afeCalib', SeriesRDivVSensorCalib), \
+                ('cellTypeParam', CellTypeParam_1)]
+
+class Config_2(ctypes.Structure):
+    _fields_ = [('boardID', ctypes.c_ubyte), \
+                ('afeCalib', SeriesRDivVSensorCalib), \
+                ('cellTypeParam', CellTypeParam_2)]
 
 class Target(object):
     def __init__(self, idOrSlave, outFileName):
@@ -23,18 +122,13 @@ class Target(object):
         else:
             self.file = open(outFileName.format(self.id), 'w')
 
-def CastShortToS16(i):
-    return struct.unpack('h', struct.pack('H', i))[0]
-
-def CastIntToFloat(i):
-    return struct.unpack('f', struct.pack('I', i))[0]
-
 plugins.load_plugins()
 
 parser = argparse.ArgumentParser(description="reads data from an IBEM")
 parser.add_argument('-t', help="CAN device type", dest="deviceType", default=None)
 parser.add_argument('-d', help="CAN device name", dest="deviceName", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 1-3)", dest="targetID", default=None)
+parser.add_argument('-v', help="Config structure version", dest="structVersion", default=2)
 parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default=None)
 args = parser.parse_args()
 
@@ -53,6 +147,14 @@ else:
     if targetIDs[0] < 0:
         print('Invalid ID argument \'' + args.targetID + '\'')
         sys.exit(1)
+
+if args.structVersion == 1:
+    ConfigType = Config_1
+elif args.structVersion = 2:
+    ConfigType = Config_2
+else:
+    print('Invalid config struct version ' + str(args.structVersion))
+    sys.exit(1)
 
 try:
     with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
@@ -73,56 +175,9 @@ try:
             conn = XCPConnection.Connection(interface, 0.2, 1.0)
             data = {}
             conn.set_cal_page(0, 0)
-            data['boardID'] = conn.upload8(XCPConnection.Pointer(0, 0))
-            data['afeCalib'] = {'zeroCts': [], 'scale': []}
-            for i in range(0, 8):
-                data['afeCalib']['zeroCts'].append(CastShortToS16(conn.upload16(XCPConnection.Pointer(4 + 2 * i, 0))))
-                data['afeCalib']['scale'].append(CastIntToFloat(conn.upload32(XCPConnection.Pointer(20 + 4 * i, 0))))
-            data['cellTypeParam'] = {'vocParam': {'soc': [], 'voc': []}, 'riParam': {}, 'modelParam': {}, 'balParam': {}, 'protParam': {}}
-            for i in range(0, 11):
-                data['cellTypeParam']['vocParam']['soc'].append(CastIntToFloat(conn.upload32(XCPConnection.Pointer(52 + 4 * i, 0))))
-                data['cellTypeParam']['vocParam']['voc'].append(CastIntToFloat(conn.upload32(XCPConnection.Pointer(96 + 4 * i, 0))))
-            data['cellTypeParam']['riParam']['socBreakpt'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(140, 0)))
-            data['cellTypeParam']['riParam']['rAtZeroSOC'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(144, 0)))
-            data['cellTypeParam']['riParam']['dRdSOCLow'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(148, 0)))
-            data['cellTypeParam']['riParam']['dRdSOCHigh'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(152, 0)))
-            data['cellTypeParam']['riParam']['rInterconn'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(156, 0)))
-            data['cellTypeParam']['riParam']['rDToRC'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(160, 0)))
-            
-            data['cellTypeParam']['modelParam']['minR'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(164, 0)))
-            data['cellTypeParam']['modelParam']['maxR'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(168, 0)))
-            data['cellTypeParam']['modelParam']['srVarI'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(172, 0)))
-            data['cellTypeParam']['modelParam']['srVarSOC'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(176, 0)))
-            data['cellTypeParam']['modelParam']['srVarRPerI'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(180, 0)))
-            data['cellTypeParam']['modelParam']['srVarRMinI'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(184, 0)))
-            data['cellTypeParam']['modelParam']['srVarMeasV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(188, 0)))
-            data['cellTypeParam']['modelParam']['srMinBetaV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(192, 0)))
-            data['cellTypeParam']['modelParam']['nomCellCap'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(196, 0)))
-            data['cellTypeParam']['modelParam']['nomCellR'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(200, 0)))
-            data['cellTypeParam']['modelParam']['usableDischI'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(204, 0)))
-            data['cellTypeParam']['modelParam']['usableChgI'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(208, 0)))
-            data['cellTypeParam']['modelParam']['capEstHistLength'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(212, 0)))
-            
-            data['cellTypeParam']['balParam']['qPerVSec'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(216, 0)))
-            data['cellTypeParam']['balParam']['minAccQ'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(220, 0)))
-            data['cellTypeParam']['balParam']['maxAccQ'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(224, 0)))
-            data['cellTypeParam']['balParam']['stopQ'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(228, 0)))
-            
-            data['cellTypeParam']['protParam']['highTMaxV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(232, 0)))
-            data['cellTypeParam']['protParam']['lowTMaxV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(236, 0)))
-            data['cellTypeParam']['protParam']['highTForMaxV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(240, 0)))
-            data['cellTypeParam']['protParam']['lowTForMaxV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(244, 0)))
-            data['cellTypeParam']['protParam']['highTMinV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(248, 0)))
-            data['cellTypeParam']['protParam']['lowTMinV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(252, 0)))
-            data['cellTypeParam']['protParam']['highTForMinV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(256, 0)))
-            data['cellTypeParam']['protParam']['lowTForMinV'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(260, 0)))
-            data['cellTypeParam']['protParam']['rForCellProt'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(264, 0)))
-            data['cellTypeParam']['protParam']['thermalMaxI'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(268, 0)))
-            data['cellTypeParam']['protParam']['zeroITemp'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(272, 0)))
-            data['cellTypeParam']['protParam']['safeMaxT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(276, 0)))
-            data['cellTypeParam']['protParam']['highWarnT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(280, 0)))
-            data['cellTypeParam']['protParam']['safeMinT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(284, 0)))
-            data['cellTypeParam']['protParam']['lowWarnT'] = CastIntToFloat(conn.upload32(XCPConnection.Pointer(288, 0)))
+            dataBuffer = conn.upload(XCPConnection.Pointer(0, 0), sizeof(ConfigType))
+            dataStruct = ConfigType.from_buffer(dataBuffer)
+            data = ctypesdict.getdict(dataStruct)
 
             target.file.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')))
             target.file.write('\n')
