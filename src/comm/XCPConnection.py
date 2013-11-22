@@ -267,7 +267,7 @@ class Connection(object):
     def _action_upload(self, ptr, size):
         if self._calcMTA == ptr:
             request = struct.pack(self._byteorder + "BB", 0xF5, size / self._addressGranularity)
-        else
+        else:
             request = struct.pack(self._byteorder + "BBxBL", 0xF4, size / self._addressGranularity, ptr.ext, ptr.addr)
         
         if self._addressGranularity == 1:
@@ -388,7 +388,7 @@ class Connection(object):
         
         if self._addressGranularity < 4:
             request = struct.pack(self._byteorder + "BB", 0xF0, len(data) / self._addressGranularity) + data
-        else
+        else:
             request = struct.pack(self._byteorder + "BBxx", 0xF4, len(data) / self._addressGranularity) + data
         
         decodeFormat = "B"
