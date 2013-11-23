@@ -35,22 +35,11 @@ class ArgError(Exception):
         else:
             return 'Invalid argument'
 
-if args.targetType == 'ibem':
-    boardType = BoardTypes.Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0)
-    maxAttempts=10
-elif args.targetType == 'cda':
-    boardType = BoardTypes.Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000080, 0x9F000081, 2, (0,2), 0.5, 2.0)
-    maxAttempts=10
-elif args.targetType == 'cs2':
-    boardType = BoardTypes.Singleton(0xDEADBEEF, 0xDEADBEF0, 2.0, 5.0) #FIXME
-    maxAttempts=10
-elif args.targetType == None:
-    # FIXME read information from user and/or more command line params
-    print('Must specify target type')
-    sys.exit(1)
-else:
-    print('Invalid target type \'' + args.targetType + '\'')
-    sys.exit(1)
+try:
+    boardType = BoardTypes.ByName(args.targetType)
+except KeyError:
+    raise ArgError('Invalid target type \'' + args.targetType + '\'')
+maxAttempts = 10
 
 # Get input data
 
@@ -79,38 +68,32 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         targetSlaves = [slaves[index]]
                 
     for targetSlave in targetSlaves:
-        conn = boardType.Connect(interface, targetSlave)
         if targetSlave[1] != None:
             print('Programming target addr ' + targetSlave[0].description() + ', ID ' + str(targetSlave[1]))
         else:
             print('Programming target addr ' + targetSlave[0].description())
         
-        if not args.ignoreCRCMatch:
-            print('Checking existing code CRC')
-            conn.program_start()
-            if conn.program_check(XCPConnection.Pointer(dataSingleBlock.baseaddr, 0), len(dataSingleBlock.data), dataCRC):
-                print('CRC matched flash contents')
-                conn.program_reset()
-                # Success, don't need to do anything further with this slave
-                continue
-            else:
-                print('CRC differs from flash contents, reprogramming')
-        
-        # Either CRC check was not done or it didn't match
-        attempts = 1
-        while 1:
+        for attempt in range(1, maxAttempts + 1)
             try:
+                conn = boardType.Connect(interface, targetSlave)
                 conn.program_start()
-                conn.program_clear(XCPConnection.Pointer(dataSingleBlock.baseaddr, 0), len(dataSingleBlock.data))
-                for block in dataBlocks:
-                    conn.program_range(XCPConnection.Pointer(block.baseaddr, 0), block.data)
-                # MTA should now be one past the end of the last block
-                conn.program_verify(dataCRC)
+                
+                if not args.ignoreCRCMatch and conn.program_check(XCPConnection.Pointer(dataSingleBlock.baseaddr, 0), len(dataSingleBlock.data), dataCRC):
+                    print('CRC matched flash contents')
+                    # Success, don't need to do anything further with this slave
+                else:
+                    # Either CRC check was not done or it didn't match
+                    conn.program_clear(XCPConnection.Pointer(dataSingleBlock.baseaddr, 0), len(dataSingleBlock.data))
+                    for block in dataBlocks:
+                        conn.program_range(XCPConnection.Pointer(block.baseaddr, 0), block.data)
+                    # MTA should now be one past the end of the last block
+                    conn.program_verify(dataCRC)
                 conn.program_reset()
                 print('Program OK')
+                programOK = True
                 break
             except XCPConnection.Error as err:
-                print('Program failure (' + str(err) + '), retry #' + str(attempts))
-                if attempts >= maxAttempts:
-                    sys.exit(1)
-            attempts = attempts + 1
+                print('Program failure (' + str(err) + '), attempt #' + str(attempt))
+                programOK = False
+        if not programOK:
+            sys.exit(1)
