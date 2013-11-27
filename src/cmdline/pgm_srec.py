@@ -1,19 +1,17 @@
 #!/usr/bin/python3.3
 
-import getopt
-import struct
+import argparse
 import sys
 
-sys.path.append('..')
+if not '..' in sys.path:
+    sys.path.append('..')
 
-import argparse
 from comm import CANInterface
 from comm import XCPConnection
-from comm import BoardTypes
-from util import STCRC
 from util import plugins
+from util import STCRC
 from util import srec
-from collections import namedtuple
+import argProc
    
 plugins.load_plugins()
 
@@ -26,19 +24,12 @@ parser.add_argument('-c', help="Force reprogram even if CRC matches what is alre
 parser.add_argument('inputFile', type=argparse.FileType('rb'), default=sys.stdin)
 args = parser.parse_args()
 
-class ArgError(Exception):
-    def __init__(self, value=None):
-        self._value = value
-    def __str__(self):
-        if self._value != None:
-            return 'Invalid argument ' + self._value
-        else:
-            return 'Invalid argument'
-
 try:
-    boardType = BoardTypes.ByName(args.targetType)
-except KeyError:
-    raise ArgError('Invalid target type \'' + args.targetType + '\'')
+    boardType = argProc.GetBoardType(args.targetType)
+except argProc.ArgError as exc:
+    print(str(exc))
+    sys.exit(1)
+
 maxAttempts = 10
 
 # Get input data
@@ -73,7 +64,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         else:
             print('Programming target addr ' + targetSlave[0].description())
         
-        for attempt in range(1, maxAttempts + 1)
+        for attempt in range(1, maxAttempts + 1):
             try:
                 conn = boardType.Connect(interface, targetSlave)
                 conn.program_start()

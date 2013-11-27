@@ -1,7 +1,7 @@
 #!/usr/bin/python3.3
 
-import CANInterface
-import XCPConnection
+from comm import CANInterface
+from comm import XCPConnection
 
 class Indexed(object):
     def __init__(self, broadcastID, recoveryCmdID, recoveryResID, cmdBaseID, resBaseID, idPitch, idRange, regularTimeout, nvWriteTimeout):
