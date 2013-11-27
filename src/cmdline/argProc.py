@@ -3,6 +3,7 @@
 import ctypes
 
 from comm import BoardTypes
+from comm import XCPConnection
 from util import ctypesdict
 import pyclibrary
 

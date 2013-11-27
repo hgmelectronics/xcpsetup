@@ -27,4 +27,5 @@ def setfromdict(struct, dict):
             # Probably another struct - recurse
             setfromdict(fieldAttr, dict[fieldName])
         else:
+            setattr(struct, fieldName, dict[fieldName])
             fieldAttr = dict[fieldName]

@@ -5,6 +5,7 @@ Created on Oct 3, 2013
 '''
 import array
 import ctypes
+import sys
 import time
 from comm import CANInterface
 
@@ -115,7 +116,7 @@ class ICSCANInterface(CANInterface.Interface):
         if nNeoDevices.value < 1:
             raise CANInterface.ConnectFailed('No ICS devices found')
 
-        print('Connecting to ' + _ICSDevTypeStr(neoDevices[0].DeviceType))
+        sys.stderr.write('Connecting to ' + _ICSDevTypeStr(neoDevices[0].DeviceType) + '\n')
 
         netIDs = (ctypes.c_ubyte * 64)()
         for i in range(len(netIDs)):

@@ -139,7 +139,7 @@ class Connection(object):
         if len(replies) > 1:
             raise BadReply()
         try:
-            # print('Send ' + repr([hex(elem) for elem in request]) + ' Reply ' + repr([hex(elem) for elem in replies[0]]))
+            #print('Send ' + repr([hex(elem) for elem in request]) + ' Reply ' + repr([hex(elem) for elem in replies[0]]))
             reply = struct.unpack_from(self._byteorder + fmt, replies[0])
             return reply
         except struct.error:
@@ -266,16 +266,16 @@ class Connection(object):
     
     def _action_upload(self, ptr, size):
         if self._calcMTA == ptr:
-            request = struct.pack(self._byteorder + "BB", 0xF5, size / self._addressGranularity)
+            request = struct.pack(self._byteorder + "BB", 0xF5, int(size / self._addressGranularity))
         else:
-            request = struct.pack(self._byteorder + "BBxBL", 0xF4, size / self._addressGranularity, ptr.ext, ptr.addr)
+            request = struct.pack(self._byteorder + "BBxBL", 0xF4, int(size / self._addressGranularity), ptr.ext, ptr.addr)
         
         if self._addressGranularity == 1:
-            decodeFormat = "B7s"
+            decodeFormat = 'B' + str(size) + 's'
         elif self._addressGranularity == 2:
-            decodeFormat = "Bx6s"
+            decodeFormat = 'Bx' + str(size) + 's'
         elif self._addressGranularity == 4:
-            decodeFormat = "Bxxx4s"
+            decodeFormat = 'Bxxx' + str(size) + 's'
         else:
             raise InvalidOp()
         
@@ -298,6 +298,7 @@ class Connection(object):
         packetPtr = ptr
         while remBytes > 0:
             packetBytes = min(remBytes, self._maxUploadPayload)
+            remBytes -= packetBytes
             data = data + self._query(self._action_upload, packetPtr, packetBytes)
             packetPtr = Pointer(packetPtr.addr + self.byteToAG(packetBytes), ptr.ext)
         return data
@@ -385,11 +386,13 @@ class Connection(object):
         
         if self._calcMTA != ptr:
             self._setMTA(ptr)
+            
+        lenDataAG = int(len(data) % self._addressGranularity)
         
         if self._addressGranularity < 4:
-            request = struct.pack(self._byteorder + "BB", 0xF0, len(data) / self._addressGranularity) + data
+            request = struct.pack(self._byteorder + "BB", 0xF0, lenDataAG) + data
         else:
-            request = struct.pack(self._byteorder + "BBxx", 0xF4, len(data) / self._addressGranularity) + data
+            request = struct.pack(self._byteorder + "BBxx", 0xF4, lenDataAG) + data
         
         decodeFormat = "B"
         
@@ -411,6 +414,7 @@ class Connection(object):
         packetPtr = ptr
         while remBytes > 0:
             packetBytes = min(remBytes, self._maxDownloadPayload)
+            remBytes -= packetBytes
             self._query(self._action_download, packetPtr, data[dataStart:(dataStart + packetBytes)])
             dataStart = dataStart + packetBytes
             packetPtr = Pointer(packetPtr.addr + self.byteToAG(packetBytes), ptr.ext)

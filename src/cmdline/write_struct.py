@@ -1,6 +1,7 @@
 #!/usr/bin/python3.3
 
 import argparse
+import ctypes
 import json
 import sys
 
@@ -69,18 +70,20 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
                 
                 # Read the existing data from the board - in case the dict we have loaded does not cover the entire struct
                 conn.set_cal_page(structSegment, 0)
-                dataBuffer = conn.upload(XCPConnection.Pointer(structBaseaddr, 0), sizeof(ConfigType))
-                dataStruct = ConfigType.from_buffer(dataBuffer)
+                dataBuffer = conn.upload(XCPConnection.Pointer(structBaseaddr, 0), ctypes.sizeof(ConfigType))
+                dataStruct = ConfigType.from_buffer_copy(dataBuffer)
                 dataDict = ctypesdict.getdict(dataStruct)
                 
                 # Merge in data from the loaded dictionary
                 dataDict.update(inDict)
                 
-                # Set the data in the struct from the dict; since the struct was created with a reference to the buffer, the buffer gets updated
-                ctypesdict.setfromdict(dataStruct, dataDict)
+                # Set the data in the struct from the dict
+                writeDataStruct = ConfigType()
+                ctypesdict.setfromdict(writeDataStruct, dataDict)
+                writeDataBuffer=bytes(memoryview(writeDataStruct))
                 
                 # Write the new buffer to the board
-                conn.download(XCPConnection.Pointer(structBaseaddr, 0), dataBuffer)
+                conn.download(XCPConnection.Pointer(structBaseaddr, 0), writeDataBuffer)
                 conn.nvwrite()
                 
                 try:

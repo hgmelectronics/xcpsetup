@@ -1,6 +1,7 @@
 #!/usr/bin/python3.3
 
 import argparse
+import ctypes
 import json
 import sys
 
@@ -33,10 +34,10 @@ except argProc.ArgError as exc:
     print(str(exc))
     sys.exit(1)
 
-maxAttempts = 10
+maxAttempts = 1
 
 def OpenOutFile(name, id):
-    if name == None:
+    if name == None or name == '-':
         return sys.stdout
     else:
         return open(name.format(id), 'w')
@@ -54,22 +55,21 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         targetSlaves = [slaves[index]]
                 
     for targetSlave in targetSlaves:
-        if outputFile != None: # only print if not writing data to stdout
-            if targetSlave[1] != None:
-                print('Connecting to target addr ' + targetSlave[0].description() + ', ID ' + str(targetSlave[1]))
-            else:
-                print('Connecting to target addr ' + targetSlave[0].description())
+        outFile=OpenOutFile(args.outputFile, targetSlave[1])
+        if targetSlave[1] != None:
+            sys.stderr.write('Connecting to target addr ' + targetSlave[0].description() + ', ID ' + str(targetSlave[1]) + '\n')
+        else:
+            sys.stderr.write('Connecting to target addr ' + targetSlave[0].description() + '\n')
         
         for attempt in range(1, maxAttempts + 1):
             try:
                 conn = boardType.Connect(interface, targetSlave)
                 
                 conn.set_cal_page(structSegment, 0)
-                dataBuffer = conn.upload(XCPConnection.Pointer(structBaseaddr, 0), sizeof(ConfigType))
-                dataStruct = ConfigType.from_buffer(dataBuffer)
+                dataBuffer = conn.upload(XCPConnection.Pointer(structBaseaddr, 0), ctypes.sizeof(ConfigType))
+                dataStruct = ConfigType.from_buffer_copy(dataBuffer)
                 data = ctypesdict.getdict(dataStruct)
                 
-                outFile=OpenOutFile(args.outputFile, targetSlave[1])
                 outFile.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')))
                 outFile.write('\n')
                 outFile.close()
@@ -78,12 +78,11 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
                 except XCPConnection.Error:
                     pass # swallow any errors when closing connection due to bad target implementations - we really don't care
                 
-                if outputFile != None:
-                    print('Read OK')
+                sys.stderr.write('Read OK\n')
                 readOK = True
                 break
             except XCPConnection.Error as err:
-                print('Read failure (' + str(err) + '), attempt #' + str(attempt))
+                sys.stderr.write('Read failure (' + str(err) + '), attempt #' + str(attempt) + '\n')
                 readOK = False
         if not readOK:
             sys.exit(1)
