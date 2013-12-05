@@ -1,10 +1,11 @@
 #!/usr/bin/python3.3
 
+import time
 from comm import CANInterface
 from comm import XCPConnection
 
 class Indexed(object):
-    def __init__(self, broadcastID, recoveryCmdID, recoveryResID, cmdBaseID, resBaseID, idPitch, idRange, regularTimeout, nvWriteTimeout):
+    def __init__(self, broadcastID, recoveryCmdID, recoveryResID, cmdBaseID, resBaseID, idPitch, idRange, regularTimeout, nvWriteTimeout, rebootTime):
         self._broadcastID = broadcastID
         self._broadcastTimeout = 0.2
         self._recoveryCmdID = recoveryCmdID
@@ -15,6 +16,7 @@ class Indexed(object):
         self._idRange = idRange
         self._regularTimeout = regularTimeout
         self._nvWriteTimeout = nvWriteTimeout
+        self._rebootTime = rebootTime
     
     def SlaveListFromIDArg(self, arg):
         if arg == None:
@@ -65,12 +67,16 @@ class Indexed(object):
     def Connect(self, intfc, slave):
         intfc.connect(slave[0])
         return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
+    
+    def WaitForReboot(self):
+        time.sleep(self._rebootTime)
 
 class Singleton(object):
-    def __init__(self, cmdID, resID, regularTimeout, nvWriteTimeout):
+    def __init__(self, cmdID, resID, regularTimeout, nvWriteTimeout, rebootTime):
         self._addr = CANInterface.XCPSlaveCANAddr(cmdID, resID)
         self._regularTimeout = regularTimeout
         self._nvWriteTimeout = nvWriteTimeout
+        self._rebootTime = rebootTime
     
     def SlaveListFromIDArg(self, arg):
         if arg == None:
@@ -85,8 +91,8 @@ class Singleton(object):
         intfc.connect(slave[0])
         return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
 
-ByName = {  'ibem': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0),\
-            'cda': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000080, 0x9F000081, 2, (0,2), 0.5, 2.0),\
-            'cs2': Singleton(0xDEADBEEF, 0xDEADBEF0, 2.0, 5.0) } #FIXME
+ByName = {  'ibem': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0, 3.0),\
+            'cda': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000080, 0x9F000081, 2, (0,2), 0.5, 2.0, 3.0),\
+            'cs2': Singleton(0xDEADBEEF, 0xDEADBEF0, 2.0, 5.0, 5.0) } #FIXME
 
 
