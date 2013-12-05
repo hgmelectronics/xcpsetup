@@ -34,7 +34,7 @@ except argProc.ArgError as exc:
     print(str(exc))
     sys.exit(1)
 
-maxAttempts = 1
+maxAttempts = 10
 
 def OpenOutFile(name, id):
     if name == None or name == '-':
