@@ -477,8 +477,8 @@ class Connection(object):
         self._calcMTA = None
         self._pgmStarted = True
         # Compensate for erroneous implementations that gave BS as a number of bytes, not number of packets
-        if self._pgmMaxBS > (255/self._pgmMaxDownloadPayload):
-            self._pgmMaxBS = self._pgmMaxBS / self._pgmMaxDownloadPayload
+        if self._pgmMaxBS > int(255/self._pgmMaxDownloadPayload):
+            self._pgmMaxBS = int(self._pgmMaxBS / self._pgmMaxDownloadPayload)
             
     
     def program_start(self):
