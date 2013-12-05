@@ -16,16 +16,22 @@ def getdict(struct):
         result[field] = value
     return result
 
+'''
+Recursively set the members of a ctypes struct from a dict.
+Discards any dict members that do not exist in the struct,
+and preserves the value of any struct members that do not exist in the dict.
+'''
 def setfromdict(struct, dict):
     for fieldName, _ in struct._fields_:
-        fieldAttr = getattr(struct, fieldName)
-        if hasattr(fieldAttr, "_length_") and hasattr(fieldAttr, "_type_"):
-            # Probably an array
-            for i in range(fieldAttr._length_):
-                fieldAttr[i] = dict[fieldName][i]
-        elif hasattr(fieldAttr, "_fields_"):
-            # Probably another struct - recurse
-            setfromdict(fieldAttr, dict[fieldName])
-        else:
-            setattr(struct, fieldName, dict[fieldName])
-            fieldAttr = dict[fieldName]
+        if fieldName in dict:
+            fieldAttr = getattr(struct, fieldName)
+            if hasattr(fieldAttr, "_length_") and hasattr(fieldAttr, "_type_"):
+                # Probably an array
+                for i in range(fieldAttr._length_):
+                    fieldAttr[i] = dict[fieldName][i]
+            elif hasattr(fieldAttr, "_fields_"):
+                # Probably another struct - recurse
+                setfromdict(fieldAttr, dict[fieldName])
+            else:
+                setattr(struct, fieldName, dict[fieldName])
+                fieldAttr = dict[fieldName]
