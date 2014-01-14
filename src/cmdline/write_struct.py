@@ -72,14 +72,13 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
                 conn.set_cal_page(structSegment, 0)
                 dataBuffer = conn.upload(XCPConnection.Pointer(structBaseaddr, 0), ctypes.sizeof(ConfigType))
                 dataStruct = ConfigType.from_buffer_copy(dataBuffer)
-                dataDict = ctypesdict.getdict(dataStruct)
+                
+                # Set the data in the struct from the existing one
+                writeDataStruct = dataStruct
                 
                 # Merge in data from the loaded dictionary
-                dataDict.update(inDict)
+                ctypesdict.setfromdict(writeDataStruct, inDict)
                 
-                # Set the data in the struct from the dict
-                writeDataStruct = ConfigType()
-                ctypesdict.setfromdict(writeDataStruct, dataDict)
                 writeDataBuffer=bytes(memoryview(writeDataStruct))
                 
                 # Write the new buffer to the board
