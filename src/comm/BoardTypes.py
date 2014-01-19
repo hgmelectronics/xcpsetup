@@ -61,7 +61,7 @@ class Indexed(object):
                     and slave.resId.raw == self._resBaseID + possID * self._idPitch \
                     and possID >= self._idRange[0] and possID < self._idRange[1]:
                     mySlaves.append((slave, possID))
-        mySlaves.sort(key=lambda slave: slave[1])
+        mySlaves.sort(key=lambda slave: slave[1] if slave[1] != 'recovery' else -1)
         return mySlaves
     
     def Connect(self, intfc, slave):
@@ -91,7 +91,7 @@ class Singleton(object):
         intfc.connect(slave[0])
         return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
 
-ByName = {  'ibem': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0, 3.0),\
+ByName = {  'ibem': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0, 5.0),\
             'cda': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000080, 0x9F000081, 2, (0,2), 0.5, 2.0, 3.0),\
             'cs2': Singleton(0xDEADBEEF, 0xDEADBEF0, 2.0, 5.0, 5.0) } #FIXME
 

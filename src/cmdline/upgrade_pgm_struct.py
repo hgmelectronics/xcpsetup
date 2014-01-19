@@ -27,7 +27,8 @@ parser.add_argument('-l', help="Location of config structure in form <segment>:<
 parser.add_argument('-s', help="Old config structure in form my.h:mystruct", dest="oldStructSpec")
 parser.add_argument('-S', help="New config structure in form my.h:mystruct", dest="newStructSpec")
 parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default="-")
-parser.add_argument('-p', help="S-record file to program", dest="srecFile", type=argparse.FileType('r'))
+parser.add_argument('-p', help="S-record file to program", dest="srecFile", type=argparse.FileType('rb'))
+parser.add_argument('-c', help="Force reprogram even if CRC matches what is already in flash", action='count', dest='ignoreCRCMatch')
 parser.add_argument('inputFile', help="Input file name (if range of IDs specified must contain a {} to be replaced with the ID)", default=None)
 args = parser.parse_args()
 
@@ -44,7 +45,7 @@ maxAttempts = 10
 
 progBlocks = srec.ReadFile(args.srecFile)
 progSingleBlock = srec.MakeSingleBlock(progBlocks, b'\xFF')
-args.inputFile.close()
+args.srecFile.close()
 crcCalc = STCRC.Calc()
 progCRC = crcCalc.calc(progSingleBlock.data)
 for block in progBlocks:
@@ -120,6 +121,8 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         #  Set members from the new configuration file
         ctypesdict.setfromdict(writeDataStruct, inDict)
         writeDataBuffer=bytes(memoryview(writeDataStruct))
+        
+        sys.stderr.write('Programming\n')
                 
         # Program the target
         for attempt in range(1, maxAttempts + 1):
@@ -147,6 +150,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         if not programOK:
             sys.exit(1)
         
+        sys.stderr.write('Waiting for reboot\n')
         # Wait for the target to reboot
         boardType.WaitForReboot()
         
@@ -154,9 +158,10 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, boardType.SlaveListFromIDArg('recovery'))
-                
+                conn = boardType.Connect(interface, boardType.SlaveListFromIDArg('recovery')[0])
+                print('Connected to recovery address')
                 # Write the new buffer to the board
+                conn.set_cal_page(structSegment, 0)
                 conn.download(XCPConnection.Pointer(structBaseaddr, 0), writeDataBuffer)
                 conn.nvwrite()
                 print('Write OK')
