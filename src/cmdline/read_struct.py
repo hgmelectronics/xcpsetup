@@ -1,4 +1,4 @@
-#!/usr/bin/python3.3
+#!/usr/bin/python3
 
 import argparse
 import ctypes
@@ -21,8 +21,8 @@ parser.add_argument('-t', help="CAN device type", dest="deviceType", default=Non
 parser.add_argument('-d', help="CAN device name", dest="deviceName", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
-parser.add_argument('-l', help="Location of config structure in form <segment>:<baseaddr>", default="0:0", dest="structLocation")
-parser.add_argument('-s', help="Config structure in form my.h:mystruct", dest="structSpec")
+parser.add_argument('-l', help="Location of structure in form <segment>:<baseaddr>", default="0:0", dest="structLocation")
+parser.add_argument('-s', help="Pickled structure definition", dest="structSpec")
 parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default="-")
 args = parser.parse_args()
 

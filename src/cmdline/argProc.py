@@ -1,4 +1,4 @@
-#!/usr/bin/python3.3
+#!/usr/bin/python3
 
 import ctypes
 
@@ -23,17 +23,12 @@ def GetBoardType(name):
         raise ArgError('Invalid target type \'' + str(name) + '\'')
 
 def GetStructType(name):
-    try:
-        structHeader,structName = name.split(':')
-    except (TypeError,ValueError):
-        raise ArgError('Invalid struct type \'' + str(name) + '\'')
-    
-    # Create the parser and process the header without making noise about no cache being available
-    structParser = pyclibrary.CParser(structHeader, processAll=False)
-    structParser.processAll(noCacheWarning=False)
+    # Create the parser 
+    structParser = pyclibrary.CParser(processAll=None)
+    structParser.loadCache(name)
     # Make the library that will actually contain the type
     structLibrary = pyclibrary.CLibrary(None, structParser)
-    return getattr(structLibrary, structName)
+    return getattr(structLibrary, '_struct')
 
 def GetStructLocation(arg):
     try:
