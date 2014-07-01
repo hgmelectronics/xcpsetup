@@ -16,7 +16,7 @@ import argProc
    
 plugins.load_plugins()
 
-parser = argparse.ArgumentParser(description="writes data to a board using a C header file to define layout in memory")
+parser = argparse.ArgumentParser(description="writes data to a board using a preparsed C struct to define layout in memory")
 parser.add_argument('-t', help="CAN device type", dest="deviceType", default=None)
 parser.add_argument('-d', help="CAN device name", dest="deviceName", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
