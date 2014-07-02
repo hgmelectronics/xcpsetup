@@ -4,6 +4,7 @@ import argparse
 import ctypes
 import json
 import sys
+import copy
 
 if not '..' in sys.path:
     sys.path.append('..')
@@ -50,7 +51,7 @@ def SLOTScaleFactor(slot):
     return float(slot['numerator']) / float(slot['denominator']) / pow(10.0, slot['decimals'])
 
 def WriteScalar(value, param, paramSpec, conn):
-    slot = paramSpec['slots'][param[slots][-1]]
+    slot = paramSpec['slots'][param['slots'][-1]]
     addr = param['addr']
     addrext = 0 if not 'addrext' in param else param['addrext']
     ptr = XCPConnection.Pointer(addr, addrext)
@@ -70,10 +71,10 @@ def WriteParam(value, param, paramSpec, conn):
     if len(param['slots']) == 1:
         return WriteScalar(value, param, paramSpec, conn)
     elif len(param['slots']) == 2:
-        indepSlot = paramSpec['slots'][param[slots][0]]
+        indepSlot = paramSpec['slots'][param['slots'][0]]
         length = indepSlot['max'] - indepSlot['min'] + 1
         ret = [0.0] * length
-        paramIt = param
+        paramIt = copy.deepcopy(param)
         for idx in range(0, length):
             paramIt['addr'] = param['addr'] + idx
             ret[idx] = WriteScalar(value[idx], paramIt, paramSpec, conn)
