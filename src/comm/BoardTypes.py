@@ -91,8 +91,11 @@ class Singleton(object):
         intfc.connect(slave[0])
         return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
 
-ByName = {  'ibem': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0, 5.0),\
-            'cda': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000080, 0x9F000081, 2, (0,2), 0.5, 2.0, 3.0),\
-            'cs2': Singleton(0xDEADBEEF, 0xDEADBEF0, 2.0, 5.0, 5.0) } #FIXME
-
+ByName = { \
+    'ibem': Indexed(broadcastID=0x9F000000, recoveryCmdID=0x9F000010, recoveryResID=0x9F000011, cmdBaseID=0x9F000100, \
+        resBaseID=0x9F000101, idPitch=2, idRange=(0,256), regularTimeout=0.5, nvWriteTimeout=2.0, rebootTime=5.0), \
+    'cda': Indexed(broadcastID=0x9F000000, recoveryCmdID=0x9F000010, recoveryResID=0x9F000011, cmdBaseID=0x9F000080, \
+        resBaseID=0x9F000081, idPitch=2, idRange=(0,2), regularTimeout=0.5, nvWriteTimeout=2.0, rebootTime=3.0), \
+    'cs2': Singleton(cmdID=0xDEADBEEF, resID=0xDEADBEF0, regularTimeout=2.0, nvWriteTimeout=5.0, rebootTime=5.0) \
+}
 
