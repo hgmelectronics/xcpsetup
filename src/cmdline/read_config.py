@@ -4,6 +4,7 @@ import argparse
 import ctypes
 import json
 import sys
+import copy
 
 if not '..' in sys.path:
     sys.path.append('..')
@@ -24,6 +25,7 @@ parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery
 parser.add_argument('-p', help="Parameter definition file", dest="paramSpecFile", type=argparse.FileType('r'))
 parser.add_argument('-s', help="XCP memory segment in which parameters reside", dest="paramSegment", default=0)
 parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default="-")
+parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
 args = parser.parse_args()
 
 try:
@@ -45,7 +47,7 @@ def SLOTScaleFactor(slot):
     return float(slot['numerator']) / float(slot['denominator']) / pow(10.0, slot['decimals'])
 
 def ReadScalar(param, paramSpec, conn):
-    slot = paramSpec['slots'][param[slots][-1]]
+    slot = paramSpec['slots'][param['slots'][-1]]
     addr = param['addr']
     addrext = 0 if not 'addrext' in param else param['addrext']
     ptr = XCPConnection.Pointer(addr, addrext)
@@ -65,10 +67,10 @@ def ReadParam(param, paramSpec, conn):
     if len(param['slots']) == 1:
         return ReadScalar(param, paramSpec, conn)
     elif len(param['slots']) == 2:
-        indepSlot = paramSpec['slots'][param[slots][0]]
+        indepSlot = paramSpec['slots'][param['slots'][0]]
         length = indepSlot['max'] - indepSlot['min'] + 1
         ret = [0.0] * length
-        paramIt = param
+        paramIt = copy.deepcopy(param)
         for idx in range(0, length):
             paramIt['addr'] = param['addr'] + idx
             ret[idx] = ReadScalar(paramIt, paramSpec, conn)
@@ -97,16 +99,17 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, targetSlave)
+                conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
                 
                 conn.set_cal_page(args.paramSegment, 0)
                 data = dict()
-                for param in paramSpec.parameters:
+                for param in paramSpec['parameters']:
                     data[param['name']] = ReadParam(param, paramSpec, conn)
                 
                 outFile.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')))
                 outFile.write('\n')
-                outFile.close()
+                if outFile != sys.stdout:
+                    outFile.close()
                 try:
                     conn.close()
                 except XCPConnection.Error:

@@ -64,8 +64,8 @@ class Indexed(object):
         mySlaves.sort(key=lambda slave: slave[1] if slave[1] != 'recovery' else -1)
         return mySlaves
     
-    def Connect(self, intfc, slave):
-        intfc.connect(slave[0])
+    def Connect(self, intfc, slave, dumpTraffic = False):
+        intfc.connect(slave[0], dumpTraffic)
         return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
     
     def WaitForReboot(self):
@@ -87,8 +87,8 @@ class Singleton(object):
     def GetSlaves(self, intfc):
         return [(self._addr, None)]
     
-    def Connect(self, intfc, slave):
-        intfc.connect(slave[0])
+    def Connect(self, intfc, slave, dumpTraffic = False):
+        intfc.connect(slave[0], dumpTraffic)
         return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
 
 ByName = {  'ibem': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0, 5.0),\

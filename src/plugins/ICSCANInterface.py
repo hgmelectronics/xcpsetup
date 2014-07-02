@@ -174,8 +174,9 @@ class ICSCANInterface(CANInterface.Interface):
         
         return ident, data[0:frame.NumberBytesData]
     
-    def connect(self, address):
+    def connect(self, address, dumpTraffic):
         self._slaveAddr = address
+        self._dumpTraffic = dumpTraffic
 
             # Now flush the receive buffer
         icsMsgs = (_ICSSpyMessage * 20000)()
@@ -186,14 +187,19 @@ class ICSCANInterface(CANInterface.Interface):
     
     def disconnect(self):
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
+        self._dumpTraffic = False
     
     def transmit(self, data):
+        if self._dumpTraffic:
+            print('TX ' + self._slaveAddr.cmdId.getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._build_frame(data, self._slaveAddr.cmdId.raw)
         res = self._dll.icsneoTxMessages(self._neoObject, ctypes.byref(frame), self._ICSNETID_HSCAN, 1)  # network ID 1 = HS CAN
         if res != 1:
             raise CANInterface.Error()
     
     def transmitTo(self, data, ident):
+        if self._dumpTraffic:
+            print('TX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._build_frame(data, ident)
         res = self._dll.icsneoTxMessages(self._neoObject, ctypes.byref(frame), self._ICSNETID_HSCAN, 1)  # network ID 1 = HS CAN
         if res != 1:
@@ -231,6 +237,8 @@ class ICSCANInterface(CANInterface.Interface):
             for iMsg in range(icsNMsgs.value):
                 ident, data = self._decode_frame(icsMsgs[iMsg])
                 if len(data) > 0 and ident == self._slaveAddr.resId.raw and (data[0] == 0xFF or data[0] == 0xFE):
+                    if self._dumpTraffic:
+                        print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(data))
                     packets.append(data)
             
             if len(packets) != 0:
@@ -267,6 +275,8 @@ class ICSCANInterface(CANInterface.Interface):
                 ident, data = self._decode_frame(icsMsgs[iMsg])
                 if len(data) > 0 and (data[0] == 0xFF or data[0] == 0xFE):
                     packets.append(CANInterface.Packet(ident, data))
+                    if self._dumpTraffic:
+                        print('RX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
             
             if len(packets) != 0:
                 break
