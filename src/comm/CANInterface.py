@@ -21,6 +21,9 @@ class ID(object):
         else:
             return "%x" % self.raw
 
+def getDataHexString(data):
+	return ' '.join(format(x, '02x') for x in data)
+
 Packet = namedtuple('Packet', ['ident', 'data'])
 
 class XCPSlaveCANAddr(object):

@@ -24,6 +24,7 @@ class SocketCANInterface(CANInterface.Interface):
         
         self._s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
+        self._dumpTraffic = False
         if name == None:
             dev = 'can0'
         else:
@@ -51,8 +52,9 @@ class SocketCANInterface(CANInterface.Interface):
         ident, dlc, data = struct.unpack("=IB3x8s", frame)
         return ident, data[0:dlc]
     
-    def connect(self, address):
+    def connect(self, address, dumpTraffic = False):
         self._slaveAddr = address
+        self._dumpTraffic = dumpTraffic
         filt = struct.pack("=II", self._slaveAddr.resId.raw, 0x9FFFFFFF)
         self._s.setsockopt(socket.SOL_CAN_RAW, socket.CAN_RAW_FILTER, filt)
         # Now flush any packets that were previously there
@@ -65,6 +67,7 @@ class SocketCANInterface(CANInterface.Interface):
     
     def disconnect(self):
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
+        self._dumpTraffic = False
         filt = struct.pack("=II", 0, 0)
         self._s.setsockopt(socket.SOL_CAN_RAW, socket.CAN_RAW_FILTER, filt)
        
@@ -82,10 +85,14 @@ class SocketCANInterface(CANInterface.Interface):
                     time.sleep(0.010)
     
     def transmit(self, data):
+        if self._dumpTraffic:
+            print('TX ' + self._slaveAddr.cmdId.getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._build_frame(data, self._slaveAddr.cmdId.raw)
         self._sendFrame(frame)
     
     def transmitTo(self, data, ident):
+        if self._dumpTraffic:
+            print('TX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._build_frame(data, ident)
         self._sendFrame(frame)
         
@@ -114,6 +121,8 @@ class SocketCANInterface(CANInterface.Interface):
             ident, data = self._decode_frame(frame)
             if data[0] == 0xFF or data[0] == 0xFE:
                 msgs.append(data)
+                if self._dumpTraffic:
+                    print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(data))
         return msgs
     
     def receivePackets(self, timeout):
@@ -138,6 +147,8 @@ class SocketCANInterface(CANInterface.Interface):
             ident, data = self._decode_frame(frame)
             if data[0] == 0xFF or data[0] == 0xFE:
                 packets.append(CANInterface.Packet(ident, data))
+                if self._dumpTraffic:
+                    print('RX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
         return packets
 
 
