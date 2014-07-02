@@ -93,6 +93,6 @@ class Singleton(object):
 
 ByName = {  'ibem': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000100, 0x9F000101, 2, (0,256), 0.5, 2.0, 5.0),\
             'cda': Indexed(0x9F000000, 0x9F000010, 0x9F000011, 0x9F000080, 0x9F000081, 2, (0,2), 0.5, 2.0, 3.0),\
-            'cs2': Singleton(0xDEADBEEF, 0xDEADBEF0, 2.0, 5.0, 5.0) } #FIXME
+            'cs2': Singleton(0x98FCD403, 0x98FCD4F9, 2.0, 5.0, 5.0) }
 
 
