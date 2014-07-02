@@ -18,6 +18,7 @@ parser.add_argument('-t', help="CAN device type", dest="deviceType", default=Non
 parser.add_argument('-d', help="CAN device name", dest="deviceName", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
+parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
 args = parser.parse_args()
 
 try:
@@ -50,7 +51,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, targetSlave)
+                conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
                 conn.program_start()
                 conn.program_reset()
                 print('Reset OK')

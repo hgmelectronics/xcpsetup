@@ -24,6 +24,7 @@ parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery
 parser.add_argument('-l', help="Location of structure in form <segment>:<baseaddr>", default="0:0", dest="structLocation")
 parser.add_argument('-s', help="Pickled structure definition", dest="structSpec")
 parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default="-")
+parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
 args = parser.parse_args()
 
 try:
@@ -63,7 +64,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, targetSlave)
+                conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
                 
                 conn.set_cal_page(structSegment, 0)
                 dataBuffer = conn.upload(XCPConnection.Pointer(structBaseaddr, 0), ctypes.sizeof(ConfigType))

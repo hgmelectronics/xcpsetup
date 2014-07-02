@@ -23,6 +23,7 @@ parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic 
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
 parser.add_argument('-l', help="Location of config structure in form <segment>:<baseaddr>", default="0:0", dest="structLocation")
 parser.add_argument('-s', help="Pickled structure definition", dest="structSpec")
+parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
 parser.add_argument('inputFile', help="Input file name (if range of IDs specified must contain a {} to be replaced with the ID)", default=None)
 args = parser.parse_args()
 
@@ -66,7 +67,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
                 inDict = json.loads(inFile.read())
                 inFile.close()
                 
-                conn = boardType.Connect(interface, targetSlave)
+                conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
                 
                 # Read the existing data from the board - in case the dict we have loaded does not cover the entire struct
                 conn.set_cal_page(structSegment, 0)
