@@ -1,5 +1,5 @@
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui
 
 class SLOTEditDialog(QtGui.QWidget):
     def __init__(self, parent=None, model, encodingModel):
@@ -7,19 +7,19 @@ class SLOTEditDialog(QtGui.QWidget):
 
         self.model = model
         self.encodingModel = encodingModel
-        
+
         # Set up the widgets.
         nameLabel = QtGui.QLabel("Name")
         nameEdit = QtGui.QLineEdit()
-        
+
         symbolLabel = QtGui.QLabel("Symbol")
         symbolEdit = QtGui.QLineEdit()
         symbolLabel.setBuddy(symbolEdit)
-        
+
         numeratorLabel = QtGui.QLabel("Numerator")
         numeratorEdit = QtGui.QLineEdit()
         numeratorLabel.setBuddy(numeratorEdit)
-        
+
         denominatorLabel = QtGui.QLabel("Denominator")
         denominatorEdit = QtGui.QLineEdit()
         denominatorLabel.setBuddy(denominatorEdit)
@@ -27,14 +27,14 @@ class SLOTEditDialog(QtGui.QWidget):
         offsetLabel = QtGui.QLabel("Offset")
         offsetEdit = QtGui.QLineEdit()
         offsetLabel.setBuddy(offsetEdit)
-        
+
         encodingLabel = QtGui.QLabel("Encoding")
         encodingComboBox = QtGui.QComboBox()
         encodingLabel.setBuddy(encodingComboBox)
-        
+
         self.nextButton = QtGui.QPushButton("&Next")
         self.previousButton = QtGui.QPushButton("&Previous")
-        
+
         encodingComboBox.setModel(self.encodingModel)
 
         # Set up the mapper.
@@ -64,7 +64,7 @@ class SLOTEditDialog(QtGui.QWidget):
         self.setLayout(layout)
 
         self.mapper.toFirst()
- 
+
     def updateButtons(self, row):
         self.previousButton.setEnabled(row > 0)
         self.nextButton.setEnabled(row < self.model.rowCount() - 1)

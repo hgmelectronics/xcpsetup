@@ -3,7 +3,7 @@ Created on Jun 14, 2013
 
 @author: gcardwel
 '''
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 
 class FlowLayout(QtGui.QLayout):

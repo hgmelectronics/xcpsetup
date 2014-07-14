@@ -1,0 +1,19 @@
+
+
+
+Refactor the existing command lines tools to
+
+
+Fold most of the existing command line tools into the shell, or build a version of them that runs in the shell.
+
+Change board profiles from being built-in python code to using a configuration file.  We should be able to abstract all of the different types of configuration possibilities
+into a single set of configuration parameters.
+
+Commands issued to multiple notes should use a single loop and a function object
+
+YAML base description of structured data
+
+load / save in YAML configuration files
+
+Tools move to command line
+
