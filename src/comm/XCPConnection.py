@@ -27,47 +27,151 @@ def GetCANSlaves(interface, bcastId, timeout):
             pass
     return slaves
     
-    
 class Error(Exception):
-    pass
-
+    def __init__(self):
+        self._desc = ''
+        self._value = None
+    def __str(self):
+        if self._value != None:
+            return self.desc + ' ' + self._value
+        else:
+            return self.desc
 
 class Timeout(Error):
     def __init__(self, value=None):
+        self._desc = 'Timeout'
         self._value = value
-    def __str__(self):
-        if self._value != None:
-            return 'Timeout in ' + self._value
-        else:
-            return 'Timeout'
 
 class InvalidOp(Error):
     def __init__(self, value=None):
+        self._desc = 'Invalid operation attempted'
         self._value = value
-    def __str__(self):
-        if self._value != None:
-            return 'Invalid operation attempted: ' + self._value
-        else:
-            return 'Invalid operation attempted'
 
 class BadReply(Error):
     def __init__(self, value=None):
+        self._desc = 'Unexpected reply from slave'
         self._value = value
-    def __str__(self):
-        if self._value != None:
-            return 'Unexpected reply from slave: ' + self._value
-        else:
-            return 'Unexpected reply from slave'
 
-class PacketLost(Error):
+class Timeout(Error):
     def __init__(self, value=None):
+        self._desc = 'Block mode packet lost'
         self._value = value
-    def __str__(self):
-        if self._value != None:
-            return 'Block mode packet lost: ' + self._value
-        else:
-            return 'Block mode packet lost'
 
+class SlaveError(Error):
+    pass
+
+class SlaveErrorBusy(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (busy)'
+        self._value = value
+
+class SlaveErrorDAQActive(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (DAQ active)'
+        self._value = value
+
+class SlaveErrorPgmActive(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (program active)'
+        self._value = value
+
+class SlaveErrorCmdUnknown(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (Command unknown)'
+        self._value = value
+
+class SlaveErrorCmdSyntax(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (command syntax)'
+        self._value = value
+
+class SlaveErrorOutOfRange(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (out of range)'
+        self._value = value
+
+class SlaveErrorWriteProtected(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (write protected)'
+        self._value = value
+
+class SlaveErrorAccessDenied(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (access denied)'
+        self._value = value
+
+class SlaveErrorAccessLocked(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (access locked)'
+        self._value = value
+
+class SlaveErrorPageNotValid(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (page not valid)'
+        self._value = value
+
+class SlaveErrorModeNotValid(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (page mode not valid)'
+        self._value = value
+
+class SlaveErrorSegmentNotValid(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (segment not valid)'
+        self._value = value
+
+class SlaveErrorSequence(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (sequence)'
+        self._value = value
+
+class SlaveErrorDAQConfig(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (DAQ config invalid)'
+        self._value = value
+
+class SlaveErrorMemoryOverflow(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (memory overflow)'
+        self._value = value
+
+class SlaveErrorGeneric(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (generic)'
+        self._value = value
+
+class SlaveErrorVerify(SlaveError):
+    def __init__(self, value=None):
+        self._desc = 'Slave error (program verify) '
+        self._value = value
+
+xcpErrCodes = { \
+    0x10: SlaveErrorBusy, \
+    0x11: SlaveErrorDAQActive, \
+    0x12: SlaveErrorPgmActive, \
+    0x20: SlaveErrorCmdUnknown, \
+    0x21: SlaveErrorCmdSyntax, \
+    0x22: SlaveErrorOutOfRange, \
+    0x23: SlaveErrorWriteProtected, \
+    0x24: SlaveErrorAccessDenied, \
+    0x25: SlaveErrorAccessLocked, \
+    0x26: SlaveErrorPageNotValid, \
+    0x27: SlaveErrorModeNotValid, \
+    0x28: SlaveErrorSegmentNotValid, \
+    0x29: SlaveErrorSequence, \
+    0x2A: SlaveErrorDAQConfig, \
+    0x30: SlaveErrorMemoryOverflow, \
+    0x31: SlaveErrorGeneric, \
+    0x32: SlaveErrorVerify \
+}
+
+def RaiseReply(reply, msg = None):
+    print(repr(reply))
+    if reply[0] == 0xFE and reply[1] in xcpErrCodes:
+        raise xcpErrCodex[reply[1]](msg)
+    else:
+        raise BadReply(msg)
+    
 class Connection(object):
     '''
     classdocs
@@ -87,7 +191,7 @@ class Connection(object):
         request = struct.pack("BB", 0xFF, 0x00)
         reply = self._transaction(request, "BBBBBBBB")
         if reply[0] != 0xFF:
-            raise BadReply('connecting to slave')
+            RaiseReply(reply, 'connecting to slave')
         self._calPage = reply[1] & 0x01
         self._daq = reply[1] & 0x04
         self._stim = reply[1] & 0x08
@@ -110,7 +214,7 @@ class Connection(object):
             self._addressGranularity = 4
         else:
             self.close()
-            raise BadReply('connecting to slave')
+            RaiseReply(reply, 'connecting to slave')
         
         self._maxCTO = reply[3]
         
@@ -119,7 +223,7 @@ class Connection(object):
         
         if reply[6] != 0x01 or reply[7] != 0x01:
             self.close()
-            raise BadReply('connecting to slave')
+            RaiseReply(reply, 'connecting to slave')
     
     def byteToAG(self, data):
         return int(data / self._addressGranularity)
@@ -128,7 +232,7 @@ class Connection(object):
         request = struct.pack(self._byteorder + "B", 0xFE)
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
-            raise BadReply('closing connection to slave')
+            RaiseReply(reply, 'closing connection to slave')
         self._pgmStarted = False
     
     def _getReply(self, fmt, timeout):
@@ -137,13 +241,13 @@ class Connection(object):
         if len(replies) < 1:
             raise Timeout()
         if len(replies) > 1:
-            raise BadReply('multiple replies')
+            RaiseReply(reply, 'multiple replies')
         try:
             #print('Send ' + repr([hex(elem) for elem in request]) + ' Reply ' + repr([hex(elem) for elem in replies[0]]))
             reply = struct.unpack_from(self._byteorder + fmt, replies[0])
             return reply
         except struct.error:
-            raise BadReply('reply wrong length')
+            RaiseReply(reply, 'reply wrong length')
     
     def _transaction(self, request, fmt, timeout=-1):
         self._interface.transmit(request)
@@ -156,7 +260,7 @@ class Connection(object):
         request = struct.pack(self._byteorder + "B", 0xFC)
         reply = self._transaction(request, "BB")
         if reply[0] != 0xFE or reply[1] != 0x00:
-            raise BadReply('resynchronization')
+            RaiseReply(reply, 'resynchronization')
     
     def _query(self, action_func, *args):
         failures = 0
@@ -184,7 +288,7 @@ class Connection(object):
             raise
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('set MTA')
+            RaiseReply(reply, 'set MTA')
         self._calcMTA = ptr
     
     def _action_upload8(self, ptr):
@@ -199,7 +303,7 @@ class Connection(object):
             
             if reply[0] != 0xFF:
                 self._calcMTA = None
-                raise BadReply('uploading 1 byte')
+                RaiseReply(reply, 'uploading 1 byte')
             else:
                 self._calcMTA = Pointer(ptr.addr + 1, ptr.ext)
                 return reply[1]
@@ -227,7 +331,7 @@ class Connection(object):
             
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('uploading 2 bytes')
+            RaiseReply(reply, 'uploading 2 bytes')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(2), ptr.ext)
             return reply[1]
@@ -256,7 +360,7 @@ class Connection(object):
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('uploading 4 bytes')
+            RaiseReply(reply, 'uploading 4 bytes')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(4), ptr.ext)
             return reply[1]
@@ -287,7 +391,7 @@ class Connection(object):
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('uploading data')
+            RaiseReply(reply, 'uploading data')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(size), ptr.ext)
             return bytes(reply[1])
@@ -318,13 +422,13 @@ class Connection(object):
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('downloading 1 byte')
+            RaiseReply(reply, 'downloading 1 byte')
         else:
             self._calcMTA = Pointer(ptr.addr + 1, ptr.ext)
     
     def download8(self, ptr, data):
         if not self._calPage:
-            raise BadReply('downloading 1 byte, calibration page not set')
+            raise InvalidOp('downloading 1 byte, calibration page not set')
         return self._query(self._action_download8, ptr, data)
 
     def _action_download16(self, ptr, data):
@@ -344,13 +448,13 @@ class Connection(object):
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('downloading 2 bytes')
+            RaiseReply(reply, 'downloading 2 bytes')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(2), ptr.ext)
     
     def download16(self, ptr, data):
         if not self._calPage:
-            raise BadReply('downloading 2 bytes, calibration page not set')
+            raise InvalidOp('downloading 2 bytes, calibration page not set')
         return self._query(self._action_download16, ptr, data)
 
     def _action_download32(self, ptr, data):
@@ -370,13 +474,13 @@ class Connection(object):
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('downloading 4 bytes')
+            RaiseReply(reply, 'downloading 4 bytes')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(4), ptr.ext)
     
     def download32(self, ptr, data):
         if not self._calPage:
-            raise BadReply('downloading 4 bytes, calibration page not set')
+            raise InvalidOp('downloading 4 bytes, calibration page not set')
         return self._query(self._action_download32, ptr, data)
         
     
@@ -404,7 +508,7 @@ class Connection(object):
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('downloading data')
+            RaiseReply(reply, 'downloading data')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(len(data)), ptr.ext)
     
@@ -423,7 +527,7 @@ class Connection(object):
         request = struct.pack(self._byteorder + "BBH", 0xF9, 0x01, 0)
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
-            raise BadReply('writing nonvolatile memory')
+            RaiseReply(reply, 'writing nonvolatile memory')
         
         # Fixed turndown ratio of 10
         pollInterval = self._nvWriteTimeout / 10
@@ -437,7 +541,7 @@ class Connection(object):
                     # EV_STORE_CAL: we're done
                     return
             if reply[0] != 0xFF:
-                raise BadReply('waiting for nonvolatile memory write to finish')
+                RaiseReply(reply, 'waiting for nonvolatile memory write to finish')
             if not (reply[1] & 0x01):
                 return
                 
@@ -446,7 +550,7 @@ class Connection(object):
     
     def nvwrite(self):
         if not self._calPage:
-            raise BadReply('writing nonvolatile memory, calibration page not set')
+            RaiseReply(reply, 'writing nonvolatile memory, calibration page not set')
         return self._query(self._action_nvwrite)
     
     def _action_set_cal_page(self, segment, page):
@@ -454,7 +558,7 @@ class Connection(object):
         self._calcMTA = None  # standard does not define what happens to MTA
         reply = self._transaction(request, "B", self._nvWriteTimeout)
         if reply[0] != 0xFF:
-            raise BadReply('setting calibration page')
+            RaiseReply(reply, 'setting calibration page')
     
     def set_cal_page(self, segment, page):
         if not self._calPage:
@@ -465,7 +569,7 @@ class Connection(object):
         request = struct.pack(self._byteorder + "B", 0xD2)
         reply = self._transaction(request, "BxBBBBB")
         if reply[0] != 0xFF or reply[2] < 8:
-            raise BadReply('starting program')
+            RaiseReply(reply, 'starting program')
         if reply[1] & 0x01:
             self._pgmMasterBlockMode = True
         else:
@@ -491,7 +595,7 @@ class Connection(object):
         self._calcMTA = None  # standard does not define what happens to MTA
         reply = self._transaction(request, "B", self._nvWriteTimeout)
         if reply[0] != 0xFF:
-            raise BadReply('erasing program')
+            RaiseReply(reply, 'erasing program')
     
     def program_clear(self, ptr, length):
         if not self._pgmStarted:
@@ -516,7 +620,7 @@ class Connection(object):
                 # if a reply that is not ERR_SEQUENCE, raise bad reply
                 for reply in replies:
                     if len(reply) < 2 or reply[0] != 0xFE or reply[1] != 0x29:
-                        raise BadReply('writing program block')  # not ERR_SEQUENCE
+                        RaiseReply(reply, 'writing program block')  # not ERR_SEQUENCE
                 # if replies are all ERR_SEQUENCE, raise packet lost (and potentially try again)
                 raise PacketLost()
             
@@ -549,7 +653,7 @@ class Connection(object):
             # if a reply that is not ERR_SEQUENCE, raise bad reply
             for reply in replies:
                 if len(reply) < 2 or reply[0] != 0xFE or reply[1] != 0x29:
-                    raise BadReply('writing program block')  # not ERR_SEQUENCE
+                    RaiseReply(reply, 'writing program block')  # not ERR_SEQUENCE
             # if replies are all ERR_SEQUENCE, raise packet lost (and potentially try again)
             raise PacketLost()
     def _program_block(self, ptr, data):
@@ -574,7 +678,7 @@ class Connection(object):
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            raise BadReply('writing program packet')
+            RaiseReply(reply, 'writing program packet')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(len(data)), ptr.ext)
     
@@ -608,7 +712,7 @@ class Connection(object):
         request = struct.pack(self._byteorder + "BBHL", 0xC8, 0x01, 0x0002, crc)
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
-            raise BadReply('verifying program')
+            RaiseReply(reply, 'verifying program')
 
     def program_verify(self, crc):
         if not self._pgmStarted:
@@ -619,7 +723,7 @@ class Connection(object):
         request = struct.pack(self._byteorder + "B", 0xCF)
         reply = self._transaction(request, "B")
         if reply[0] != 0xFF:
-            raise BadReply('resetting slave')
+            RaiseReply(reply, 'resetting slave')
         self._pgmStarted = False
 
     def program_reset(self):

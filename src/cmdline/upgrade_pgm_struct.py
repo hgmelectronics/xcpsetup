@@ -29,6 +29,7 @@ parser.add_argument('-S', help="New config structure in form my.h:mystruct", des
 parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default="-")
 parser.add_argument('-p', help="S-record file to program", dest="srecFile", type=argparse.FileType('rb'))
 parser.add_argument('-c', help="Force reprogram even if CRC matches what is already in flash", action='count', dest='ignoreCRCMatch')
+parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
 parser.add_argument('inputFile', help="Input file name (if range of IDs specified must contain a {} to be replaced with the ID)", default=None)
 args = parser.parse_args()
 
@@ -90,7 +91,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         # Connect to the target and read out its old configuration
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, targetSlave)
+                conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
                 
                 conn.set_cal_page(structSegment, 0)
                 oldBuffer = conn.upload(XCPConnection.Pointer(structBaseaddr, 0), ctypes.sizeof(OldConfigType))
@@ -127,7 +128,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         # Program the target
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, targetSlave)
+                conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
                 conn.program_start()
                 
                 if not args.ignoreCRCMatch and conn.program_check(XCPConnection.Pointer(progSingleBlock.baseaddr, 0), len(progSingleBlock.data), progCRC):
@@ -158,7 +159,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, boardType.SlaveListFromIDArg('recovery')[0])
+                conn = boardType.Connect(interface, boardType.SlaveListFromIDArg('recovery')[0], args.dumpTraffic)
                 print('Connected to recovery address')
                 # Write the new buffer to the board
                 conn.set_cal_page(structSegment, 0)
@@ -183,7 +184,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
         # Connect to the target at its designated address to make sure it came up
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, targetSlave)
+                conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
                 try:
                     conn.close()
                 except XCPConnection.Error:
