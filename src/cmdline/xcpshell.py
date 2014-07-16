@@ -4,12 +4,14 @@ Created on Dec 3, 2013
 @author: gcardwel
 '''
 
-import cmd, sys, argparse, shlex
+import sys, argparse, shlex
+import cmd2
 from comm import CANInterface
 from comm import XCPConnection
 from util import plugins
 from util import STCRC
 from util import srec
+
 
 
 if not '..' in sys.path:
@@ -29,7 +31,7 @@ class ShellArgParser(argparse.ArgumentParser):
         raise ShellArgParserExit()
 
 
-class XCPShell(cmd.Cmd):
+class XCPShell(cmd2.Cmd):
     intro = 'Welcome to the xcpshell.   Type help or ? to list commands.\n'
     file = None
     prompt = '(xcp) '
