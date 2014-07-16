@@ -4,7 +4,6 @@ import argparse
 import ctypes
 import json
 import sys
-import copy
 
 if not '..' in sys.path:
     sys.path.append('..')
@@ -12,8 +11,14 @@ if not '..' in sys.path:
 from comm import CANInterface
 from comm import XCPConnection
 from util import plugins
-from util import casts
+from util import dictconfig
 import argProc
+
+def OpenOutFile(name, id):
+    if name == None or name == '-':
+        return sys.stdout
+    else:
+        return open(name.format(id), 'w')
 
 plugins.load_plugins()
 
@@ -36,47 +41,6 @@ except argProc.ArgError as exc:
     sys.exit(1)
 
 maxAttempts = 10
-
-def OpenOutFile(name, id):
-    if name == None or name == '-':
-        return sys.stdout
-    else:
-        return open(name.format(id), 'w')
-
-def SLOTScaleFactor(slot):
-    return float(slot['numerator']) / float(slot['denominator']) / pow(10.0, slot['decimals'])
-
-def ReadScalar(param, paramSpec, conn):
-    slot = paramSpec['slots'][param['slots'][-1]]
-    addr = param['addr']
-    addrext = 0 if not 'addrext' in param else param['addrext']
-    ptr = XCPConnection.Pointer(addr, addrext)
-    type = 'uint32' if not 'type' in slot else slot['type']
-    if casts.sizeof(type) == 4:
-        raw = conn.upload32(ptr)
-    elif casts.sizeof(type) == 2:
-        raw = conn.upload16(ptr)
-    elif casts.sizeof(type) == 1:
-        raw = conn.upload8(ptr)
-    else:
-        raise ValueError
-    castRaw = casts.poly(casts.uintTypeFor(type), type, raw)
-    return float(castRaw) * SLOTScaleFactor(slot)
-
-def ReadParam(param, paramSpec, conn):
-    if len(param['slots']) == 1:
-        return ReadScalar(param, paramSpec, conn)
-    elif len(param['slots']) == 2:
-        indepSlot = paramSpec['slots'][param['slots'][0]]
-        length = indepSlot['max'] - indepSlot['min'] + 1
-        ret = [0.0] * length
-        paramIt = copy.deepcopy(param)
-        for idx in range(0, length):
-            paramIt['addr'] = param['addr'] + idx
-            ret[idx] = ReadScalar(paramIt, paramSpec, conn)
-        return ret
-    else:
-        raise ValueError
 
 with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
     targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
@@ -104,7 +68,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
                 conn.set_cal_page(args.paramSegment, 0)
                 data = dict()
                 for param in paramSpec['parameters']:
-                    data[param['name']] = ReadParam(param, paramSpec, conn)
+                    data[param['name']] = dictconfig.ReadParam(param, paramSpec, conn)
                 
                 outFile.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')))
                 outFile.write('\n')
