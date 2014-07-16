@@ -2,4 +2,7 @@ syntax: glob
 
 __pycache__
 *.pyc
+build
+dist
+MANIFEST
 src/cmdline/data

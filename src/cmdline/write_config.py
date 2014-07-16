@@ -4,7 +4,6 @@ import argparse
 import ctypes
 import json
 import sys
-import copy
 
 if not '..' in sys.path:
     sys.path.append('..')
@@ -12,7 +11,7 @@ if not '..' in sys.path:
 from comm import CANInterface
 from comm import XCPConnection
 from util import plugins
-from util import casts
+from util import dictconfig
 import argProc
 
 plugins.load_plugins()
@@ -47,41 +46,6 @@ def OpenInFile(name, id):
     else:
         return open(name.format(id), 'r')
 
-def SLOTScaleFactor(slot):
-    return float(slot['numerator']) / float(slot['denominator']) / pow(10.0, slot['decimals'])
-
-def WriteScalar(value, param, paramSpec, conn):
-    slot = paramSpec['slots'][param['slots'][-1]]
-    addr = param['addr']
-    addrext = 0 if not 'addrext' in param else param['addrext']
-    ptr = XCPConnection.Pointer(addr, addrext)
-    type = 'uint32' if not 'type' in slot else slot['type']
-    unscaledFloat = value / SLOTScaleFactor(slot)
-    raw = casts.poly(type, casts.uintTypeFor(type), unscaledFloat)
-    if casts.sizeof(type) == 4:
-        conn.download32(ptr, raw)
-    elif casts.sizeof(type) == 2:
-        conn.download16(ptr, raw)
-    elif casts.sizeof(type) == 1:
-        conn.download8(ptr, raw)
-    else:
-        raise ValueError
-
-def WriteParam(value, param, paramSpec, conn):
-    if len(param['slots']) == 1:
-        return WriteScalar(value, param, paramSpec, conn)
-    elif len(param['slots']) == 2:
-        indepSlot = paramSpec['slots'][param['slots'][0]]
-        length = indepSlot['max'] - indepSlot['min'] + 1
-        ret = [0.0] * length
-        paramIt = copy.deepcopy(param)
-        for idx in range(0, length):
-            paramIt['addr'] = param['addr'] + idx
-            ret[idx] = WriteScalar(value[idx], paramIt, paramSpec, conn)
-        return ret
-    else:
-        raise ValueError
-
 with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
     targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
     # If needed, ask the user to pick a slave from the list
@@ -110,7 +74,7 @@ with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
                 
                 conn.set_cal_page(args.paramSegment, 0)
                 for name in inDict:
-                    WriteParam(inDict[name], paramDict[name], paramSpec, conn)
+                    dictconfig.WriteParam(inDict[name], paramDict[name], paramSpec, conn)
                 
                 try:
                     conn.close()
