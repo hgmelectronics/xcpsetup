@@ -15,7 +15,7 @@ for param in paramSpec['parameters']:
     param['addr'] = int(paramSpec['globalEnums'][param['id']], 16) * 65536
     del param['id']
     param['addrext'] = 0
-    param['type'] = 'uint32'
+    param['type'] = 'int32'
 
 del paramSpec['globalEnums']
 
