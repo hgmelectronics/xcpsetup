@@ -704,52 +704,52 @@ slots:
 
   transmissionType1:
     encoding:
-      - {  value: "PowertrainType::NONE", string: "Unknown" }
-      - {  value: "PowertrainType::GM_4L60E", string: "GM 4L60E" }
-      - {  value: "PowertrainType::GM_4L60ET", string: "GM 4L60E Transaxle" }
-      - {  value: "PowertrainType::GM_4L70E", string: "GM 4L70 w/IMS" }
-      - {  value: "PowertrainType::GM_4L80E", string: "GM 4L80E" }
-      - {  value: "PowertrainType::GM_4T65E", string: "GM 4T65E" }
-      - {  value: "PowertrainType::GM_4T65E_IMS", string: "GM 4T65E w/IMS" }
-      - {  value: "PowertrainType::GM_4T80E", string: "GM 4T80E" }
-      - {  value: "PowertrainType::GM_4T80E_IMS", string: "GM 4T80E w/IMS" }
-      - {  value: "PowertrainType::FORD_4R100", string: "Ford 4R100 Non-PWM TCC" }
-      - {  value: "PowertrainType::FORD_4R100_PWM_TCC", string: "Ford 4R100 PWM TCC" }
-      - {  value: "PowertrainType::FORD_4R70W", string: "Ford 4R70W Non-PWM TCC" }
-      - {  value: "PowertrainType::FORD_4R70W_PWM_TCC", string: "Ford 4R70W PWM TCC" }
-      - {  value: "PowertrainType::FORD_4R75W", string: "Ford 4R75W Non-PWM TCC" }
-      - {  value: "PowertrainType::FORD_4R75W_PWM_TCC", string: "Ford 4R75W PWM TCC" }
-      - {  value: "PowertrainType::FORD_AODE", string: "Ford AODE Non-PWM TCC" }
-      - {  value: "PowertrainType::FORD_AODE_PWM_TCC", string: "Ford AODE PWM TCC" }
-      - {  value: "PowertrainType::FORD_E4OD", string: "Ford E4OD Non-PWM TCC" }
-      - {  value: "PowertrainType::FORD_E4OD_PWM_TCC", string: "Ford E4OD PWM TCC" }
-      - {  value: "PowertrainType::FORD_E4OD_RABS", string: "Ford E4OD Non-PWM TCC RABS" }
-      - {  value: "PowertrainType::FORD_E4OD_PWM_TCC_RABS", string: "Ford E4OD PWM TCC RABS" }
-      - {  value: "PowertrainType::FORD_5R110", string: "Ford 5R110" }
-      - {  value: "PowertrainType::ZF_4HP24_US", string: "ZF 4HP24 w/D2 switch" }
-      - {  value: "PowertrainType::ZF_4HP24_EU", string: "ZF 4HP24 w/P38 switch" }
-      - {  value: "PowertrainType::ZF_4HP24_HGM", string: "ZF 4HP24 w/HGM Lever Sensor" }
-      - {  value: "PowertrainType::NISSAN_RE4R03A", string: "Nissan RE4R03A" }
-      - {  value: "PowertrainType::TOYOTA_A442", string: "Toyota 442F" }
-      - {  value: "PowertrainType::TOYOTA_A442_PCS", string: "Toyota 442F w/PCS" }
-      - {  value: "PowertrainType::TOYOTA_A340", string: "Toyota A340" }
-      - {  value: "PowertrainType::TOYOTA_A341", string: "Toyota A341" }
-      - {  value: "PowertrainType::TOYOTA_A343", string: "Toyota A343" }
-      - {  value: "PowertrainType::TOYOTA_AB60", string: "Toyota AB60" }
-      - {  value: "PowertrainType::ALLISON_3000_G3", string: "Allison 3000 Gen 3" }
-      - {  value: "PowertrainType::EBUS_MRPCS", string: "Ebus MRPCS" }
-      - {  value: "PowertrainType::EBUS_SRMCS", string: "Ebus SRMCS" }
-      - {  value: "PowertrainType::DART_MACHINE_3_SPEED", string: "Dart Machine 3 Speed" }
-      - {  value: "PowertrainType::ZEROTRUCK", string: "ZeroTruck / Dart Machine 3 Speed" }
-      - {  value: "PowertrainType::DART_MACHINE_2_SPEED", string: "Dart Machine 2 Speed" }
-      - {  value: "PowertrainType::NOMAD_NISSAN_RE4R03A", string: "Nomad Nissan RE4R03A" }
-      - {  value: "PowertrainType::NOMAD_TOYOTA_A442", string: "Nomad Toyota 442F" }
-      - {  value: "PowertrainType::NOMAD_GM_4L80E", string: "Nomad GM 4L80E" }
-      - {  value: "PowertrainType::NOMAD_TOYOTA_A442_PCS", string: "Nomad Toyota 442F w/PCS" }
-      - {  value: "PowertrainType::NOMAD_GM_4L60E", string: "Nomad GM 4L60E" }
-      - {  value: "PowertrainType::HGM_4L80E6", string: "HGM 4L80E 6 Speed" }
-      - {  value: "PowertrainType::MERCEDES_NAG1_JEEP_CHEROKEE", string: "Mercedes NAG1 / 2006 Jeep Cherokee" }
-      - {  value: "PowertrainType::MDENGINEERING_MERCEDES_NAG1", string: "MDEngineering NAG1"}
+      - {  value: "PowertrainType_NONE", string: "Unknown" }
+      - {  value: "PowertrainType_GM_4L60E", string: "GM 4L60E" }
+      - {  value: "PowertrainType_GM_4L60ET", string: "GM 4L60E Transaxle" }
+      - {  value: "PowertrainType_GM_4L70E", string: "GM 4L70 w/IMS" }
+      - {  value: "PowertrainType_GM_4L80E", string: "GM 4L80E" }
+      - {  value: "PowertrainType_GM_4T65E", string: "GM 4T65E" }
+      - {  value: "PowertrainType_GM_4T65E_IMS", string: "GM 4T65E w/IMS" }
+      - {  value: "PowertrainType_GM_4T80E", string: "GM 4T80E" }
+      - {  value: "PowertrainType_GM_4T80E_IMS", string: "GM 4T80E w/IMS" }
+      - {  value: "PowertrainType_FORD_4R100", string: "Ford 4R100 Non-PWM TCC" }
+      - {  value: "PowertrainType_FORD_4R100_PWM_TCC", string: "Ford 4R100 PWM TCC" }
+      - {  value: "PowertrainType_FORD_4R70W", string: "Ford 4R70W Non-PWM TCC" }
+      - {  value: "PowertrainType_FORD_4R70W_PWM_TCC", string: "Ford 4R70W PWM TCC" }
+      - {  value: "PowertrainType_FORD_4R75W", string: "Ford 4R75W Non-PWM TCC" }
+      - {  value: "PowertrainType_FORD_4R75W_PWM_TCC", string: "Ford 4R75W PWM TCC" }
+      - {  value: "PowertrainType_FORD_AODE", string: "Ford AODE Non-PWM TCC" }
+      - {  value: "PowertrainType_FORD_AODE_PWM_TCC", string: "Ford AODE PWM TCC" }
+      - {  value: "PowertrainType_FORD_E4OD", string: "Ford E4OD Non-PWM TCC" }
+      - {  value: "PowertrainType_FORD_E4OD_PWM_TCC", string: "Ford E4OD PWM TCC" }
+      - {  value: "PowertrainType_FORD_E4OD_RABS", string: "Ford E4OD Non-PWM TCC RABS" }
+      - {  value: "PowertrainType_FORD_E4OD_PWM_TCC_RABS", string: "Ford E4OD PWM TCC RABS" }
+      - {  value: "PowertrainType_FORD_5R110", string: "Ford 5R110" }
+      - {  value: "PowertrainType_ZF_4HP24_US", string: "ZF 4HP24 w/D2 switch" }
+      - {  value: "PowertrainType_ZF_4HP24_EU", string: "ZF 4HP24 w/P38 switch" }
+      - {  value: "PowertrainType_ZF_4HP24_HGM", string: "ZF 4HP24 w/HGM Lever Sensor" }
+      - {  value: "PowertrainType_NISSAN_RE4R03A", string: "Nissan RE4R03A" }
+      - {  value: "PowertrainType_TOYOTA_A442", string: "Toyota 442F" }
+      - {  value: "PowertrainType_TOYOTA_A442_PCS", string: "Toyota 442F w/PCS" }
+      - {  value: "PowertrainType_TOYOTA_A340", string: "Toyota A340" }
+      - {  value: "PowertrainType_TOYOTA_A341", string: "Toyota A341" }
+      - {  value: "PowertrainType_TOYOTA_A343", string: "Toyota A343" }
+      - {  value: "PowertrainType_TOYOTA_AB60", string: "Toyota AB60" }
+      - {  value: "PowertrainType_ALLISON_3000_G3", string: "Allison 3000 Gen 3" }
+      - {  value: "PowertrainType_EBUS_MRPCS", string: "Ebus MRPCS" }
+      - {  value: "PowertrainType_EBUS_SRMCS", string: "Ebus SRMCS" }
+      - {  value: "PowertrainType_DART_MACHINE_3_SPEED", string: "Dart Machine 3 Speed" }
+      - {  value: "PowertrainType_ZEROTRUCK", string: "ZeroTruck / Dart Machine 3 Speed" }
+      - {  value: "PowertrainType_DART_MACHINE_2_SPEED", string: "Dart Machine 2 Speed" }
+      - {  value: "PowertrainType_NOMAD_NISSAN_RE4R03A", string: "Nomad Nissan RE4R03A" }
+      - {  value: "PowertrainType_NOMAD_TOYOTA_A442", string: "Nomad Toyota 442F" }
+      - {  value: "PowertrainType_NOMAD_GM_4L80E", string: "Nomad GM 4L80E" }
+      - {  value: "PowertrainType_NOMAD_TOYOTA_A442_PCS", string: "Nomad Toyota 442F w/PCS" }
+      - {  value: "PowertrainType_NOMAD_GM_4L60E", string: "Nomad GM 4L60E" }
+      - {  value: "PowertrainType_HGM_4L80E6", string: "HGM 4L80E 6 Speed" }
+      - {  value: "PowertrainType_MERCEDES_NAG1_JEEP_CHEROKEE", string: "Mercedes NAG1 / 2006 Jeep Cherokee" }
+      - {  value: "PowertrainType_MDENGINEERING_MERCEDES_NAG1", string: "MDEngineering NAG1"}
 
   transmissionOilLevelMeasurementStatus:
     encoding:
@@ -910,8 +910,21 @@ slots:
     radixPoint: 1
 
 permissions:
+  ACL_NONE: &ACL_NONE 0
   ACL_READ_ONLY: &ACL_READ_ONLY 0
   ADVICE_READ_ONLY: &ADVICE_NONE 0
+  ACL_DIAGNOSTIC: &ACL_DIAGNOSTIC 0
+  ACL_SETUP: &ACL_SETUP 0
+  ACL_SECURITY_CODE: &ACL_SECURITY_CODE 0
+  ACL_SETUP_SECURITY_CODE: &ACL_SETUP_SECURITY_CODE 0
+  ACL_CALIBRATE: &ACL_CALIBRATE 0
+
+advice:
+  ADVICE_RESET_ADVISED: &ADVICE_RESET_ADVISED 0
+
+
+
+
 
 #  /*
 #   * Never visible, never saved.
@@ -962,1278 +975,1277 @@ params:
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "COMPUSHIFT CS II Software Version"
-    axes: [ "SLOTRegistry::count", "SLOTRegistry::count" ]
+    axes: [ "SLOTRegistry_count", "SLOTRegistry_count" ]
 
   controllerHeapSize:
     address: *CONTROLLER_HEAP_SIZE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Heap Size"
-    axes: [ SLOTRegistry::count ]
+    axes: [ SLOTRegistry_count ]
 
   controllerHeapUsed:
     address: *CONTROLLER_HEAP_USED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Heap Used"
-    axes: [ SLOTRegistry::count ]
+    axes: [ SLOTRegistry_count ]
 
   transmissionGears:
     address: *TRANSMISSION_GEARS
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transmission Gears"
-    axes: [ SLOTRegistry::gear1, SLOTRegistry::count ]
+    axes: [ SLOTRegistry_gear1, SLOTRegistry_count ]
 
   transmissionRatios:
     address: *TRANSMISSION_RATIOS
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transmission Gear Ratios"
-    axes: [ SLOTRegistry::ratio1, SLOTRegistry::count ]
+    axes: [ SLOTRegistry_ratio1, SLOTRegistry_count ]
 
   transmissionTCCMinGear:
     address: *TRANSMISSION_TCC_MIN_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transmission TCC Min Gear"
-    axes: [ SLOTRegistry::gear1 ]
+    axes: [ SLOTRegistry_gear1 ]
 
   transmissionRatio:
     address: *TRANSMISSION_RATIO
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transmission Gear Ratio"
-    axes: [ SLOTRegistry::ratio1 ]
+    axes: [ SLOTRegistry_ratio1 ]
 
   diagnosticMode:
     address: *DIAGNOSTIC_MODE
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Diagnostic Mode"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   transmissionClutchFillTime:
     - address: *TRANSMISSION_CLUTCH_FILL_TIME_1
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 1 Fill Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_FILL_TIME_2
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 2 Fill Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_FILL_TIME_3
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 3 Fill Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_FILL_TIME_4
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 4 Fill Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_FILL_TIME_5
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 5 Fill Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_FILL_TIME_6
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 6 Fill Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_FILL_TIME_7
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 7 Fill Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_FILL_TIME_8
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 8 Fill Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ] ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
 
   transmissionClutchEmptyTime:
     - address: *TRANSMISSION_CLUTCH_EMPTY_TIME_1
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 1 Empty Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_EMPTY_TIME_2
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 2 Empty Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_EMPTY_TIME_3
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 3 Empty Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_EMPTY_TIME_4
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 4 Empty Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_EMPTY_TIME_5
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 5 Empty Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_EMPTY_TIME_6
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 6 Empty Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_EMPTY_TIME_7
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 7 Empty Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
     - address: *TRANSMISSION_CLUTCH_EMPTY_TIME_8
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Clutch 8 Empty Time"
-      axes:  [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::percentage3 ] ]
+      axes:  [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_percentage3 ]
 
   transmissionClutchApplyTime:
     address: *TRANSMISSION_CLUTCH_APPLY_TIME
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Clutch Apply Time"
-    axes: [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::clutchId ]
+    axes: [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_clutchId ]
 
   transmissionClutchReleaseTime:
     address: *TRANSMISSION_CLUTCH_RELEASE_TIME
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Clutch Release Time"
-    axes: [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::clutchId ]
+    axes: [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_clutchId ]
 
   transmissionClutchPrefillTime:
     address: *TRANSMISSION_CLUTCH_PREFILL_TIME
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Clutch Prefill Time"
-    axes: [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::clutchId ]
+    axes: [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_clutchId ]
 
   transmissionClutchPrefillPressure:
     address: *TRANSMISSION_CLUTCH_PREFILL_PRESSURE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Clutch Prefill Pressure"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::clutchId ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_clutchId ]
 
   transmissionClutchApplyPressure:
     address: *TRANSMISSION_CLUTCH_APPLY_PRESSURE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Clutch Apply Pressure"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::clutchId ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_clutchId ]
 
   transmissionShiftPrefillTime:
     address: *TRANSMISSION_SHIFT_PREFILL_TIME
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Shift Prefill Time"
-    axes: [ SLOTRegistry::timeMilliseconds1, SLOTRegistry::upshiftDownShiftTableIndex ]
+    axes: [ SLOTRegistry_timeMilliseconds1, SLOTRegistry_upshiftDownShiftTableIndex ]
 
   transmissionShiftPrefillPressure:
     address: *TRANSMISSION_SHIFT_PREFILL_PRESSURE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Shift Prefill Pressure"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::upshiftDownShiftTableIndex ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_upshiftDownShiftTableIndex ]
 
   transmissionShiftApplyPressure:
     address: *TRANSMISSION_SHIFT_APPLY_PRESSURE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Shift Overlap Percentage"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::upshiftDownShiftTableIndex ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_upshiftDownShiftTableIndex ]
 
   transmissionTemperaturePressureCompensation:
     address: *TRANSMISSION_PRESSURE_TEMPERATURE_COMPENSATION
     access: *ACL_SETUP
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Trans. Pressure vs. Temp. Compensation"
-    axes:  [ SLOTRegistry::percentage1, SLOTRegistry::tempTableIndex1 ]
+    axes:  [ SLOTRegistry_percentage1, SLOTRegistry_tempTableIndex1 ]
 
   transmissionClutchPressure:
     - address: *TRANSMISSION_CLUTCH_1_PRESSURE
       access: *ACL_DIAGNOSTIC
       advice: *ADVICE_NONE
       description: "Clutch 1 Pressure"
-      axes:  [ SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1 ]
     - address: *TRANSMISSION_CLUTCH_2_PRESSURE
       access: *ACL_DIAGNOSTIC
       advice: *ADVICE_NONE
       description: "Clutch 2 Pressure"
-      axes:  [ SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1 ]
     - address: *TRANSMISSION_CLUTCH_3_PRESSURE
       access: *ACL_DIAGNOSTIC
       advice: *ADVICE_NONE
       description: "Clutch 3 Pressure"
-      axes:  [ SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1 ]
     - address: *TRANSMISSION_CLUTCH_4_PRESSURE
       access: *ACL_DIAGNOSTIC
       advice: *ADVICE_NONE
       description: "Clutch 4 Pressure"
-      axes:  [ SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1 ]
     - address: *TRANSMISSION_CLUTCH_5_PRESSURE
       access: *ACL_DIAGNOSTIC
       advice: *ADVICE_NONE
       description: "Clutch 5 Pressure"
-      axes:  [ SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1 ]
     - address: *TRANSMISSION_CLUTCH_6_PRESSURE
       access: *ACL_DIAGNOSTIC
       advice: *ADVICE_NONE
       description: "Clutch 6 Pressure"
-      axes:  [ SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1 ]
     - address: *TRANSMISSION_CLUTCH_7_PRESSURE
       access: *ACL_DIAGNOSTIC
       advice: *ADVICE_NONE
       description: "Clutch 7 Pressure"
-      axes:  [ SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1 ]
     - address: *TRANSMISSION_CLUTCH_8_PRESSURE
       access: *ACL_DIAGNOSTIC
       advice: *ADVICE_NONE
       description: "Clutch 8 Pressure"
-      axes:  [ SLOTRegistry::percentage1 ] ]
+      axes:  [ SLOTRegistry_percentage1 ]
 
   transmissionShiftSynchronizationTolerance:
     address: *TRANSMISSION_SHIFT_SYNCHRONIZATION_TOLERANCE
     access: *ACL_SETUP
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Shift Sync. Tolerance"
-    axes:  [ SLOTRegistry::rpm1 ]
+    axes:  [ SLOTRegistry_rpm1 ]
 
   transmissionShiftSynchronizationDuration:
     address: *TRANSMISSION_SHIFT_SYNCHRONIZATION_DURATION
     access: *ACL_SETUP
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Shift Sync. Duration"
-    axes:  [ SLOTRegistry::timeMilliseconds1 ]
+    axes:  [ SLOTRegistry_timeMilliseconds1 ]
 
   shiftSelectorGear:
     address: *SHIFT_SELECTOR_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Shift Lever Position"
-    axes: [ SLOTRegistry::gear1 ]
+    axes: [ SLOTRegistry_gear1 ]
 
   shiftSelectorSensorVoltage:
     address: *SHIFT_SELECTOR_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Shift Lever Sensor Voltage"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   controllerMode:
-    address: *CONTROLLER_MODE, //
+    address: *CONTROLLER_MODE
     access:  *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Controller A/B Mode"
-    axes:  [ SLOTRegistry::abMode ]
+    axes:  [ SLOTRegistry_abMode ]
 
   pressureSelectedPercentage:
     address: *PRESSURE_SELECTED_PERCENTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Selected Pressure %"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   pressureCurrentPercentage:
     address: *PRESSURE_CURRENT_PERCENTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Current Pressure %"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   transmissionMainLinePressure:
     address: *TRANSMISSION_MAIN_PRESSURE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transmission Main Pressure"
-    axes: [ SLOTRegistry::pressure ]
+    axes: [ SLOTRegistry_pressure ]
 
   tccSelectedState:
     address: *TCC_SELECTED_STATE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Selected TCC State"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   tccCurrentState:
     address: *TCC_CURRENT_STATE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Current TCC State"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   transmissionInputShaftSpeed:
     address: *TRANSMISSION_INPUT_SHAFT_SPEED
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Transmission Input Shaft Speed"
-    axes:  [ SLOTRegistry::rpm1 ]
+    axes:  [ SLOTRegistry_rpm1 ]
 
   transmissionOutputShaftSpeed:
     address: *TRANSMISSION_OUTPUT_SHAFT_SPEED
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Transmission Output Shaft Speed"
-    axes:  [ SLOTRegistry::rpm1 ]
+    axes:  [ SLOTRegistry_rpm1 ]
 
   vehicleSpeedSensorSpeed:
     address: *VEHICLE_SPEED_SENSOR_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Vehicle Speed Sensor Speed"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   brakeSwitch:
     address: *BRAKE_SWITCH
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Brake Switch"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   rightFrontWheelSpeed:
     address: *RIGHT_FRONT_WHEEL_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Right Front Wheel Speed"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   leftFrontWheelSpeed:
     address: *LEFT_FRONT_WHEEL_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Left Front Wheel Speed"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   rightRearWheelSpeed:
     address: *RIGHT_REAR_WHEEL_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Right Rear Wheel Speed"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   leftRearWheelSpeed:
     address: *LEFT_REAR_WHEEL_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Left Rear Wheel Speed"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   transmissionSlip:
     address: *TRANSMISSION_SLIP
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transmission Slip"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   transmissionTorqueConverterSlip:
     address: *TRANSMISSION_TORQUE_CONVERTER_SLIP
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Torque Converter Slip"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   transmissionShaftSpeed:
     - address: *TRANSMISSION_SHAFT_SPEED_1
       access: *ACL_READ_ONLY
       advice: *ADVICE_NONE
       description: "Transmission Shaft 1 Speed"
-      axes:  [ SLOTRegistry::rpm1 ]
+      axes:  [ SLOTRegistry_rpm1 ]
     - address: *TRANSMISSION_SHAFT_SPEED_2
       access: *ACL_READ_ONLY
       advice: *ADVICE_NONE
       description: "Transmission Shaft 2 Speed"
-      axes:  [ SLOTRegistry::rpm1 ]
+      axes:  [ SLOTRegistry_rpm1 ]
     - address: *TRANSMISSION_SHAFT_SPEED_3
       access: *ACL_READ_ONLY
       advice: *ADVICE_NONE
       description: "Transmission Shaft 3 Speed"
-      axes:  [ SLOTRegistry::rpm1 ]
+      axes:  [ SLOTRegistry_rpm1 ]
     - address: *TRANSMISSION_SHAFT_SPEED_4
       access: *ACL_READ_ONLY
       advice: *ADVICE_NONE
       description: "Transmission Shaft 4 Speed"
-      axes:  [ SLOTRegistry::rpm1 ]
+      axes:  [ SLOTRegistry_rpm1 ]
     - address: *TRANSMISSION_SHAFT_SPEED_5
       access: *ACL_READ_ONLY
       advice: *ADVICE_NONE
       description: "Transmission Shaft 5 Speed"
-      axes:  [ SLOTRegistry::rpm1 ]
+      axes:  [ SLOTRegistry_rpm1 ]
     - address: *TRANSMISSION_SHAFT_SPEED_6
       access: *ACL_READ_ONLY
       advice: *ADVICE_NONE
       description: "Transmission Shaft 6 Speed"
-      axes:  [ SLOTRegistry::rpm1 ] ]
+      axes:  [ SLOTRegistry_rpm1 ]
 
   transmissionTemperature:
     address: *TRANSMISSION_OIL_TEMPERATURE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transmission Temperature"
-    axes: [ SLOTRegistry::temperature1 ]
+    axes: [ SLOTRegistry_temperature1 ]
 
   transmissionOilLevel:
     address: *TRANSMISSION_OIL_LEVEL
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transmission Oil Level"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   transmissionOilLevelMeasurementStatus:
     address: *TRANSMISSION_OIL_LEVEL_MEASUREMENT_STATUS
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Transmission Oil Level Status"
-    axes:  [ SLOTRegistry::transmissionOilLevelMeasurementStatus ]
+    axes:  [ SLOTRegistry_transmissionOilLevelMeasurementStatus ]
 
   transmissionOilLevelSettlingTime:
     address: *TRANSMISSION_OIL_LEVEL_SETTLING_TIME
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Transmission Oil Settling Time"
-    axes:  [ SLOTRegistry::timeSeconds1 ]
+    axes:  [ SLOTRegistry_timeSeconds1 ]
 
   shiftCurrentGear:
     address: *SHIFT_CURRENT_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Current Gear"
-    axes: [ SLOTRegistry::gear1 ]
+    axes: [ SLOTRegistry_gear1 ]
 
   shiftSelectedGear:
     address: *SHIFT_SELECTED_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Selected Gear"
-    axes: [ SLOTRegistry::gear1 ]
+    axes: [ SLOTRegistry_gear1 ]
 
   shiftControlMode:
     address: *SHIFT_CONTROL_MODE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Shift Control Mode"
-    axes: [ SLOTRegistry::controlMode ]
+    axes: [ SLOTRegistry_controlMode ]
 
   shiftDiagnosticGear:
     address: *SHIFT_DIAGNOSTIC_GEAR
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Diagnostic Gear"
-    axes:  [ SLOTRegistry::gear1 ]
+    axes:  [ SLOTRegistry_gear1 ]
 
   shiftLowestPossibleGear:
     address: *SHIFT_LOWEST_POSSIBLE_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Lowest Possible Gear"
-    axes: [ SLOTRegistry::gear1 ]
+    axes: [ SLOTRegistry_gear1 ]
 
   shiftRecommendedGear:
     address: *SHIFT_RECOMMENDED_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Recommended Gear"
-    axes: [ SLOTRegistry::gear1 ]
+    axes: [ SLOTRegistry_gear1 ]
 
   shiftHighestPossibleGear:
     address: *SHIFT_HIGHEST_POSSIBLE_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Highest Possible Gear"
-    axes: [ SLOTRegistry::gear1 ]
+    axes: [ SLOTRegistry_gear1 ]
 
   shiftRequestedGear:
     address: *SHIFT_REQUESTED_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Requested Gear"
-    axes: [ SLOTRegistry::gear1 ]
+    axes: [ SLOTRegistry_gear1 ]
 
   resetDefaults:
     address: *RESET_DEFAULTS
     access: *ACL_SETUP
     advice: CONFIRM_THEN_RESET, "Reset to Defaults"
-    axes: [ SLOTRegistry::resetDefaults ]
+    axes: [ SLOTRegistry_resetDefaults ]
 
   securityCode:
     address: *SECURITY_CODE
     access: *ACL_SECURITY_CODE
     advice: *ADVICE_NONE
     description: "Security Code"
-    axes:  [ SLOTRegistry::securityCode ]
+    axes:  [ SLOTRegistry_securityCode ]
 
   setupSecurityCode:
-    address: *SETUP_SECURITY_CODE,
+    address: *SETUP_SECURITY_CODE
     access: *ACL_SETUP_SECURITY_CODE
     advice: RESET_ADVISED
     description: "Set Security Code"
-    axes:  [ SLOTRegistry::securityCode ]
+    axes:  [ SLOTRegistry_securityCode ]
 
   powertrainType:
     address: *TRANSMISSION_TYPE
     access: *ACL_SETUP
     advice: CONFIRM_THEN_RESET_VARIATION
     description: "Transmission Type"
-    axes: [ SLOTRegistry::transmissionType1 ]
+    axes: [ SLOTRegistry_transmissionType1 ]
 
   variation:
     address: *VARIATION
     access: *ACL_SETUP
     advice: CONFIRM_THEN_RESET_VARIATION
     description: "Engine Type"
-    axes: [ SLOTRegistry::variationTypes ]
+    axes: [ SLOTRegistry_variationTypes ]
 
   pressureR2LBoostA:
     address: *PRESSURE_R2L_BOOST_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "R2L Pressure Boost A"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   pressureR2LBoostB:
     address: *PRESSURE_R2L_BOOST_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "R2L Pressure Boost B"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   displayColor:
     address: *DISPLAY_COLOR
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Display Color"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::colorIndex ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_colorIndex ]
 
   displayBrightness:
     address: *DISPLAY_BRIGHTNESS
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Display Brightness"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   displayContrast:
     address: *DISPLAY_CONTRAST
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Display Contrast"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   shiftDownshiftOffsetA:
     address: *SHIFT_DOWNSHIFT_OFFSET_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Downshift Offset A"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   shiftDownshiftOffsetB:
     address: *SHIFT_DOWNSHIFT_OFFSET_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Downshift Offset B"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   engineCylinders:
     address: *ENGINE_CYLINDERS
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Number of Engine Cylinders"
-    axes: [ SLOTRegistry::cylinders ]
+    axes: [ SLOTRegistry_cylinders ]
 
   engineIdleShutdownTime:
     address: *ENGINE_IDLE_SHUTDOWN_TIME
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Engine Idle Shutdown Time"
-    axes: [ SLOTRegistry::timeInSecondsZeroIsDisabled ]
+    axes: [ SLOTRegistry_timeInSecondsZeroIsDisabled ]
 
   finalDriveRatio:
     address: *FINAL_DRIVE_RATIO
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Final Drive Ratio"
-    axes:  [ SLOTRegistry::ratio1 ]
+    axes:  [ SLOTRegistry_ratio1 ]
 
   can0BaudRate:
     address: *CAN0_BAUD_RATE
     access: *ACL_SETUP
     advice: RESET_ADVISED, "CAN0 Baud Rate"
-    axes: [ SLOTRegistry::kiloBaud ]
+    axes: [ SLOTRegistry_kiloBaud ]
 
   can1BaudRate:
     address: *CAN1_BAUD_RATE
     access: *ACL_SETUP
     advice: RESET_ADVISED, "CAN1 Baud Rate"
-    axes: [ SLOTRegistry::kiloBaud ]
+    axes: [ SLOTRegistry_kiloBaud ]
 
   j1939Transmissionaddress:
     address: *J1939_TRANSMISSION_ADDRESS
     access: *ACL_SETUP
     advice: RESET_ADVISED, "J1939 Transmission Address"
-    axes: [ SLOTRegistry::j1939Address ]
+    axes: [ SLOTRegistry_j1939Address ]
 
   j1939Engineaddress:
     address: *J1939_ENGINE_ADDRESS
     access: *ACL_SETUP
     advice: RESET_ADVISED, "J1939 Engine Address"
-    axes: [ SLOTRegistry::j1939Address ]
+    axes: [ SLOTRegistry_j1939Address ]
 
   j1939ShiftSelectoraddress:
     address: *J1939_SHIFT_SELECTOR_ADDRESS
     access: *ACL_SETUP
     advice: RESET_ADVISED,
     description: "J1939 Shift Selector Address"
-    axes:  [ SLOTRegistry::j1939Address ]
+    axes:  [ SLOTRegistry_j1939Address ]
 
   xcpCTOId:
     address: *XCP_CTO_ID
     access: *ACL_SETUP
     advice: RESET_ADVISED, "XCP CRO Id"
-    axes: [ SLOTRegistry::hex32bit ]
+    axes: [ SLOTRegistry_hex32bit ]
 
   xcpDTOId:
     address: *XCP_DTO_ID
     access: *ACL_SETUP
     advice: RESET_ADVISED, "XCP DTO Id"
-    axes: [ SLOTRegistry::hex32bit ]
+    axes: [ SLOTRegistry_hex32bit ]
 
   shiftManualModeA:
     address: *SHIFT_MANUAL_MODE_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Shift Control Mode A"
-    axes: [ SLOTRegistry::booleanManualMode ]
+    axes: [ SLOTRegistry_booleanManualMode ]
 
   shiftManualModeB:
     address: *SHIFT_MANUAL_MODE_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Shift Control Mode B"
-    axes: [ SLOTRegistry::booleanManualMode ]
+    axes: [ SLOTRegistry_booleanManualMode ]
 
   tccManualModeA:
     address: *TCC_MANUAL_MODE_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Control Mode A"
-    axes: [ SLOTRegistry::booleanManualMode ]
+    axes: [ SLOTRegistry_booleanManualMode ]
 
   tccManualModeB:
     address: *TCC_MANUAL_MODE_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Control Mode B"
-    axes: [ SLOTRegistry::booleanManualMode ]
+    axes: [ SLOTRegistry_booleanManualMode ]
 
   tccControlMode:
     address: *TCC_CONTROL_MODE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "TCC Control Mode"
-    axes: [ SLOTRegistry::controlMode ]
+    axes: [ SLOTRegistry_controlMode ]
 
   shiftMaxEngineSpeedA:
     address: *SHIFT_MAX_ENGINE_SPEED_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Max. Engine Speed A"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   shiftMaxEngineSpeedB:
     address: *SHIFT_MAX_ENGINE_SPEED_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Max. Engine Speed B"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   pressureAdjustA:
     address: *PRESSURE_ADJUST_A
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Pressure Adjust A"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   pressureAdjustB:
     address: *PRESSURE_ADJUST_B
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Pressure Adjust B"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   pressureTablesA:
     - address: *PRESSURE_TABLES_A_1
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 1 A"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_A_2
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 2 A"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_A_3
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 3 A"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_A_4
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 4 A"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_A_5
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 5 A"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_A_6
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 6 A"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ] ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
 
   pressureTablesB:
     - address: *PRESSURE_TABLES_B_1
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 1 B"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_B_2
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 2 B"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_B_3
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 3 B"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_B_4
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 4 B"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_B_5
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 5 B"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
     - address: *PRESSURE_TABLES_B_6
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Pressure Gear 6 B"
-      axes:  [ SLOTRegistry::percentage1, SLOTRegistry::percentage1 ] ]
+      axes:  [ SLOTRegistry_percentage1, SLOTRegistry_percentage1 ]
 
   shiftSpeedAdjustA:
     address: *SHIFT_SPEED_ADJUST_A
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Shift Speed Adjust A"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   shiftSpeedAdjustB:
     address: *SHIFT_SPEED_ADJUST_B
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Shift Speed Adjust B"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   shiftTablesA:
     - address: *SHIFT_TABLES_A_1
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 1-2 A"
-      axes:  [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
     - address: *SHIFT_TABLES_A_2
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 2-3 A"
-      axes:  [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
     - address: *SHIFT_TABLES_A_3
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 3-4 A"
-      axes:  [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
     - address: *SHIFT_TABLES_A_4
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 4-5 A"
-      axes:  [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
     - address: *SHIFT_TABLES_A_5
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 5-6 A"
-      axes:  [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ] ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
 
   shiftTablesB:
     - address: *SHIFT_TABLES_B_1
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 1-2 B"
-      axes:  axes: [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
     - address: *SHIFT_TABLES_B_2
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 2-3 B"
-      axes:  [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
     - address: *SHIFT_TABLES_B_3
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 3-4 B"
-      axes:  axes: [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
     - address: *SHIFT_TABLES_B_4
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 4-5 B"
-      axes:  [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
     - address: *SHIFT_TABLES_B_5
       access: *ACL_SETUP
       advice: *ADVICE_NONE
       description: "Shift Speed 5-6 B"
-      axes:  [ SLOTRegistry::tossRPMAsSpeed, SLOTRegistry::percentage1 ] ]
+      axes:  [ SLOTRegistry_tossRPMAsSpeed, SLOTRegistry_percentage1 ]
 
   tccDisableTOSSPercentA:
     address: *TCC_DISABLE_TOSS_PERCENT_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Disable Percentage A"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   tccDisableTOSSPercentB:
     address: *TCC_DISABLE_TOSS_PERCENT_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Disable Percentage B"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   tccEnableGearA:
     address: *TCC_ENABLE_GEAR_A
-      ACL_SETUP
+    access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Enable Gear A"
-    axes:  [ SLOTRegistry::gear1 ]
+    axes:  [ SLOTRegistry_gear1 ]
 
   tccEnableGearB:
     address: *TCC_ENABLE_GEAR_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Enable Gear B"
-    axes:  [ SLOTRegistry::gear1 ]
+    axes:  [ SLOTRegistry_gear1 ]
 
   tccEnableTOSSA:
     address: *TCC_ENABLE_TOSS_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Enable Speed A"
-    axes: [ SLOTRegistry::tossRPMAsSpeed ]
+    axes: [ SLOTRegistry_tossRPMAsSpeed ]
 
   tccEnableTOSSB:
     address: *TCC_ENABLE_TOSS_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Enable Speed B"
-    axes: [ SLOTRegistry::tossRPMAsSpeed ]
+    axes: [ SLOTRegistry_tossRPMAsSpeed ]
 
   tccMaxThrottleA:
     address: *TCC_MAX_THROTTLE_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Max. Throttle A"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   tccMaxThrottleB:
     address: *TCC_MAX_THROTTLE_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Max. Throttle B"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   tccMinThrottleA:
     address: *TCC_MIN_THROTTLE_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Min. Throttle A"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   tccMinThrottleB:
     address: *TCC_MIN_THROTTLE_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TCC Min. Throttle B"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   tireDiameter:
     address: *TIRE_DIAMETER
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Tire Diameter"
-    axes:  [ SLOTRegistry::length ]
+    axes:  [ SLOTRegistry_length ]
 
   transferCaseRatio:
     address: *TRANSFER_CASE_RATIO
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Transfer Case Ratio"
-    axes: [ SLOTRegistry::ratio1 ]
+    axes: [ SLOTRegistry_ratio1 ]
 
   vehicleMass:
     address: *VEHICLE_MASS
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Vehicle Weight"
-    axes:  [ SLOTRegistry::mass ]
+    axes:  [ SLOTRegistry_mass ]
 
   voltageTPSVoltage:
     address: *VOLTAGE_TPS_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Throttle Position Sensor"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   voltageTPSIsReversed:
     address: *VOLTAGE_TPS_IS_REVERSED
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TPS Direction"
-    axes: [ SLOTRegistry::booleanNormalReversed ]
+    axes: [ SLOTRegistry_booleanNormalReversed ]
 
   voltageTPSCalibrationHigh:
     address: *VOLTAGE_TPS_CALIBRATION_HIGH
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "TPS High Calibration"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   voltageTPSCalibrationLow:
     address: *VOLTAGE_TPS_CALIBRATION_LOW
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "TPS Low Calibration"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   voltageTPSGroundEnable:
     address: *VOLTAGE_TPS_GROUND_ENABLE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "TPS Ground"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   voltageTPSFilterOrder:
     address: *VOLTAGE_TPS_FILTER_ORDER
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Throttle Filter Size"
-    axes: [ SLOTRegistry::timeMilliseconds1 ]
+    axes: [ SLOTRegistry_timeMilliseconds1 ]
 
   voltageMAPSensorVoltage:
     address: *VOLTAGE_MAP_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "MAP Sensor Voltage"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   voltageMAPSensorHighCalibration:
     address: *VOLTAGE_MAP_SENSOR_HIGH_CALIBRATION
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "MAP Sensor High Calibration"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   voltageMAPSensorLowCalibration:
     address: *VOLTAGE_MAP_SENSOR_LOW_CALIBRATION
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "MAP Sensor Low Calibration"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   voltageMAPSensorGroundEnable:
     address: *VOLTAGE_MAP_SENSOR_GROUND_ENABLE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "MAP Sensor Ground"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   transmissionTempBiasEnable:
     address: *TRANSMISSION_TEMP_BIAS_ENABLE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Transmission Temp Sensor Bias"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   transmissionHasLinePressureSensor:
     address: *TRANSMISSION_MAIN_PRESSURE_SENSOR_PRESENT
     access: *ACL_SETUP
-    advice: *ADVICE_RESET_ADVISED,
+    advice: *ADVICE_RESET_ADVISED
     description: "Transmission Pressure Sensor"
-    axes:  [ SLOTRegistry::booleanOnOff1 ]
+    axes:  [ SLOTRegistry_booleanOnOff1 ]
 
   cs2EngineTempBiasEnable:
     address: *CS2_ENGINE_TEMP_BIAS_ENABLE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Engine Temp Sensor Bias"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   pressureControlSource:
     address: *PRESSURE_CONTROL_SOURCE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Pressure Control Source"
-    axes: [ SLOTRegistry::torqueSignalSource ]
+    axes: [ SLOTRegistry_torqueSignalSource ]
 
   shiftSelectorGearVoltages:
     address: *SHIFT_SELECTOR_GEAR_VOLTAGES
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Shift Lever Gear Voltages"
-    axes:  [ SLOTRegistry::hgmShiftSelectorCalibrationSensorVoltage,
-      SLOTRegistry::hgmShiftSelectorCalibrationGear, ]
+    axes:  [ SLOTRegistry_hgmShiftSelectorCalibrationSensorVoltage, SLOTRegistry_hgmShiftSelectorCalibrationGear ]
 
   shiftSelectorODCancelAtStartup:
     address: *SHIFT_SELECTOR_OVERDRIVE_CANCEL_AT_STARTUP
     access: *ACL_CALIBRATE
-    advice: *ADVICE_RESET_ADVISED,
+    advice: *ADVICE_RESET_ADVISED
     description: "Overdrive Cancel at Startup"
-    axes:  [ SLOTRegistry::booleanOnOff1 ]
+    axes:  [ SLOTRegistry_booleanOnOff1 ]
 
   useMetricUnits:
     address: *USE_METRIC_UNITS
     access: *ACL_CALIBRATE
-    advice: *RESET_ADVISED
+    advice: *ADVICE_RESET_ADVISED
     description: "System Units"
-    axes: [ SLOTRegistry::measurementSystem ]
+    axes: [ SLOTRegistry_measurementSystem ]
 
   speedometerCalibration:
     address: *SPEEDOMETER_CALIBRATION
     access: *ACL_CALIBRATE
     advice: *ADVICE_NONE
     description: "Speedometer Calibration"
-    axes: [ SLOTRegistry::speedoCalibration ]
+    axes: [ SLOTRegistry_speedoCalibration ]
 
   startInhibitRelayType:
     address: *START_INHIBIT_RELAY_TYPE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "Start Inhibit Relay"
-    axes: [ SLOTRegistry::booleanNormalReversed ]
+    axes: [ SLOTRegistry_booleanNormalReversed ]
 
   transferCaseTemperature:
     address: *TRANSFER_CASE_TEMPERATURE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transfer Case Temperature"
-    axes: [ SLOTRegistry::temperature1 ]
+    axes: [ SLOTRegistry_temperature1 ]
 
   controllerVoltage:
     address: *CONTROLLER_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Battery Voltage"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   vehicleAcceleration:
     address: *VEHICLE_ACCELERATION
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Acceleration"
-    axes: [ SLOTRegistry::acceleration1 ]
+    axes: [ SLOTRegistry_acceleration1 ]
 
   transferCaseGear:
     address: *TRANSFER_CASE_GEAR
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transfer Case Low Range"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   vehicleSpeed:
     address: *VEHICLE_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Vehicle Speed"
-    axes: [ SLOTRegistry::vehicleSpeed ]
+    axes: [ SLOTRegistry_vehicleSpeed ]
 
   differentialInputSpeed:
     address: *DIFFERENTIAL_INPUT_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Differential Input RPM"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   differentialOutputSpeed:
     address: *DIFFERENTIAL_OUTPUT_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Differential Output RPM"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   differentialTemperature:
     address: *DIFFERENTIAL_TEMPERATURE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Differential Temp"
-    axes: [ SLOTRegistry::temperature1 ]
+    axes: [ SLOTRegistry_temperature1 ]
 
   engineMAPPercentage:
     address: *ENGINE_MAP_PERCENTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Engine Manifold Pressure"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   engineSpeed:
-    address: *ENGINE_SPEED,
+    address: *ENGINE_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Engine Speed"
-    axes:  [ SLOTRegistry::rpm1 ]
+    axes:  [ SLOTRegistry_rpm1 ]
 
   engineTorqueMode:
     address: *ENGINE_TORQUE_MODE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Engine Torque Mode"
-    axes: [ SLOTRegistry::torqueMode ]
+    axes: [ SLOTRegistry_torqueMode ]
 
   engineActualPercentTorque:
     address: *ENGINE_ACTUAL_PERCENT_TORQUE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Engine Actual % Torque"
-    axes: [ SLOTRegistry::percentage2 ]
+    axes: [ SLOTRegistry_percentage2 ]
 
   driversDemandPercentTorque:
     address: *DRIVERS_DEMAND_PERCENT_TORQUE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Driver's Demand % Torque"
-    axes: [ SLOTRegistry::percentage2 ]
+    axes: [ SLOTRegistry_percentage2 ]
 
   accelerationRateLimiting:
     address: *ACCELERATION_RATE_LIMITING
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Acceleration Rate Limiting"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   engineIdleShutdownActive:
     address: *ENGINE_IDLE_SHUTDOWN_ACTIVE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Idle Shutdown Active"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   engineIdleShutdownTimerActive:
     address: *ENGINE_IDLE_SHUTDOWN_TIMER_ACTIVE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Idle Shutdown Timer State"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   engineDemandPercentTorque:
     address: *ENGINE_DEMAND_PERCENT_TORQUE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Engine Demand % Torque"
-    axes: [ SLOTRegistry::percentage2 ]
+    axes: [ SLOTRegistry_percentage2 ]
 
   engineTemperature:
     address: *ENGINE_TEMPERATURE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Engine Temperature"
-    axes: [ SLOTRegistry::temperature1 ]
+    axes: [ SLOTRegistry_temperature1 ]
 
   transferCaseInputSpeed:
     address: *TRANSFER_CASE_INPUT_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transfer Case Input Speed"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   transferCaseOutputSpeed:
     address: *TRANSFER_CASE_OUTPUT_SPEED
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Transfer Case Output Speed"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   engineThrottlePosition:
     address: *ENGINE_THROTTLE_POSITION
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Throttle Position"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   controllerTachInputFrequency:
     address: *CONTROLLER_TACH_INPUT_FREQUENCY
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Tach Input Frequency"
-    axes: [ SLOTRegistry::frequency1 ]
+    axes: [ SLOTRegistry_frequency1 ]
 
   controllerTISSInputFrequency:
     address: *CONTROLLER_TISS_INPUT_FREQUENCY
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "TISS Input Frequency"
-    axes: [ SLOTRegistry::frequency1 ]
+    axes: [ SLOTRegistry_frequency1 ]
 
   controllerTOSSInputFrequency:
     address: *CONTROLLER_TOSS_INPUT_FREQUENCY
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "TOSS Input Frequency"
-    axes: [ SLOTRegistry::frequency1 ]
+    axes: [ SLOTRegistry_frequency1 ]
 
   controllerSpareInputFrequency:
     address: *CONTROLLER_SPARE_INPUT_FREQUENCY
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Spare Input Frequency"
-    axes: [ SLOTRegistry::frequency1 ]
+    axes: [ SLOTRegistry_frequency1 ]
 
   controllerSpeedTimer1Frequency:
     address: *CONTROLLER_SPEED_TIMER_1_FREQUENCY
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Speed Timer 1 Frequency"
-    axes: [ SLOTRegistry::frequency1 ]
+    axes: [ SLOTRegistry_frequency1 ]
 
   controllerSpeedTimer2Frequency:
     address: *CONTROLLER_SPEED_TIMER_2_FREQUENCY
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Speed Timer 2 Frequency"
-    axes: [ SLOTRegistry::frequency1 ]
+    axes: [ SLOTRegistry_frequency1 ]
 
   controllerPWMDriverFrequency:
     address: *CONTROLLER_PWMDRIVER_FREQUENCY
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "PWM Driver Frequency"
-    axes: [ SLOTRegistry::frequency1, SLOTRegistry::pwmDriverId ]
+    axes: [ SLOTRegistry_frequency1, SLOTRegistry_pwmDriverId ]
 
   controllerPWMDriverDutyCycle:
     address: *CONTROLLER_PWMDRIVER_DUTY_CYCLE
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "PWM Driver Duty Cycle"
-    axes: [ SLOTRegistry::percentage2, SLOTRegistry::pwmDriverId ]
+    axes: [ SLOTRegistry_percentage2, SLOTRegistry_pwmDriverId ]
 
   controllerPWMDriverMode:
     address: *CONTROLLER_PWMDRIVER_MODE
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "PWM Driver Mode"
-    axes: [ SLOTRegistry::pwmDriverMode, SLOTRegistry::pwmDriverId ]
+    axes: [ SLOTRegistry_pwmDriverMode, SLOTRegistry_pwmDriverId ]
 
   controllerPWMDriverSPN:
     - address: *CONTROLLER_PWMDRIVER_SPN_1
@@ -2302,196 +2314,196 @@ params:
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Switch Monitor Input"
-    axes: [ SLOTRegistry::booleanOnOff1, SLOTRegistry::switchMonitorId ]
+    axes: [ SLOTRegistry_booleanOnOff1, SLOTRegistry_switchMonitorId ]
 
   controllerSwitchCurrent:
     address: *CONTROLLER_SWITCH_CURRENT
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Switch Monitor Current"
-    axes: [ SLOTRegistry::booleanOnOff1, SLOTRegistry::switchMonitorId ]
+    axes: [ SLOTRegistry_booleanOnOff1, SLOTRegistry_switchMonitorId ]
 
   controllerSDCardPresent:
     address: *CONTROLLER_SD_CARD_PRESENT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "SD Card Present"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   controllerSDCardWriteProtect:
     address: *CONTROLLER_SD_CARD_WRITE_PROTECT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "SD Card Write Protect"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   controllerMasterDriverFault:
     address: *CONTROLLER_MASTER_DRIVER_FAULT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Master Driver Fault Signal"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   controllerUSBPower:
     address: *CONTROLLER_USB_POWER
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "USB Power"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   controllerUSBConnect:
     address: *CONTROLLER_USB_CONNECT
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "USB Connect"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   controllerThrottlePositionSensorVoltage:
     address: *CONTROLLER_THROTTLE_POSITION_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Throttle Position Sensor"
-    axes:  [ SLOTRegistry::voltage1 ]
+    axes:  [ SLOTRegistry_voltage1 ]
 
   controllerMAPSensorVoltage:
     address: *CONTROLLER_MAP_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "MAP Sensor"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   controllerInternalTemperatureSensorVoltage:
     address: *CONTROLLER_INTERNAL_TEMPERATURE_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Internal Temperature Sensor"
-    axes:  [ SLOTRegistry::voltage1 ]
+    axes:  [ SLOTRegistry_voltage1 ]
 
   controllerInternalTemperature:
     address: *CONTROLLER_INTERNAL_TEMPERATURE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Internal Temperature"
-    axes: [ SLOTRegistry::temperature1 ]
+    axes: [ SLOTRegistry_temperature1 ]
 
   controllerEngineTemperatureSensorVoltage:
     address: *CONTROLLER_ENGINE_TEMPERATURE_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Engine Temperature Sensor"
-    axes:  [ SLOTRegistry::voltage1 ]
+    axes:  [ SLOTRegistry_voltage1 ]
 
   controllerTransmissionTemperatureSensorVoltage:
     address: *CONTROLLER_TRANSMISSION_TEMPERATURE_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Transmission Temperature Sensor"
-    axes:  [ SLOTRegistry::voltage1 ]
+    axes:  [ SLOTRegistry_voltage1 ]
 
   controllerMultiplexedSensorVoltage:
     address: *CONTROLLER_MULTIPLEXED_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Multiplexed Sensor"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   controller5VoltBusVoltage:
     address: *CONTROLLER_5_VOLT_BUS_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "5 Volt Bus"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   controller3_3VoltBusVoltage:
     address: *CONTROLLER_3_3_VOLT_BUS_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "3.3 Volt Bus"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   controller1_8VoltBusVoltage:
     address: *CONTROLLER_1_8_VOLT_BUS_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "1.8 Volt Bus"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   controller12VoltBusVoltage:
     address: *CONTROLLER_12_VOLT_BUS_VOLTAGE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "12 Volt Bus"
-    axes: [ SLOTRegistry::voltage1 ]
+    axes: [ SLOTRegistry_voltage1 ]
 
   controllerGreenLED:
     address: *CONTROLLER_GREED_LED
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Green LED"
-    axes:  [ SLOTRegistry::booleanOnOff1 ]
+    axes:  [ SLOTRegistry_booleanOnOff1 ]
 
   controllerRedLED:
     address: *CONTROLLER_RED_LED
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Red LED"
-    axes:  [ SLOTRegistry::booleanOnOff1 ]
+    axes:  [ SLOTRegistry_booleanOnOff1 ]
 
   controllerTransmissionTemperatureSensorBias:
     address: *CONTROLLER_TRANSMISSION_TEMPERATURE_SENSOR_BIAS
     access: *ACL_DIAGNOSTIC
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Transmission Temp. Sensor Bias"
-    axes:  [ SLOTRegistry::booleanOnOff1 ]
+    axes:  [ SLOTRegistry_booleanOnOff1 ]
 
   controllerEngineTemperatureSensorBias:
     address: *CONTROLLER_ENGINE_TEMPERATURE_SENSOR_BIAS
     access: *ACL_DIAGNOSTIC
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Engine Temp. Sensor Bias"
-    axes:  [ SLOTRegistry::booleanOnOff1 ]
+    axes:  [ SLOTRegistry_booleanOnOff1 ]
 
   controllerThrottlePositionSensorGround:
     address: *CONTROLLER_THROTTLE_POSITION_SENSOR_GROUND
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "TPS Ground"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   controllerMAPGround:
     address: *CONTROLLER_MAP_GROUND
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "MAP Ground"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   controllerAccelerometer:
     address: *CONTROLLER_ACCLEROMETER
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Accelerometer"
-    axes: [ SLOTRegistry::acceleration1, SLOTRegistry::xyzIndex ]
+    axes: [ SLOTRegistry_acceleration1, SLOTRegistry_xyzIndex ]
 
   pressureDiagnosticPercentage:
     address: *PRESSURE_DIAGNOSTIC_PERCENTAGE
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Diagnostic Shift Pressure"
-    axes: [ SLOTRegistry::percentage1 ]
+    axes: [ SLOTRegistry_percentage1 ]
 
   tccDiagnosticState:
     address: *TCC_DIAGNOSTIC_TCC
     access: *ACL_DIAGNOSTIC
     advice: *ADVICE_NONE
     description: "Diagnostic TCC"
-    axes: [ SLOTRegistry::booleanOnOff1 ]
+    axes: [ SLOTRegistry_booleanOnOff1 ]
 
   transmissionMainLinePressureSensorVoltage:
     address: *TRANSMISSION_MAIN_PRESSURE_SENSOR_VOLTAGE
     access: *ACL_READ_ONLY
-    advice: *ADVICE_NONE,
+    advice: *ADVICE_NONE
     description: "Transmission Pressure Sensor"
-    axes:  [ SLOTRegistry::voltage1 ]
+    axes:  [ SLOTRegistry_voltage1 ]
 
   evMotorCommunications:
     address: *EV_MOTOR_COMMUNICATIONS
@@ -2505,152 +2517,152 @@ params:
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Torque Filter Order"
-    axes: [ SLOTRegistry::timeMilliseconds1 ]
+    axes: [ SLOTRegistry_timeMilliseconds1 ]
 
   evSpeedFilterOrder:
     address: *EV_SPEED_FILTER_ORDER
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Speed Filter Order"
-    axes: [ SLOTRegistry::timeMilliseconds1 ]
+    axes: [ SLOTRegistry_timeMilliseconds1 ]
 
   evMotorTorqueIdle:
     address: *EV_MOTOR_TORQUE_IDLE
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Motor Idle Torque"
-    axes: [ SLOTRegistry::percentage2 ]
+    axes: [ SLOTRegistry_percentage2 ]
 
   evMotorTorqueShift:
     address: *EV_MOTOR_TORQUE_SHIFT
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Motor Shift Torque"
-    axes: [ SLOTRegistry::percentage2 ]
+    axes: [ SLOTRegistry_percentage2 ]
 
   evTorqueRampDownTime:
     address: *EV_TORQUE_RAMP_DOWN_TIME
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Shift Torque Ramp Down Time By Gear"
-    axes: [ SLOTRegistry::timeSeconds1, SLOTRegistry::gear1Offset1 ]
+    axes: [ SLOTRegistry_timeSeconds1, SLOTRegistry_gear1Offset1 ]
 
   evTorqueRampUpTime:
     address: *EV_TORQUE_RAMP_UP_TIME
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Shift Torque Ramp Up Time By Gear"
-    axes: [ SLOTRegistry::timeSeconds1, SLOTRegistry::gear1Offset1 ]
+    axes: [ SLOTRegistry_timeSeconds1, SLOTRegistry_gear1Offset1 ]
 
   evMotorSpeedMax:
     address: *EV_MOTOR_SPEED_MAX
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Motor Max. Speed"
-    axes: [ SLOTRegistry::rpm1 ]
+    axes: [ SLOTRegistry_rpm1 ]
 
   evMotorTorqueMaxA:
     address: *EV_MOTOR_TORQUE_MAX_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Motor Max. Torque by Gear A"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::gear1Offset1 ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_gear1Offset1 ]
 
   evRegenTorqueMaxA:
     address: *EV_REGEN_TORQUE_MAX_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Regen Max. Torque by Gear A"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::gear1Offset1 ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_gear1Offset1 ]
 
   evRegenTorqueMaxB:
     address: *EV_REGEN_TORQUE_MAX_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Regen Max. Torque by Gear B"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::gear1Offset1 ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_gear1Offset1 ]
 
   evMotorTorqueMaxB:
     address: *EV_MOTOR_TORQUE_MAX_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Motor Max. Torque by Gear B"
-    axes: [ SLOTRegistry::percentage1, SLOTRegistry::gear1Offset1 ]
+    axes: [ SLOTRegistry_percentage1, SLOTRegistry_gear1Offset1 ]
 
   evMaxRegenSpeedA:
     address: *EV_MAX_REGEN_SPEED_A
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Max. Regen Speed A"
-    axes: [ SLOTRegistry::tossRPMAsSpeed ]
+    axes: [ SLOTRegistry_tossRPMAsSpeed ]
 
   evMaxRegenSpeedB:
     address: *EV_MAX_REGEN_SPEED_B
     access: *ACL_SETUP
     advice: *ADVICE_NONE
     description: "EV Max. Regen Speed B"
-    axes: [ SLOTRegistry::tossRPMAsSpeed ]
+    axes: [ SLOTRegistry_tossRPMAsSpeed ]
 
   evJ1939CTLSourceaddress:
     address: *EV_J1939_CTL_SOURCE_ADDRESS
     access: *ACL_SETUP
-    advice: *RESET_ADVISED
+    advice: *ADVICE_RESET_ADVISED
     description: "J1939 CTL Source Address"
-    axes: [ SLOTRegistry::j1939Address ]
+    axes: [ SLOTRegistry_j1939Address ]
 
   can0ReceiveErrorCount:
     address: *CAN0_RECEIVE_ERROR_COUNT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "CAN Bus 1 Receive Error Count"
-    axes: [ SLOTRegistry::count ]
+    axes: [ SLOTRegistry_count ]
 
   can0TransmitErrorCount:
     address: *CAN0_TRANSMIT_ERROR_COUNT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "CAN Bus 1 Transmit Error Count"
-    axes: [ SLOTRegistry::count ]
+    axes: [ SLOTRegistry_count ]
 
   can1ReceiveErrorCount:
     address: *CAN1_RECEIVE_ERROR_COUNT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "CAN Bus 2 Receive Error Count"
-    axes: [ SLOTRegistry::count ]
+    axes: [ SLOTRegistry_count ]
 
   can1TransmitErrorCount:
     address: *CAN1_TRANSMIT_ERROR_COUNT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "CAN Bus 2 Transmit Error Count"
-    axes: [ SLOTRegistry::count, ]
+    axes: [ SLOTRegistry_count, ]
 
   dtcActiveCount:
     address: *DTC_ACTIVE_COUNT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Active DTC Count"
-    axes: [ SLOTRegistry::count ]
+    axes: [ SLOTRegistry_count ]
 
   dtcRecordedCount:
     address: *DTC_RECORDED_COUNT
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Recorded DTC Count"
-    axes: [ SLOTRegistry::count ]
+    axes: [ SLOTRegistry_count ]
 
   dtcActiveCountByType:
     address: *DTC_ACTIVE_COUNT_BY_TYPE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Active DTC Count By Type"
-    axes: [ SLOTRegistry::count, SLOTRegistry::dtcType ]
+    axes: [ SLOTRegistry_count, SLOTRegistry_dtcType ]
 
   dtcRecordedCountByType:
     address: *DTC_RECORDED_COUNT_BY_TYPE
     access: *ACL_READ_ONLY
     advice: *ADVICE_NONE
     description: "Recorded DTC Count By Type"
-    axes: [ SLOTRegistry::count, SLOTRegistry::dtcType ]
+    axes: [ SLOTRegistry_count, SLOTRegistry_dtcType ]
 
