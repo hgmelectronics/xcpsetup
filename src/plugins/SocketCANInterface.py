@@ -18,17 +18,17 @@ class SocketCANInterface(CANInterface.Interface):
     Interface using Linux SocketCAN
     '''
     
-    def __init__(self, name):
+    def __init__(self, parsedURL):
         if not SocketCANSupported():
             raise CANInterface.InterfaceNotSupported('Socket module does not support CAN')
         
         self._s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
         self._dumpTraffic = False
-        if name == None:
+        if parsedURL.netloc == None:
             dev = 'can0'
         else:
-            dev = name
+            dev = parsedURL.netloc
         try:
             self._s.bind((dev,))
         except socket.error:
@@ -153,4 +153,4 @@ class SocketCANInterface(CANInterface.Interface):
 
 
 if SocketCANSupported():
-    CANInterface.addInterface("socket", SocketCANInterface)
+    CANInterface.addInterface("socketcan", SocketCANInterface)
