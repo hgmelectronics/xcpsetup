@@ -6,7 +6,6 @@ Created on Aug 03, 2013
 
 from collections import namedtuple
 
-
 class ID(object):
     '''
     CAN identifier
@@ -20,9 +19,15 @@ class ID(object):
             return "x%x" % (self.raw ^ 0x80000000)
         else:
             return "%x" % self.raw
+    
+    def isExt(self):
+        if self.raw & 0x80000000:
+            return True
+        else:
+            return False
 
 def getDataHexString(data):
-	return ' '.join(format(x, '02x') for x in data)
+    return ' '.join(format(x, '02x') for x in data)
 
 Packet = namedtuple('Packet', ['ident', 'data'])
 
