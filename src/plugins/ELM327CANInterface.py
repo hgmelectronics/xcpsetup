@@ -30,8 +30,7 @@ import binascii
 import time
 import threading
 import queue
-import string
-import struct
+from collections import namedtuple
 
 class Error(CANInterface.Error):
     pass
@@ -166,7 +165,14 @@ def ELM327Read(port, receive, cmdResp, promptReady):
         else:
             promptReady.clear()
 
+def identToHex(ident):
+    if ident & 0x80000000:
+        return b'{:08x}'.format(ident)
+    else:
+        return b'{:03x}'.format(ident)
+        
 class ELM327CANInterface(CANInterface.Interface):
+    BitrateTXType = namedtuple('BitrateTXType', ['bitrate', 'txAddrStd'])
     '''
     Interface using ELM327 via serial. Spawns a thread that manages communications with the device; two queues allow it to communicate with the main thread.
     "Write" queue can request transmission of a frame, set baud rate, set filters, or request that monitoring stop.
@@ -177,7 +183,8 @@ class ELM327CANInterface(CANInterface.Interface):
     
     _slaveAddr = None
     _port = None
-    _bitRate = None
+    _bitrateTXType = BitrateTXType(None, False)
+    _cfgdBitrateTXType = BitrateTXType(None, False)
     _txAddrStd = False
     _baudDivisor = None
     _baud87Mult = None
@@ -202,7 +209,7 @@ class ELM327CANInterface(CANInterface.Interface):
             s.create_connection(addr, self._tcpTimeout)
             self._port = SocketAsPort(s)
         else:
-            port = serial.Serial(timeout=self._serialTimeout)
+            port = serial.Serial()
             if 'COM' in parsedURL.path:
                 port.port = parsedURL.path.strip('COM')
             else:
@@ -212,6 +219,7 @@ class ELM327CANInterface(CANInterface.Interface):
             for baudRate in self._POSSIBLE_BAUDRATES:
                 port.baudrate = baudRate
                 port.interCharTimeout = min(10/baudRate, 0.0001)
+                port.timeout = 0.1
                 
                 # Try sending a CR, if we get a prompt then it's probably the right baudrate
                 port.write(b'\r')
@@ -243,7 +251,7 @@ class ELM327CANInterface(CANInterface.Interface):
                     port.baudrate = 500000
                     port.flushInput()
                     response = port.read(6)
-                    if response != 'ELM327':
+                    if response != b'ELM327':
                         # Baudrate switch unsuccessful, try to recover
                         port.baudrate = baudRate
                         port.write(b'\r')
@@ -271,29 +279,40 @@ class ELM327CANInterface(CANInterface.Interface):
         
         self._readThread = threading.Thread(target=ELM327Read, args=(self._port, self._receiveQueue, self._cmdRespQueue, self._promptReady))
         
-        self._runCmdWithCheck('ATWS', checkOK=False, closeOnFail=True) # Software reset
-        self._runCmdWithCheck('ATE0', closeOnFail=True) # Turn off echo
-        self._runCmdWithCheck('ATL0', closeOnFail=True) # Turn off newlines
-        self._runCmdWithCheck('ATS0', closeOnFail=True) # Turn off spaces
-        self._runCmdWithCheck('ATH1', closeOnFail=True) # Turn on headers
-        self._runCmdWithCheck('ATSPB', closeOnFail=True) # Switch to protocol B (user defined)
+        self._runCmdWithCheck(b'ATWS', checkOK=False, closeOnFail=True) # Software reset
+        self._runCmdWithCheck(b'ATE0', closeOnFail=True) # Turn off echo
+        self._runCmdWithCheck(b'ATL0', closeOnFail=True) # Turn off newlines
+        self._runCmdWithCheck(b'ATS0', closeOnFail=True) # Turn off spaces
+        self._runCmdWithCheck(b'ATH1', closeOnFail=True) # Turn on headers
+        self._runCmdWithCheck(b'ATSPB', closeOnFail=True) # Switch to protocol B (user defined)
         
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
     
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exitType, value, traceback):
         self._port.close()
         
     def close(self):
         self._port.close()
     
     def setBaud(self, bitrate):
-        if self._bitrate != bitrate:
-            self._bitrate = bitrate
-            self._calcBaudDivisor()
-            self._setBaudIDType()
+        self._bitrateTXType.bitrate = bitrate
+        self._updateBitrateTXType()
+    
+    def _setTXTypeByIdent(self, ident):
+        if ident & 0x80000000:
+            self._bitrateTXType.txAddrStd = False
+        else:
+            self._bitrateTXType.txAddrStd = True
+    
+    def _updateBitrateTXType(self):
+        if self._bitrateTXType != self._cfgdBitrateTXType:
+            if self._bitrateTXType.bitrate != self._cfgdBitrateTXType.bitrate:
+                self._calcBaudDivisor()
+            self._setBitrateTXType()
+            self._cfgdBitrateTXType = self._bitrateTXType
     
     def _calcBaudDivisor(self):
         baudTol = 0.001
@@ -308,16 +327,16 @@ class ELM327CANInterface(CANInterface.Interface):
             self._baudDivisor = divisor
             self._baud87Mult = False
     
-    def _setBaudIDType(self):
+    def _setBitrateTXType(self):
         if self._txAddrStd:
             canOptions = 0xE0
         else:
             canOptions = 0x60
         if self._baud87Mult:
             canOptions |= 0x10;
-        self._runCmdWithCheck('ATPB' + binascii.hexlify(bytearray([canOptions, self._baudDivisor])), closeOnFail=True)
+        self._runCmdWithCheck(b'ATPB' + binascii.hexlify(bytearray([canOptions, self._baudDivisor])), closeOnFail=True)
         if not self._hasSetCSM0:
-            self._runCmdWithCheck('ATCSM0', closeOnFail=True)
+            self._runCmdWithCheck(b'ATCSM0', closeOnFail=True)
             self._hasSetCSM0 = True
             
     def _runCmdWithCheck(self, cmd, checkOK=True, closeOnFail=False):
@@ -347,142 +366,90 @@ class ELM327CANInterface(CANInterface.Interface):
             failAction()
     
     def _buildFrame(self, data, ident):
-        can_dlc = len(data)
-        if ident & 0x80000000:
-            setHeader = 'ATSH' + '{:08x}'.format(ident)
-        else:
-            setHeader = 'ATSH' + '{:03x}'.format(ident)
-        
-            header = binascii.hexlify()
-            binstr = struct.pack(">I8s", ident, data.ljust(8, b'\x00'))[0:can_dlc+4]
-        else:
-            binstr = struct.pack(">H8s", ident, data.ljust(8, b'\x00'))[0:can_dlc+2]
-        return binascii.hexlify(binstr)
-    
-    def _decode_frame(self, frame):
-        binstr = binascii.unhexlify(frame)
-        
-        bytearray.fromhex(string)
-
-        ident, dlc, data = struct.unpack("=IB3x8s", binstr)
-        return ident, data[0:dlc]
-    
-    def _set_
+        setHeader = b'ATSH' + identToHex(ident) + b'\r'
+        dataHex = binascii.hexlify(data)
+        return setHeader + dataHex + b'\r'
 
     def connect(self, address, dumpTraffic):
         self._slaveAddr = address
         self._dumpTraffic = dumpTraffic
-
-            # Now flush the receive buffer
-        icsMsgs = (_ICSSpyMessage * 20000)()
-        icsNMsgs = ctypes.c_int()
-        icsNErrors = ctypes.c_int()
-
-        res = self._dll.icsneoGetMessages(self._neoObject, icsMsgs, ctypes.byref(icsNMsgs), ctypes.byref(icsNErrors))
+        self._runCmdWithCheck(b'ATCRA' + identToHex(address.resId.raw))
+        self._runCmdWithCheck(b'ATMA', checkOK=False)
     
     def disconnect(self):
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
+        self._port.write(b'\r')
+        self._runCmdWithCheck(b'ATCRA')
         self._dumpTraffic = False
     
     def transmit(self, data):
         if self._dumpTraffic:
             print('TX ' + self._slaveAddr.cmdId.getString() + ' ' + CANInterface.getDataHexString(data))
-        frame = self._build_frame(data, self._slaveAddr.cmdId.raw)
-        res = self._dll.icsneoTxMessages(self._neoObject, ctypes.byref(frame), self._ICSNETID_HSCAN, 1)  # network ID 1 = HS CAN
-        if res != 1:
-            raise CANInterface.Error()
+        frame = self._buildFrame(data, self._slaveAddr.cmdId.raw)
+        self._port.write(b'\r')
+        self._setTXTypeByIdent(self._slaveAddr.cmdId.raw)
+        self._updateBitrateTXType()
+        self._port.write(frame)
     
     def transmitTo(self, data, ident):
         if self._dumpTraffic:
             print('TX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
-        frame = self._build_frame(data, ident)
-        res = self._dll.icsneoTxMessages(self._neoObject, ctypes.byref(frame), self._ICSNETID_HSCAN, 1)  # network ID 1 = HS CAN
-        if res != 1:
-            raise CANInterface.Error()
+        frame = self._buildFrame(data, ident)
+        self._port.write(b'\r')
+        self._setTXTypeByIdent(ident)
+        self._updateBitrateTXType()
+        self._port.write(frame)
         
     def receive(self, timeout):
         if self._slaveAddr.resId.raw == 0xFFFFFFFF:
             return []
-        if self._slaveAddr.resId.isExt():
-            self._run_cmd_check_ok('CRA' + '{:08x}'.format(self._slaveAddr.resId.raw & 0x1FFFFFFF))
-        else:
-            self._run_cmd_check_ok('CRA' + '{:03x}'.format(self._slaveAddr.resId.raw))
-            
-        packets = []
-
-        if timeout != 0:
-            endTime = time.time() + timeout
-        else:
-            endTime = None
-
+        
+        msgs = []
+        endTime = time.time() + timeout
+        
         while 1:
-            if endTime != None:
-                newTimeout = int((endTime - time.time()) * 1000)
-                if newTimeout > 0:
-                    self._dll.icsneoWaitForRxMessagesWithTimeOut(self._neoObject, newTimeout)
+            try:
+                if len(msgs):
+                    packet = self._receiveQueue.get_nowait()
                 else:
-                    break
-            else:
-                endTime = 0  # allow one pass, then return on the next
-
-            icsMsgs = (_ICSSpyMessage * 20000)()
-            icsNMsgs = ctypes.c_int()
-            icsNErrors = ctypes.c_int()
-
-            res = self._dll.icsneoGetMessages(self._neoObject, icsMsgs, ctypes.byref(icsNMsgs), ctypes.byref(icsNErrors))
-            if res != 1:
-                raise CANInterface.Error()
-
-            for iMsg in range(icsNMsgs.value):
-                ident, data = self._decode_frame(icsMsgs[iMsg])
-                if len(data) > 0 and ident == self._slaveAddr.resId.raw and (data[0] == 0xFF or data[0] == 0xFE):
-                    if self._dumpTraffic:
-                        print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(data))
-                    packets.append(data)
-            
-            if len(packets) != 0:
+                    newTimeout = endTime - time.time()
+                    if newTimeout < 0:
+                        packet = self._receiveQueue.get_nowait()
+                    else:
+                        packet = self._receiveQueue.get(timeout=newTimeout)
+            except queue.Empty:
                 break
-        return packets
+            
+            if packet.ident != self._slaveAddr.resId.raw:
+                raise UnexpectedResponse('filtered data read')
+            
+            if packet.data[0] == 0xFF or packet.data[0] == 0xFE:
+                msgs.append(packet.data)
+                if self._dumpTraffic:
+                    print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(packet.data))
+        return msgs
     
-    def receivePackets(self, timeout, stdFilter = (0xFFF, 0x000), extFilter = (0x1FFFFFFF, 0x00000000)):
-        self._run_cmd_check_ok('CF' + '{:03x}'.format(stdFilter[0]))
-        self._run_cmd_check_ok('CM' + '{:03x}'.format(stdFilter[1]))
-        self._run_cmd_check_ok('CF' + '{:08x}'.extFilter(stdFilter[0]))
-        self._run_cmd_check_ok('CM' + '{:08x}'.extFilter(stdFilter[1]))
+    def receivePackets(self, timeout):
         packets = []
-
-        if timeout != 0:
-            endTime = time.time() + timeout
-        else:
-            endTime = None
-
+        endTime = time.time() + timeout
+        
         while 1:
-            if endTime != None:
-                newTimeout = int((endTime - time.time()) * 1000)
-                if newTimeout > 0:
-                    self._dll.icsneoWaitForRxMessagesWithTimeOut(self._neoObject, newTimeout)
+            try:
+                if len(packets):
+                    packet = self._receiveQueue.get_nowait()
                 else:
-                    break
-            else:
-                endTime = 0  # allow one pass, then return on the next
-
-            icsMsgs = (_ICSSpyMessage * 20000)()
-            icsNMsgs = ctypes.c_int()
-            icsNErrors = ctypes.c_int()
-
-            res = self._dll.icsneoGetMessages(self._neoObject, icsMsgs, ctypes.byref(icsNMsgs), ctypes.byref(icsNErrors))
-            if res != 1:
-                raise CANInterface.Error()
-
-            for iMsg in range(icsNMsgs.value):
-                ident, data = self._decode_frame(icsMsgs[iMsg])
-                if len(data) > 0 and (data[0] == 0xFF or data[0] == 0xFE):
-                    packets.append(CANInterface.Packet(ident, data))
-                    if self._dumpTraffic:
-                        print('RX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
-            
-            if len(packets) != 0:
+                    newTimeout = endTime - time.time()
+                    if newTimeout < 0:
+                        packet = self._receiveQueue.get_nowait()
+                    else:
+                        packet = self._receiveQueue.get(timeout=newTimeout)
+            except queue.Empty:
                 break
+            
+            if packet.data[0] == 0xFF or packet.data[0] == 0xFE:
+                packets.append(packet)
+                if self._dumpTraffic:
+                    print('RX ' + CANInterface.ID(packet.ident).getString() + ' ' + CANInterface.getDataHexString(packet.data))
         return packets
 
 CANInterface.addInterface("elm327", ELM327CANInterface)

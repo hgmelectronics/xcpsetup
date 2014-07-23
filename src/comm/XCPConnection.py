@@ -7,8 +7,8 @@ Created on Jun 23, 2013
 from collections import namedtuple
 import struct
 import time
+import itertools
 from . import CANInterface
-
 
 Pointer = namedtuple('Pointer', ['addr', 'ext'])
 
@@ -52,7 +52,7 @@ class BadReply(Error):
         self._desc = 'Unexpected reply from slave'
         self._value = value
 
-class Timeout(Error):
+class PacketLost(Error):
     def __init__(self, value=None):
         self._desc = 'Block mode packet lost'
         self._value = value
@@ -166,10 +166,12 @@ xcpErrCodes = { \
 }
 
 def RaiseReply(reply, msg = None):
-    print(repr(reply))
-    if reply[0] == 0xFE and reply[1] in xcpErrCodes:
-        raise xcpErrCodex[reply[1]](msg)
-    else:
+    try:
+        if reply[0] == 0xFE and reply[1] in xcpErrCodes:
+            raise xcpErrCodes[reply[1]](msg)
+        else:
+            raise BadReply(msg)
+    except TypeError:
         raise BadReply(msg)
     
 class Connection(object):
@@ -241,7 +243,7 @@ class Connection(object):
         if len(replies) < 1:
             raise Timeout()
         if len(replies) > 1:
-            RaiseReply(reply, 'multiple replies')
+            RaiseReply(replies, 'multiple replies')
         try:
             #print('Send ' + repr([hex(elem) for elem in request]) + ' Reply ' + repr([hex(elem) for elem in replies[0]]))
             reply = struct.unpack_from(self._byteorder + fmt, replies[0])
@@ -532,7 +534,7 @@ class Connection(object):
         # Fixed turndown ratio of 10
         pollInterval = self._nvWriteTimeout / 10
         
-        for i in range(10):
+        for _ in itertools.repeat(None, 10):
             time.sleep(pollInterval)
             request = struct.pack(self._byteorder + "B", 0xFD)
             reply = self._transaction(request, "BBBBH")
@@ -550,7 +552,7 @@ class Connection(object):
     
     def nvwrite(self):
         if not self._calPage:
-            RaiseReply(reply, 'writing nonvolatile memory, calibration page not set')
+            RaiseReply(None, 'writing nonvolatile memory, calibration page not set')
         return self._query(self._action_nvwrite)
     
     def _action_set_cal_page(self, segment, page):

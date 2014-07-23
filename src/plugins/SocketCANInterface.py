@@ -6,7 +6,6 @@ Created on Oct 3, 2013
 
 import socket
 import struct
-import sys
 import time
 from comm import CANInterface
 
@@ -38,19 +37,19 @@ class SocketCANInterface(CANInterface.Interface):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exitType, value, traceback):
         self._s.close()
         
     def close(self):
         self._s.close()
     
-    def _build_frame(self, data, ident):
+    def _buildFrame(self, data, ident):
         can_dlc = len(data)
         return struct.pack("=IB3x8s", ident, can_dlc, data.ljust(8, b'\x00'))
     
-    def _decode_frame(self, frame):
+    def _decodeFrame(self, frame):
         ident, dlc, data = struct.unpack("=IB3x8s", frame)
-        return ident, data[0:dlc]
+        return CANInterface.Packet(ident, data[0:dlc])
     
     def connect(self, address, dumpTraffic = False):
         self._slaveAddr = address
@@ -61,7 +60,7 @@ class SocketCANInterface(CANInterface.Interface):
         self._s.settimeout(0.001)
         while 1:
             try:
-                frame = self._s.recvfrom(16)[0]
+                self._s.recvfrom(16)[0]
             except socket.timeout:
                 break
     
@@ -87,13 +86,13 @@ class SocketCANInterface(CANInterface.Interface):
     def transmit(self, data):
         if self._dumpTraffic:
             print('TX ' + self._slaveAddr.cmdId.getString() + ' ' + CANInterface.getDataHexString(data))
-        frame = self._build_frame(data, self._slaveAddr.cmdId.raw)
+        frame = self._buildFrame(data, self._slaveAddr.cmdId.raw)
         self._sendFrame(frame)
     
     def transmitTo(self, data, ident):
         if self._dumpTraffic:
             print('TX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
-        frame = self._build_frame(data, ident)
+        frame = self._buildFrame(data, ident)
         self._sendFrame(frame)
         
     def receive(self, timeout):
@@ -118,11 +117,11 @@ class SocketCANInterface(CANInterface.Interface):
             except (socket.timeout, BlockingIOError):
                 break
             
-            ident, data = self._decode_frame(frame)
-            if data[0] == 0xFF or data[0] == 0xFE:
-                msgs.append(data)
+            packet = self._decodeFrame(frame)
+            if packet.data[0] == 0xFF or packet.data[0] == 0xFE:
+                msgs.append(packet.data)
                 if self._dumpTraffic:
-                    print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(data))
+                    print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(packet.data))
         return msgs
     
     def receivePackets(self, timeout):
@@ -144,13 +143,12 @@ class SocketCANInterface(CANInterface.Interface):
             except (socket.timeout, BlockingIOError):
                 break
             
-            ident, data = self._decode_frame(frame)
-            if data[0] == 0xFF or data[0] == 0xFE:
-                packets.append(CANInterface.Packet(ident, data))
+            packet = self._decodeFrame(frame)
+            if packet.data[0] == 0xFF or packet.data[0] == 0xFE:
+                packets.append(packet)
                 if self._dumpTraffic:
-                    print('RX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
+                    print('RX ' + CANInterface.ID(packet.ident).getString() + ' ' + CANInterface.getDataHexString(packet.data))
         return packets
-
 
 if SocketCANSupported():
     CANInterface.addInterface("socketcan", SocketCANInterface)

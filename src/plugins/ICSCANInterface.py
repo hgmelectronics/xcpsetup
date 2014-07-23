@@ -82,7 +82,7 @@ def ICSSupported():
         return False
     
     try:
-        dll = ctypes.windll.icsneo40
+        ctypes.windll.icsneo40
     except OSError:
         return False
     
@@ -136,7 +136,7 @@ class ICSCANInterface(CANInterface.Interface):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exitType, value, traceback):
         if self._neoObject != None:
             numOfErrors = ctypes.c_int()
             self._dll.icsneoClosePort(self._neoObject, ctypes.byref(numOfErrors))
@@ -183,7 +183,7 @@ class ICSCANInterface(CANInterface.Interface):
         icsNMsgs = ctypes.c_int()
         icsNErrors = ctypes.c_int()
 
-        res = self._dll.icsneoGetMessages(self._neoObject, icsMsgs, ctypes.byref(icsNMsgs), ctypes.byref(icsNErrors))
+        self._dll.icsneoGetMessages(self._neoObject, icsMsgs, ctypes.byref(icsNMsgs), ctypes.byref(icsNErrors))
     
     def disconnect(self):
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
