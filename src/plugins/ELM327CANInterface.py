@@ -389,6 +389,8 @@ class ELM327CANInterface(CANInterface.Interface):
         self._port.write(b'\r')
         self._setTXTypeByIdent(self._slaveAddr.cmdId.raw)
         self._updateBitrateTXType()
+        if not self._promptReady.wait(self._intfcTimeout):
+            raise UnexpectedResponse('abort RX for transmission')
         self._port.write(frame)
     
     def transmitTo(self, data, ident):
@@ -398,6 +400,8 @@ class ELM327CANInterface(CANInterface.Interface):
         self._port.write(b'\r')
         self._setTXTypeByIdent(ident)
         self._updateBitrateTXType()
+        if not self._promptReady.wait(self._intfcTimeout):
+            raise UnexpectedResponse('abort RX for transmission')
         self._port.write(frame)
         
     def receive(self, timeout):
