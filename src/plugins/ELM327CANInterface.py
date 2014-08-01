@@ -24,7 +24,7 @@ Created on Oct 5, 2013
         bus before stopping. If this is absent it will read from the bus indefinitely.
 '''
 from comm import CANInterface
-import serial
+from . import threadserial
 import socket
 import binascii
 import time
@@ -101,7 +101,7 @@ class SocketAsPort(object):
                 break
         self._updateTimeout()
 
-class LoggingPort(serial.Serial):
+class LoggingPort(threadserial.Serial):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
     def open(self, *args, **kwargs):
@@ -155,7 +155,7 @@ def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
         
         try:
             dataRead = port.read(port.inWaiting()).translate(None, b'\0')
-        except serial.serialutil.SerialException as exc:
+        except threadserial.serialutil.SerialException as exc:
             if str(exc) == 'Attempting to use a port that is not open':
                 return  # Port was closed in main thread, gracefully terminate
             else:
@@ -254,7 +254,7 @@ class ELM327CANInterface(CANInterface.Interface):
             self._port = SocketAsPort(s)
             self._intfcTimeout = self._tcpTimeout
         else:
-            port = serial.Serial()
+            port = threadserial.Serial()
             #port = LoggingPort()
             port.port = parsedURL.path
             port.open()
