@@ -132,20 +132,17 @@ def PutDiscard(queue, item):
         queue.get()
     queue.put(item)
 
-def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
+def ELM327IO(port, receive, cmdResp, promptReady, terminate):
     '''
     Reads input, discards zero bytes (which ELM docs say can sometimes be inserted in error),
     packages completed lines that appear to be CAN frames and places them in the receive queue.
     Lines that are not packets and not empty are placed in the cmdResp queue, and command prompts from the ELM327
     (indicating readiness to receive commands) set the promptReady Event (reception of other data clears this event).
     
-    Monitors the transmit queue for packets to be sent
-    
     Expects that ELM327 has already received ATL0 (disable linefeed), ATS0 (disable spaces), and ATH1 (enable headers).
     '''
     EOL=b'\r'
     PROMPT=b'>'
-    TICKTIME=0.001 # Time between polls of the serial port - need to poll because select() not available to wait on both transmit queue and serial receive on Windows
     
     lineBuffer=b''
     while 1:
@@ -153,13 +150,7 @@ def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
             port.close()
             return
         
-        try:
-            dataRead = port.read(port.inWaiting()).translate(None, b'\0')
-        except threadserial.serialutil.SerialException as exc:
-            if str(exc) == 'Attempting to use a port that is not open':
-                return  # Port was closed in main thread, gracefully terminate
-            else:
-                raise
+        dataRead = port.read(FIXME).translate(None, b'\0')
         # First find complete lines and process them
         if EOL in dataRead:
             linesRead = dataRead.splitlines(keepends=True)
@@ -197,15 +188,6 @@ def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
                     else:
                         # Too short to be valid
                         PutDiscard(cmdResp, line)
-        
-        try:
-            toSend = transmit.get(timeout=TICKTIME)
-            port.write(toSend)
-            while 1:
-                toSend = transmit.get_nowait()
-                port.write(toSend)
-        except queue.Empty:
-            pass
 
 def identToHex(ident):
     if ident & 0x80000000:
@@ -235,7 +217,6 @@ class ELM327CANInterface(CANInterface.Interface):
     _serialTimeout = 0.1
     
     _receiveQueue = queue.Queue(_QUEUE_MAX_SIZE)
-    _transmitQueue = queue.Queue(_QUEUE_MAX_SIZE)
     _cmdRespQueue = queue.Queue(_QUEUE_MAX_SIZE)
     _promptReady = threading.Event()
     _ioThreadTerminate = threading.Event()
@@ -326,11 +307,11 @@ class ELM327CANInterface(CANInterface.Interface):
         self._port.flushInput()
         
         # Start the I/O thread, which takes over control of the port
-        self._ioThread = threading.Thread(target=ELM327IO, args=(self._port, self._receiveQueue, self._transmitQueue, self._cmdRespQueue, self._promptReady, self._ioThreadTerminate))
+        self._ioThread = threading.Thread(target=ELM327IO, args=(self._port, self._receiveQueue, self._cmdRespQueue, self._promptReady, self._ioThreadTerminate))
         self._ioThread.start()
         
         self._promptReady.clear()
-        self._transmitQueue.put(b'\r') # Get a prompt so the reader thread knows ELM327 is ready
+        self._port.write(b'\r') # Get a prompt so the reader thread knows ELM327 is ready
         self._runCmdWithCheck(b'ATWS', checkOK=False, closeOnFail=True) # Software reset
         self._runCmdWithCheck(b'ATE0', closeOnFail=True) # Turn off echo
         self._runCmdWithCheck(b'ATL0', closeOnFail=True) # Turn off newlines
@@ -405,7 +386,7 @@ class ELM327CANInterface(CANInterface.Interface):
         if not self._promptReady.wait(self._intfcTimeout):
             failAction()
         self._promptReady.clear()
-        self._transmitQueue.put(cmd + b'\r')
+        self.port.write(cmd + b'\r')
         if not self._promptReady.wait(self._intfcTimeout):
             failAction()
         if checkOK:
@@ -438,7 +419,7 @@ class ELM327CANInterface(CANInterface.Interface):
     def disconnect(self):
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
         self._promptReady.clear()
-        self._transmitQueue.put(b'\r')
+        self.port.write(b'\r')
         self._runCmdWithCheck(b'ATCRA')
         self._dumpTraffic = False
     
@@ -447,24 +428,24 @@ class ELM327CANInterface(CANInterface.Interface):
             print('TX ' + self._slaveAddr.cmdId.getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._buildFrame(data, self._slaveAddr.cmdId.raw)
         self._promptReady.clear()
-        self._transmitQueue.put(b'\r')
+        self.port.write(b'\r')
         self._setTXTypeByIdent(self._slaveAddr.cmdId.raw)
         self._updateBitrateTXType()
         if not self._promptReady.wait(self._intfcTimeout):
             raise UnexpectedResponse('abort RX for transmission')
-        self._transmitQueue.put(frame)
+        self.port.write(frame)
     
     def transmitTo(self, data, ident):
         if self._dumpTraffic:
             print('TX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._buildFrame(data, ident)
         self._promptReady.clear()
-        self._transmitQueue.put(b'\r')
+        self.port.write(b'\r')
         self._setTXTypeByIdent(ident)
         self._updateBitrateTXType()
         if not self._promptReady.wait(self._intfcTimeout):
             raise UnexpectedResponse('abort RX for transmission')
-        self._transmitQueue.put(frame)
+        self.port.write(frame)
         
     def receive(self, timeout):
         if self._slaveAddr.resId.raw == 0xFFFFFFFF:
