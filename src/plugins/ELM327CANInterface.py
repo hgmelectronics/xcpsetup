@@ -23,15 +23,19 @@ Created on Oct 5, 2013
         be sent (eg 0011228, CAN frame is 001122 extra char is 8) it takes it as a number of frames to read from the
         bus before stopping. If this is absent it will read from the bus indefinitely.
 '''
+import sys
+if not '..' in sys.path:
+    sys.path.append('..')
 from comm import CANInterface
+#from ..comm import CANInterface FIXME need to find out if we are in plugins namespace
 import serial
 import socket
 import binascii
 import time
 import threading
 import queue
-import traceback
-from collections import namedtuple
+
+LOGGING=True
 
 class Error(CANInterface.Error):
     pass
@@ -62,6 +66,15 @@ class BadBitrate(Error):
             return 'ELM327 cannot generate bitrate ' + repr(self._value)
         else:
             return 'ELM327 cannot generate bitrate'
+
+class BadFilter(Error):
+    def __init__(self, value=None):
+        self._value = value
+    def __str__(self):
+        if self._value != None:
+            return 'Attempt to set invalid filter ' + repr(self._value)
+        else:
+            return 'Attempt to set invalid filter'
 
 class SocketAsPort(object):
     '''
@@ -104,22 +117,22 @@ class SocketAsPort(object):
 class LoggingPort(serial.Serial):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+    def _timeStr(self):
+        return str(time.time())
     def open(self, *args, **kwargs):
         result = super().open(*args, **kwargs)
-        print('OPEN')
-        #traceback.print_stack()
+        print(self._timeStr() + ' OPEN')
         return result
     def close(self, *args, **kwargs):
         result = super().close(*args, **kwargs)
-        print('CLOSE')
-        #traceback.print_stack()
+        print(self._timeStr() + ' CLOSE')
         return result
     def read(self, *args, **kwargs):
         result = super().read(*args, **kwargs)
-        print('RD ' + repr(result))
+        print(self._timeStr() + ' RD ' + repr(result))
         return result
     def write(self, data):
-        print('WR ' + repr(data))
+        print(self._timeStr() + ' WR ' + repr(data))
         return super().write(data)
 
 def PutDiscard(queue, item):
@@ -150,9 +163,13 @@ def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
     lineBuffer=b''
     while 1:
         if terminate.is_set():
+            if LOGGING:
+                print(str(time.time()) + ' ELM327IO(): terminate set')
             port.close()
             return
         
+        if LOGGING:
+            print(str(time.time()) + ' ELM327IO(): check read')
         try:
             dataRead = port.read(port.inWaiting()).translate(None, b'\0')
         except serial.serialutil.SerialException as exc:
@@ -168,12 +185,15 @@ def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
             # We now have a list of lines with the CR still on the end, except if the last is not complete it will not have one.
             if not EOL in linesRead[-1]:
                 if linesRead[-1] == PROMPT:
+                    if LOGGING:
+                        print(str(time.time()) + ' promptReady.set()')
                     # Manage the promptReady Event; it's set if and only if there is an incomplete line consisting of a prompt.
                     promptReady.set()
                 lineBuffer = linesRead[-1] # Stash an incomplete line in lineBuffer
                 del linesRead[-1]
             for rawLine in linesRead:
                 # Now parse the line
+                print(str(time.time()) + ' rawLine ' + repr(rawLine))
                 line = rawLine.strip(EOL)
                 # Is it empty?
                 if len(line) == 0:
@@ -181,6 +201,7 @@ def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
                 # Does it contain non-hex characters?
                 elif any(x for x in line if x not in b'0123456789ABCDEF'):
                     # Command response or a packet received with errors
+                    print(str(time.time()) + ' cmdResp ' + repr(line))
                     PutDiscard(cmdResp, line)
                 else:
                     # Must be a valid received frame
@@ -197,7 +218,10 @@ def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
                     else:
                         # Too short to be valid
                         PutDiscard(cmdResp, line)
+                        print(str(time.time()) + ' cmdResp ' + repr(line))
         
+        if LOGGING:
+            print(str(time.time()) + ' ELM327IO(): Check for queued transmit')
         try:
             toSend = transmit.get(timeout=TICKTIME)
             port.write(toSend)
@@ -209,30 +233,35 @@ def ELM327IO(port, receive, transmit, cmdResp, promptReady, terminate):
 
 def identToHex(ident):
     if ident & 0x80000000:
-        return b'{:08x}'.format(ident)
+        string = '{:08x}'.format(ident)
     else:
-        return b'{:03x}'.format(ident)
+        string = '{:03x}'.format(ident)
+    return bytes(string, 'utf-8')
         
 class ELM327CANInterface(CANInterface.Interface):
-    BitrateTXType = namedtuple('BitrateTXType', ['bitrate', 'txAddrStd'])
     '''
     Interface using ELM327 via serial. Spawns a thread that manages communications with the device; two queues allow it to communicate with the main thread.
     "Write" queue can request transmission of a frame, set baud rate, set filters, or request that monitoring stop.
     "Read" queue contains messages received from the bus.
     '''
     _QUEUE_MAX_SIZE = 16384
-    _POSSIBLE_BAUDRATES = [115200, 500000, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
+    _POSSIBLE_BAUDRATES = [500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
     
     _slaveAddr = None
     _port = None
-    _bitrateTXType = BitrateTXType(None, False)
-    _cfgdBitrateTXType = BitrateTXType(None, False)
+    _bitrate = None
     _txAddrStd = False
+    _cfgdBitrate = None
+    _cfgdTxAddrStd = False
     _baudDivisor = None
     _baud87Mult = None
     _hasSetCSM0 = False
     _tcpTimeout = 1.0
-    _serialTimeout = 0.1
+    _serialTimeout = 0.5
+    _dumpTraffic = False
+    _cfgdHeaderIdent = None
+    _filter = None
+    _cfgdFilter = None
     
     _receiveQueue = queue.Queue(_QUEUE_MAX_SIZE)
     _transmitQueue = queue.Queue(_QUEUE_MAX_SIZE)
@@ -250,33 +279,38 @@ class ELM327CANInterface(CANInterface.Interface):
             elif len(addr) != 2:
                 raise CANInterface.Error('Interface address invalid')
             s = socket.socket()
-            s.create_connection(addr, self._tcpTimeout)
+            s.create_connection(addr, 0)
             self._port = SocketAsPort(s)
             self._intfcTimeout = self._tcpTimeout
         else:
-            port = serial.Serial()
-            #port = LoggingPort()
+            if LOGGING:
+                port = LoggingPort()
+            else:
+                port = serial.Serial()
             port.port = parsedURL.path
             port.open()
             foundBaud = False
             for baudRate in self._POSSIBLE_BAUDRATES:
-                print('Trying ' + str(baudRate))
+                if LOGGING:
+                    print('Trying ' + str(baudRate))
                 port.baudrate = baudRate
                 port.interCharTimeout = min(10/baudRate, 0.0001)
-                port.timeout = 0.1
+                port.timeout = self._serialTimeout
                 
                 # Try sending a CR, if we get a prompt then it's probably the right baudrate
                 port.flushInput()
-                port.write(b'\r')
-                response = port.read(1024)
+                port.write(b'AT\r')
+                time.sleep(0.05)
+                port.write(b'AT\r')
+                response = port.read(16384)
                 if len(response) == 0 or response[-1:] != b'>':
                     continue
                 
                 # Turn off echo, this also serves as a test to make sure we didn't randomly get a > at the end of some gibberish
                 port.flushInput()
                 port.write(b'ATE0\r')
-                response = port.read(2)
-                if response != b'OK':
+                response = port.read(16)
+                if not b'OK' in response:
                     continue
                 
                 # If we made contact at baudrate 500k, we're done
@@ -318,7 +352,7 @@ class ELM327CANInterface(CANInterface.Interface):
             
             if not foundBaud:
                 raise SerialError('could not find baudrate')
-            port.timeout = self._serialTimeout
+            port.timeout = 0
                 
             self._port = port
             self._intfcTimeout = self._serialTimeout
@@ -355,28 +389,58 @@ class ELM327CANInterface(CANInterface.Interface):
                 self._port.close()
     
     def setBaud(self, bitrate):
-        self._bitrateTXType.bitrate = bitrate
+        self._bitrate = bitrate
         self._updateBitrateTXType()
+    
+    def setFilter(self, filt):
+        self._filter = filt
+        self._doSetFilter(filt)
+    
+    def _doSetFilter(self, filt):
+        # User probably doesn't mean to set a filter that accepts both standard and extended IDs
+        if not filt[1] & 0x80000000:
+            raise BadFilter((hex(filt[0]), hex(filt[1])))
+        if filt[0] & 0x80000000:
+            stdFilter = '7ff' # Set a standard ID filter that matches nothing
+            stdMask = '000'
+            extFilter = '{:08x}'.format(filt[0] & 0x1FFFFFFF)
+            extMask = '{:08x}'.format(filt[1] & 0x1FFFFFFF)
+        else:
+            stdFilter = '{:03x}'.format(filt[0] & 0x7FF)
+            stdMask = '{:03x}'.format(filt[1] & 0x7FF)
+            extFilter = '1fffffff'
+            extMask = '00000000'
+            
+        self._promptReady.clear()
+        self._transmitQueue.put(b'\r')
+        self._runCmdWithCheck(b'ATCF' + bytes(stdFilter, 'utf-8'))
+        self._runCmdWithCheck(b'ATCM' + bytes(stdMask, 'utf-8'))
+        self._runCmdWithCheck(b'ATCF' + bytes(extFilter, 'utf-8'))
+        self._runCmdWithCheck(b'ATCM' + bytes(extMask, 'utf-8'))
+        self._transmitQueue.put(b'ATMA\r')
+        
+        self._cfgdFilter = filt
     
     def _setTXTypeByIdent(self, ident):
         if ident & 0x80000000:
-            self._bitrateTXType.txAddrStd = False
+            self._txAddrStd = False
         else:
-            self._bitrateTXType.txAddrStd = True
+            self._txAddrStd = True
     
     def _updateBitrateTXType(self):
-        if self._bitrateTXType != self._cfgdBitrateTXType:
-            if self._bitrateTXType.bitrate != self._cfgdBitrateTXType.bitrate:
+        if self._bitrate != self._cfgdBitrate or self._txAddrStd != self._cfgdTxAddrStd:
+            if self._bitrate != self._cfgdBitrate:
                 self._calcBaudDivisor()
             self._setBitrateTXType()
-            self._cfgdBitrateTXType = self._bitrateTXType
+            self._cfgdBitrate = self._bitrate
+            self._cfgdTxAddrStd = self._txAddrStd
     
     def _calcBaudDivisor(self):
         baudTol = 0.001
-        divisor = round(500000 / self._baudRate)
-        if abs(500000 / divisor / self._baudRate - 1) > baudTol:
-            divisor = round((500000 * 8 / 7) / self._baudRate)
-            if abs((500000 * 8 / 7) / divisor / self._baudRate - 1) > baudTol:
+        divisor = int(round(500000 / self._bitrate))
+        if abs(500000 / divisor / self._bitrate - 1) > baudTol:
+            divisor = int(round((500000 * 8 / 7) / self._bitrate))
+            if abs((500000 * 8 / 7) / divisor / self._bitrate - 1) > baudTol:
                 raise ValueError('')
             self._baudDivisor = divisor
             self._baud87Mult = True
@@ -391,6 +455,11 @@ class ELM327CANInterface(CANInterface.Interface):
             canOptions = 0x60
         if self._baud87Mult:
             canOptions |= 0x10;
+        if self._baudDivisor == None:
+            raise Error #FIXME
+        
+        self._promptReady.clear()
+        self._transmitQueue.put(b'\r')
         self._runCmdWithCheck(b'ATPB' + binascii.hexlify(bytearray([canOptions, self._baudDivisor])), closeOnFail=True)
         if not self._hasSetCSM0:
             self._runCmdWithCheck(b'ATCSM0', closeOnFail=True)
@@ -404,8 +473,17 @@ class ELM327CANInterface(CANInterface.Interface):
         
         if not self._promptReady.wait(self._intfcTimeout):
             failAction()
+        if LOGGING:
+            print(str(time.time()) + ' _runCmdWithCheck(): Prompt ready')
         self._promptReady.clear()
+        while 1:
+            try:
+                self._cmdRespQueue.get_nowait()
+            except queue.Empty:
+                break
         self._transmitQueue.put(cmd + b'\r')
+        if LOGGING:
+            print(str(time.time()) + ' _runCmdWithCheck(): put ' + cmd.decode('utf-8'))
         if not self._promptReady.wait(self._intfcTimeout):
             failAction()
         if checkOK:
@@ -413,7 +491,9 @@ class ELM327CANInterface(CANInterface.Interface):
             while 1:
                 try:
                     response = self._cmdRespQueue.get_nowait()
+                    print('response ' + repr(response))
                     if b'OK' in response:
+                        print('gotOK')
                         gotOK = True
                     elif response == cmd + b'\r':
                         response = self._cmdRespQueue.get_nowait()
@@ -421,52 +501,56 @@ class ELM327CANInterface(CANInterface.Interface):
                             gotOK = True
                 except queue.Empty:
                     break
+            print('gotOK ' + repr(gotOK))
             if not gotOK:
                 failAction()
-    
-    def _buildFrame(self, data, ident):
-        setHeader = b'ATSH' + identToHex(ident) + b'\r'
-        dataHex = binascii.hexlify(data)
-        return setHeader + dataHex + b'\r'
+
+    def exactMask(self, ident):
+        if ident & 0x80000000:
+            return 0x9FFFFFFF
+        else:
+            return 0x800007FF
 
     def connect(self, address, dumpTraffic):
         self._slaveAddr = address
         self._dumpTraffic = dumpTraffic
-        self._runCmdWithCheck(b'ATCRA' + identToHex(address.resId.raw))
+        self._doSetFilter((address, self.exactMask(address)))
         self._runCmdWithCheck(b'ATMA', checkOK=False)
     
     def disconnect(self):
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
-        self._promptReady.clear()
-        self._transmitQueue.put(b'\r')
-        self._runCmdWithCheck(b'ATCRA')
+        self._doSetFilter(self._filter)
         self._dumpTraffic = False
     
-    def transmit(self, data):
-        if self._dumpTraffic:
-            print('TX ' + self._slaveAddr.cmdId.getString() + ' ' + CANInterface.getDataHexString(data))
-        frame = self._buildFrame(data, self._slaveAddr.cmdId.raw)
-        self._promptReady.clear()
-        self._transmitQueue.put(b'\r')
-        self._setTXTypeByIdent(self._slaveAddr.cmdId.raw)
-        self._updateBitrateTXType()
-        if not self._promptReady.wait(self._intfcTimeout):
-            raise UnexpectedResponse('abort RX for transmission')
-        self._transmitQueue.put(frame)
-    
-    def transmitTo(self, data, ident):
+    def _doTransmit(self, data, ident):
         if self._dumpTraffic:
             print('TX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
-        frame = self._buildFrame(data, ident)
-        self._promptReady.clear()
-        self._transmitQueue.put(b'\r')
+        
         self._setTXTypeByIdent(ident)
         self._updateBitrateTXType()
         if not self._promptReady.wait(self._intfcTimeout):
             raise UnexpectedResponse('abort RX for transmission')
-        self._transmitQueue.put(frame)
         
+        if self._cfgdHeaderIdent != ident:
+            self._promptReady.clear()
+            self._transmitQueue.put(b'ATSH' + identToHex(ident) + b'\r')
+            if not self._promptReady.wait(self._intfcTimeout):
+                raise UnexpectedResponse((b'ATSH' + identToHex(ident)).decode('utf-8'))
+            self._cfgdHeaderIdent = ident
+            
+        self._promptReady.clear()
+        self._transmitQueue.put(binascii.hexlify(data) + b'\r')
+    
+    def transmit(self, data):
+        assert self._cfgdBitrate != None and self._cfgdFilter != None
+        self._doTransmit(data, self._slaveAddr.cmdId.raw)
+    
+    def transmitTo(self, data, ident):
+        assert self._cfgdBitrate != None and self._cfgdFilter != None
+        self._doTransmit(data, ident)
+    
     def receive(self, timeout):
+        assert self._cfgdBitrate != None and self._cfgdFilter != None
         if self._slaveAddr.resId.raw == 0xFFFFFFFF:
             return []
         
@@ -496,6 +580,7 @@ class ELM327CANInterface(CANInterface.Interface):
         return msgs
     
     def receivePackets(self, timeout):
+        assert self._cfgdBitrate != None and self._cfgdFilter != None
         packets = []
         endTime = time.time() + timeout
         
@@ -519,3 +604,16 @@ class ELM327CANInterface(CANInterface.Interface):
         return packets
 
 CANInterface.addInterface("elm327", ELM327CANInterface)
+
+if __name__ == "__main__":
+    import urllib.parse
+    parsedurl = urllib.parse.urlparse('elm327:COM8')
+    elm327 = ELM327CANInterface(parsedurl)
+    elm327.setBaud(250000)
+    elm327.setFilter((0x000, 0x80000000))
+    elm327.transmitTo(b'1234', 0x7FF)
+    time.sleep(1)
+    packets = elm327.receivePackets(1)
+    for packet in packets:
+        print(repr(packet))
+    elm327.close()
