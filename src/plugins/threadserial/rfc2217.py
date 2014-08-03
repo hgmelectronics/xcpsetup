@@ -59,7 +59,7 @@
 #   RFC).
 # the order of the options is not relevant
 
-from serial.serialutil import *
+from threadserial.serialutil import *
 import time
 import struct
 import socket
@@ -526,7 +526,7 @@ class RFC2217Serial(SerialBase):
                         value = None
                     if option == 'logging':
                         logging.basicConfig()   # XXX is that good to call it here?
-                        self.logger = logging.getLogger('pySerial.rfc2217')
+                        self.logger = logging.getLogger('threadserial.rfc2217')
                         self.logger.setLevel(LOGGER_LEVELS[value])
                         self.logger.debug('enabled logging')
                     elif option == 'ign_set_control':
@@ -1004,7 +1004,7 @@ class PortManager(object):
         for byte in filter(socket.recv(1024)):
             # do things like CR/LF conversion/whatever
             # and write data to the serial port
-            serial.write(byte)
+            threadserial.write(byte)
 
         (socket error handling code left as exercise for the reader)
         """

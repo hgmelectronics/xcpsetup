@@ -5,28 +5,29 @@
 #
 # (C) 2001-2010 Chris Liechti <cliechti@gmx.net>
 # this is distributed under a free software license, see license.txt
+# (C) 2014 Doug Brunner <doug@doug-brunner.com>
 
 VERSION = '2.6'
 
 import sys
 
 if sys.platform == 'cli':
-    from serial.serialcli import *
+    from threadserial.serialcli import *
 else:
     import os
     # chose an implementation, depending on os
     if os.name == 'nt': #sys.platform == 'win32':
-        from serial.serialwin32 import *
+        from threadserial.serialwin32 import *
     elif os.name == 'posix':
-        from serial.serialposix import *
+        from threadserial.serialposix import *
     elif os.name == 'java':
-        from serial.serialjava import *
+        from threadserial.serialjava import *
     else:
         raise ImportError("Sorry: no implementation for your platform ('%s') available" % (os.name,))
 
 
 protocol_handler_packages = [
-        'serial.urlhandler',
+        'threadserial.urlhandler',
         ]
 
 def serial_for_url(url, *args, **kwargs):

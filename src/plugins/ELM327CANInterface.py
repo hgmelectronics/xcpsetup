@@ -24,18 +24,20 @@ Created on Oct 5, 2013
         bus before stopping. If this is absent it will read from the bus indefinitely.
 '''
 import sys
-if not '..' in sys.path:
-    sys.path.append('..')
-from comm import CANInterface
-#from ..comm import CANInterface FIXME need to find out if we are in plugins namespace
-from . import threadserial
+if not 'plugins' in __name__:
+    if not '..' in sys.path:
+        sys.path.append('..')
+    from comm import CANInterface
+else:
+    from ..comm import CANInterface
+import threadserial
 import socket
 import binascii
 import time
 import threading
 import queue
 
-LOGGING=True
+DEBUG=False
 
 class Error(CANInterface.Error):
     pass
@@ -115,24 +117,26 @@ class SocketAsPort(object):
         self._updateTimeout()
 
 class LoggingPort(threadserial.Serial):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, debugLogfile, **kwargs):
+        super().__init__(**kwargs)
+        self._debugLogfile = debugLogfile
     def _timeStr(self):
         return str(time.time())
     def open(self, *args, **kwargs):
         result = super().open(*args, **kwargs)
-        print(self._timeStr() + ' OPEN')
+        self._debugLogfile.write(self._timeStr() + ' OPEN')
         return result
     def close(self, *args, **kwargs):
         result = super().close(*args, **kwargs)
-        print(self._timeStr() + ' CLOSE')
+        self._debugLogfile.write(self._timeStr() + ' CLOSE')
         return result
     def read(self, *args, **kwargs):
         result = super().read(*args, **kwargs)
-        print(self._timeStr() + ' RD ' + repr(result))
+        if len(result) > 0:
+            self._debugLogfile.write(self._timeStr() + ' RD ' + repr(result))
         return result
     def write(self, data):
-        print(self._timeStr() + ' WR ' + repr(data))
+        self._debugLogfile.write(self._timeStr() + ' WR ' + repr(data))
         return super().write(data)
 
 def PutDiscard(queue, item):
@@ -157,34 +161,33 @@ def ELM327IO(port, receive, cmdResp, promptReady, terminate):
     EOL=b'\r'
     PROMPT=b'>'
     
+    port.timeout = 0.001
     lineBuffer=b''
     while 1:
         if terminate.is_set():
-            if LOGGING:
+            if DEBUG:
                 print(str(time.time()) + ' ELM327IO(): terminate set')
-            port.close()
             return
         
-        if LOGGING:
-            print(str(time.time()) + ' ELM327IO(): check read')
-        dataRead = port.read(FIXME).translate(None, b'\0')
+        dataRead = port.read(4096).translate(None, b'\0')
         # First find complete lines and process them
         if EOL in dataRead:
             linesRead = dataRead.splitlines(keepends=True)
             # Add in any buffered data from last iter
             linesRead[0] = lineBuffer + linesRead[0]
             # We now have a list of lines with the CR still on the end, except if the last is not complete it will not have one.
+            setPromptReady = False
             if not EOL in linesRead[-1]:
                 if linesRead[-1] == PROMPT:
-                    if LOGGING:
+                    if DEBUG:
                         print(str(time.time()) + ' promptReady.set()')
                     # Manage the promptReady Event; it's set if and only if there is an incomplete line consisting of a prompt.
-                    promptReady.set()
-                lineBuffer = linesRead[-1] # Stash an incomplete line in lineBuffer
+                    setPromptReady = True
+                else:
+                    lineBuffer = linesRead[-1] # Stash an incomplete line in lineBuffer
                 del linesRead[-1]
             for rawLine in linesRead:
                 # Now parse the line
-                print(str(time.time()) + ' rawLine ' + repr(rawLine))
                 line = rawLine.strip(EOL)
                 # Is it empty?
                 if len(line) == 0:
@@ -192,7 +195,6 @@ def ELM327IO(port, receive, cmdResp, promptReady, terminate):
                 # Does it contain non-hex characters?
                 elif any(x for x in line if x not in b'0123456789ABCDEF'):
                     # Command response or a packet received with errors
-                    print(str(time.time()) + ' cmdResp ' + repr(line))
                     PutDiscard(cmdResp, line)
                 else:
                     # Must be a valid received frame
@@ -205,11 +207,13 @@ def ELM327IO(port, receive, cmdResp, promptReady, terminate):
                     if len(line) >= idLen:
                         ident = int(line[0:idLen], 16)
                         data = binascii.unhexlify(line[idLen:])
-                        return CANInterface.Packet(ident | mask, data)
+                        packet = CANInterface.Packet(ident | mask, data)
+                        PutDiscard(receive, packet)
                     else:
                         # Too short to be valid
                         PutDiscard(cmdResp, line)
-                        print(str(time.time()) + ' cmdResp ' + repr(line))
+            if setPromptReady:
+                promptReady.set()
 
 def identToHex(ident):
     if ident & 0x80000000:
@@ -249,7 +253,7 @@ class ELM327CANInterface(CANInterface.Interface):
     _ioThreadTerminate = threading.Event()
     _ioThread = None
     
-    def __init__(self, parsedURL):
+    def __init__(self, parsedURL, debugLogfile):
         if len(parsedURL.netloc):
             # If netloc is present, we're using a TCP connection
             addr = parsedURL.netloc.split(':')
@@ -262,15 +266,15 @@ class ELM327CANInterface(CANInterface.Interface):
             self._port = SocketAsPort(s)
             self._intfcTimeout = self._tcpTimeout
         else:
-            if LOGGING:
-                port = LoggingPort()
+            if debugLogfile != None:
+                port = LoggingPort(debugLogfile)
             else:
                 port = threadserial.Serial()
             port.port = parsedURL.path
             port.open()
             foundBaud = False
             for baudRate in self._POSSIBLE_BAUDRATES:
-                if LOGGING:
+                if DEBUG:
                     print('Trying ' + str(baudRate))
                 port.baudrate = baudRate
                 port.interCharTimeout = min(10/baudRate, 0.0001)
@@ -340,6 +344,7 @@ class ELM327CANInterface(CANInterface.Interface):
         
         # Start the I/O thread, which takes over control of the port
         self._ioThread = threading.Thread(target=ELM327IO, args=(self._port, self._receiveQueue, self._cmdRespQueue, self._promptReady, self._ioThreadTerminate))
+        self._ioThread.daemon = True # In case main thread crashes...
         self._ioThread.start()
         
         self._promptReady.clear()
@@ -391,7 +396,7 @@ class ELM327CANInterface(CANInterface.Interface):
             extMask = '00000000'
             
         self._promptReady.clear()
-        self.__port.write(b'\r')
+        self._port.write(b'\r')
         self._runCmdWithCheck(b'ATCF' + bytes(stdFilter, 'utf-8'))
         self._runCmdWithCheck(b'ATCM' + bytes(stdMask, 'utf-8'))
         self._runCmdWithCheck(b'ATCF' + bytes(extFilter, 'utf-8'))
@@ -452,16 +457,18 @@ class ELM327CANInterface(CANInterface.Interface):
         
         if not self._promptReady.wait(self._intfcTimeout):
             failAction()
-        if LOGGING:
+        if DEBUG:
             print(str(time.time()) + ' _runCmdWithCheck(): Prompt ready')
         self._promptReady.clear()
         while 1:
             try:
-                self._cmdRespQueue.get_nowait()
+                resp = self._cmdRespQueue.get_nowait()
+                if DEBUG:
+                    print(str(time.time()) + ' _runCmdWithCheck(): flushed cmd resp ' + resp.decode('utf-8'))
             except queue.Empty:
                 break
         self._port.write(cmd + b'\r')
-        if LOGGING:
+        if DEBUG:
             print(str(time.time()) + ' _runCmdWithCheck(): put ' + cmd.decode('utf-8'))
         if not self._promptReady.wait(self._intfcTimeout):
             failAction()
@@ -470,9 +477,7 @@ class ELM327CANInterface(CANInterface.Interface):
             while 1:
                 try:
                     response = self._cmdRespQueue.get_nowait()
-                    print('response ' + repr(response))
                     if b'OK' in response:
-                        print('gotOK')
                         gotOK = True
                     elif response == cmd + b'\r':
                         response = self._cmdRespQueue.get_nowait()
@@ -480,7 +485,6 @@ class ELM327CANInterface(CANInterface.Interface):
                             gotOK = True
                 except queue.Empty:
                     break
-            print('gotOK ' + repr(gotOK))
             if not gotOK:
                 failAction()
 
@@ -518,7 +522,7 @@ class ELM327CANInterface(CANInterface.Interface):
             self._cfgdHeaderIdent = ident
             
         self._promptReady.clear()
-        self._transmitQueue.put(binascii.hexlify(data) + b'\r')
+        self._port.write(binascii.hexlify(data) + b'\r')
     
     def transmit(self, data):
         assert self._cfgdBitrate != None and self._cfgdFilter != None
@@ -576,7 +580,7 @@ class ELM327CANInterface(CANInterface.Interface):
             except queue.Empty:
                 break
             
-            if packet.data[0] == 0xFF or packet.data[0] == 0xFE:
+            if len(packet.data) > 0 and (packet.data[0] == 0xFF or packet.data[0] == 0xFE):
                 packets.append(packet)
                 if self._dumpTraffic:
                     print('RX ' + CANInterface.ID(packet.ident).getString() + ' ' + CANInterface.getDataHexString(packet.data))
@@ -587,7 +591,7 @@ CANInterface.addInterface("elm327", ELM327CANInterface)
 if __name__ == "__main__":
     import urllib.parse
     parsedurl = urllib.parse.urlparse('elm327:COM8')
-    elm327 = ELM327CANInterface(parsedurl)
+    elm327 = ELM327CANInterface(parsedurl, open('elm327.log', 'w'))
     elm327.setBaud(250000)
     elm327.setFilter((0x000, 0x80000000))
     elm327.transmitTo(b'1234', 0x7FF)

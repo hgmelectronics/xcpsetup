@@ -11,7 +11,7 @@
 import ctypes
 from serial import win32
 
-from serial.serialutil import *
+from threadserial.serialutil import *
 
 import threading
 
@@ -72,15 +72,12 @@ class Win32Serial(SerialBase):
             self._rtsState = win32.RTS_CONTROL_ENABLE
             self._dtrState = win32.DTR_CONTROL_ENABLE
 
-            self._reconfigurePort()
+        self._reconfigurePort()
+        
+        self.flushInput()
+        self.flushOutput()
 
-            # Clear buffers:
-            # Remove anything that was there
-            win32.PurgeComm(self.hComPort,
-                                win32.PURGE_TXCLEAR | win32.PURGE_TXABORT |
-                                win32.PURGE_RXCLEAR | win32.PURGE_RXABORT)
-
-            self._isOpen = True
+        self._isOpen = True
 
     def _reconfigurePort(self):
         """Set communication parameters on opened port."""
@@ -220,9 +217,9 @@ class Win32Serial(SerialBase):
         if not self.hComPort: raise portNotOpenError
         
         if size > 0:
-            buf = ctypes.create_string_buffer(n)
+            buf = ctypes.create_string_buffer(size)
             rc = win32.DWORD()
-            err = win32.ReadFile(self.hComPort, buf, n, ctypes.byref(rc), None)
+            err = win32.ReadFile(self.hComPort, buf, size, ctypes.byref(rc), None)
             if not err:
                 flags = win32.DWORD()
                 comstat = win32.COMSTAT()

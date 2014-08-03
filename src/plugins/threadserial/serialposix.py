@@ -13,7 +13,7 @@
 # references: http://www.easysw.com/~mike/serial/serial.html
 
 import sys, os, fcntl, termios, struct, select, errno, time
-from serial.serialutil import *
+from threadserial.serialutil import *
 
 # Do check the Python version as some constants have moved.
 if (sys.hexversion < 0x020100f0):
