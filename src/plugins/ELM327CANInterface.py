@@ -118,26 +118,35 @@ class SocketAsPort(object):
         self._updateTimeout()
 
 class LoggingPort(threadserial.Serial):
+    _logLock = threading.Lock()
     def __init__(self, debugLogfile, **kwargs):
         super().__init__(**kwargs)
         self._debugLogfile = debugLogfile
     def _timeStr(self):
         return str(time.time())
     def open(self, *args, **kwargs):
+        timeStr = self._timeStr()
         result = super().open(*args, **kwargs)
-        self._debugLogfile.write(self._timeStr() + ' OPEN' + '\r\n')
+        with self._logLock:
+            self._debugLogfile.write(timeStr + ' OPEN' + '\r\n')
         return result
     def close(self, *args, **kwargs):
+        timeStr = self._timeStr()
         result = super().close(*args, **kwargs)
-        self._debugLogfile.write(self._timeStr() + ' CLOSE' + '\r\n')
+        with self._logLock:
+            self._debugLogfile.write(timeStr + ' CLOSE' + '\r\n')
         return result
     def read(self, *args, **kwargs):
+        timeStr = self._timeStr()
         result = super().read(*args, **kwargs)
         if len(result) > 0:
-            self._debugLogfile.write(self._timeStr() + ' RD ' + repr(result) + '\r\n')
+            with self._logLock:
+                self._debugLogfile.write(timeStr + ' RD ' + repr(result) + '\r\n')
         return result
     def write(self, data):
-        self._debugLogfile.write(self._timeStr() + ' WR ' + repr(data) + '\r\n')
+        timeStr = self._timeStr()
+        with self._logLock:
+            self._debugLogfile.write(timeStr + ' WR ' + repr(data) + '\r\n')
         return super().write(data)
 
 def PutDiscard(queue, item):
