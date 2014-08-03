@@ -264,7 +264,7 @@ class ELM327CANInterface(CANInterface.Interface):
     _ioThreadTerminate = threading.Event()
     _ioThread = None
     
-    def __init__(self, parsedURL, debugLogfile):
+    def __init__(self, parsedURL, debugLogfile=None):
         if len(parsedURL.netloc):
             # If netloc is present, we're using a TCP connection
             addr = parsedURL.netloc.split(':')
@@ -277,10 +277,11 @@ class ELM327CANInterface(CANInterface.Interface):
             self._port = SocketAsPort(s)
             self._intfcTimeout = self._tcpTimeout
         else:
-            if debugLogfile != None:
-                port = LoggingPort(debugLogfile)
-            else:
-                port = threadserial.Serial()
+            #if debugLogfile != None:
+            #    port = LoggingPort(debugLogfile)
+            #else:
+            #    port = threadserial.Serial()
+            port=LoggingPort(open('elm327.log','w')) #FIXME TEMP FOR TEST
             port.port = parsedURL.path
             port.open()
             foundBaud = False
@@ -372,6 +373,8 @@ class ELM327CANInterface(CANInterface.Interface):
         self._runCmdWithCheck(b'ATH1', closeOnFail=True) # Turn on headers
         self._runCmdWithCheck(b'ATSPB', closeOnFail=True) # Switch to protocol B (user defined)
         
+        self.setBitrate(CANInterface.URLBitrate(parsedURL))
+        
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
     
     def __enter__(self):
@@ -388,7 +391,7 @@ class ELM327CANInterface(CANInterface.Interface):
             if self._port != None:
                 self._port.close()
     
-    def setBaud(self, bitrate):
+    def setBitrate(self, bitrate):
         self._bitrate = bitrate
         self._updateBitrateTXType()
     
@@ -522,8 +525,7 @@ class ELM327CANInterface(CANInterface.Interface):
     def connect(self, address, dumpTraffic):
         self._slaveAddr = address
         self._dumpTraffic = dumpTraffic
-        self._doSetFilter((address, self.exactMask(address)))
-        self._runCmdWithCheck(b'ATMA', checkOK=False)
+        self._doSetFilter((address.resId.raw, self.exactMask(address.resId.raw)))
     
     def disconnect(self):
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
@@ -586,10 +588,8 @@ class ELM327CANInterface(CANInterface.Interface):
             except queue.Empty:
                 break
             
-            if packet.ident != self._slaveAddr.resId.raw:
-                raise UnexpectedResponse('filtered data read')
             
-            if packet.data[0] == 0xFF or packet.data[0] == 0xFE:
+            if packet.ident == self._slaveAddr.resId.raw and (packet.data[0] == 0xFF or packet.data[0] == 0xFE):
                 msgs.append(packet.data)
                 if self._dumpTraffic:
                     print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(packet.data))
@@ -625,7 +625,6 @@ if __name__ == "__main__":
     import urllib.parse
     parsedurl = urllib.parse.urlparse('elm327:COM8')
     elm327 = ELM327CANInterface(parsedurl, open('elm327.log', 'w'))
-    elm327.setBaud(250000)
     elm327.setFilter((0x000, 0x80000000))
     elm327.transmitTo(b'1234', 0x9FFFFFFF)
     elm327.transmitTo(b'1234', 0x7FF)

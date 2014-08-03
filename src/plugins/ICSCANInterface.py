@@ -145,7 +145,7 @@ class ICSCANInterface(CANInterface.Interface):
         else:
             devIdx = 0
         
-        devOfType = [dev for dev in neoDevices[0:nNeoDevices] if dev.DeviceType & devTypeMask]
+        devOfType = [dev for dev in neoDevices[0:nNeoDevices.value] if dev.DeviceType & devTypeMask]
         if len(devOfType) < devIdx + 1:
             raise CANInterface.ConnectFailed('ICS device of type \'' + splitPath[0] + '\', index ' + str(devIdx) + ' not found')
 
@@ -160,10 +160,12 @@ class ICSCANInterface(CANInterface.Interface):
             raise CANInterface.ConnectFailed('Opening ICS device failed')
         self._neoObject = tempNeoObject.value
 
-        setBitrateResult = self._dll.icsneoSetBitRate(self._neoObject, self._BITRATE, self._ICSNETID_HSCAN)
+        setBitrateResult = self._dll.icsneoSetBitRate(self._neoObject, self._BITRATE, self._ICSNETID_HSCAN) #FIXME need to implement ICS net ID in URI
         if setBitrateResult != 1:
             raise CANInterface.ConnectFailed()
 
+        #self.setBitrate(CANInterface.URLBitrate(parsedURL))
+        
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
 
     def __enter__(self):
@@ -314,6 +316,9 @@ class ICSCANInterface(CANInterface.Interface):
             if len(packets) != 0:
                 break
         return packets
+    
+    def setFilter(self, filter):
+        pass #FIXME
 
 if ICSSupported():
     CANInterface.addInterface("ics", ICSCANInterface)

@@ -31,6 +31,8 @@ maxAttempts = 10
 # Connect to the bus
 
 with CANInterface.MakeInterface(args.deviceURI) as interface:
+    interface.setFilter((0x80000000, 0x80000000)) #FIXME need to get filter definitions from board type
+    interface.setFilter((0x000, 0x80000000))
     targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
     # If needed, ask the user to pick a slave from the list
     if len(targetSlaves) == 0:

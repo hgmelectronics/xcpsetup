@@ -43,6 +43,8 @@ def OpenOutFile(name, id):
         return open(name.format(id), 'w')
 
 with CANInterface.MakeInterface(args.deviceURI) as interface:
+    interface.setFilter((0x80000000, 0x80000000)) #FIXME need to get filter definitions from board type
+    interface.setFilter((0x000, 0x80000000))
     targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
     # If needed, ask the user to pick a slave from the list
     if len(targetSlaves) == 0:
@@ -72,7 +74,8 @@ with CANInterface.MakeInterface(args.deviceURI) as interface:
                 
                 outFile.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')))
                 outFile.write('\n')
-                outFile.close()
+                if outFile != sys.stdout:
+                    outFile.close()
                 try:
                     conn.close()
                 except XCPConnection.Error:

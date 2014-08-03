@@ -5,7 +5,7 @@ Created on Aug 03, 2013
 '''
 
 from collections import namedtuple
-import urllib.parse.urlparse
+import urllib.parse
 
 class ID(object):
     '''
@@ -69,6 +69,21 @@ _interfaceTypes = {}
 
 def addInterface(interfaceType, cls):
     _interfaceTypes[interfaceType] = cls
+
+def URLBitrate(parsedURL, default=250000):
+    queryDict={}
+    for queryParam in parsedURL.query.split('&'):
+        if len(queryParam) > 0:
+            tokens = queryParam.split('=')
+            if len(tokens) != 2:
+                raise ValueError('Bad URL query parameter ' + queryParam)
+            queryDict[tokens[0]] = tokens[1]
+    if 'bitrate' in queryDict:
+        return int(queryDict['bitrate'])
+    elif 'baud' in queryDict:
+        return int(queryDict['baud'])
+    else:
+        return default
 
 def MakeInterface(intfcURI):
     if intfcURI == None:
