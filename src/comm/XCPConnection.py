@@ -8,6 +8,7 @@ from collections import namedtuple
 import struct
 import time
 import itertools
+import binascii
 from . import CANInterface
 
 Pointer = namedtuple('Pointer', ['addr', 'ext'])
@@ -31,11 +32,11 @@ class Error(Exception):
     def __init__(self):
         self._desc = ''
         self._value = None
-    def __str(self):
+    def __str__(self):
         if self._value != None:
-            return self.desc + ' ' + self._value
+            return self._desc + ' ' + self._value
         else:
-            return self.desc
+            return self._desc
 
 class Timeout(Error):
     def __init__(self, value=None):
@@ -166,13 +167,17 @@ xcpErrCodes = { \
 }
 
 def RaiseReply(reply, msg = None):
+    if msg == None:
+        msgStr = ''
+    else:
+        msgStr = msg
     try:
-        if reply[0] == 0xFE and reply[1] in xcpErrCodes:
-            raise xcpErrCodes[reply[1]](msg)
+        if len(reply) == 2 and reply[0] == 0xFE and reply[1] in xcpErrCodes:
+            raise xcpErrCodes[reply[1]](msgStr)
         else:
-            raise BadReply(msg)
+            raise BadReply(msgStr + '(' + binascii.hexlify(reply).decode('utf-8') + ')')
     except TypeError:
-        raise BadReply(msg)
+        raise BadReply(msgStr + '(' + binascii.hexlify(reply).decode('utf-8') + ')')
     
 class Connection(object):
     '''
@@ -191,9 +196,9 @@ class Connection(object):
         # temporarily set byteorder to allow transaction
         self._byteorder = "@"
         request = struct.pack("BB", 0xFF, 0x00)
-        reply = self._transaction(request, "BBBBBBBB")
+        reply, replyData = self._transaction(request, "BBBBBBBB")
         if reply[0] != 0xFF:
-            RaiseReply(reply, 'connecting to slave')
+            RaiseReply(replyData, 'connecting to slave')
         self._calPage = reply[1] & 0x01
         self._daq = reply[1] & 0x04
         self._stim = reply[1] & 0x08
@@ -225,16 +230,16 @@ class Connection(object):
         
         if reply[6] != 0x01 or reply[7] != 0x01:
             self.close()
-            RaiseReply(reply, 'connecting to slave')
+            RaiseReply(replyData, 'connecting to slave')
     
     def byteToAG(self, data):
         return int(data / self._addressGranularity)
 
     def close(self):
         request = struct.pack(self._byteorder + "B", 0xFE)
-        reply = self._transaction(request, "B")
+        reply, replyData = self._transaction(request, "B")
         if reply[0] != 0xFF:
-            RaiseReply(reply, 'closing connection to slave')
+            RaiseReply(replyData, 'closing connection to slave')
         self._pgmStarted = False
     
     def _getReply(self, fmt, timeout):
@@ -247,9 +252,9 @@ class Connection(object):
         try:
             #print('Send ' + repr([hex(elem) for elem in request]) + ' Reply ' + repr([hex(elem) for elem in replies[0]]))
             reply = struct.unpack_from(self._byteorder + fmt, replies[0])
-            return reply
+            return (reply, replies[0])
         except struct.error:
-            RaiseReply(reply, 'reply wrong length')
+            RaiseReply(replies[0], None)
     
     def _transaction(self, request, fmt, timeout=-1):
         self._interface.transmit(request)
@@ -260,9 +265,9 @@ class Connection(object):
     
     def _synch(self):
         request = struct.pack(self._byteorder + "B", 0xFC)
-        reply = self._transaction(request, "BB")
+        reply, replyData = self._transaction(request, "BB")
         if reply[0] != 0xFE or reply[1] != 0x00:
-            RaiseReply(reply, 'resynchronization')
+            RaiseReply(replyData, 'resynchronization')
     
     def _query(self, action_func, *args):
         failures = 0
@@ -284,13 +289,13 @@ class Connection(object):
     def _setMTA(self, ptr):
         request = struct.pack(self._byteorder + "BxxBL", 0xF6, ptr.ext, ptr.addr)
         try:
-            reply = self._transaction(request, "B")
+            reply, replyData = self._transaction(request, "B")
         except Error:
             self._calcMTA = None
             raise
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'set MTA')
+            RaiseReply(replyData, 'set MTA')
         self._calcMTA = ptr
     
     def _action_upload8(self, ptr):
@@ -298,14 +303,14 @@ class Connection(object):
             request = struct.pack(self._byteorder + "BBxBL", 0xF4, 1, ptr.ext, ptr.addr)
             
             try:
-                reply = self._transaction(request, "BB")
+                reply, replyData = self._transaction(request, "BB")
             except Error:
                 self._calcMTA = None
                 raise
             
             if reply[0] != 0xFF:
                 self._calcMTA = None
-                RaiseReply(reply, 'uploading 1 byte')
+                RaiseReply(replyData, 'uploading 1 byte')
             else:
                 self._calcMTA = Pointer(ptr.addr + 1, ptr.ext)
                 return reply[1]
@@ -326,14 +331,14 @@ class Connection(object):
             raise InvalidOp()
         
         try:
-            reply = self._transaction(request, decodeFormat)
+            reply, replyData = self._transaction(request, decodeFormat)
         except Error:
             self._calcMTA = None
             raise
             
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'uploading 2 bytes')
+            RaiseReply(replyData, 'uploading 2 bytes')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(2), ptr.ext)
             return reply[1]
@@ -355,14 +360,14 @@ class Connection(object):
             raise InvalidOp()
         
         try:
-            reply = self._transaction(request, decodeFormat)
+            reply, replyData = self._transaction(request, decodeFormat)
         except Error:
             self._calcMTA = None
             raise
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'uploading 4 bytes')
+            RaiseReply(replyData, 'uploading 4 bytes')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(4), ptr.ext)
             return reply[1]
@@ -386,14 +391,14 @@ class Connection(object):
             raise InvalidOp()
         
         try:
-            reply = self._transaction(request, decodeFormat)
+            reply, replyData = self._transaction(request, decodeFormat)
         except Error:
             self._calcMTA = None
             raise
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'uploading data')
+            RaiseReply(replyData, 'uploading data')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(size), ptr.ext)
             return bytes(reply[1])
@@ -417,14 +422,14 @@ class Connection(object):
         request = struct.pack(self._byteorder + "BBB", 0xF0, 1, data)
         
         try:
-            reply = self._transaction(request, "B")
+            reply, replyData = self._transaction(request, "B")
         except Error:
             self._calcMTA = None
             raise
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'downloading 1 byte')
+            RaiseReply(replyData, 'downloading 1 byte')
         else:
             self._calcMTA = Pointer(ptr.addr + 1, ptr.ext)
     
@@ -443,14 +448,14 @@ class Connection(object):
         if self._calcMTA != ptr:
             self._setMTA(ptr)
         try:
-            reply = self._transaction(request, "B")
+            reply, replyData = self._transaction(request, "B")
         except Error:
             self._calcMTA = None
             raise
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'downloading 2 bytes')
+            RaiseReply(replyData, 'downloading 2 bytes')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(2), ptr.ext)
     
@@ -469,14 +474,14 @@ class Connection(object):
         if self._calcMTA != ptr:
             self._setMTA(ptr)
         try:
-            reply = self._transaction(request, "B")
+            reply, replyData = self._transaction(request, "B")
         except Error:
             self._calcMTA = None
             raise
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'downloading 4 bytes')
+            RaiseReply(replyData, 'downloading 4 bytes')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(4), ptr.ext)
     
@@ -503,14 +508,14 @@ class Connection(object):
         decodeFormat = "B"
         
         try:
-            reply = self._transaction(request, decodeFormat)
+            reply, replyData = self._transaction(request, decodeFormat)
         except Error:
             self._calcMTA = None
             raise
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'downloading data')
+            RaiseReply(replyData, 'downloading data')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(len(data)), ptr.ext)
     
@@ -527,9 +532,9 @@ class Connection(object):
     
     def _action_nvwrite(self):
         request = struct.pack(self._byteorder + "BBH", 0xF9, 0x01, 0)
-        reply = self._transaction(request, "B")
+        reply, replyData = self._transaction(request, "B")
         if reply[0] != 0xFF:
-            RaiseReply(reply, 'writing nonvolatile memory')
+            RaiseReply(replyData, 'writing nonvolatile memory')
         
         # Fixed turndown ratio of 10
         pollInterval = self._nvWriteTimeout / 10
@@ -537,13 +542,13 @@ class Connection(object):
         for _ in itertools.repeat(None, 10):
             time.sleep(pollInterval)
             request = struct.pack(self._byteorder + "B", 0xFD)
-            reply = self._transaction(request, "BBBBH")
+            reply, replyData = self._transaction(request, "BBBBH")
             if reply[0] == 0xFD:
                 if reply[1] == 0x03:
                     # EV_STORE_CAL: we're done
                     return
             if reply[0] != 0xFF:
-                RaiseReply(reply, 'waiting for nonvolatile memory write to finish')
+                RaiseReply(replyData, 'waiting for nonvolatile memory write to finish')
             if not (reply[1] & 0x01):
                 return
                 
@@ -558,9 +563,9 @@ class Connection(object):
     def _action_set_cal_page(self, segment, page):
         request = struct.pack(self._byteorder + "BBBB", 0xEB, 0x03, segment, page)  # Both slave device and application can access area
         self._calcMTA = None  # standard does not define what happens to MTA
-        reply = self._transaction(request, "B", self._nvWriteTimeout)
+        reply, replyData = self._transaction(request, "B", self._nvWriteTimeout)
         if reply[0] != 0xFF:
-            RaiseReply(reply, 'setting calibration page')
+            RaiseReply(replyData, 'setting calibration page')
     
     def set_cal_page(self, segment, page):
         if not self._calPage:
@@ -569,9 +574,9 @@ class Connection(object):
     
     def _action_program_start(self):
         request = struct.pack(self._byteorder + "B", 0xD2)
-        reply = self._transaction(request, "BxBBBBB")
+        reply, replyData = self._transaction(request, "BxBBBBB")
         if reply[0] != 0xFF or reply[2] < 8:
-            RaiseReply(reply, 'starting program')
+            RaiseReply(replyData, 'starting program')
         if reply[1] & 0x01:
             self._pgmMasterBlockMode = True
         else:
@@ -595,9 +600,9 @@ class Connection(object):
             self._setMTA(ptr)
         request = struct.pack(self._byteorder + "BBxxL", 0xD1, 0x00, length)
         self._calcMTA = None  # standard does not define what happens to MTA
-        reply = self._transaction(request, "B", self._nvWriteTimeout)
+        reply, replyData = self._transaction(request, "B", self._nvWriteTimeout)
         if reply[0] != 0xFF:
-            RaiseReply(reply, 'erasing program')
+            RaiseReply(replyData, 'erasing program')
     
     def program_clear(self, ptr, length):
         if not self._pgmStarted:
@@ -673,14 +678,14 @@ class Connection(object):
         else:
             request = struct.pack(self._byteorder + "BBxx", 0xD0, len(data)) + data
         try:
-            reply = self._transaction(request, "B")
+            reply, replyData = self._transaction(request, "B")
         except Error:
             self._calcMTA = None
             raise
         
         if reply[0] != 0xFF:
             self._calcMTA = None
-            RaiseReply(reply, 'writing program packet')
+            RaiseReply(replyData, 'writing program packet')
         else:
             self._calcMTA = Pointer(ptr.addr + self.byteToAG(len(data)), ptr.ext)
     
@@ -712,9 +717,9 @@ class Connection(object):
     
     def _action_program_verify(self, crc):
         request = struct.pack(self._byteorder + "BBHL", 0xC8, 0x01, 0x0002, crc)
-        reply = self._transaction(request, "B")
+        reply, replyData = self._transaction(request, "B")
         if reply[0] != 0xFF:
-            RaiseReply(reply, 'verifying program')
+            RaiseReply(replyData, 'verifying program')
 
     def program_verify(self, crc):
         if not self._pgmStarted:
@@ -723,9 +728,9 @@ class Connection(object):
         
     def _action_program_reset(self):
         request = struct.pack(self._byteorder + "B", 0xCF)
-        reply = self._transaction(request, "B")
+        reply, replyData = self._transaction(request, "B")
         if reply[0] != 0xFF:
-            RaiseReply(reply, 'resetting slave')
+            RaiseReply(replyData, 'resetting slave')
         self._pgmStarted = False
 
     def program_reset(self):
