@@ -19,8 +19,7 @@ import argProc
 plugins.load_plugins()
 
 parser = argparse.ArgumentParser(description="reads data from a board using a C header file to define layout in memory")
-parser.add_argument('-t', help="CAN device type", dest="deviceType", default=None)
-parser.add_argument('-d', help="CAN device name", dest="deviceName", default=None)
+parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
 parser.add_argument('-l', help="Location of config structure in form <segment>:<baseaddr>", default="0:0", dest="structLocation")
@@ -65,7 +64,7 @@ def OpenOutFile(name, id):
     else:
         return open(name.format(id), 'w')
 
-with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
+with CANInterface.MakeInterface(args.deviceURI) as interface:
     targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
     # If needed, ask the user to pick a slave from the list
     if len(targetSlaves) == 0:

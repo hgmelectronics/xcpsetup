@@ -23,8 +23,7 @@ def OpenOutFile(name, id):
 plugins.load_plugins()
 
 parser = argparse.ArgumentParser(description="reads data from a board using a JSON file to define locations and data formats")
-parser.add_argument('-t', help="CAN device type", dest="deviceType", default=None)
-parser.add_argument('-d', help="CAN device name", dest="deviceName", default=None)
+parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
 parser.add_argument('-p', help="Parameter definition file", dest="paramSpecFile", type=argparse.FileType('r'))
@@ -42,7 +41,7 @@ except argProc.ArgError as exc:
 
 maxAttempts = 10
 
-with CANInterface.MakeInterface(args.deviceType, args.deviceName) as interface:
+with CANInterface.MakeInterface(args.deviceURI) as interface:
     targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
     # If needed, ask the user to pick a slave from the list
     if len(targetSlaves) == 0:

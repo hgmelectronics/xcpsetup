@@ -94,10 +94,9 @@ class XCPShell(cmd2.Cmd):
         'Connect to the CAN interface'
         try:
             parser = ShellArgParser(prog='interface', description=__doc__)
-            parser.add_argument('deviceType', help="CAN device type", default=None)
-            parser.add_argument('deviceName', help="CAN device name", default=None)
+            parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
             args = parser.parse_args(shlex.split(cmdLine))
-            self.interface = CANInterface.MakeInterface(args.deviceType, args.deviceName);
+            self.interface = CANInterface.MakeInterface(args.deviceURI);
             self.connection = None;
         except ShellArgParserExit:
             return

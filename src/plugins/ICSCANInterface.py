@@ -9,15 +9,32 @@ import sys
 import time
 from comm import CANInterface
 
-_ICS_TYPE_TABLE = [(1, 'NeoVI Blue'), \
-                   (4, 'DW ValueCAN'), \
-                   (8, 'NeoVI Fire'), \
-                   (16, 'ValueCAN 3'), \
-                   (32, 'NeoVI Yellow'), \
-                   (64, 'NeoVI Red'), \
-                   (128, 'ECU'), \
-                   (256, 'IEVB'),
-                   (512, 'Pendant')]
+_ICS_TYPE_TABLE = [(0x001, 'NeoVI Blue'), \
+                   (0x004, 'DW ValueCAN'), \
+                   (0x008, 'NeoVI Fire'), \
+                   (0x010, 'ValueCAN 3'), \
+                   (0x020, 'NeoVI Yellow'), \
+                   (0x040, 'NeoVI Red'), \
+                   (0x080, 'ECU'), \
+                   (0x100, 'IEVB'),
+                   (0x200, 'Pendant')]
+
+_ICS_TYPE_STRING_MASKS = {'neovi-blue':     0x001,
+                          'dw-valuecan':    0x004,
+                          'neovi-fire':     0x008,
+                          'valuecan-3':     0x010,
+                          'neovi-yellow':   0x020,
+                          'neovi-red':      0x040,
+                          'ecu':            0x080,
+                          'ievb':           0x100,
+                          'pendant':        0x200,
+                          'neovi':          0x069,
+                          'valuecan':       0x014,
+                          'vcan':           0x014,
+                          'all':            0x3FF,
+                          'any':            0x3FF,
+                          None:             0x3FF
+                          }
 
 def _ICSDevTypeStr(typeBits):
     typeStrs = [typeEntry[1] for typeEntry in _ICS_TYPE_TABLE if (typeEntry[0] & typeBits)]
@@ -96,7 +113,7 @@ class ICSCANInterface(CANInterface.Interface):
     _ICSNETID_HSCAN = 1
     _BITRATE = 250000
 
-    def __init__(self, name):
+    def __init__(self, parsedURL):
         if not hasattr(ctypes, 'windll'):
             raise CANInterface.InterfaceNotSupported('Not a Windows system')
         
@@ -105,24 +122,40 @@ class ICSCANInterface(CANInterface.Interface):
         except OSError:
             raise CANInterface.InterfaceNotSupported('Loading icsneo40.dll failed')
         
-        neoDevices = (_ICSNeoDevice * 1)()
+        neoDevices = (_ICSNeoDevice * 64)()
         self._neoObject = None
 
-        nNeoDevices = ctypes.c_int(1)
+        nNeoDevices = ctypes.c_int(64)
         findResult = self._dll.icsneoFindNeoDevices(0xFFFFFFFF, neoDevices, ctypes.byref(nNeoDevices))
         if findResult != 1:
             raise CANInterface.ConnectFailed('Finding ICS devices failed')
+        
+        splitPath = parsedURL.path.split('/')
+        if len(splitPath) > 2:
+            raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'')
+        try:
+            devTypeMask = _ICS_TYPE_STRING_MASKS[splitPath[0]]
+        except KeyError:
+            raise CANInterface.ConnectFailed('Invalid ICS device type \'' + splitPath[0] + '\'')
+        if len(splitPath) == 2:
+            try:
+                devIdx = int(splitPath[1])
+            except ValueError:
+                raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'')
+        else:
+            devIdx = 0
+        
+        devOfType = [dev for dev in neoDevices[0:nNeoDevices] if dev.DeviceType & devTypeMask]
+        if len(devOfType) < devIdx + 1:
+            raise CANInterface.ConnectFailed('ICS device of type \'' + splitPath[0] + '\', index ' + str(devIdx) + ' not found')
 
-        if nNeoDevices.value < 1:
-            raise CANInterface.ConnectFailed('No ICS devices found')
-
-        sys.stderr.write('Connecting to ' + _ICSDevTypeStr(neoDevices[0].DeviceType) + '\n')
+        sys.stderr.write('Connecting to ' + _ICSDevTypeStr(neoDevices[0].DeviceType) + ' #' + str(devIdx) + '\n')
 
         netIDs = (ctypes.c_ubyte * 64)()
         for i in range(len(netIDs)):
             netIDs[i] = i
         tempNeoObject = ctypes.c_int()
-        openResult = self._dll.icsneoOpenNeoDevice(ctypes.byref(neoDevices[0]), ctypes.byref(tempNeoObject), netIDs, 1, 0)
+        openResult = self._dll.icsneoOpenNeoDevice(ctypes.byref(devOfType[devIdx]), ctypes.byref(tempNeoObject), netIDs, 1, 0)
         if openResult != 1:
             raise CANInterface.ConnectFailed('Opening ICS device failed')
         self._neoObject = tempNeoObject.value
@@ -283,4 +316,4 @@ class ICSCANInterface(CANInterface.Interface):
         return packets
 
 if ICSSupported():
-    CANInterface.addInterface("ICS", ICSCANInterface)
+    CANInterface.addInterface("ics", ICSCANInterface)

@@ -5,6 +5,7 @@ Created on Aug 03, 2013
 '''
 
 from collections import namedtuple
+import urllib.parse.urlparse
 
 class ID(object):
     '''
@@ -69,17 +70,18 @@ _interfaceTypes = {}
 def addInterface(interfaceType, cls):
     _interfaceTypes[interfaceType] = cls
 
-def MakeInterface(interfaceType, name):
-    if interfaceType == None:
-        for interfaceType in _interfaceTypes:
+def MakeInterface(intfcURI):
+    if intfcURI == None:
+        for trialType in _interfaceTypes:
             try:
-                cls = _interfaceTypes[interfaceType]
-                return cls(name)
+                cls = _interfaceTypes[trialType]
+                return cls(None)
             except (InterfaceNotSupported,ConnectFailed) as exc:
-                print('Connecting to ' + interfaceType + ' interface failed: ' + str(exc))
-        raise ConnectFailed('Could not connect to any available type of interface')
+                print('Connecting to ' + trialType + ' interface failed: ' + str(exc))
+        raise ConnectFailed('Could not connect to any available type of interface without specifying location')
     else:
-        cls = _interfaceTypes[interfaceType]
-        if cls == None:
-            raise InterfaceNotSupported
-        return cls(name)
+        parsedURI = urllib.parse.urlparse(intfcURI)
+        if not parsedURI.scheme in _interfaceTypes:
+            raise InterfaceNotSupported('\'' + parsedURI.scheme + '\' is not a supported type of interface')
+        cls = _interfaceTypes[parsedURI.scheme]
+        return cls(parsedURI)
