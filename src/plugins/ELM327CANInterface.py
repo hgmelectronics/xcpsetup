@@ -30,7 +30,8 @@ if not 'plugins' in __name__:
     from comm import CANInterface
 else:
     from ..comm import CANInterface
-import threadserial
+#import threadserial
+import serial
 import socket
 import binascii
 import time
@@ -117,37 +118,38 @@ class SocketAsPort(object):
                 break
         self._updateTimeout()
 
-class LoggingPort(threadserial.Serial):
+class LoggingPort(serial.Serial):
     _logLock = threading.Lock()
     def __init__(self, debugLogfile, **kwargs):
         super().__init__(**kwargs)
         self._debugLogfile = debugLogfile
-    def _timeStr(self):
-        return str(time.time())
+    def _prefix(self):
+        return str(time.time()) + ' ' + str(threading.currentThread().ident)
     def open(self, *args, **kwargs):
-        timeStr = self._timeStr()
         result = super().open(*args, **kwargs)
+        prefix = self._prefix()
         with self._logLock:
-            self._debugLogfile.write(timeStr + ' OPEN' + '\r\n')
+            self._debugLogfile.write(prefix + ' OPEN' + '\n')
         return result
     def close(self, *args, **kwargs):
-        timeStr = self._timeStr()
         result = super().close(*args, **kwargs)
+        prefix = self._prefix()
         with self._logLock:
-            self._debugLogfile.write(timeStr + ' CLOSE' + '\r\n')
+            self._debugLogfile.write(prefix + ' CLOSE' + '\n')
         return result
     def read(self, *args, **kwargs):
-        timeStr = self._timeStr()
-        result = super().read(*args, **kwargs)
-        if len(result) > 0:
-            with self._logLock:
-                self._debugLogfile.write(timeStr + ' RD ' + repr(result) + '\r\n')
+        with self._logLock:
+            result = super().read(*args, **kwargs)
+            prefix = self._prefix()
+            if len(result) > 0:
+                self._debugLogfile.write(prefix + ' RD ' + repr(result) + '\n')
         return result
     def write(self, data):
-        timeStr = self._timeStr()
         with self._logLock:
-            self._debugLogfile.write(timeStr + ' WR ' + repr(data) + '\r\n')
-        return super().write(data)
+            result = super().write(data)
+            prefix = self._prefix()
+            self._debugLogfile.write(prefix + ' WR ' + repr(data) + '\n')
+            return result
 
 def PutDiscard(queue, item):
     '''
@@ -159,7 +161,7 @@ def PutDiscard(queue, item):
         queue.get()
     queue.put(item)
 
-def ELM327IO(port, receive, cmdResp, promptReady, terminate, pipelineClear):
+def ELM327IO(port, portLock, receive, cmdResp, promptReady, terminate, pipelineClear):
     '''
     Reads input, discards zero bytes (which ELM docs say can sometimes be inserted in error),
     packages completed lines that appear to be CAN frames and places them in the receive queue.
@@ -180,7 +182,8 @@ def ELM327IO(port, receive, cmdResp, promptReady, terminate, pipelineClear):
             return
         
         setPipelineClear = (not pipelineClear.is_set())
-        linesRead = port.read(4096).translate(None, b'\0').splitlines(keepends=True)
+        with portLock:
+            linesRead = port.read(4096).translate(None, b'\0').splitlines(keepends=True)
         if len(linesRead) == 0:
             if setPipelineClear:
                 pipelineClear.set()
@@ -248,7 +251,7 @@ class ELM327CANInterface(CANInterface.Interface):
     "Read" queue contains messages received from the bus.
     '''
     _QUEUE_MAX_SIZE = 16384
-    _POSSIBLE_BAUDRATES = [500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
+    _POSSIBLE_BAUDRATES = [115200, 500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
     
     _slaveAddr = None
     _port = None
@@ -267,6 +270,7 @@ class ELM327CANInterface(CANInterface.Interface):
     _cfgdFilter = None
     
     _receiveQueue = queue.Queue(_QUEUE_MAX_SIZE)
+    _portLock = threading.Lock()
     _cmdRespQueue = queue.Queue(_QUEUE_MAX_SIZE)
     _promptReady = threading.Event()
     _pipelineClear = threading.Event()
@@ -317,6 +321,10 @@ class ELM327CANInterface(CANInterface.Interface):
                 if not b'OK' in response:
                     continue
                 
+                #FIXME TEMP FOR TEST
+                if baudRate == 115200:
+                    foundBaud  = True
+                    break
                 # If we made contact at baudrate 500k, we're done
                 if baudRate == 500000:
                     foundBaud = True
@@ -365,8 +373,8 @@ class ELM327CANInterface(CANInterface.Interface):
         
         # Start the I/O thread, which takes over control of the port
         self._ioThread = threading.Thread(target=ELM327IO,
-                                          args=(self._port, self._receiveQueue, self._cmdRespQueue, self._promptReady,
-                                                self._ioThreadTerminate, self._pipelineClear))
+                                          args=(self._port, self._portLock, self._receiveQueue, self._cmdRespQueue,
+                                                self._promptReady, self._ioThreadTerminate, self._pipelineClear))
         self._ioThread.daemon = True # In case main thread crashes...
         self._ioThread.start()
         
@@ -374,7 +382,7 @@ class ELM327CANInterface(CANInterface.Interface):
         if not self._pipelineClear.wait(self._intfcTimeout):
             raise Error #FIXME
         self._promptReady.clear()
-        self._port.write(b'\r') # Get a prompt so the reader thread knows ELM327 is ready
+        with self._portLock: self._port.write(b'\r') # Get a prompt so the reader thread knows ELM327 is ready
         self._runCmdWithCheck(b'ATWS', checkOK=False, closeOnFail=True) # Software reset
         self._runCmdWithCheck(b'ATE0', closeOnFail=True) # Turn off echo
         self._runCmdWithCheck(b'ATL0', closeOnFail=True) # Turn off newlines
@@ -427,12 +435,12 @@ class ELM327CANInterface(CANInterface.Interface):
         if not self._pipelineClear.wait(self._intfcTimeout):
             raise Error #FIXME
         self._promptReady.clear()
-        self._port.write(b'\r')
+        with self._portLock: self._port.write(b'\r')
         self._runCmdWithCheck(b'ATCF' + bytes(stdFilter, 'utf-8'))
         self._runCmdWithCheck(b'ATCM' + bytes(stdMask, 'utf-8'))
         self._runCmdWithCheck(b'ATCF' + bytes(extFilter, 'utf-8'))
         self._runCmdWithCheck(b'ATCM' + bytes(extMask, 'utf-8'))
-        self._port.write(b'ATMA\r')
+        with self._portLock: self._port.write(b'ATMA\r')
         
         self._cfgdFilter = filt
     
@@ -477,7 +485,7 @@ class ELM327CANInterface(CANInterface.Interface):
         if not self._pipelineClear.wait(self._intfcTimeout):
             raise Error #FIXME
         self._promptReady.clear()
-        self._port.write(b'\r')
+        with self._portLock: self._port.write(b'\r')
         self._runCmdWithCheck(b'ATPB' + binascii.hexlify(bytearray([canOptions, self._baudDivisor])), closeOnFail=True)
         if not self._hasSetCSM0:
             self._runCmdWithCheck(b'ATCSM0', closeOnFail=True)
@@ -504,7 +512,7 @@ class ELM327CANInterface(CANInterface.Interface):
                     print(str(time.time()) + ' _runCmdWithCheck(): flushed cmd resp ' + resp.decode('utf-8'))
             except queue.Empty:
                 break
-        self._port.write(cmd + b'\r')
+        with self._portLock: self._port.write(cmd + b'\r')
         if DEBUG:
             print(str(time.time()) + ' _runCmdWithCheck(): put ' + cmd.decode('utf-8'))
         if not self._promptReady.wait(self._intfcTimeout):
@@ -554,7 +562,7 @@ class ELM327CANInterface(CANInterface.Interface):
         if not self._pipelineClear.wait(self._intfcTimeout):
             raise Error #FIXME
         self._promptReady.clear()
-        self._port.write(b'\r')
+        with self._portLock: self._port.write(b'\r')
             
         if not self._promptReady.wait(self._intfcTimeout):
             raise UnexpectedResponse('get prompt for transmission')
@@ -566,7 +574,7 @@ class ELM327CANInterface(CANInterface.Interface):
                 self._runCmdWithCheck(b'ATSH' + bytes('{:03x}'.format(ident & 0x7FF), 'utf-8'))
             self._cfgdHeaderIdent = ident
             
-        self._port.write(binascii.hexlify(data) + b'\r')
+        with self._portLock: self._port.write(binascii.hexlify(data) + b'\r')
     
     def transmit(self, data):
         assert self._cfgdBitrate != None and self._cfgdFilter != None

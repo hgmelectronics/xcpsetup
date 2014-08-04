@@ -175,7 +175,7 @@ def RaiseReply(reply, msg = None):
         if len(reply) == 2 and reply[0] == 0xFE and reply[1] in xcpErrCodes:
             raise xcpErrCodes[reply[1]](msgStr)
         else:
-            raise BadReply(msgStr + '(' + binascii.hexlify(reply).decode('utf-8') + ')')
+            raise BadReply(msgStr + '(' + binascii.hexlify(reply).decode('utf-8') + ')') #FIXME handle reply = list of multiple replies
     except TypeError:
         raise BadReply(msgStr + '(' + binascii.hexlify(reply).decode('utf-8') + ')')
     
