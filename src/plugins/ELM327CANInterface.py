@@ -546,7 +546,7 @@ class ELM327CANInterface(CANInterface.Interface):
             raise UnexpectedResponse(cmd)
         
         try:
-            self._io.syncAndGetPrompt()
+            self._io.syncAndGetPrompt(self._intfcTimeout)
         except UnexpectedResponse:
             if closeOnFail:
                 self.close()
@@ -598,8 +598,6 @@ class ELM327CANInterface(CANInterface.Interface):
         self._setTXTypeByIdent(ident)
         self._updateBitrateTXType()
         
-        if not self._io.waitPromptReady(self._intfcTimeout):
-            raise UnexpectedResponse('get prompt for transmission')
         if self._cfgdHeaderIdent != ident:
             if ident & 0x80000000:
                 self._runCmdWithCheck(b'ATCP' + bytes('{:02x}'.format((ident >> 24) & 0x1F), 'utf-8'))
@@ -608,7 +606,7 @@ class ELM327CANInterface(CANInterface.Interface):
                 self._runCmdWithCheck(b'ATSH' + bytes('{:03x}'.format(ident & 0x7FF), 'utf-8'))
             self._cfgdHeaderIdent = ident
         else:
-            self._io.syncAndGetPrompt() # Not synchronized by calling _runCmdWithCheck(), so do it here
+            self._io.syncAndGetPrompt(self._intfcTimeout) # Not synchronized by calling _runCmdWithCheck(), so do it here
             
         self._io.write(binascii.hexlify(data) + b'\r')
     
