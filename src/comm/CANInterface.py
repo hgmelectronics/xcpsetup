@@ -71,19 +71,15 @@ def addInterface(interfaceType, cls):
     _interfaceTypes[interfaceType] = cls
 
 def URLBitrate(parsedURL, default=250000):
-    queryDict={}
-    for queryParam in parsedURL.query.split('&'):
-        if len(queryParam) > 0:
-            tokens = queryParam.split('=')
-            if len(tokens) != 2:
-                raise ValueError('Bad URL query parameter ' + queryParam)
-            queryDict[tokens[0]] = tokens[1]
-    if 'bitrate' in queryDict:
-        return int(queryDict['bitrate'])
-    elif 'baud' in queryDict:
-        return int(queryDict['baud'])
-    else:
+    queryDict = urllib.parse.parse_qs(parsedURL.query)
+    bitrates = [queryDict[key] for key in ['bitrate','baud'] if key in queryDict]
+    # bitrates should either be an empty list (use default) or like [['250000']]; anything else is ambiguous
+    if len(bitrates) == 0:
         return default
+    elif len(bitrates) == 1 and len(bitrates[0]) == 1:
+        return int(bitrates[0][0])
+    else:
+        raise ValueError('Bad query string ' + parsedURL.query)
 
 def MakeInterface(intfcURI):
     if intfcURI == None:
