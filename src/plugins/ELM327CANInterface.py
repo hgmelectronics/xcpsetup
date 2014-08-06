@@ -277,6 +277,26 @@ class ELM327IO(object):
         if not self._pipelineClear.wait(self._CYCLE_TIMEOUT):
             raise Error #FIXME
     
+    def syncAndGetPrompt(self, intfcTimeout, retries=5):
+        '''
+        Synchronize the I/O thread and obtain a prompt. If one is available return immediately; otherwise get one
+        by sending CR and waiting for a prompt to come back.
+        
+        Loop is believed to be the best way of dealing with the race condition: ELM327 is receiving CAN data,
+        so isPromptReady() returns False, but just before we send the CR, ELM327 runs into buffer full, stops receive,
+        and returns to the prompt. ELM327 then gets the CR and resumes receiving, so the CR was actually
+        counterproductive. Buffer full conditions should not be allowed to happen (through appropriate filter settings)
+        but we should deal with them somewhat robustly if e.g. there is unexpected traffic on the CAN.
+        '''
+        self.sync()
+        if self.isPromptReady():
+            return
+        for _ in range(retries):
+            self.write(b'\r')
+            if self.waitPromptReady(intfcTimeout):
+                return
+        raise UnexpectedResponse(b'\r')
+    
     def getReceived(self, timeout=0):
         return self._receive.get(timeout)
     
@@ -427,9 +447,6 @@ class ELM327CANInterface(CANInterface.Interface):
         # Start the I/O thread, which takes over control of the port
         self._io = ELM327IO(port)
         
-        self._io.sync()
-        if not self._io.isPromptReady(): # Race condition: if unit runs into buffer full between sync and write, this may restart reception and cause an error!
-            self._io.write(b'\r') # Get a prompt so the reader thread knows ELM327 is ready
         self._runCmdWithCheck(b'ATWS', checkOK=False, closeOnFail=True) # Software reset
         self._runCmdWithCheck(b'ATE0', closeOnFail=True) # Turn off echo
         self._runCmdWithCheck(b'ATL0', closeOnFail=True) # Turn off newlines
@@ -477,9 +494,6 @@ class ELM327CANInterface(CANInterface.Interface):
             extFilter = '1fffffff'
             extMask = '00000000'
             
-        self._io.sync()
-        if not self._io.isPromptReady():
-            self._io.write(b'\r')
         self._runCmdWithCheck(b'ATCF' + bytes(stdFilter, 'utf-8'))
         self._runCmdWithCheck(b'ATCM' + bytes(stdMask, 'utf-8'))
         self._runCmdWithCheck(b'ATCF' + bytes(extFilter, 'utf-8'))
@@ -525,9 +539,6 @@ class ELM327CANInterface(CANInterface.Interface):
         if self._baudDivisor == None:
             raise Error #FIXME
         
-        self._io.sync()
-        if not self._io.isPromptReady():
-            self._io.write(b'\r')
         self._runCmdWithCheck(b'ATPB' + binascii.hexlify(bytearray([canOptions, self._baudDivisor])), closeOnFail=True)
         if not self._hasSetCSM0:
             self._runCmdWithCheck(b'ATCSM0', closeOnFail=True)
@@ -539,11 +550,14 @@ class ELM327CANInterface(CANInterface.Interface):
                 self.close()
             raise UnexpectedResponse(cmd)
         
-        if not self._io.waitPromptReady(self._intfcTimeout):
-            failAction()
+        try:
+            self._io.syncAndGetPrompt()
+        except UnexpectedResponse:
+            if closeOnFail:
+                self.close()
+            raise
         if DEBUG:
             print(str(time.time()) + ' _runCmdWithCheck(): Prompt ready')
-        self._io.sync()
         self._io.flushCmdResp()
         self._io.write(cmd + b'\r')
         if DEBUG:
@@ -589,10 +603,6 @@ class ELM327CANInterface(CANInterface.Interface):
         self._setTXTypeByIdent(ident)
         self._updateBitrateTXType()
         
-        self._io.sync()
-        if not self._io.isPromptReady():
-            self._io.write(b'\r')
-        
         if not self._io.waitPromptReady(self._intfcTimeout):
             raise UnexpectedResponse('get prompt for transmission')
         if self._cfgdHeaderIdent != ident:
@@ -602,6 +612,8 @@ class ELM327CANInterface(CANInterface.Interface):
             else:
                 self._runCmdWithCheck(b'ATSH' + bytes('{:03x}'.format(ident & 0x7FF), 'utf-8'))
             self._cfgdHeaderIdent = ident
+        else:
+            self._io.syncAndGetPrompt() # Not synchronized by calling _runCmdWithCheck(), so do it here
             
         self._io.write(binascii.hexlify(data) + b'\r')
     
