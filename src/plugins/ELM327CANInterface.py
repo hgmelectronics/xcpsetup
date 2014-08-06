@@ -172,7 +172,7 @@ class ELM327IO(object):
     '''
     
     _QUEUE_MAX_SIZE = 16384
-    _TICK_TIME = 0.0001
+    _TICK_TIME = 0.001
     _ELM_RECOVERY_TIME = 0.002
     _CYCLE_TIMEOUT = 1.0
     _EOL=b'\r'
@@ -310,7 +310,7 @@ class ELM327CANInterface(CANInterface.Interface):
     "Write" queue can request transmission of a frame, set baud rate, set filters, or request that monitoring stop.
     "Read" queue contains messages received from the bus.
     '''
-    _POSSIBLE_BAUDRATES = [115200, 500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
+    _POSSIBLE_BAUDRATES = [500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
     
     _slaveAddr = None
     _port = None
@@ -343,11 +343,10 @@ class ELM327CANInterface(CANInterface.Interface):
             self._port = SocketAsPort(s)
             self._intfcTimeout = self._tcpTimeout
         else:
-            #if debugLogfile != None:
-            #    port = LoggingPort(debugLogfile)
-            #else:
-            #    port = threadserial.Serial()
-            port=LoggingPort(open('elm327.log','w')) #FIXME TEMP FOR TEST
+            if debugLogfile != None:
+                port = LoggingPort(debugLogfile)
+            else:
+                port = serial.Serial()
             port.port = parsedURL.path
             port.open()
             foundBaud = False
@@ -374,10 +373,6 @@ class ELM327CANInterface(CANInterface.Interface):
                 if not b'OK' in response:
                     continue
                 
-                #FIXME TEMP FOR TEST
-                if baudRate == 115200:
-                    foundBaud  = True
-                    break
                 # If we made contact at baudrate 500k, we're done
                 if baudRate == 500000:
                     foundBaud = True
