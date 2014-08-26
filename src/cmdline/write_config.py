@@ -1,22 +1,24 @@
 #!/usr/bin/python3
 
 import argparse
-import ctypes
 import json
 import sys
 
 if not '..' in sys.path:
     sys.path.append('..')
 
+from comm import BoardTypes
 from comm import CANInterface
 from comm import XCPConnection
 from util import plugins
 from util import dictconfig
-import argProc
+from util import config
 
-plugins.load_plugins()
+plugins.loadPlugins()
+config.loadSysConfigs()
 
 parser = argparse.ArgumentParser(description="reads data from a board using a JSON file to define locations and data formats")
+parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles')
 parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
@@ -26,12 +28,15 @@ parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", d
 parser.add_argument('inputFile', help="Input file name (if range of IDs specified must contain a {} to be replaced with the ID)", default=None)
 args = parser.parse_args()
 
-try:
-    boardType = argProc.GetBoardType(args.targetType)
-    paramSpec = json.loads(args.paramSpecFile.read())
-except argProc.ArgError as exc:
-    print(str(exc))
+config.loadConfigs(args.configFiles)
+BoardTypes.SetupBoardTypes()
+if not args.targetType in config.configDict['xcptoolsBoardTypes']:
+    print('Could not find board type ' + args.targetType)
     sys.exit(1)
+else:
+    boardType = config.configDict['xcptoolsBoardTypes'][args.targetType]
+
+paramSpec = json.loads(args.paramSpecFile.read())
 
 paramDict = dict()
 for param in paramSpec['parameters']:
@@ -39,11 +44,11 @@ for param in paramSpec['parameters']:
 
 maxAttempts = 10
 
-def OpenInFile(name, id):
+def OpenInFile(name, idx):
     if name == None:
         return sys.stdin
     else:
-        return open(name.format(id), 'r')
+        return open(name.format(idx), 'r')
 
 with CANInterface.MakeInterface(args.deviceURI) as interface:
     targetSlaves = boardType.SlaveListFromIDArg(args.targetID)

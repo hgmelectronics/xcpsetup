@@ -13,7 +13,7 @@ from util import STCRC
 from util import srec
 import argProc
    
-plugins.load_plugins()
+plugins.loadPlugins()
 
 parser = argparse.ArgumentParser(description="programs application code into a target device")
 parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)

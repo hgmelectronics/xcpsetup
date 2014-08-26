@@ -3,65 +3,102 @@
 import time
 from comm import CANInterface
 from comm import XCPConnection
+from util import config
 
-class Indexed(object):
-    def __init__(self, broadcastID, recoveryCmdID, recoveryResID, cmdBaseID, resBaseID, idPitch, idRange, regularTimeout, nvWriteTimeout, rebootTime):
-        self._broadcastID = broadcastID
-        self._broadcastTimeout = 0.2
-        self._recoveryCmdID = recoveryCmdID
-        self._recoveryResID = recoveryResID
-        self._cmdBaseID = cmdBaseID
-        self._resBaseID = resBaseID
-        self._idPitch = idPitch
-        self._idRange = idRange
-        self._regularTimeout = regularTimeout
-        self._nvWriteTimeout = nvWriteTimeout
-        self._rebootTime = rebootTime
-    
-    def SlaveListFromIDArg(self, arg):
-        if arg == None:
-            return []
-        elif arg == 'recovery':
-            return [(CANInterface.XCPSlaveCANAddr(self._recoveryCmdID, self._recoveryResID), 'recovery')]
-        elif arg.find('-') >= 0:
-            idStrs = arg.split('-')
-            if len(idStrs) != 2:
-                raise ArgError('ID=\'' + arg + '\'')
-            firstID = int(idStrs[0])
-            lastID = int(idStrs[1])
-            if firstID < self._idRange[0] \
-                or firstID >= self._idRange[1] \
-                or lastID < self._idRange[0] \
-                or lastID >= self._idRange[1]:
-                raise ArgError('ID=\'' + arg + '\'')
-            targetIDs = range(int(idStrs[0]), int(idStrs[1]) + 1)
-            return [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * id, self._resBaseID + self._idPitch * id), id) for id in targetIDs];
+types={}
+
+class InvalidIDArg(Exception):
+    def __init__(self, value=None):
+        self._value = value
+    def __str__(self):
+        if self._value != None:
+            return 'Invalid ID argument ' + repr(self._value)
         else:
-            try:
-                targetID = int(arg);
-            except:
-                raise ArgError('ID=\'' + arg + '\'')
-            if targetID < self._idRange[0] or targetID >= self._idRange[1]:
-                raise ArgError('ID=\'' + arg + '\'')
-            return [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * targetID, self._resBaseID + self._idPitch * targetID), targetID)];
+            return 'Invalid ID argument'
+
+class BoardType(object):
+    def __init__(self, defDict):
+        self._broadcastId = defDict['broadcastId'] if 'broadcastId' in defDict else None
+        if 'broadcastId' in defDict:
+            self._broadcastId = defDict['broadcastId']
+            self._broadcastTimeout = defDict['timeouts']['broadcast']
+        else:
+            self._broadcastId = None
+        self._regularTimeout = defDict['timeouts']['regular']
+        self._nvWriteTimeout = defDict['timeouts']['nvWrite']
+        self._rebootTime = defDict['timeouts']['reboot']
+        self._hasIndexedIds = False
+        for idName in defDict['ids']:
+            if idName == '_indexed':
+                self._hasIndexedIds = True
+                self._cmdBaseID = int(defDict['ids']['_indexed']['cmdBase'], 16)
+                self._resBaseID = int(defDict['ids']['_indexed']['resBase'], 16)
+                self._idPitch = int(defDict['ids']['_indexed']['idPitch'], 16)
+                self._idxRange = (int(defDict['ids']['_indexed']['idxRange'][0]), int(defDict['ids']['_indexed']['idxRange'][1]))
+            else:
+                self._ids[idName]['cmd'] = int(defDict['ids'][idName]['cmd'], 16)
+                self._ids[idName]['res'] = int(defDict['ids'][idName]['res'], 16)
+    
+    def SlaveListFromIdxArg(self, arg):
+        if arg == None:
+            if len(self._ids) == 1:
+                idName = list(self._ids.keys())
+                return [(CANInterface.XCPSlaveCANAddr(self._ids[idName]['cmd'], self._ids[idName]['res']), 'idName')]
+            raise InvalidIDArg(arg)
+        elif arg.find('-') >= 0:
+            if not self._hasIndexedIds:
+                raise InvalidIDArg(arg)
+            idxs = [int(x) for x in arg.split('-')]
+            if len(idxs) != 2:
+                raise InvalidIDArg(arg)
+            if idxs[0] < self._idxRange[0] \
+                or idxs[0] >= self._idxRange[1] \
+                or idxs[1] < self._idxRange[0] \
+                or idxs[1] >= self._idxRange[1]:
+                raise InvalidIDArg(arg)
+            targetIdxs = range(idxs[0], idxs[1] + 1)
+            return [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * idx, self._resBaseID + self._idPitch * idx), idx) for idx in targetIdxs]
+        else:
+            if arg in self._ids:
+                return [(CANInterface.XCPSlaveCANAddr(self._ids[arg]['cmd'], self._ids[arg]['res']), arg)]
+            elif self._hasIndexedIds:
+                try:
+                    idx = int(arg)
+                    if idx >= self._idRange[0] and idx < idx._idRange[1]:
+                        return [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * idx, self._resBaseID + self._idPitch * idx), idx)]
+                except ValueError:
+                    pass
+            raise InvalidIDArg(arg)
     
     def GetSlaves(self, intfc):
-        # Handle case of singleton devices
-        if self._broadcastID == None:
-            return CANInterface.XCPSlaveCANAddr(self._cmdBaseID, self._resBaseID)
+        if self._broadcastId == None:
+            ret = [(CANInterface.XCPSlaveCANAddr(self._ids[idName]['cmd'], self._ids[idName]['res']), idName) for idName in self._ids]
+            if self._hasIndexedIds:
+                idxRange = range(self._idxRange[0], self._idxRange[1])
+                ret += [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * idx, self._resBaseID + self._idPitch * idx), idx) for idx in idxRange]
+            return ret
         
         slaves = XCPConnection.GetCANSlaves(intfc, self._broadcastID, self._broadcastTimeout)
         mySlaves = []
         for slave in slaves:
-            if slave.cmdId.raw == self._recoveryCmdID and slave.resId.raw == self._recoveryResID:
-                mySlaves.append((slave, 'recovery'))
-            else:
+            match = None
+            
+            if self._hasIndexedIds:
                 possID = int((slave.cmdId.raw - self._cmdBaseID) / self._idPitch)
                 if slave.cmdId.raw == self._cmdBaseID + possID * self._idPitch \
                     and slave.resId.raw == self._resBaseID + possID * self._idPitch \
                     and possID >= self._idRange[0] and possID < self._idRange[1]:
-                    mySlaves.append((slave, possID))
-        mySlaves.sort(key=lambda slave: slave[1] if slave[1] != 'recovery' else -1)
+                    match = (slave, possID)
+            
+            if match == None:
+                for idName in self._ids:
+                    if {'cmd': slave.cmdId.raw, 'res': slave.resId.raw} == self._ids[idName]:
+                        match = (slave, idName)
+                        break
+            
+            if match != None:
+                mySlaves.append(match)
+        mySlaves.sort(key=lambda slave: '{:010}'.format(slave[1]) if isinstance(slave[1], int) else slave[1])
         return mySlaves
     
     def Connect(self, intfc, slave, dumpTraffic):
@@ -70,32 +107,8 @@ class Indexed(object):
     
     def WaitForReboot(self):
         time.sleep(self._rebootTime)
-
-class Singleton(object):
-    def __init__(self, cmdID, resID, regularTimeout, nvWriteTimeout, rebootTime):
-        self._addr = CANInterface.XCPSlaveCANAddr(cmdID, resID)
-        self._regularTimeout = regularTimeout
-        self._nvWriteTimeout = nvWriteTimeout
-        self._rebootTime = rebootTime
-    
-    def SlaveListFromIDArg(self, arg):
-        if arg == None:
-            return [(self._addr, None)]
-        else:
-            raise ArgError('ID=\'' + arg + '\'')
-    
-    def GetSlaves(self, intfc):
-        return [(self._addr, None)]
-    
-    def Connect(self, intfc, slave, dumpTraffic):
-        intfc.connect(slave[0], dumpTraffic)
-        return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
-
-ByName = { \
-    'ibem': Indexed(broadcastID=0x9F000000, recoveryCmdID=0x9F000010, recoveryResID=0x9F000011, cmdBaseID=0x9F000100, \
-        resBaseID=0x9F000101, idPitch=2, idRange=(0,256), regularTimeout=0.5, nvWriteTimeout=2.0, rebootTime=5.0), \
-    'cda': Indexed(broadcastID=0x9F000000, recoveryCmdID=0x9F000010, recoveryResID=0x9F000011, cmdBaseID=0x9F000080, \
-        resBaseID=0x9F000081, idPitch=2, idRange=(0,2), regularTimeout=0.5, nvWriteTimeout=2.0, rebootTime=3.0), \
-    'cs2': Singleton(cmdID=0x98FCD403, resID=0x98FCD4F9, regularTimeout=2.0, nvWriteTimeout=5.0, rebootTime=5.0) \
-}
-
+        
+def SetupBoardTypes():
+    for typeName in config.configDict['xcptoolsBoardTypes']:
+        types[typeName] = BoardType(config.configDict['xcptoolsBoardTypes'][typeName])
+        

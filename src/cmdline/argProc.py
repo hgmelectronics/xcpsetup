@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 
-import ctypes
-
-from comm import BoardTypes
-from comm import XCPConnection
-from util import ctypesdict
 import pyclibrary
 
 class ArgError(Exception):
@@ -15,12 +10,6 @@ class ArgError(Exception):
             return 'Invalid argument: ' + self._value
         else:
             return 'Invalid argument'
-
-def GetBoardType(name):
-    try:
-        return BoardTypes.ByName[name]
-    except KeyError:
-        raise ArgError('Invalid target type \'' + str(name) + '\'')
 
 def GetStructType(name):
     # Create the parser 

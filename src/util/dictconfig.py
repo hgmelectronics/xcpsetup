@@ -39,10 +39,7 @@ def WriteParam(value, param, paramSpec, conn):
         del subParamSpec['slots'][0]
         for idx in range(0, length):
             paramIt['addr'] = param['addr'] + idx
-            ret[idx] = WriteParam(value[idx], paramIt, subParamSpec, conn)
-        return ret
-    else:
-        raise ValueError
+            WriteParam(value[idx], paramIt, subParamSpec, conn)
 
 def ReadScalar(param, paramSpec, conn):
     slot = paramSpec['slots'][param['slots'][-1]]

@@ -6,25 +6,31 @@ import sys
 if not '..' in sys.path:
     sys.path.append('..')
 
+from comm import BoardTypes
 from comm import CANInterface
 from comm import XCPConnection
+from util import config
 from util import plugins
 import argProc
    
-plugins.load_plugins()
+plugins.loadPlugins()
+config.loadSysConfigs()
 
 parser = argparse.ArgumentParser(description="uses program mode to reset a target device")
+parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles')
 parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
 parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
 args = parser.parse_args()
 
-try:
-    boardType = argProc.GetBoardType(args.targetType)
-except argProc.ArgError as exc:
-    print(str(exc))
+config.loadConfigs(args.configFiles)
+BoardTypes.SetupBoardTypes()
+if not args.targetType in config.configDict['xcptoolsBoardTypes']:
+    print('Could not find board type ' + args.targetType)
     sys.exit(1)
+else:
+    boardType = config.configDict['xcptoolsBoardTypes'][args.targetType]
 
 maxAttempts = 10
 

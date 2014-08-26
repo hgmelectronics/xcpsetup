@@ -8,26 +8,37 @@ import sys
 if not '..' in sys.path:
     sys.path.append('..')
 
+from comm import BoardTypes
 from comm import CANInterface
 from comm import XCPConnection
 from util import plugins
 from util import ctypesdict
-import argProc
+from util import config
+from . import argProc
 
-plugins.load_plugins()
+plugins.loadPlugins()
+config.loadSysConfigs()
 
-parser = argparse.ArgumentParser(description="reads data from a board using a preparsed C struct to define layout in memory")
-parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
-parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
-parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
-parser.add_argument('-l', help="Location of structure in form <segment>:<baseaddr>", default="0:0", dest="structLocation")
-parser.add_argument('-s', help="Pickled structure definition", dest="structSpec")
-parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default="-")
-parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
+parser = argparse.ArgumentParser(description='reads data from a board using a preparsed C struct to define layout in memory')
+parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles')
+parser.add_argument('-d', help='CAN device URI', dest='deviceURI', default=None)
+parser.add_argument('-T', help='Target device type (ibem,cda,cs2) for automatic XCP ID selection', dest='targetType', default=None)
+parser.add_argument('-i', help='Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection', dest='targetID', default=None)
+parser.add_argument('-l', help='Location of structure in form <segment>:<baseaddr>', default='0:0', dest='structLocation')
+parser.add_argument('-s', help='Pickled structure definition', dest='structSpec')
+parser.add_argument('-o', help='Output file name (if range of IDs specified must contain a {} to be replaced with the ID)', dest='outputFile', default='-')
+parser.add_argument('-D', help='Dump all XCP traffic, for debugging purposes', dest='dumpTraffic', action='store_true', default=False)
 args = parser.parse_args()
 
+config.loadConfigs(args.configFiles)
+BoardTypes.SetupBoardTypes()
+if not args.targetType in config.configDict['xcptoolsBoardTypes']:
+    print('Could not find board type ' + args.targetType)
+    sys.exit(1)
+else:
+    boardType = config.configDict['xcptoolsBoardTypes'][args.targetType]
+
 try:
-    boardType = argProc.GetBoardType(args.targetType)
     ConfigType = argProc.GetStructType(args.structSpec)
     structSegment,structBaseaddr = argProc.GetStructLocation(args.structLocation)
 except argProc.ArgError as exc:
@@ -36,11 +47,11 @@ except argProc.ArgError as exc:
 
 maxAttempts = 10
 
-def OpenOutFile(name, id):
+def OpenOutFile(name, idx):
     if name == None or name == '-':
         return sys.stdout
     else:
-        return open(name.format(id), 'w')
+        return open(name.format(idx), 'w')
 
 with CANInterface.MakeInterface(args.deviceURI) as interface:
     interface.setFilter((0x80000000, 0x80000000)) #FIXME need to get filter definitions from board type
