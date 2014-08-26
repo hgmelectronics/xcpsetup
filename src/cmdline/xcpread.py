@@ -23,7 +23,7 @@ class UploadDelegate32:
 def hexInt(param):
     return int(param, 0)
 
-plugins.load_plugins()
+plugins.loadPlugins()
 
 readTimeout = .2
 writeTimeout = 1.0

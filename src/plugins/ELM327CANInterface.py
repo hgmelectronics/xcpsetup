@@ -30,7 +30,6 @@ if not 'plugins' in __name__:
     from comm import CANInterface
 else:
     from ..comm import CANInterface
-#import threadserial
 import serial
 import socket
 import binascii

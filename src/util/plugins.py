@@ -6,7 +6,7 @@ Created on Oct 3, 2013
 import os
 import sys
 
-def load_plugins():
+def loadPlugins():
     local_dir = os.path.dirname(os.path.realpath(__file__))
     plugin_dir = os.path.join(os.path.dirname(local_dir),"plugins")
     sys.path.insert(0, plugin_dir)

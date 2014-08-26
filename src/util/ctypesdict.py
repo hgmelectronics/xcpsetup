@@ -1,7 +1,5 @@
 #!/usr/bin/python3.3
 
-import ctypes
-
 # Thanks to http://stackoverflow.com/users/156771/tamas
 def getdict(struct):
     result = {}
@@ -21,17 +19,17 @@ Recursively set the members of a ctypes struct from a dict.
 Discards any dict members that do not exist in the struct,
 and preserves the value of any struct members that do not exist in the dict.
 '''
-def setfromdict(struct, dict):
+def setfromdict(struct, theDict):
     for fieldName, _ in struct._fields_:
-        if fieldName in dict:
+        if fieldName in theDict:
             fieldAttr = getattr(struct, fieldName)
             if hasattr(fieldAttr, "_length_") and hasattr(fieldAttr, "_type_"):
                 # Probably an array
                 for i in range(fieldAttr._length_):
-                    fieldAttr[i] = dict[fieldName][i]
+                    fieldAttr[i] = theDict[fieldName][i]
             elif hasattr(fieldAttr, "_fields_"):
                 # Probably another struct - recurse
-                setfromdict(fieldAttr, dict[fieldName])
+                setfromdict(fieldAttr, theDict[fieldName])
             else:
-                setattr(struct, fieldName, dict[fieldName])
-                fieldAttr = dict[fieldName]
+                setattr(struct, fieldName, theDict[fieldName])
+                fieldAttr = theDict[fieldName]

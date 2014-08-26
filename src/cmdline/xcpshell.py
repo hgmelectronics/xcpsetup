@@ -18,7 +18,7 @@ if not '..' in sys.path:
     sys.path.append('..')
 
 
-plugins.load_plugins()
+plugins.loadPlugins()
 
 def hexInt(param):
     return int(param, 0)
