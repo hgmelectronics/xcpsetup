@@ -177,18 +177,17 @@ class ELM327IO(object):
     _EOL=b'\r'
     _PROMPT=b'>'
     
-    _port = None
-    _receive = queue.Queue(_QUEUE_MAX_SIZE)
-    _transmit = queue.Queue(_QUEUE_MAX_SIZE)
-    _cmdResp = queue.Queue(_QUEUE_MAX_SIZE)
-    _promptReady = threading.Event()
-    _pipelineClear = threading.Event()
-    _terminate = threading.Event()
-    _thread = None
-    _lines = collections.deque()
-    _timeToSend = 0
-    
     def __init__(self, port):
+        self._port = None
+        self._receive = queue.Queue(self._QUEUE_MAX_SIZE)
+        self._transmit = queue.Queue(self._QUEUE_MAX_SIZE)
+        self._cmdResp = queue.Queue(self._QUEUE_MAX_SIZE)
+        self._promptReady = threading.Event()
+        self._pipelineClear = threading.Event()
+        self._terminate = threading.Event()
+        self._thread = None
+        self._lines = collections.deque()
+        self._timeToSend = 0
         self._port = port
         self._port.timeout = self._TICK_TIME
         self._thread = threading.Thread(target=self.threadFunc)

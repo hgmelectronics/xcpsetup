@@ -121,12 +121,12 @@ class ICSCANInterface(CANInterface.Interface):
     URI scheme: ics:<type-string>/<index>/<netid>
     '''
 
-    _icsNetId = None
-    _cfgdBitrate = None
-    _filter = 0x00000000
-    _mask = 0x00000000
 
     def __init__(self, parsedURL):
+        self._icsNetId = None
+        self._cfgdBitrate = None
+        self._filter = 0x00000000
+        self._mask = 0x00000000
         if not hasattr(ctypes, 'windll'):
             raise CANInterface.InterfaceNotSupported('Not a Windows system')
         
