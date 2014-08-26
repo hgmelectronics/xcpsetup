@@ -22,14 +22,14 @@ def loadSysConfigs():
     '''
     localDir = os.path.dirname(os.path.realpath(__file__))
     configDir = os.path.join(os.path.dirname(localDir), 'config')
-    configFiles = [configDir + '/' + x for x in os.listdir(configDir) if x.endswith('.yaml')]
+    configFiles = [os.path.join(configDir, x) for x in os.listdir(configDir) if x.endswith('.yaml')]
     loadConfigs(configFiles)
 
-def loadConfigs(files):
+def loadConfigs(configFiles):
     '''
     Loads YAML config files into the system configuration dict.
     '''
-    for file in files:
+    for file in configFiles:
         with open(file, 'r') as fd:
             fileDict = yaml.safe_load(fd)
             recursiveUpdateDict(configDict, fileDict)

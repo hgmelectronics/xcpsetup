@@ -155,7 +155,7 @@ class ICSCANInterface(CANInterface.Interface):
         except ValueError:
             raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'')
         try:
-            _icsNetId = _ICS_NET_IDS[splitPath[2]]
+            self._icsNetId = _ICS_NET_IDS[splitPath[2]]
         except KeyError:
             raise CANInterface.ConnectFailed('Invalid ICS net id \'' + splitPath[2])
         
@@ -220,6 +220,7 @@ class ICSCANInterface(CANInterface.Interface):
         return ident, data[0:frame.NumberBytesData]
     
     def setBitrate(self, bitrate):
+        print('Setting bitrate ' + str(bitrate))
         setBitrateResult = self._dll.icsneoSetBitRate(self._neoObject, bitrate, self._icsNetId)
         if setBitrateResult != 1:
             raise CANInterface.Error('Setting bitrate failed')

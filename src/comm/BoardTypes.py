@@ -17,6 +17,7 @@ class InvalidIDArg(Exception):
             return 'Invalid ID argument'
 
 class BoardType(object):
+    _ids = {}
     def __init__(self, defDict):
         self._broadcastId = defDict['broadcastId'] if 'broadcastId' in defDict else None
         if 'broadcastId' in defDict:
@@ -31,13 +32,14 @@ class BoardType(object):
         for idName in defDict['ids']:
             if idName == '_indexed':
                 self._hasIndexedIds = True
-                self._cmdBaseID = int(defDict['ids']['_indexed']['cmdBase'], 16)
-                self._resBaseID = int(defDict['ids']['_indexed']['resBase'], 16)
-                self._idPitch = int(defDict['ids']['_indexed']['idPitch'], 16)
-                self._idxRange = (int(defDict['ids']['_indexed']['idxRange'][0]), int(defDict['ids']['_indexed']['idxRange'][1]))
+                self._cmdBaseID = defDict['ids']['_indexed']['cmdBase']
+                self._resBaseID = defDict['ids']['_indexed']['resBase']
+                self._idPitch = defDict['ids']['_indexed']['idPitch']
+                self._idxRange = (defDict['ids']['_indexed']['idxRange'][0], defDict['ids']['_indexed']['idxRange'][1])
             else:
-                self._ids[idName]['cmd'] = int(defDict['ids'][idName]['cmd'], 16)
-                self._ids[idName]['res'] = int(defDict['ids'][idName]['res'], 16)
+                self._ids[idName] = {}
+                self._ids[idName]['cmd'] = defDict['ids'][idName]['cmd']
+                self._ids[idName]['res'] = defDict['ids'][idName]['res']
     
     def SlaveListFromIdxArg(self, arg):
         if arg == None:
