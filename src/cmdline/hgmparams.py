@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import sys
 
 parser = argparse.ArgumentParser(description='makes a parameter JSON file suitable for read_config and write_config from HGM parameter definition files')
 parser.add_argument('inputFile', help='input JSON with param IDs, params, and SLOTs', type=argparse.FileType('r'))
