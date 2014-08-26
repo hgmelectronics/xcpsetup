@@ -149,6 +149,10 @@ class SocketCANInterface(CANInterface.Interface):
                 if self._dumpTraffic:
                     print('RX ' + CANInterface.ID(packet.ident).getString() + ' ' + CANInterface.getDataHexString(packet.data))
         return packets
+    
+    def setFilter(self, filt):
+        rfilter = struct.pack('LL', filt[0], filt[1])
+        self._s.setsockopt(socket.SOL_CAN_RAW, socket.CAN_RAW_FILTER, rfilter)
 
 if SocketCANSupported():
     CANInterface.addInterface("socketcan", SocketCANInterface)
