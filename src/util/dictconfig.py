@@ -18,12 +18,12 @@ def WriteScalar(value, param, paramSpec, conn):
     addrext = 0 if not 'addrext' in param else param['addrext']
     ptr = XCPConnection.Pointer(addr, addrext)
     unscaledFloat = value / SLOTScaleFactor(slot)
-    raw = casts.poly(slot['type'], casts.uintTypeFor(slot['type']), unscaledFloat)
-    if casts.sizeof(slot['type']) == 4:
+    raw = casts.poly(param['type'], casts.uintTypeFor(param['type']), unscaledFloat)
+    if casts.sizeof(param['type']) == 4:
         conn.download32(ptr, raw)
-    elif casts.sizeof(slot['type']) == 2:
+    elif casts.sizeof(param['type']) == 2:
         conn.download16(ptr, raw)
-    elif casts.sizeof(slot['type']) == 1:
+    elif casts.sizeof(param['type']) == 1:
         conn.download8(ptr, raw)
     else:
         raise ValueError
@@ -35,26 +35,25 @@ def WriteParam(value, param, paramSpec, conn):
         indepSlot = paramSpec['slots'][param['slots'][0]]
         length = indepSlot['max'] - indepSlot['min'] + 1
         paramIt = copy.deepcopy(param)
-        subParamSpec = copy.deepcopy(paramSpec)
-        del subParamSpec['slots'][0]
+        del paramIt['slots'][0]
         for idx in range(0, length):
             paramIt['addr'] = param['addr'] + idx
-            WriteParam(value[idx], paramIt, subParamSpec, conn)
+            WriteParam(value[idx], paramIt, paramSpec, conn)
 
 def ReadScalar(param, paramSpec, conn):
     slot = paramSpec['slots'][param['slots'][-1]]
     addr = param['addr']
     addrext = 0 if not 'addrext' in param else param['addrext']
     ptr = XCPConnection.Pointer(addr, addrext)
-    if casts.sizeof(slot['type']) == 4:
+    if casts.sizeof(param['type']) == 4:
         raw = conn.upload32(ptr)
-    elif casts.sizeof(slot['type']) == 2:
+    elif casts.sizeof(param['type']) == 2:
         raw = conn.upload16(ptr)
-    elif casts.sizeof(slot['type']) == 1:
+    elif casts.sizeof(param['type']) == 1:
         raw = conn.upload8(ptr)
     else:
         raise ValueError
-    castRaw = casts.poly(casts.uintTypeFor(slot['type']), slot['type'], raw)
+    castRaw = casts.poly(casts.uintTypeFor(param['type']), param['type'], raw)
     return float(castRaw) * SLOTScaleFactor(slot)
 
 def ReadParam(param, paramSpec, conn):
@@ -65,9 +64,8 @@ def ReadParam(param, paramSpec, conn):
         length = indepSlot['max'] - indepSlot['min'] + 1
         ret = [0.0] * length
         paramIt = copy.deepcopy(param)
-        subParamSpec = copy.deepcopy(paramSpec)
-        del subParamSpec['slots'][0]
+        del paramIt['slots'][0]
         for idx in range(0, length):
             paramIt['addr'] = param['addr'] + idx
-            ret[idx] = ReadParam(paramIt, subParamSpec, conn)
+            ret[idx] = ReadParam(paramIt, paramSpec, conn)
         return ret
