@@ -36,6 +36,15 @@ _ICS_TYPE_STRING_MASKS = {'neovi-blue':     0x001,
                           None:             0x3FF
                           }
 
+_ICS_NET_IDS = {
+                'hscan': 1,
+                'mscan': 2,
+                'swcan': 3,
+                'lsftcan': 4,
+                'hscan2': 42,
+                'hscan3': 44
+                }
+
 def _ICSDevTypeStr(typeBits):
     typeStrs = [typeEntry[1] for typeEntry in _ICS_TYPE_TABLE if (typeEntry[0] & typeBits)]
     return ','.join(typeStrs)
@@ -108,10 +117,14 @@ def ICSSupported():
 class ICSCANInterface(CANInterface.Interface):
     '''
     Interface using ICS NeoVI DLL
+    
+    URI scheme: ics:<type-string>/<index>/<netid>
     '''
 
-    _ICSNETID_HSCAN = 1
-    _BITRATE = 250000
+    _icsNetId = None
+    _cfgdBitrate = None
+    _filter = 0x00000000
+    _mask = 0x00000000
 
     def __init__(self, parsedURL):
         if not hasattr(ctypes, 'windll'):
@@ -131,19 +144,20 @@ class ICSCANInterface(CANInterface.Interface):
             raise CANInterface.ConnectFailed('Finding ICS devices failed')
         
         splitPath = parsedURL.path.split('/')
-        if len(splitPath) > 2:
+        if len(splitPath) != 3:
             raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'')
         try:
             devTypeMask = _ICS_TYPE_STRING_MASKS[splitPath[0]]
         except KeyError:
             raise CANInterface.ConnectFailed('Invalid ICS device type \'' + splitPath[0] + '\'')
-        if len(splitPath) == 2:
-            try:
-                devIdx = int(splitPath[1])
-            except ValueError:
-                raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'')
-        else:
-            devIdx = 0
+        try:
+            devIdx = int(splitPath[1])
+        except ValueError:
+            raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'')
+        try:
+            _icsNetId = _ICS_NET_IDS[splitPath[2]]
+        except KeyError:
+            raise CANInterface.ConnectFailed('Invalid ICS net id \'' + splitPath[2])
         
         devOfType = [dev for dev in neoDevices[0:nNeoDevices.value] if dev.DeviceType & devTypeMask]
         if len(devOfType) < devIdx + 1:
@@ -159,12 +173,8 @@ class ICSCANInterface(CANInterface.Interface):
         if openResult != 1:
             raise CANInterface.ConnectFailed('Opening ICS device failed')
         self._neoObject = tempNeoObject.value
-
-        setBitrateResult = self._dll.icsneoSetBitRate(self._neoObject, self._BITRATE, self._ICSNETID_HSCAN) #FIXME need to implement ICS net ID in URI
-        if setBitrateResult != 1:
-            raise CANInterface.ConnectFailed()
-
-        #self.setBitrate(CANInterface.URLBitrate(parsedURL))
+        
+        self.setBitrate(CANInterface.URLBitrate(parsedURL))
         
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
 
@@ -209,6 +219,13 @@ class ICSCANInterface(CANInterface.Interface):
         
         return ident, data[0:frame.NumberBytesData]
     
+    def setBitrate(self, bitrate):
+        setBitrateResult = self._dll.icsneoSetBitRate(self._neoObject, bitrate, self._icsNetId)
+        if setBitrateResult != 1:
+            raise CANInterface.Error('Setting bitrate failed')
+        else:
+            self._cfgdBitrate = bitrate
+    
     def connect(self, address, dumpTraffic):
         self._slaveAddr = address
         self._dumpTraffic = dumpTraffic
@@ -225,22 +242,28 @@ class ICSCANInterface(CANInterface.Interface):
         self._dumpTraffic = False
     
     def transmit(self, data):
+        assert self._cfgdBitrate != None
+        
         if self._dumpTraffic:
             print('TX ' + self._slaveAddr.cmdId.getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._build_frame(data, self._slaveAddr.cmdId.raw)
-        res = self._dll.icsneoTxMessages(self._neoObject, ctypes.byref(frame), self._ICSNETID_HSCAN, 1)  # network ID 1 = HS CAN
+        res = self._dll.icsneoTxMessages(self._neoObject, ctypes.byref(frame), self._icsNetId, 1)
         if res != 1:
             raise CANInterface.Error()
     
     def transmitTo(self, data, ident):
+        assert self._cfgdBitrate != None
+        
         if self._dumpTraffic:
             print('TX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._build_frame(data, ident)
-        res = self._dll.icsneoTxMessages(self._neoObject, ctypes.byref(frame), self._ICSNETID_HSCAN, 1)  # network ID 1 = HS CAN
+        res = self._dll.icsneoTxMessages(self._neoObject, ctypes.byref(frame), self._icsNetId, 1)
         if res != 1:
             raise CANInterface.Error()
         
     def receive(self, timeout):
+        assert self._cfgdBitrate != None
+        
         if self._slaveAddr.resId.raw == 0xFFFFFFFF:
             return []
             
@@ -270,17 +293,20 @@ class ICSCANInterface(CANInterface.Interface):
                 raise CANInterface.Error()
 
             for iMsg in range(icsNMsgs.value):
-                ident, data = self._decode_frame(icsMsgs[iMsg])
-                if len(data) > 0 and ident == self._slaveAddr.resId.raw and (data[0] == 0xFF or data[0] == 0xFE):
-                    if self._dumpTraffic:
-                        print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(data))
-                    packets.append(data)
+                if icsMsgs[iMsg].NetworkID == self._icsNetId:
+                    ident, data = self._decode_frame(icsMsgs[iMsg])
+                    if len(data) > 0 and ident == self._slaveAddr.resId.raw and (data[0] == 0xFF or data[0] == 0xFE):
+                        if self._dumpTraffic:
+                            print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(data))
+                        packets.append(data)
             
             if len(packets) != 0:
                 break
         return packets
     
     def receivePackets(self, timeout):
+        assert self._cfgdBitrate != None
+        
         packets = []
 
         if timeout != 0:
@@ -307,18 +333,20 @@ class ICSCANInterface(CANInterface.Interface):
                 raise CANInterface.Error()
 
             for iMsg in range(icsNMsgs.value):
-                ident, data = self._decode_frame(icsMsgs[iMsg])
-                if len(data) > 0 and (data[0] == 0xFF or data[0] == 0xFE):
-                    packets.append(CANInterface.Packet(ident, data))
-                    if self._dumpTraffic:
-                        print('RX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
+                if icsMsgs[iMsg].NetworkID == self._icsNetId:
+                    ident, data = self._decode_frame(icsMsgs[iMsg])
+                    if (ident & self._mask) == self._filter and len(data) > 0 and (data[0] == 0xFF or data[0] == 0xFE):
+                        packets.append(CANInterface.Packet(ident, data))
+                        if self._dumpTraffic:
+                            print('RX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
             
             if len(packets) != 0:
                 break
         return packets
     
-    def setFilter(self, filter):
-        pass #FIXME
+    def setFilter(self, filt):
+        self._filter = filt[0]
+        self._mask = filt[1]
 
 if ICSSupported():
     CANInterface.addInterface("ics", ICSCANInterface)
