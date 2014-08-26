@@ -145,7 +145,7 @@ class ICSCANInterface(CANInterface.Interface):
         
         splitPath = parsedURL.path.split('/')
         if len(splitPath) != 3:
-            raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'')
+            raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'; path is ics:<devtype>/<dev-index>/<net-id>')
         try:
             devTypeMask = _ICS_TYPE_STRING_MASKS[splitPath[0]]
         except KeyError:
@@ -153,7 +153,7 @@ class ICSCANInterface(CANInterface.Interface):
         try:
             devIdx = int(splitPath[1])
         except ValueError:
-            raise CANInterface.ConnectFailed('Invalid ICS device path \'' + parsedURL.path + '\'')
+            raise CANInterface.ConnectFailed('Invalid ICS device index \'' + splitPath[1] + '\'')
         try:
             self._icsNetId = _ICS_NET_IDS[splitPath[2]]
         except KeyError:
