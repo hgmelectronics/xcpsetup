@@ -17,7 +17,6 @@ class InvalidIDArg(Exception):
             return 'Invalid ID argument'
 
 class BoardType(object):
-    _ids = {}
     def __init__(self, defDict):
         self._broadcastId = defDict['broadcastId'] if 'broadcastId' in defDict else None
         if 'broadcastId' in defDict:
@@ -29,6 +28,7 @@ class BoardType(object):
         self._nvWriteTimeout = defDict['timeouts']['nvWrite']
         self._rebootTime = defDict['timeouts']['reboot']
         self._hasIndexedIds = False
+        self._ids = {}
         for idName in defDict['ids']:
             if idName == '_indexed':
                 self._hasIndexedIds = True
@@ -40,12 +40,12 @@ class BoardType(object):
                 self._ids[idName] = {}
                 self._ids[idName]['cmd'] = defDict['ids'][idName]['cmd']
                 self._ids[idName]['res'] = defDict['ids'][idName]['res']
-    
+
     def SlaveListFromIdxArg(self, arg):
         if arg == None:
             if len(self._ids) == 1:
-                idName = list(self._ids.keys())
-                return [(CANInterface.XCPSlaveCANAddr(self._ids[idName]['cmd'], self._ids[idName]['res']), 'idName')]
+                idName = list(self._ids.keys())[0]
+                return [(CANInterface.XCPSlaveCANAddr(self._ids[idName]['cmd'], self._ids[idName]['res']), idName)]
             raise InvalidIDArg(arg)
         elif arg.find('-') >= 0:
             if not self._hasIndexedIds:

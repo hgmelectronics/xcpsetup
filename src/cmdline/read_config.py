@@ -36,18 +36,18 @@ args = parser.parse_args()
 
 config.loadConfigs(args.configFiles)
 BoardTypes.SetupBoardTypes()
-if not args.targetType in config.configDict['xcptoolsBoardTypes']:
+try:
+    boardType = BoardTypes.types[args.targetType]
+except KeyError:
     print('Could not find board type ' + str(args.targetType))
     sys.exit(1)
-else:
-    boardType = config.configDict['xcptoolsBoardTypes'][args.targetType]
 
 paramSpec = json.loads(args.paramSpecFile.read())
 
 maxAttempts = 10
 
 with CANInterface.MakeInterface(args.deviceURI) as interface:
-    targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
+    targetSlaves = boardType.SlaveListFromIdxArg(args.targetID)
     # If needed, ask the user to pick a slave from the list
     if len(targetSlaves) == 0:
         slaves = boardType.GetSlaves(interface)
