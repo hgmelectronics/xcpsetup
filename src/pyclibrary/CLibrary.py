@@ -266,7 +266,7 @@ class CLibrary:
                     cls = mkfn(cls, *args)
                             
                 else:
-                    raise Exception("Not sure what to do with this type modifier: '%s'" % str(p))
+                    raise Exception("Not sure what to do with this type modifier: '%s'" % str(m))
             return cls
         except:
             print("Error while processing type", typ)
