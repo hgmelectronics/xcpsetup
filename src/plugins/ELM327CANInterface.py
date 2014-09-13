@@ -330,25 +330,27 @@ class ELM327CANInterface(CANInterface.Interface):
     '''
     _POSSIBLE_BAUDRATES = [500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
     
-    _slaveAddr = None
-    _port = None
-    _bitrate = None
-    _txAddrStd = False
-    _cfgdBitrate = None
-    _cfgdTxAddrStd = False
-    _baudDivisor = None
-    _baud87Mult = None
-    _hasSetCSM0 = False
-    _tcpTimeout = 1.0
-    _serialTimeout = 0.5
-    _dumpTraffic = False
-    _cfgdHeaderIdent = None
-    _filter = None
-    _cfgdFilter = None
-    
-    _io = None
     
     def __init__(self, parsedURL, debugLogfile=None):
+        self._slaveAddr = None
+        self._port = None
+        self._bitrate = None
+        self._txAddrStd = False
+        self._cfgdBitrate = None
+        self._cfgdTxAddrStd = False
+        self._baudDivisor = None
+        self._baud87Mult = None
+        self._hasSetCSM0 = False
+        self._tcpTimeout = 1.0
+        self._serialTimeout = 0.5
+        self._dumpTraffic = False
+        self._cfgdHeaderIdent = None
+        self._filter = None
+        self._cfgdFilter = None
+        self._noCsmQuirk = False
+        
+        self._io = None
+    
         if len(parsedURL.netloc):
             # If netloc is present, we're using a TCP connection
             addr = parsedURL.netloc.split(':')
@@ -409,8 +411,8 @@ class ELM327CANInterface(CANInterface.Interface):
                     # Device allows baudrate change, try to switch to 500k
                     port.baudrate = 500000
                     port.flushInput()
-                    response = port.read(6)
-                    if response != b'ELM327':
+                    response = port.read(11)
+                    if response[0:6] != b'ELM327':
                         # Baudrate switch unsuccessful, try to recover
                         port.baudrate = baudRate
                         port.write(b'\r')
@@ -426,6 +428,8 @@ class ELM327CANInterface(CANInterface.Interface):
                     if response != b'OK':
                         raise UnexpectedResponse('switching baudrate')
                     foundBaud = True
+                    if response == b'ELM327 v1.5':
+                        self._noCsmQuirk = True
                     break
             
             if not foundBaud:
@@ -534,7 +538,11 @@ class ELM327CANInterface(CANInterface.Interface):
         
         self._runCmdWithCheck(b'ATPB' + binascii.hexlify(bytearray([canOptions, self._baudDivisor])), closeOnFail=True)
         if not self._hasSetCSM0:
-            self._runCmdWithCheck(b'ATCSM0', closeOnFail=True)
+            try:
+                self._runCmdWithCheck(b'ATCSM0', closeOnFail=False)
+            except UnexpectedResponse:
+                if not self._noCsmQuirk:
+                    print('Warning: Failed to set CAN silent monitoring to off')
             self._hasSetCSM0 = True
             
     def _runCmdWithCheck(self, cmd, checkOK=True, closeOnFail=False):
@@ -672,7 +680,7 @@ CANInterface.addInterface("elm327", ELM327CANInterface)
 
 if __name__ == "__main__":
     import urllib.parse
-    parsedurl = urllib.parse.urlparse('elm327:COM8')
+    parsedurl = urllib.parse.urlparse('elm327:/dev/rfcomm0')
     elm327 = ELM327CANInterface(parsedurl, open('elm327.log', 'w'))
     elm327.setFilter((0x000, 0x80000000))
     elm327.transmitTo(b'1234', 0x9FFFFFFF)
