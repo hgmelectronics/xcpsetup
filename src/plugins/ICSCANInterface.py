@@ -125,6 +125,7 @@ class ICSCANInterface(CANInterface.Interface):
     def __init__(self, parsedURL):
         self._icsNetId = None
         self._cfgdBitrate = None
+        self._dumpTraffic = False
         self._filter = 0x00000000
         self._mask = 0x00000000
         if not hasattr(ctypes, 'windll'):

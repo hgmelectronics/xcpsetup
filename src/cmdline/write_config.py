@@ -25,6 +25,7 @@ parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery
 parser.add_argument('-p', help="Parameter definition file", dest="paramSpecFile", type=argparse.FileType('r'), required=True)
 parser.add_argument('-s', help="XCP memory segment in which parameters reside", dest="paramSegment", default=0)
 parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
+parser.add_argument('-n', help="Write to nonvolatile memory", dest="nvWrite", action="store_true", default=False)
 parser.add_argument('inputFile', help="Input file name (if range of IDs specified must contain a {} to be replaced with the ID)", default=None)
 args = parser.parse_args()
 
@@ -71,24 +72,30 @@ with CANInterface.MakeInterface(args.deviceURI) as interface:
         inDict = json.loads(inFile.read())
         inFile.close()
         
-        for attempt in range(1, maxAttempts + 1):
-            try:
-                conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
-                
-                conn.set_cal_page(args.paramSegment, 0)
-                for name in inDict:
-                    dictconfig.WriteParam(inDict[name], paramDict[name], paramSpec, conn)
-                
+        conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
+        
+        conn.set_cal_page(args.paramSegment, 0)
+        for name in inDict:
+            attempts = 0
+            while 1:
                 try:
-                    conn.close()
-                except XCPConnection.Error:
-                    pass # swallow any errors when closing connection due to bad target implementations - we really don't care
-                
-                sys.stderr.write('Write OK\n')
-                writeOK = True
-                break
-            except XCPConnection.Error as err:
-                sys.stderr.write('Write failure (' + str(err) + '), attempt #' + str(attempt) + '\n')
-                writeOK = False
-        if not writeOK:
-            sys.exit(1)
+                    dictconfig.WriteParam(inDict[name], paramDict[name], paramSpec, conn)
+                    break
+                except XCPConnection.Error as err:
+                    attempts = attempts + 1
+                    if attempts == maxAttempts:
+                        sys.stderr.write('Write failure (' + str(err) + ')\n')
+                        sys.exit(1)
+                    else:
+                        sys.stderr.write('Write failure (' + str(err) + '), retrying\n')
+        
+        sys.stderr.write('Write OK\n')
+        
+        if args.nvWrite:
+            conn.nvwrite()
+            sys.stderr.write('NV save OK\n')
+        
+        try:
+            conn.close()
+        except XCPConnection.Error:
+            pass # swallow any errors when closing connection due to bad target implementations - we really don't care

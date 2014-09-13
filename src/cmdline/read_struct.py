@@ -14,13 +14,13 @@ from comm import XCPConnection
 from util import plugins
 from util import ctypesdict
 from util import config
-from . import argProc
+import argProc
 
 plugins.loadPlugins()
 config.loadSysConfigs()
 
 parser = argparse.ArgumentParser(description='reads data from a board using a preparsed C struct to define layout in memory')
-parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles')
+parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles', default=[])
 parser.add_argument('-d', help='CAN device URI', dest='deviceURI', default=None)
 parser.add_argument('-T', help='Target device type (ibem,cda,cs2) for automatic XCP ID selection', dest='targetType', default=None)
 parser.add_argument('-i', help='Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection', dest='targetID', default=None)
@@ -32,11 +32,11 @@ args = parser.parse_args()
 
 config.loadConfigs(args.configFiles)
 BoardTypes.SetupBoardTypes()
-if not args.targetType in config.configDict['xcptoolsBoardTypes']:
-    print('Could not find board type ' + args.targetType)
+try:
+    boardType = BoardTypes.types[args.targetType]
+except KeyError:
+    print('Could not find board type ' + str(args.targetType))
     sys.exit(1)
-else:
-    boardType = config.configDict['xcptoolsBoardTypes'][args.targetType]
 
 try:
     ConfigType = argProc.GetStructType(args.structSpec)
@@ -56,7 +56,7 @@ def OpenOutFile(name, idx):
 with CANInterface.MakeInterface(args.deviceURI) as interface:
     interface.setFilter((0x80000000, 0x80000000)) #FIXME need to get filter definitions from board type
     interface.setFilter((0x000, 0x80000000))
-    targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
+    targetSlaves = boardType.SlaveListFromIdxArg(args.targetID)
     # If needed, ask the user to pick a slave from the list
     if len(targetSlaves) == 0:
         slaves = boardType.GetSlaves(interface)
