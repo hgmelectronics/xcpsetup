@@ -1,0 +1,666 @@
+{
+    "parameters": [
+        {
+            "addr": 69468160,
+            "addrext": 0,
+            "name": "Shift Speed 1-2 A",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 69533696,
+            "addrext": 0,
+            "name": "Shift Speed 2-3 A",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 69599232,
+            "addrext": 0,
+            "name": "Shift Speed 3-4 A",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 69664768,
+            "addrext": 0,
+            "name": "Shift Speed 4-5 A",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 69730304,
+            "addrext": 0,
+            "name": "Shift Speed 5-6 A",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 71565312,
+            "addrext": 0,
+            "name": "Shift Speed 1-2 B",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 71630848,
+            "addrext": 0,
+            "name": "Shift Speed 2-3 B",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 71696384,
+            "addrext": 0,
+            "name": "Shift Speed 3-4 B",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 71761920,
+            "addrext": 0,
+            "name": "Shift Speed 4-5 B",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        },
+        {
+            "addr": 71827456,
+            "addrext": 0,
+            "name": "Shift Speed 5-6 B",
+            "slots": [
+                "percentage1",
+                "rpm1"
+            ],
+            "type": "uint32"
+        }
+    ],
+    "slots": {
+        "acceleration1": {
+            "decimals": 1,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "m/s^2"
+        },
+        "adcCountAsVoltage": {
+            "decimals": 2,
+            "denominator": 1023,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 500,
+            "offset": 0,
+            "units": "V"
+        },
+        "booleanManualMode": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "autoManualEncoding",
+            "max": 1,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "booleanOnOff1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "onOffEncoding",
+            "max": 1,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "booleanOnOffGauge": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "onOffGaugeEncoding",
+            "max": 1,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "booleanSensorIsReversed": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "tpsDirectionEnumEncoding",
+            "max": 1,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "booleanYesNo1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "yesNoEncoding",
+            "max": 1,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "colorIndex": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "colorIndexEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "count1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "frequency1": {
+            "decimals": 1,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "Hz"
+        },
+        "frequency2": {
+            "decimals": 0,
+            "denominator": 10,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "Hz"
+        },
+        "gear1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "gearEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "gearGauge": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "gearsGaugeEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "gearLever1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "shiftconsolePositionEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "hgmShiftConsoleCalibrationXAxis": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "hgmShiftConsoleCalibrationXAxisEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 2,
+            "units": ""
+        },
+        "hgmShiftConsoleCalibrationYAxis": {
+            "decimals": 2,
+            "denominator": 10,
+            "encoding": "zeroIsDisabledEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "V"
+        },
+        "lengthCentimeters1": {
+            "decimals": 1,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "cm"
+        },
+        "lengthInches1": {
+            "decimals": 1,
+            "denominator": 254,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 100,
+            "offset": 0,
+            "units": "in"
+        },
+        "massMetric1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "kg"
+        },
+        "massUS1": {
+            "decimals": 0,
+            "denominator": 10,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 22,
+            "offset": 0,
+            "units": "lbs"
+        },
+        "measurementSystem": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "unitTypeEncoding",
+            "max": 1,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "percentage1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 100,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "%"
+        },
+        "percentage2": {
+            "decimals": 1,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 1000,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "%"
+        },
+        "percentageGauge": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 100,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "%"
+        },
+        "pressureMetric": {
+            "decimals": 1,
+            "denominator": 100,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "BAR"
+        },
+        "pressureMetricGauge": {
+            "decimals": 1,
+            "denominator": 100,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "pressureUS": {
+            "decimals": 0,
+            "denominator": 32768,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 476,
+            "offset": 0,
+            "units": "PSI"
+        },
+        "pressureUSGauge": {
+            "decimals": 0,
+            "denominator": 32768,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 476,
+            "offset": 0,
+            "units": ""
+        },
+        "pwmDriverId": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 1,
+            "units": ""
+        },
+        "pwmDriverMode": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "pwmDriverModeEncoding",
+            "max": 1,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "ratio1": {
+            "decimals": 2,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "ratioGauge": {
+            "decimals": 2,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "rpm1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "RPM"
+        },
+        "rpmAdjustBy10": {
+            "decimals": -1,
+            "denominator": 10,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "RPM"
+        },
+        "rpmGauge": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "shiftControlModeGauge": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "rangeControlModeGaugeEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "speedoCalibration": {
+            "decimals": 2,
+            "denominator": 1,
+            "encoding": "zeroIsDisabledEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ": 1"
+        },
+        "switchMonitorId": {
+            "decimals": 0,
+            "denominator": 0,
+            "encoding": "switchMonitorIdEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "tccControlModeGauge": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "rangeControlModeGaugeEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "temperature1Metric": {
+            "decimals": 1,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "C"
+        },
+        "temperature1US": {
+            "decimals": 1,
+            "denominator": 5,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 9,
+            "offset": 320,
+            "units": "F"
+        },
+        "temperature2Metric": {
+            "decimals": 0,
+            "denominator": 10,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "C"
+        },
+        "temperature2US": {
+            "decimals": 0,
+            "denominator": 50,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 9,
+            "offset": 32,
+            "units": "F"
+        },
+        "temperatureMetricGauge": {
+            "decimals": 0,
+            "denominator": 10,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "C"
+        },
+        "temperatureUSGauge": {
+            "decimals": 0,
+            "denominator": 50,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 9,
+            "offset": 32,
+            "units": "F"
+        },
+        "torqueSignalSource": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "torqueSourceEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "transferCaseRange": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        },
+        "transferCaseRangeGauge": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "transferCaseGearGaugeEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "transmissionType1": {
+            "decimals": 0,
+            "denominator": 1,
+            "encoding": "transmissionTypeEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "variationTypes": {
+            "decimals": 0,
+            "denominator": 0,
+            "encoding": "variationTypeEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 0,
+            "offset": 0,
+            "units": ""
+        },
+        "vehicleSpeedKPH1": {
+            "decimals": 1,
+            "denominator": 1000,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 36,
+            "offset": 0,
+            "units": "KPH"
+        },
+        "vehicleSpeedKPHGauge": {
+            "decimals": 1,
+            "denominator": 1000,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 36,
+            "offset": 0,
+            "units": ""
+        },
+        "vehicleSpeedMPH1": {
+            "decimals": 1,
+            "denominator": 65535,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 14659,
+            "offset": 0,
+            "units": "MPH"
+        },
+        "vehicleSpeedMPHGauge": {
+            "decimals": 1,
+            "denominator": 65535,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 14659,
+            "offset": 0,
+            "units": ""
+        },
+        "voltage1": {
+            "decimals": 2,
+            "denominator": 10,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": "V"
+        },
+        "voltageGauge": {
+            "decimals": 1,
+            "denominator": 100,
+            "encoding": "nullEncoding",
+            "max": 0,
+            "min": 0,
+            "numerator": 1,
+            "offset": 0,
+            "units": ""
+        }
+    }
+}

@@ -271,7 +271,7 @@ class Connection(object):
     
     def _query(self, action_func, *args):
         failures = 0
-        maxFailures = 2
+        maxFailures = 10
         while failures <= maxFailures:
             try:
                 return action_func(*args)  # Jumps out if the action succeeds
@@ -753,5 +753,5 @@ class Connection(object):
         try:
             self.program_verify(crc)
             return True
-        except BadReply:
+        except SlaveErrorVerify:
             return False

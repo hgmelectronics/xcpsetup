@@ -14,16 +14,17 @@ from comm import XCPConnection
 from util import plugins
 from util import ctypesdict
 from util import config
-from . import argProc
+import argProc
    
 plugins.loadPlugins()
 config.loadSysConfigs()
 
 parser = argparse.ArgumentParser(description="writes data to a board using a preparsed C struct to define layout in memory")
-parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles')
+parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles', default=[])
 parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
+parser.add_argument('-I', help="Search for targets on the network", action='count', dest='searchTargets')
 parser.add_argument('-l', help="Location of config structure in form <segment>:<baseaddr>", default="0:0", dest="structLocation")
 parser.add_argument('-s', help="Pickled structure definition", dest="structSpec")
 parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
@@ -32,11 +33,11 @@ args = parser.parse_args()
 
 config.loadConfigs(args.configFiles)
 BoardTypes.SetupBoardTypes()
-if not args.targetType in config.configDict['xcptoolsBoardTypes']:
-    print('Could not find board type ' + args.targetType)
+try:
+    boardType = BoardTypes.types[args.targetType]
+except KeyError:
+    print('Could not find board type ' + str(args.targetType))
     sys.exit(1)
-else:
-    boardType = config.configDict['xcptoolsBoardTypes'][args.targetType]
 
 try:
     ConfigType = argProc.GetStructType(args.structSpec)
@@ -54,9 +55,8 @@ def OpenInFile(name, idx):
         return open(name.format(idx), 'r')
 
 with CANInterface.MakeInterface(args.deviceURI) as interface:
-    targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
-    # If needed, ask the user to pick a slave from the list
-    if len(targetSlaves) == 0:
+    targetSlaves = boardType.SlaveListFromIdxArg(args.targetID)
+    if args.searchTargets or len(targetSlaves) == 0:
         slaves = boardType.GetSlaves(interface)
         for i in range(0, len(slaves)):
             print(str(i) + ': ' + slaves[i][0].description() + ', ID ' + str(slaves[i][1]))

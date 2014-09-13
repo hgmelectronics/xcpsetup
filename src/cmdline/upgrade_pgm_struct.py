@@ -1,4 +1,4 @@
-#!/usr/bin/python3.3
+#!/usr/bin/python3
 
 import argparse
 import ctypes
@@ -16,12 +16,13 @@ from util import ctypesdict
 from util import config
 from util import STCRC
 from util import srec
-from . import argProc
+import argProc
 
 plugins.loadPlugins()
+config.loadSysConfigs()
 
 parser = argparse.ArgumentParser(description="reads data from a board using a C header file to define layout in memory")
-parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles')
+parser.add_argument('-c', nargs='*', help='Extra configuration files to load', dest='configFiles', default=[])
 parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
 parser.add_argument('-T', help="Target device type (ibem,cda,cs2) for automatic XCP ID selection", dest="targetType", default=None)
 parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery) for automatic XCP ID selection", dest="targetID", default=None)
@@ -30,18 +31,18 @@ parser.add_argument('-s', help="Pickled old structure definition", dest="oldStru
 parser.add_argument('-S', help="Pickled new structure definition", dest="newStructSpec")
 parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default="-")
 parser.add_argument('-p', help="S-record file to program", dest="srecFile", type=argparse.FileType('rb'))
-parser.add_argument('-c', help="Force reprogram even if CRC matches what is already in flash", action='count', dest='ignoreCRCMatch')
+parser.add_argument('-C', help="Force reprogram even if CRC matches what is already in flash", action='count', dest='ignoreCRCMatch')
 parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
 parser.add_argument('inputFile', help="Input file name (if range of IDs specified must contain a {} to be replaced with the ID)", default=None)
 args = parser.parse_args()
 
 config.loadConfigs(args.configFiles)
 BoardTypes.SetupBoardTypes()
-if not args.targetType in config.configDict['xcptoolsBoardTypes']:
-    print('Could not find board type ' + args.targetType)
+try:
+    boardType = BoardTypes.types[args.targetType]
+except KeyError:
+    print('Could not find board type ' + str(args.targetType))
     sys.exit(1)
-else:
-    boardType = config.configDict['xcptoolsBoardTypes'][args.targetType]
 
 try:
     OldConfigType = argProc.GetStructType(args.oldStructSpec)
@@ -75,7 +76,7 @@ def OpenOutFile(name, idx):
         return open(name.format(idx), 'w')
 
 with CANInterface.MakeInterface(args.deviceURI) as interface:
-    targetSlaves = boardType.SlaveListFromIDArg(args.targetID)
+    targetSlaves = boardType.SlaveListFromIdxArg(args.targetID)
     # If needed, ask the user to pick a slave from the list
     if len(targetSlaves) == 0:
         slaves = boardType.GetSlaves(interface)
@@ -168,7 +169,7 @@ with CANInterface.MakeInterface(args.deviceURI) as interface:
         
         for attempt in range(1, maxAttempts + 1):
             try:
-                conn = boardType.Connect(interface, boardType.SlaveListFromIDArg('recovery')[0], args.dumpTraffic)
+                conn = boardType.Connect(interface, boardType.SlaveListFromIdxArg('recovery')[0], args.dumpTraffic)
                 print('Connected to recovery address')
                 # Write the new buffer to the board
                 conn.set_cal_page(structSegment, 0)

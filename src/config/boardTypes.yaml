@@ -32,7 +32,7 @@ xcptoolsBoardTypes:
         res: 0x9F000011
   hgm-cs2:
     timeouts:
-      regular: 2.0
+      regular: 0.5
       nvWrite: 5.0
       reboot: 5.0
     ids:

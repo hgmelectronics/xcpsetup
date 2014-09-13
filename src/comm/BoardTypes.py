@@ -18,7 +18,6 @@ class InvalidIDArg(Exception):
 
 class BoardType(object):
     def __init__(self, defDict):
-        self._broadcastId = defDict['broadcastId'] if 'broadcastId' in defDict else None
         if 'broadcastId' in defDict:
             self._broadcastId = defDict['broadcastId']
             self._broadcastTimeout = defDict['timeouts']['broadcast']
@@ -66,7 +65,7 @@ class BoardType(object):
             elif self._hasIndexedIds:
                 try:
                     idx = int(arg)
-                    if idx >= self._idRange[0] and idx < idx._idRange[1]:
+                    if idx >= self._idxRange[0] and idx < self._idxRange[1]:
                         return [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * idx, self._resBaseID + self._idPitch * idx), idx)]
                 except ValueError:
                     pass
@@ -80,7 +79,7 @@ class BoardType(object):
                 ret += [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * idx, self._resBaseID + self._idPitch * idx), idx) for idx in idxRange]
             return ret
         
-        slaves = XCPConnection.GetCANSlaves(intfc, self._broadcastID, self._broadcastTimeout)
+        slaves = XCPConnection.GetCANSlaves(intfc, self._broadcastId, self._broadcastTimeout)
         mySlaves = []
         for slave in slaves:
             match = None
@@ -89,7 +88,7 @@ class BoardType(object):
                 possID = int((slave.cmdId.raw - self._cmdBaseID) / self._idPitch)
                 if slave.cmdId.raw == self._cmdBaseID + possID * self._idPitch \
                     and slave.resId.raw == self._resBaseID + possID * self._idPitch \
-                    and possID >= self._idRange[0] and possID < self._idRange[1]:
+                    and possID >= self._idxRange[0] and possID < self._idxRange[1]:
                     match = (slave, possID)
             
             if match == None:
