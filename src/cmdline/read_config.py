@@ -32,6 +32,7 @@ parser.add_argument('-p', help="Parameter definition file", dest="paramSpecFile"
 parser.add_argument('-s', help="XCP memory segment in which parameters reside", dest="paramSegment", default=0)
 parser.add_argument('-o', help="Output file name (if range of IDs specified must contain a {} to be replaced with the ID)", dest="outputFile", default="-")
 parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
+parser.add_argument('-w', help="Warn if slave returns out of range for any parameter", dest="warnNotFound", action="store_true", default=False)
 args = parser.parse_args()
 
 config.loadConfigs(args.configFiles)
@@ -72,7 +73,11 @@ with CANInterface.MakeInterface(args.deviceURI) as interface:
                 conn.set_cal_page(args.paramSegment, 0)
                 data = dict()
                 for param in paramSpec['parameters']:
-                    data[param['name']] = dictconfig.ReadParam(param, paramSpec, conn)
+                    try:
+                        data[param['name']] = dictconfig.ReadParam(param, paramSpec, conn)
+                    except XCPConnection.SlaveErrorOutOfRange as exc:
+                        if args.warnNotFound:
+                            sys.stderr.write(str(exc) + '\n')
                 
                 outFile.write(json.dumps(data, sort_keys=True, indent=4, separators=(',', ': ')))
                 outFile.write('\n')
