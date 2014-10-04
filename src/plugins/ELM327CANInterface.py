@@ -37,9 +37,8 @@ import time
 import threading
 import queue
 import collections
-import urllib.parse
 
-DEBUG=False
+DEBUG=True
 
 class Error(CANInterface.Error):
     pass
@@ -214,12 +213,14 @@ class ELM327IO(object):
                 
                 if self._lines[-1] == self._PROMPT:
                     if DEBUG:
-                        print(str(time.time()) + ' promptReady.set()')
+                        print(str(time.time()) + ' promptReady.set(), end of queue')
                     # Manage the promptReady Event; it's set if and only if there is an incomplete line consisting of a prompt.
                     setPromptReady = True
                     del self._lines[-1]
                 while self._lines:
                     rawLine = self._lines.popleft()
+                    if DEBUG:
+                        print(str(time.time()) + ' processing ' + str(rawLine))
                     if self._EOL in rawLine:
                         line = rawLine.strip(self._EOL)
                         # Is it empty?
@@ -248,19 +249,24 @@ class ELM327IO(object):
                     else:
                         if rawLine == self._PROMPT:
                             if DEBUG:
-                                print(str(time.time()) + ' promptReady.set()')
+                                print(str(time.time()) + ' promptReady.set(), not EOQ')
                             # Manage the promptReady Event; it's set if and only if there is an incomplete line consisting of a prompt.
                             setPromptReady = True
                         else:
                             self._lines.appendleft(rawLine)
                             break
-            
+
             try:
                 while 1:
                     timeDelay = self._timeToSend - time.time()
                     if timeDelay > 0:
+                        if DEBUG:
+                            print(str(time.time()) + ' waiting ' + str(timeDelay) + ' for recovery after TX')
                         time.sleep(timeDelay)
-                    self._port.write(self._transmit.get_nowait())
+                    toSend = self._transmit.get_nowait()
+                    if DEBUG:
+                        print(str(time.time()) + ' pulled from TX queue ' + str(toSend))
+                    self._port.write(toSend)
                     self._promptReady.clear()
                     self._timeToSend = time.time() + self._ELM_RECOVERY_TIME
             except queue.Empty:
@@ -297,7 +303,12 @@ class ELM327IO(object):
         raise UnexpectedResponse(b'\r')
     
     def getReceived(self, timeout=0):
-        return self._receive.get(timeout)
+        if DEBUG:
+            print(str(time.time()) + ' waiting ' + str(timeout) + ' for receive')
+        ret = self._receive.get(timeout=0)
+        if DEBUG:
+            print(str(time.time()) + ' received ' + str(ret))
+        return ret
     
     def getCmdResp(self, timeout=0):
         return self._cmdResp.get(timeout)
@@ -332,7 +343,7 @@ class ELM327CANInterface(CANInterface.Interface):
     _POSSIBLE_BAUDRATES = [500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
     
     
-    def __init__(self, parsedURL):
+    def __init__(self, parsedURL, debugLogfile=None):
         self._slaveAddr = None
         self._port = None
         self._bitrate = None
@@ -351,12 +362,6 @@ class ELM327CANInterface(CANInterface.Interface):
         self._noCsmQuirk = False
         
         self._io = None
-        
-        urlQueryDict = urllib.parse.parse_qs(parsedURL.query)
-        
-        debugLogfile = None
-        if 'debuglog' in urlQueryDict:
-            debugLogfile = open(urlQueryDict['debuglog'], 'w')
     
         if len(parsedURL.netloc):
             # If netloc is present, we're using a TCP connection
@@ -577,12 +582,10 @@ class ELM327CANInterface(CANInterface.Interface):
             while 1:
                 try:
                     response = self._io.getCmdResp(timeout=0)
+                    if DEBUG:
+                        print(str(time.time()) + ' pulled cmd response ' + str(response))
                     if b'OK' in response:
                         gotOK = True
-                    elif response == cmd + b'\r':
-                        response = self._io.getCmdResp(timeout=0)
-                        if b'OK' in response:
-                            gotOK = True
                 except queue.Empty:
                     break
             if not gotOK:
@@ -650,8 +653,12 @@ class ELM327CANInterface(CANInterface.Interface):
                     else:
                         packet = self._io.getReceived(timeout=newTimeout)
             except queue.Empty:
+                print(str(time.time()) + ' Rcv queue empty')
                 break
-            
+
+            if DEBUG:
+                print(str(time.time()) + ' rcvd pkt ' + repr(packet))
+
             
             if packet.ident == self._slaveAddr.resId.raw and (packet.data[0] == 0xFF or packet.data[0] == 0xFE):
                 msgs.append(packet.data)
@@ -686,8 +693,9 @@ class ELM327CANInterface(CANInterface.Interface):
 CANInterface.addInterface("elm327", ELM327CANInterface)
 
 if __name__ == "__main__":
-    parsedurl = urllib.parse.urlparse('elm327:/dev/rfcomm0?debuglog=elm327.log')
-    elm327 = ELM327CANInterface(parsedurl)
+    import urllib.parse
+    parsedurl = urllib.parse.urlparse('elm327:/dev/rfcomm0')
+    elm327 = ELM327CANInterface(parsedurl, open('elm327.log', 'w'))
     elm327.setFilter((0x000, 0x80000000))
     elm327.transmitTo(b'1234', 0x9FFFFFFF)
     elm327.transmitTo(b'1234', 0x7FF)
