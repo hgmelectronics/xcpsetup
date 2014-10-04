@@ -298,10 +298,10 @@ class ELM327IO(object):
         raise UnexpectedResponse(b'\r')
     
     def getReceived(self, timeout=0):
-        return self._receive.get(timeout)
+        return self._receive.get(timeout=timeout)
     
     def getCmdResp(self, timeout=0):
-        return self._cmdResp.get(timeout)
+        return self._cmdResp.get(timeout=timeout)
     
     def flushCmdResp(self):
         while 1:
