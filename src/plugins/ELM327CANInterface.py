@@ -38,6 +38,7 @@ import threading
 import queue
 import collections
 import urllib.parse
+import sys
 
 DEBUG=False
 
@@ -297,10 +298,10 @@ class ELM327IO(object):
         raise UnexpectedResponse(b'\r')
     
     def getReceived(self, timeout=0):
-        return self._receive.get(timeout)
+        return self._receive.get(timeout=timeout)
     
     def getCmdResp(self, timeout=0):
-        return self._cmdResp.get(timeout)
+        return self._cmdResp.get(timeout=timeout)
     
     def flushCmdResp(self):
         while 1:
@@ -356,7 +357,10 @@ class ELM327CANInterface(CANInterface.Interface):
         
         debugLogfile = None
         if 'debuglog' in urlQueryDict:
-            debugLogfile = open(urlQueryDict['debuglog'], 'w')
+            if urlQueryDict['debuglog'][0] == 'stdout':
+                debugLogfile = sys.stdout
+            else:
+                debugLogfile = open(urlQueryDict['debuglog'][0], 'w')
     
         if len(parsedURL.netloc):
             # If netloc is present, we're using a TCP connection
@@ -579,10 +583,6 @@ class ELM327CANInterface(CANInterface.Interface):
                     response = self._io.getCmdResp(timeout=0)
                     if b'OK' in response:
                         gotOK = True
-                    elif response == cmd + b'\r':
-                        response = self._io.getCmdResp(timeout=0)
-                        if b'OK' in response:
-                            gotOK = True
                 except queue.Empty:
                     break
             if not gotOK:
