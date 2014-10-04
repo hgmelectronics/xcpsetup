@@ -37,6 +37,7 @@ import time
 import threading
 import queue
 import collections
+import urllib.parse
 
 DEBUG=False
 
@@ -331,7 +332,7 @@ class ELM327CANInterface(CANInterface.Interface):
     _POSSIBLE_BAUDRATES = [500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
     
     
-    def __init__(self, parsedURL, debugLogfile=None):
+    def __init__(self, parsedURL):
         self._slaveAddr = None
         self._port = None
         self._bitrate = None
@@ -350,6 +351,12 @@ class ELM327CANInterface(CANInterface.Interface):
         self._noCsmQuirk = False
         
         self._io = None
+        
+        urlQueryDict = urllib.parse.parse_qs(parsedURL.query)
+        
+        debugLogfile = None
+        if 'debuglog' in urlQueryDict:
+            debugLogfile = open(urlQueryDict['debuglog'], 'w')
     
         if len(parsedURL.netloc):
             # If netloc is present, we're using a TCP connection
@@ -679,9 +686,8 @@ class ELM327CANInterface(CANInterface.Interface):
 CANInterface.addInterface("elm327", ELM327CANInterface)
 
 if __name__ == "__main__":
-    import urllib.parse
-    parsedurl = urllib.parse.urlparse('elm327:/dev/rfcomm0')
-    elm327 = ELM327CANInterface(parsedurl, open('elm327.log', 'w'))
+    parsedurl = urllib.parse.urlparse('elm327:/dev/rfcomm0?debuglog=elm327.log')
+    elm327 = ELM327CANInterface(parsedurl)
     elm327.setFilter((0x000, 0x80000000))
     elm327.transmitTo(b'1234', 0x9FFFFFFF)
     elm327.transmitTo(b'1234', 0x7FF)
