@@ -111,7 +111,8 @@ with CANInterface.MakeInterface(args.deviceURI) as interface:
                 outFile=OpenOutFile(args.outputFile, targetSlave[1])
                 outFile.write(json.dumps(oldDict, sort_keys=True, indent=4, separators=(',', ': ')))
                 outFile.write('\n')
-                outFile.close()
+                if outFile != sys.stdout:
+                    outFile.close()
                 try:
                     conn.close()
                 except XCPConnection.Error:
