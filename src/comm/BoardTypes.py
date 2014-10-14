@@ -42,10 +42,11 @@ class BoardType(object):
 
     def SlaveListFromIdxArg(self, arg):
         if arg == None:
-            if len(self._ids) == 1:
+            if len(self._ids) == 1 and not self._hasIndexedIds:
                 idName = list(self._ids.keys())[0]
                 return [(CANInterface.XCPSlaveCANAddr(self._ids[idName]['cmd'], self._ids[idName]['res']), idName)]
-            raise InvalidIDArg(arg)
+            else:
+                return []
         elif arg.find('-') >= 0:
             if not self._hasIndexedIds:
                 raise InvalidIDArg(arg)
