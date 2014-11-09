@@ -256,20 +256,16 @@ class ELM327IO(object):
                             self._lines.appendleft(rawLine)
                             break
             
-            try:
-                while 1:
-                    timeDelay = self._timeToSend - time.time()
-                    if timeDelay > 0:
-                        time.sleep(timeDelay)
-                    self._port.write(self._transmit.get_nowait())
-                    self._promptReady.clear()
-                    self._timeToSend = time.time() + self._ELM_RECOVERY_TIME
-            except queue.Empty:
-                pass
+            if self._timeToSend < time.time() and not self._transmit.empty():
+                self._port.write(self._transmit.get_nowait())
+                self._promptReady.clear()
+                self._timeToSend = time.time() + self._ELM_RECOVERY_TIME
+                setPromptReady = False
+                setPipelineClear = False
             
             if setPromptReady:
                 self._promptReady.set()
-            if setPipelineClear:
+            if setPipelineClear and self._transmit.empty():
                 self._pipelineClear.set()
     
     def sync(self):
