@@ -105,6 +105,7 @@ class BoardType(object):
     
     def Connect(self, intfc, slave, dumpTraffic):
         intfc.connect(slave[0], dumpTraffic)
+        intfc.receivePackets(timeout=0)
         return XCPConnection.Connection(intfc, self._regularTimeout, self._nvWriteTimeout)
     
     def WaitForReboot(self):
