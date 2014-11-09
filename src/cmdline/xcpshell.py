@@ -11,8 +11,7 @@ from comm import XCPConnection
 from util import plugins
 from util import STCRC
 from util import srec
-
-
+import cmdline
 
 if not '..' in sys.path:
     sys.path.append('..')
@@ -80,14 +79,14 @@ class XCPShell(cmd2.Cmd):
             self.cmdqueue.extend(f.read().splitlines())
 
 
-    def do_open(self, arg):
-        pass
-
-    def do_close(self, arg):
-        pass
-
-    def do_import(self, arg):
-        pass
+#     def do_open(self, arg):
+#         pass
+#
+#     def do_close(self, arg):
+#         pass
+#
+#     def do_import(self, arg):
+#         pass
 
 
     def do_interface(self, cmdLine):
@@ -126,6 +125,80 @@ class XCPShell(cmd2.Cmd):
         parser = ShellArgParser(kargs)
         parser.add_argument('address', help="address", type=int, default=None)
         return parser.parse_args(shlex.split(cmdLine))
+
+
+    def do_load(self,cmdLine):
+        'load a set of parameters from a file'
+        try:
+            parser = self._parseUpload(cmdLine, prog='load', description=__doc__)
+        except ShellArgParserExit:
+            return
+        except Exception as e:
+            print(e)
+
+    do_load.needs_connection = True
+
+
+    def do_save(self,cmdLine):
+        'Save a set of parameters from a file'
+        try:
+            parser = self._parseUpload(cmdLine, prog='save', description=__doc__)
+        except ShellArgParserExit:
+            return
+        except Exception as e:
+            print(e)
+
+    do_save.needs_connection = True
+
+
+    def do_describe(self,cmdLine):
+        'Describe a parameter'
+        try:
+            parser = self._parseUpload(cmdLine, prog='describe', description=__doc__)
+        except ShellArgParserExit:
+            return
+        except Exception as e:
+            print(e)
+
+    do_describe.needs_connection = False
+
+
+    def do_list(self,cmdLine):
+        'List on or more parameters'
+        try:
+            parser = self._parseUpload(cmdLine, prog='list', description=__doc__)
+            parser.add_argument('parameter', help='parameter to list', type=string)
+        except ShellArgParserExit:
+            return
+        except Exception as e:
+            print(e)
+
+    do_describe.needs_connection = False
+
+
+
+    def do_read(self, cmdLine):
+        'Read a parameter'
+        try:
+            parser = self._parseUpload(cmdLine, prog='read', description=__doc__)
+        except ShellArgParserExit:
+            return
+        except Exception as e:
+            print(e)
+
+    do_read.needs_connection = True
+
+    def do_write(self, cmdLine):
+        'Write a parameter'
+        try:
+            paser = self._parseUpload(cmdLine, prog='write', description=__doc__)
+        except ShellArgParserExit:
+            return
+        except Exception as e:
+            print(e)
+
+    do_write.needs_connection = True
+
 
 
     def do_upload8(self, cmdLine):
@@ -170,10 +243,10 @@ class XCPShell(cmd2.Cmd):
 
 
     def _parseDownload(self, cmdLine, **kargs):
-        parser = ShellArgParser(kargs)
-        parser.add_argument('address', help="address", type=int, default=None)
-        parser.add_argument('data', help="data", type=int, default=None)
-        return parser.parse_args(shlex.split(cmdLine))
+        args = ShellArgParser(kargs)
+        args.add_argument('address', help="address", type=int, default=None)
+        args.add_argument('data', help="data", type=int, default=None)
+        return args.parse_args(shlex.split(cmdLine))
 
 
     def do_download8(self, cmdLine):
@@ -427,16 +500,16 @@ class XCPShell(cmd2.Cmd):
             self.file = None
 
     def precmd(self, line):
-        return cmd.Cmd.precmd(self, line)
+        return super().precmd(self, line)
 
     def postcmd(self, stop, line):
-        return cmd.Cmd.postcmd(self, stop, line)
+        return super().postcmd(self, stop, line)
 
     def preloop(self):
-        cmd.Cmd.preloop(self)
+        super().preloop(self)
 
     def postloop(self):
-        cmd.Cmd.postloop(self)
+        super().postloop(self)
 
 def parse(arg):
     'Convert a series of zero or more numbers to an argument tuple'
