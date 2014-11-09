@@ -28,6 +28,7 @@ parser.add_argument('-l', help='Location of structure in form <segment>:<baseadd
 parser.add_argument('-s', help='Pickled structure definition', dest='structSpec')
 parser.add_argument('-o', help='Output file name (if range of IDs specified must contain a {} to be replaced with the ID)', dest='outputFile', default='-')
 parser.add_argument('-D', help='Dump all XCP traffic, for debugging purposes', dest='dumpTraffic', action='store_true', default=False)
+parser.add_argument('-r', help='Maximum times to retry read operation', dest='maxAttempts', default=10)
 args = parser.parse_args()
 
 config.loadConfigs(args.configFiles)
@@ -44,8 +45,6 @@ try:
 except argProc.ArgError as exc:
     print(str(exc))
     sys.exit(1)
-
-maxAttempts = 10
 
 def OpenOutFile(name, idx):
     if name == None or name == '-':
@@ -74,7 +73,7 @@ with CANInterface.MakeInterface(args.deviceURI) as interface:
         else:
             sys.stderr.write('Connecting to target addr ' + targetSlave[0].description() + '\n')
         
-        for attempt in range(1, maxAttempts + 1):
+        for attempt in range(1, args.maxAttempts + 1):
             try:
                 conn = boardType.Connect(interface, targetSlave, args.dumpTraffic)
                 
