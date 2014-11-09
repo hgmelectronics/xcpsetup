@@ -40,7 +40,7 @@ import collections
 import urllib.parse
 import sys
 
-DEBUG=False
+DEBUG=True
 
 class Error(CANInterface.Error):
     pass
@@ -139,16 +139,16 @@ class LoggingPort(serial.Serial):
             self._debugLogfile.write(prefix + ' CLOSE' + '\n')
         return result
     def read(self, *args, **kwargs):
+        prefix = self._prefix()
+        result = super().read(*args, **kwargs)
         with self._logLock:
-            result = super().read(*args, **kwargs)
-            prefix = self._prefix()
             if len(result) > 0:
                 self._debugLogfile.write(prefix + ' RD ' + repr(result) + '\n')
         return result
     def write(self, data):
+        result = super().write(data)
+        prefix = self._prefix()
         with self._logLock:
-            result = super().write(data)
-            prefix = self._prefix()
             self._debugLogfile.write(prefix + ' WR ' + repr(data) + '\n')
             return result
 
@@ -173,8 +173,8 @@ class ELM327IO(object):
     '''
     
     _QUEUE_MAX_SIZE = 16384
-    _TICK_TIME = 0.001
-    _ELM_RECOVERY_TIME = 0.002
+    _TICK_TIME = 0.01
+    _ELM_RECOVERY_TIME = 0.1
     _CYCLE_TIMEOUT = 1.0
     _EOL=b'\r'
     _PROMPT=b'>'
@@ -192,12 +192,14 @@ class ELM327IO(object):
         self._timeToSend = 0
         self._port = port
         self._port.timeout = self._TICK_TIME
+        #self._port.timeout = 0
         self._thread = threading.Thread(target=self.threadFunc)
         self._thread.daemon = True # In case main thread crashes...
         self._thread.start()
     
     def threadFunc(self):
         while 1:
+            #time.sleep(self._TICK_TIME)
             if self._terminate.is_set():
                 if DEBUG:
                     print(str(time.time()) + ' ELM327IO(): terminate set')
@@ -223,6 +225,7 @@ class ELM327IO(object):
                     rawLine = self._lines.popleft()
                     if self._EOL in rawLine:
                         line = rawLine.strip(self._EOL)
+                        print('Processing ' + repr(line))
                         # Is it empty?
                         if len(line) == 0:
                             pass
@@ -243,6 +246,7 @@ class ELM327IO(object):
                                 data = binascii.unhexlify(line[idLen:])
                                 packet = CANInterface.Packet(ident | mask, data)
                                 PutDiscard(self._receive, packet)
+                                print('Put ' + repr(packet) + ' on receive')
                             else:
                                 # Too short to be valid
                                 PutDiscard(self._cmdResp, line)
@@ -256,20 +260,16 @@ class ELM327IO(object):
                             self._lines.appendleft(rawLine)
                             break
             
-            try:
-                while 1:
-                    timeDelay = self._timeToSend - time.time()
-                    if timeDelay > 0:
-                        time.sleep(timeDelay)
-                    self._port.write(self._transmit.get_nowait())
-                    self._promptReady.clear()
-                    self._timeToSend = time.time() + self._ELM_RECOVERY_TIME
-            except queue.Empty:
-                pass
+            if self._timeToSend < time.time() and not self._transmit.empty():
+                self._port.write(self._transmit.get_nowait())
+                self._promptReady.clear()
+                self._timeToSend = time.time() + self._ELM_RECOVERY_TIME
+                setPromptReady = False
+                setPipelineClear = False
             
             if setPromptReady:
                 self._promptReady.set()
-            if setPipelineClear:
+            if setPipelineClear and self._transmit.empty():
                 self._pipelineClear.set()
     
     def sync(self):
@@ -298,6 +298,7 @@ class ELM327IO(object):
         raise UnexpectedResponse(b'\r')
     
     def getReceived(self, timeout=0):
+        print(str(time.time()) + ' getReceived(' + str(timeout) + ')')
         return self._receive.get(timeout=timeout)
     
     def getCmdResp(self, timeout=0):
@@ -330,8 +331,6 @@ class ELM327CANInterface(CANInterface.Interface):
     "Write" queue can request transmission of a frame, set baud rate, set filters, or request that monitoring stop.
     "Read" queue contains messages received from the bus.
     '''
-    _POSSIBLE_BAUDRATES = [500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
-    
     
     def __init__(self, parsedURL):
         self._slaveAddr = None
@@ -350,6 +349,7 @@ class ELM327CANInterface(CANInterface.Interface):
         self._filter = None
         self._cfgdFilter = None
         self._noCsmQuirk = False
+        self._possibleBaudrates = [500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200]
         
         self._io = None
         
@@ -360,7 +360,14 @@ class ELM327CANInterface(CANInterface.Interface):
             if urlQueryDict['debuglog'][0] == 'stdout':
                 debugLogfile = sys.stdout
             else:
-                debugLogfile = open(urlQueryDict['debuglog'][0], 'w')
+                debugLogfile = open(urlQueryDict['debuglog'][0], 'a')
+        
+        if 'rs232baud' in urlQueryDict:
+            desiredBaud = int(urlQueryDict['rs232baud'][0])
+            if not desiredBaud in self._possibleBaudrates:
+                raise CANInterface.Error('Invalid baudrate ' + urlQueryDict['rs232baud'][0])
+            self._possibleBaudrates.remove(desiredBaud)
+            self._possibleBaudrates.insert(0, desiredBaud)
     
         if len(parsedURL.netloc):
             # If netloc is present, we're using a TCP connection
@@ -381,7 +388,7 @@ class ELM327CANInterface(CANInterface.Interface):
             port.port = parsedURL.path
             port.open()
             foundBaud = False
-            for baudRate in self._POSSIBLE_BAUDRATES:
+            for baudRate in self._possibleBaudrates:
                 if DEBUG:
                     print('Trying ' + str(baudRate))
                 port.baudrate = baudRate
@@ -404,23 +411,24 @@ class ELM327CANInterface(CANInterface.Interface):
                 if not b'OK' in response:
                     continue
                 
-                # If we made contact at baudrate 500k, we're done
-                if baudRate == 500000:
+                # If we made contact at desired baudrate, we're done
+                if baudRate == self._possibleBaudrates[0]:
                     foundBaud = True
                     break
                 
-                # Not at 500k, try to change ELM to that
+                # Not at desired baudrate, try to change ELM to that
                 port.timeout = 1.28 # Maximum possible timeout for ELM327
                 port.flushInput()
-                port.write(b'ATBRD08\r')
+                divisor = int(round(4000000 / self._possibleBaudrates[0]))
+                port.write(b'ATBRD' + str.encode(format(divisor, '02x')) + b'\r')
                 response = port.read(2)
                 if response == b'?\r':
                     # Device does not allow baudrate change, but we found its operating baudrate
                     foundBaud = True
                     break
                 elif response == b'OK':
-                    # Device allows baudrate change, try to switch to 500k
-                    port.baudrate = 500000
+                    # Device allows baudrate change, try to switch to desired baudrate
+                    port.baudrate = self._possibleBaudrates[0]
                     port.flushInput()
                     response = port.read(11)
                     if response[0:6] != b'ELM327':
@@ -598,6 +606,11 @@ class ELM327CANInterface(CANInterface.Interface):
         self._slaveAddr = address
         self._dumpTraffic = dumpTraffic
         self._doSetFilter((address.resId.raw, self.exactMask(address.resId.raw)))
+        while 1:
+            try:
+                self._io.getReceived(timeout=0)
+            except queue.Empty:
+                break
     
     def disconnect(self):
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
