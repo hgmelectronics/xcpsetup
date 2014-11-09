@@ -139,16 +139,16 @@ class LoggingPort(serial.Serial):
             self._debugLogfile.write(prefix + ' CLOSE' + '\n')
         return result
     def read(self, *args, **kwargs):
+        result = super().read(*args, **kwargs)
+        prefix = self._prefix()
         with self._logLock:
-            result = super().read(*args, **kwargs)
-            prefix = self._prefix()
             if len(result) > 0:
                 self._debugLogfile.write(prefix + ' RD ' + repr(result) + '\n')
         return result
     def write(self, data):
+        result = super().write(data)
+        prefix = self._prefix()
         with self._logLock:
-            result = super().write(data)
-            prefix = self._prefix()
             self._debugLogfile.write(prefix + ' WR ' + repr(data) + '\n')
             return result
 
