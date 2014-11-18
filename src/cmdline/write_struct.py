@@ -27,7 +27,7 @@ parser.add_argument('-i', help="Target ID or range of IDs (e.g. 2, 1-3, recovery
 parser.add_argument('-l', help="Location of config structure in form <segment>:<baseaddr>", default="0:0", dest="structLocation")
 parser.add_argument('-s', help="Pickled structure definition", dest="structSpec")
 parser.add_argument('-D', help="Dump all XCP traffic, for debugging purposes", dest="dumpTraffic", action="store_true", default=False)
-parser.add_argument('-r', help='Maximum times to retry read-modify-write operation', dest='maxAttempts', default=10)
+parser.add_argument('-r', help='Maximum times to retry read-modify-write operation', dest='maxAttempts', type=int, default=10)
 parser.add_argument('inputFile', help="Input file name (if range of IDs specified must contain a {} to be replaced with the ID)", default=None)
 args = parser.parse_args()
 
