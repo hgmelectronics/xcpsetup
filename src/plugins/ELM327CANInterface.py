@@ -346,6 +346,7 @@ class ELM327CANInterface(CANInterface.Interface):
         self._filter = None
         self._cfgdFilter = None
         self._noCsmQuirk = False
+        self._isSt = False
         
         self._io = None
         
@@ -456,7 +457,13 @@ class ELM327CANInterface(CANInterface.Interface):
         self._runCmdWithCheck(b'ATL0', closeOnFail=True) # Turn off newlines
         self._runCmdWithCheck(b'ATS0', closeOnFail=True) # Turn off spaces
         self._runCmdWithCheck(b'ATH1', closeOnFail=True) # Turn on headers
-        self._runCmdWithCheck(b'ATSPB', closeOnFail=True) # Switch to protocol B (user defined)
+        self._runCmdWithCheck(b'ATAL', closeOnFail=True) # Allow full length messages
+        self._runCmdWithCheck(b'ATSTff', closeOnFail=True) # Set maximum timeout
+        try:
+            self._runCmdWithCheck(b'STFCP', closeOnFail=False) # See if this is an ST device
+            self._isSt = True
+        except UnexpectedResponse:
+            pass
         
         self.setBitrate(CANInterface.URLBitrate(parsedURL))
         
@@ -498,6 +505,12 @@ class ELM327CANInterface(CANInterface.Interface):
             extFilter = '1fffffff'
             extMask = '00000000'
             
+        if self._isSt:
+            self._runCmdWithCheck(b'STFCP')
+            if filt[0] & 0x80000000:
+                self._runCmdWithCheck(b'STFAP' + bytes(extFilter, 'utf-8') + b',' + bytes(extMask, 'utf-8'))
+            else:
+                self._runCmdWithCheck(b'STFAP' + bytes(stdFilter, 'utf-8') + b',' + bytes(stdMask, 'utf-8'))
         self._runCmdWithCheck(b'ATCF' + bytes(stdFilter, 'utf-8'))
         self._runCmdWithCheck(b'ATCM' + bytes(stdMask, 'utf-8'))
         self._runCmdWithCheck(b'ATCF' + bytes(extFilter, 'utf-8'))
@@ -543,7 +556,10 @@ class ELM327CANInterface(CANInterface.Interface):
         if self._baudDivisor == None:
             raise Error #FIXME
         
+        # STN1110 requires that protocol not be set to B when altering B settings
+        self._runCmdWithCheck(b'ATSP1', closeOnFail=True)
         self._runCmdWithCheck(b'ATPB' + binascii.hexlify(bytearray([canOptions, self._baudDivisor])), closeOnFail=True)
+        self._runCmdWithCheck(b'ATSPB', closeOnFail=True)
         if not self._hasSetCSM0:
             try:
                 self._runCmdWithCheck(b'ATCSM0', closeOnFail=False)
