@@ -340,7 +340,7 @@ class ELM327CANInterface(CANInterface.Interface):
         self._baud87Mult = None
         self._hasSetCSM0 = False
         self._tcpTimeout = 1.0
-        self._serialTimeout = 0.5
+        self._serialTimeout = 0.2
         self._dumpTraffic = False
         self._cfgdHeaderIdent = None
         self._filter = None
@@ -383,16 +383,17 @@ class ELM327CANInterface(CANInterface.Interface):
                     print('Trying ' + str(baudRate))
                 port.baudrate = baudRate
                 port.interCharTimeout = min(10/baudRate, 0.0001)
-                port.timeout = self._serialTimeout
+                port.timeout = 0.05
                 
                 # Try sending a CR, if we get a prompt then it's probably the right baudrate
                 port.flushInput()
-                port.write(b'AT\r')
-                time.sleep(0.05)
-                port.write(b'AT\r')
+                port.write(b'\r')
                 response = port.read(16384)
                 if len(response) == 0 or response[-1:] != b'>':
-                    continue
+                    port.write(b'\r')
+                    response = port.read(16384)
+                    if len(response) == 0 or response[-1:] != b'>':
+                        continue
                 
                 # Turn off echo, this also serves as a test to make sure we didn't randomly get a > at the end of some gibberish
                 port.flushInput()
