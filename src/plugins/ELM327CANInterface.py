@@ -458,7 +458,6 @@ class ELM327CANInterface(CANInterface.Interface):
         self._runCmdWithCheck(b'ATS0', closeOnFail=True) # Turn off spaces
         self._runCmdWithCheck(b'ATH1', closeOnFail=True) # Turn on headers
         self._runCmdWithCheck(b'ATAL', closeOnFail=True) # Allow full length messages
-        self._runCmdWithCheck(b'ATSTff', closeOnFail=True) # Set maximum timeout
         try:
             self._runCmdWithCheck(b'STFCP', closeOnFail=False) # See if this is an ST device
             self._isSt = True
@@ -560,6 +559,8 @@ class ELM327CANInterface(CANInterface.Interface):
         self._runCmdWithCheck(b'ATSP1', closeOnFail=True)
         self._runCmdWithCheck(b'ATPB' + binascii.hexlify(bytearray([canOptions, self._baudDivisor])), closeOnFail=True)
         self._runCmdWithCheck(b'ATSPB', closeOnFail=True)
+        self._runCmdWithCheck(b'ATAT0', closeOnFail=True) # Disable adaptive timing
+        self._runCmdWithCheck(b'ATSTff', closeOnFail=True) # Set maximum timeout = 1.02 s
         if not self._hasSetCSM0:
             try:
                 self._runCmdWithCheck(b'ATCSM0', closeOnFail=False)
