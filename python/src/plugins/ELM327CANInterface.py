@@ -168,8 +168,6 @@ class ELM327IO(object):
     packages completed lines that appear to be CAN frames and places them in the receive queue.
     Lines that are not packets and not empty are placed in the cmdResp queue, and command prompts from the ELM327
     (indicating readiness to receive commands) set the promptReady Event.
-    
-    Expects that ELM327 has already received ATL0 (disable linefeed), ATS0 (disable spaces), and ATH1 (enable headers).
     '''
     
     _QUEUE_MAX_SIZE = 16384

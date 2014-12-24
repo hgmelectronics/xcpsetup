@@ -66,57 +66,43 @@ class XCPShell(cmd2.Cmd):
                 func = getattr(self, 'do_' + cmd)
             except AttributeError:
                 return self.default(line)
+            
+            if hasattr(func, 'needConfig') and self.config == None:
+                return "Must load configuration first"
             if hasattr(func, 'needConnection') and self.connection == None:
                 return "Needs to be connected"
             if hasattr(func, "needInterface") and self.interface == None:
                 return "Needs interface"
-            return func(arg)
+            
+            try:
+                return func(shlex.split(arg))
+            except ShellArgParserExit:
+                return
+            except Exception as e:
+                print(e)
+            
 
     def do_source(self, arg):
-        'Run commands from a file:  source file.txt'
+        'Run commands from a file: source <filename>'
         self.close()
         with open(arg) as f:
             self.cmdqueue.extend(f.read().splitlines())
 
-
-#     def do_open(self, arg):
-#         pass
-#
-#     def do_close(self, arg):
-#         pass
-#
-#     def do_import(self, arg):
-#         pass
-
-
     def do_interface(self, cmdLine):
-        'Connect to the CAN interface'
-        try:
-            parser = ShellArgParser(prog='interface', description=__doc__)
-            parser.add_argument('-d', help="CAN device URI", dest="deviceURI", default=None)
-            args = parser.parse_args(shlex.split(cmdLine))
-            self.interface = CANInterface.MakeInterface(args.deviceURI);
-            self.connection = None;
-        except ShellArgParserExit:
-            return
-        except Exception as e:
-            print(e)
+        'Connect to a CAN interface: connect <device URI>'
+        parser = ShellArgParser(prog='interface', description=__doc__)
+        parser.add_argument('deviceURI', help="CAN device URI", default=None)
+        args = parser.parse_args(shlex.split(cmdLine))
+        self.interface = CANInterface.MakeInterface(args.deviceURI)
+        self.connection = None
 
     def do_connect(self, cmdLine):
-        'connect to an XCP slave'
-        try:
-            parser = ShellArgParser(prog='connect', description=__doc__)
-            parser.add_argument('commandId', help='command CAN id', type=hexInt)
-            parser.add_argument('responseId', help='response CAN id', type=hexInt)
-#             parser.add_argument('-t')
-            args = parser.parse_args(shlex.split(cmdLine))
-            slave = CANInterface.XCPSlaveCANAddr(args.commandId, args.responseId)
-            self.interface.connect(slave)
-            self.connection = XCPConnection.Connection(self.interface)
-        except ShellArgParserExit:
-            return
-        except Exception as e:
-            print(e)
+        'Connect to an XCP slave: connect'
+        parser = ShellArgParser(prog='connect', description=__doc__)
+        args = parser.parse_args(shlex.split(cmdLine))
+        slave = CANInterface.XCPSlaveCANAddr(args.commandId, args.responseId)
+        self.interface.connect(slave)
+        self.connection = XCPConnection.Connection(self.interface)
 
     do_connect.needs_interface = True
 
