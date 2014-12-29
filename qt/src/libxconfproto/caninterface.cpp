@@ -69,7 +69,7 @@ CanInterface::CanInterface(QObject *parent) :
     Interface(parent)
 {}
 
-QList<QByteArray> LIBXCONFPROTOSHARED_EXPORT CanInterface::receiveXcp(int timeoutMsec)
+QList<QByteArray> LIBXCONFPROTOSHARED_EXPORT CanInterface::receive(int timeoutMsec)
 {
     if(!mSlaveAddr)
         return QList<QByteArray>();

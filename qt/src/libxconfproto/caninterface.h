@@ -69,7 +69,7 @@ public:
     virtual void disconnect() = 0;                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
     virtual void transmit(const QByteArray & data) = 0;             //!< Send one XCP packet to the slave
     virtual void transmitTo(const QByteArray & data, Id id) = 0;    //!< Send one CAN frame to an arbitrary ID
-    virtual QList<QByteArray> receiveXcp(int timeoutMsec);          //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual QList<QByteArray> receive(int timeoutMsec);             //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
     virtual QList<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
     virtual void setBitrate(int bps) = 0;                           //!< Set the bitrate used on the interface
     virtual void setFilter(Filter filt) = 0;                        //!< Set the CAN filter used on the interface
