@@ -1,4 +1,4 @@
-#include "xcpconnection.h"
+#include "Xcp_Connection.h"
 
 #include <string.h>
 

@@ -1,4 +1,4 @@
-#include "elm327caninterface.h"
+#include "Xcp_Interface_Can_Elm327_Interface.h"
 
 namespace SetupTools
 {
@@ -189,8 +189,10 @@ void Io::run()
     }
 }
 
-Elm327::Elm327(const QSerialPortInfo & portInfo, QObject *parent) :
-    CanInterface(parent),
+constexpr int Interface::POSSIBLE_BAUDRATES[];
+
+Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
+    ::SetupTools::Xcp::Interface::Can::Interface(parent),
     mPort(portInfo),
     mIntfcIsStn(false)
 {
@@ -292,27 +294,27 @@ Elm327::Elm327(const QSerialPortInfo & portInfo, QObject *parent) :
     }
 }
 
-Elm327::~Elm327() {}
+Interface::~Interface() {}
 
-void Elm327::connect(SlaveId addr)
+void Interface::connect(SlaveId addr)
 {
     mSlaveAddr = addr;
     doSetFilter(ExactFilter(addr.res));
 }
 
-void Elm327::disconnect()
+void Interface::disconnect()
 {
     mSlaveAddr.reset();
     doSetFilter(mFilter);
 }
 
-void Elm327::transmit(const QByteArray & data)
+void Interface::transmit(const QByteArray & data)
 {
     Q_ASSERT(mSlaveAddr);
     transmitTo(data, mSlaveAddr.get().cmd);
 }
 
-void Elm327::transmitTo(const QByteArray & data, Id id)
+void Interface::transmitTo(const QByteArray & data, Id id)
 {
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
     mTxAddrIsStd = (id.type == Id::Type::Std);
@@ -339,7 +341,7 @@ void Elm327::transmitTo(const QByteArray & data, Id id)
     mIo->write(data.toHex() + "\r");
 }
 
-QList<Frame> Elm327::receiveFrames(unsigned long timeoutMsec, const Filter filter, bool (*validator)(const Frame &))
+QList<Frame> Interface::receiveFrames(unsigned long timeoutMsec, const Filter filter, bool (*validator)(const Frame &))
 {
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
 
@@ -368,18 +370,18 @@ QList<Frame> Elm327::receiveFrames(unsigned long timeoutMsec, const Filter filte
     return frames;
 }
 
-void Elm327::setBitrate(int bps)
+void Interface::setBitrate(int bps)
 {
     mBitrate = bps;
     updateBitrateTxType();
 }
-void Elm327::setFilter(Filter filt)
+void Interface::setFilter(Filter filt)
 {
     mFilter = filt;
     doSetFilter(filt);
 }
 
-void Elm327::runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy)
+void Interface::runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy)
 {
     mIo->syncAndGetPrompt(TIMEOUT_MSEC);
     mIo->flushCmdResp();
@@ -407,7 +409,7 @@ void Elm327::runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy)
         }
     }
 }
-void Elm327::doSetFilter(const Filter & filter)
+void Interface::doSetFilter(const Filter & filter)
 {
     QString stdFilter, stdMask;
     bool stdUsed = false;
@@ -458,7 +460,7 @@ void Elm327::doSetFilter(const Filter & filter)
     mIo->write("ATMA\r");
     mCfgdFilter = filter;
 }
-bool Elm327::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
+bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
 {
     int newDivisor;
 
@@ -484,7 +486,7 @@ bool Elm327::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
             return false;
     }
 }
-void Elm327::updateBitrateTxType()
+void Interface::updateBitrateTxType()
 {
     Q_ASSERT(mTxAddrIsStd);
     Q_ASSERT(mBitrate);

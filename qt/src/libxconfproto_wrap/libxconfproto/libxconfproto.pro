@@ -15,18 +15,20 @@ TEMPLATE = lib
 
 DEFINES += LIBXCONFPROTO_LIBRARY
 
-SOURCES += xcpconnection.cpp \
-    caninterface.cpp \
-    interface.cpp \
-    elm327caninterface.cpp \
-    util.cpp
+SOURCES += \
+    util.cpp \
+    Xcp_Connection.cpp \
+    Xcp_Interface_Interface.cpp \
+    Xcp_Interface_Can_Interface.cpp \
+    Xcp_Interface_Can_Elm327_Interface.cpp
 
-HEADERS += xcpconnection.h\
-        libxconfproto_global.h \
-    caninterface.h \
-    interface.h \
-    elm327caninterface.h \
-    util.h
+HEADERS += \
+    libxconfproto_global.h \
+    util.h \
+    Xcp_Connection.h \
+    Xcp_Interface_Interface.h \
+    Xcp_Interface_Can_Interface.h \
+    Xcp_Interface_Can_Elm327_Interface.h
 
 unix {
     target.path = /usr/lib

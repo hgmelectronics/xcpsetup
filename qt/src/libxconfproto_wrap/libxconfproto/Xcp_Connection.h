@@ -1,8 +1,8 @@
-#ifndef XCPCONNECTION_H
-#define XCPCONNECTION_H
+#ifndef XCP_CONNECTION_H
+#define XCP_CONNECTION_H
 
 #include "libxconfproto_global.h"
-#include "interface.h"
+#include "Xcp_Interface_Interface.h"
 
 #include <QObject>
 #include <QVector>
@@ -76,4 +76,4 @@ private:
 }   // namespace Xcp
 }   // namespace SetupTools
 
-#endif // XCPCONNECTION_H
+#endif // XCP_CONNECTION_H

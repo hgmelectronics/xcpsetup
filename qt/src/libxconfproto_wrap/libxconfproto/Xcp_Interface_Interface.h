@@ -1,5 +1,5 @@
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef XCP_INTERFACE_INTERFACE_H
+#define XCP_INTERFACE_INTERFACE_H
 
 #include <QtCore>
 #include <QByteArray>
@@ -29,13 +29,13 @@ class Interface : public QObject
     Q_OBJECT
 public:
     Interface(QObject *parent = NULL);
-    virtual ~Interface();
+    virtual ~Interface() {}
     virtual void transmit(const QByteArray & data) = 0;         //!< Send one XCP packet to the slave
-    virtual QList<QByteArray> receive(int timeoutMsec) = 0;    //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual QList<QByteArray> receive(unsigned long timeoutMsec) = 0; //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
 };
 
 }   // namespace Interface
 }   // namespace Xcp
 }   // namespace SetupTools
 
-#endif // INTERFACE_H
+#endif // XCP_INTERFACE_INTERFACE_H

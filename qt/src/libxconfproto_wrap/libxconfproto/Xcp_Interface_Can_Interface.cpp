@@ -1,4 +1,4 @@
-#include "caninterface.h"
+#include "Xcp_Interface_Can_Interface.h"
 
 namespace SetupTools
 {
@@ -65,11 +65,11 @@ bool validateXcp(const Frame &frame)
         return false;
 }
 
-CanInterface::CanInterface(QObject *parent) :
-    Interface(parent)
+Interface::Interface(QObject *parent) :
+    ::SetupTools::Xcp::Interface::Interface(parent)
 {}
 
-QList<QByteArray> LIBXCONFPROTOSHARED_EXPORT CanInterface::receive(int timeoutMsec)
+QList<QByteArray> LIBXCONFPROTOSHARED_EXPORT Interface::receive(unsigned long timeoutMsec)
 {
     if(!mSlaveAddr)
         return QList<QByteArray>();

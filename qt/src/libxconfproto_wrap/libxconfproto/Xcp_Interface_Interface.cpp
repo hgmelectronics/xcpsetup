@@ -1,4 +1,4 @@
-#include "interface.h"
+#include "Xcp_Interface_Interface.h"
 
 namespace SetupTools
 {

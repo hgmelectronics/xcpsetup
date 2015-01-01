@@ -1,5 +1,5 @@
-#ifndef ELM327CANINTERFACE_H
-#define ELM327CANINTERFACE_H
+#ifndef XCP_INTERFACE_CAN_ELM327_INTERFACE_H
+#define XCP_INTERFACE_CAN_ELM327_INTERFACE_H
 
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -7,7 +7,7 @@
 #include <QtSerialPort/QtSerialPort>
 #include <QThread>
 #include <QtGlobal>
-#include "caninterface.h"
+#include "Xcp_Interface_Can_Interface.h"
 #include "util.h"
 
 namespace SetupTools
@@ -84,12 +84,12 @@ private:
 /*!
  * \brief Implementation of CanInterface for the ELM327/STN1110
  */
-class LIBXCONFPROTOSHARED_EXPORT Elm327 : public CanInterface
+class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface::Can::Interface
 {
     Q_OBJECT
 public:
-    Elm327(const QSerialPortInfo & portInfo, QObject *parent = NULL);
-    virtual ~Elm327();
+    Interface(const QSerialPortInfo & portInfo, QObject *parent = NULL);
+    virtual ~Interface();
     virtual void connect(SlaveId addr);                      //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
     virtual void disconnect();                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
     virtual void transmit(const QByteArray & data);             //!< Send one XCP packet to the slave
@@ -139,4 +139,4 @@ private:
 }   // namespace Xcp
 }   // namespace SetupTools
 
-#endif // ELM327CANINTERFACE_H
+#endif // XCP_INTERFACE_CAN_ELM327_INTERFACE_H
