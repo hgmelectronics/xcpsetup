@@ -7,6 +7,7 @@ Created on Oct 3, 2013
 import socket
 import struct
 import time
+import urllib.parse
 from comm import CANInterface
 
 def SocketCANSupported():
@@ -24,7 +25,7 @@ class SocketCANInterface(CANInterface.Interface):
         self._s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
         self._slaveAddr = CANInterface.XCPSlaveCANAddr(0xFFFFFFFF, 0xFFFFFFFF)
         self._dumpTraffic = False
-        if parsedURL.netloc == None:
+        if parsedURL.netloc == None or parsedURL.netloc == "":
             dev = 'can0'
         else:
             dev = parsedURL.netloc
@@ -33,6 +34,13 @@ class SocketCANInterface(CANInterface.Interface):
         except socket.error:
             self._s.close()
             raise CANInterface.ConnectFailed()
+        
+        urlQueryDict = urllib.parse.parse_qs(parsedURL.query)
+        
+        if 'filterxcp' in urlQueryDict:
+            self._filterXcp = (urlQueryDict['filterxcp'][0] != "0")
+        else:
+            self._filterXcp = True
         
     def __enter__(self):
         return self
@@ -93,6 +101,8 @@ class SocketCANInterface(CANInterface.Interface):
         if self._dumpTraffic:
             print('TX ' + CANInterface.ID(ident).getString() + ' ' + CANInterface.getDataHexString(data))
         frame = self._buildFrame(data, ident)
+        import binascii
+        print(binascii.hexlify(frame).decode('utf-8'))
         self._sendFrame(frame)
         
     def receive(self, timeout):
@@ -118,7 +128,7 @@ class SocketCANInterface(CANInterface.Interface):
                 break
             
             packet = self._decodeFrame(frame)
-            if packet.data[0] == 0xFF or packet.data[0] == 0xFE:
+            if not self._filterXcp or packet.data[0] == 0xFF or packet.data[0] == 0xFE:
                 msgs.append(packet.data)
                 if self._dumpTraffic:
                     print('RX ' + self._slaveAddr.resId.getString() + ' ' + CANInterface.getDataHexString(packet.data))
@@ -144,7 +154,7 @@ class SocketCANInterface(CANInterface.Interface):
                 break
             
             packet = self._decodeFrame(frame)
-            if packet.data[0] == 0xFF or packet.data[0] == 0xFE:
+            if not self._filterXcp or packet.data[0] == 0xFF or packet.data[0] == 0xFE:
                 packets.append(packet)
                 if self._dumpTraffic:
                     print('RX ' + CANInterface.ID(packet.ident).getString() + ' ' + CANInterface.getDataHexString(packet.data))
