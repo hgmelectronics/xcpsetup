@@ -35,10 +35,20 @@ class BoardType(object):
                 self._resBaseID = defDict['ids']['_indexed']['resBase']
                 self._idPitch = defDict['ids']['_indexed']['idPitch']
                 self._idxRange = (defDict['ids']['_indexed']['idxRange'][0], defDict['ids']['_indexed']['idxRange'][1])
+                filt = defDict['ids']['_indexed']['resBase']
             else:
                 self._ids[idName] = {}
                 self._ids[idName]['cmd'] = defDict['ids'][idName]['cmd']
                 self._ids[idName]['res'] = defDict['ids'][idName]['res']
+                filt = defDict['ids'][idName]['res']
+        
+        mask = 0x9FFFFFFF
+        for idName in self._ids:
+            mask &= ~(filt ^ self._ids[idName]['res'])
+        if self._hasIndexedIds:
+            for idx in range(self._idxRange[0], self._idxRange[1]):
+                mask &= ~(filt ^ (self._resBaseID + idx * self._idPitch))
+        self._idFilter = (filt & mask, mask)
 
     def SlaveListFromIdxArg(self, arg):
         if arg == None:
@@ -80,6 +90,7 @@ class BoardType(object):
                 ret += [(CANInterface.XCPSlaveCANAddr(self._cmdBaseID + self._idPitch * idx, self._resBaseID + self._idPitch * idx), idx) for idx in idxRange]
             return ret
         
+        intfc.setFilter(self._idFilter)
         slaves = XCPConnection.GetCANSlaves(intfc, self._broadcastId, self._broadcastTimeout)
         mySlaves = []
         for slave in slaves:
