@@ -22,7 +22,7 @@ class PacketLost : public ConnException {};
 class SlaveError : public ConnException {};
 
 class SlaveErrorBusy : public SlaveError {};
-class SlaveErrorDAQActive : public SlaveError {};
+class SlaveErrorDaqActive : public SlaveError {};
 class SlaveErrorPgmActive : public SlaveError {};
 class SlaveErrorCmdUnknown : public SlaveError {};
 class SlaveErrorCmdSyntax : public SlaveError {};
