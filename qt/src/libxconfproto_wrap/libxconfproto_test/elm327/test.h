@@ -29,6 +29,7 @@ public:
 private slots:
     void initTestCase();
     void echoTest();
+    void filterTest();
 
 private:
     QString mDevName;
