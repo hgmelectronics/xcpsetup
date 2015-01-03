@@ -63,17 +63,15 @@ template <typename T>
 class PythonicQueue
 {
 public:
-    boost::optional<T> get(int timeoutMsec = 0)
+    boost::optional<T> getLocked(int timeoutMsec = 0)
     {
-        QMutexLocker locker(&mMutex);
-
         if(!mQueue.isEmpty())
             return mQueue.takeFirst();
         else if(timeoutMsec == 0)
             return boost::optional<T>();
         else
         {
-            mCond.wait(locker.mutex(), timeoutMsec);
+            mCond.wait(&mMutex, timeoutMsec);
             if(!mQueue.isEmpty())
                 return mQueue.takeFirst();
             else
@@ -81,20 +79,32 @@ public:
         }
     }
 
-    QList<T> getAll(int timeoutMsec = 0)
+    boost::optional<T> get(int timeoutMsec = 0)
     {
         QMutexLocker locker(&mMutex);
+
+        return getLocked(locker.mutex(), timeoutMsec);
+    }
+
+    QList<T> getAllLocked(int timeoutMsec = 0)
+    {
         QList<T> ret;
 
         if(!mQueue.isEmpty())
             mQueue.swap(ret);
         else if(timeoutMsec > 0)
         {
-            mCond.wait(locker.mutex(), timeoutMsec);
+            mCond.wait(&mMutex, timeoutMsec);
             if(!mQueue.isEmpty())
                 mQueue.swap(ret);
         }
         return ret;
+    }
+
+    QList<T> getAll(int timeoutMsec = 0)
+    {
+        QMutexLocker locker(&mMutex);
+        return getAllLocked(timeoutMsec);
     }
 
     bool empty()
@@ -108,6 +118,11 @@ public:
         QMutexLocker locker(&mMutex);
         mQueue.append(obj);
         mCond.wakeOne();
+    }
+
+    QMutex &mutex()
+    {
+        return mMutex;
     }
 
 private:

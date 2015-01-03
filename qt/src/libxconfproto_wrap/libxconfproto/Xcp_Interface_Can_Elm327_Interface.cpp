@@ -28,22 +28,26 @@ Io::~Io()
 }
 void Io::sync()
 {
-    QMutexLocker locker(&mPipelineClearMutex);
-    mPipelineClearCond.wait(locker.mutex());
+    if(!mTransmitQueue.empty())
+    {
+        QMutexLocker locker(&mPipelineClearMutex);
+        mPipelineClearCond.wait(locker.mutex());
+    }
 }
 
 void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 {
     sync();
-
     if(isPromptReady())
         return;
 
     for(int i = 0; i < retries; ++i)
     {
-        write("\r");
+        mTransmitQueue.put("\r");
         if(waitPromptReady(timeoutMsec))
+        {
             return;
+        }
     }
 
     qCritical("Failed to obtain prompt from ELM327");
@@ -93,7 +97,6 @@ void Io::run()
             return;
 
         bool setPromptReady = false;
-        bool setPipelineClear = true;
 
         Q_ASSERT(mLines.size() <= 1);
 
@@ -171,11 +174,13 @@ void Io::run()
         if(mSendTimer.nsecsElapsed() > ELM_RECOVERY_NSEC && !mTransmitQueue.empty())
         {
             mPromptReady = false;
-            QByteArray data = mTransmitQueue.get().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
-            mPort.write(data); // write() is *probably* synchronous
+            {
+                QMutexLocker locker(&(mTransmitQueue.mutex()));
+                QByteArray data = mTransmitQueue.getLocked().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
+                mPort.write(data); // write() is *probably* synchronous based on Qt docs
+            }
             mSendTimer.start();
             setPromptReady = false;
-            setPipelineClear = false;
         }
 
         if(setPromptReady)
@@ -185,7 +190,7 @@ void Io::run()
             mPromptReadyCond.wakeAll();
         }
 
-        if(setPipelineClear && mTransmitQueue.empty())
+        if(mTransmitQueue.empty())
         {
             QMutexLocker locker(&mPipelineClearMutex);
             mPipelineClearCond.wakeAll();
@@ -360,15 +365,15 @@ QList<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter, bool
 {
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
 
-    QList<Frame> frames;
-
     QElapsedTimer timer;
     timer.start();
+
+    QList<Frame> frames;
 
     qint64 timeoutNsec = qint64(timeoutMsec) * 1000000;
     while(timer.nsecsElapsed() <= timeoutNsec && !frames.size())
     {
-        int queueReadTimeout = std::max(qint64(timeoutMsec) - timer.elapsed() / 1000000, qint64(0));
+        int queueReadTimeout = std::max(timeoutMsec - int(timer.elapsed()), 0);
 
         for(const Frame & newFrame : mIo->getRcvdFrames(queueReadTimeout))
         {
