@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     QTextStream qin(stdin, QIODevice::ReadOnly);
     QTextStream qout(stdout, QIODevice::WriteOnly);
 
-    qout << "This test requires a functional CAN with another node that receives any packet with even ID and echoes it with ID incremented.\n";
+    qDebug() << "This test requires a functional CAN with another node that receives any packet with even ID and echoes it with ID incremented.";
 
     int iPort = 0;
     qDebug() << "Available serial ports:";
