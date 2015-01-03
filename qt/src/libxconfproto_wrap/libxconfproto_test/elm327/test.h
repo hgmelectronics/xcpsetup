@@ -30,6 +30,8 @@ private slots:
     void initTestCase();
     void echoTest();
     void filterTest();
+    void sameEchoTest();
+    void sameTxTest();
 
 private:
     QString mDevName;

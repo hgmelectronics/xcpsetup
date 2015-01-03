@@ -53,30 +53,18 @@ void Test::echoTest()
     {
         for(const IlQByteArray &data : datas)
         {
-            int nEchoable = 0;
             for(const Id &id : ids)
             {
                 for(int i = 0; i < nrep; ++i)
                 {
                     mIntfc->transmitTo(data, id);
                     if(id.addr % 2 == 0)
-                        ++nEchoable;
-                }
-            }
-            QThread::msleep(20);
-            QList<Frame> rxFrames = mIntfc->receiveFrames(100);
-            QCOMPARE(rxFrames.size(), nEchoable);
-            QList<Frame>::iterator rxFrameIt = rxFrames.begin();
-            for(const Id &id : ids)
-            {
-                for(int i = 0; i < nrep; ++i)
-                {
-                    if(id.addr % 2 == 0)
                     {
-                        QCOMPARE(rxFrameIt->id.addr, id.addr + 1);
-                        QCOMPARE(rxFrameIt->id.type, id.type);
-                        QCOMPARE(rxFrameIt->data, QByteArray(data));
-                        ++rxFrameIt;
+                        QList<Frame> rxFrames = mIntfc->receiveFrames(100);
+                        QCOMPARE(rxFrames.size(), 1);
+                        QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
+                        QCOMPARE(rxFrames[0].id.type, id.type);
+                        QCOMPARE(rxFrames[0].data, QByteArray(data));
                     }
                 }
             }
@@ -103,27 +91,64 @@ void Test::filterTest()
 
     for(const Filter &filter : filters)
     {
-        int nEchoable = 0;
         mIntfc->setFilter(filter);
         for(const Id &id : ids)
         {
             mIntfc->transmitTo(data, id);
             if(((id.addr + 1) & filter.maskId) == filter.filt.addr)
-                ++nEchoable;
-        }
-        QThread::msleep(20);
-        QList<Frame> rxFrames = mIntfc->receiveFrames(100);
-        QCOMPARE(rxFrames.size(), nEchoable);
-        QList<Frame>::iterator rxFrameIt = rxFrames.begin();
-        for(const Id &id : ids)
-        {
-            if((id.addr & filter.maskId) == filter.filt.addr)
             {
-                QCOMPARE(rxFrameIt->id.addr, id.addr + 1);
-                QCOMPARE(rxFrameIt->id.type, id.type);
-                QCOMPARE(rxFrameIt->data, QByteArray(data));
-                ++rxFrameIt;
+                QList<Frame> rxFrames = mIntfc->receiveFrames(100);
+                QCOMPARE(rxFrames.size(), 1);
+                QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
+                QCOMPARE(rxFrames[0].id.type, id.type);
+                QCOMPARE(rxFrames[0].data, QByteArray(data));
             }
+        }
+    }
+    mIntfc->setFilter(Filter());    // restore "match all" filter
+}
+
+void Test::sameEchoTest()
+{
+    IlQByteArray data =
+        {0x82, 0x00, 0xFF, 0x55, 0x12, 0x45, 0x3F, 0xBA};
+    Id id(0x234, Id::Type::Std);
+    int nrep = 100;
+
+    // do once to set the ID
+    mIntfc->transmitTo(data, id);
+    mIntfc->receiveFrames(100);
+
+    QBENCHMARK
+    {
+        for(int i = 0; i < nrep; ++i)
+        {
+            mIntfc->transmitTo(data, id);
+            QList<Frame> rxFrames = mIntfc->receiveFrames(100);
+            QCOMPARE(rxFrames.size(), 1);
+            QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
+            QCOMPARE(rxFrames[0].id.type, id.type);
+            QCOMPARE(rxFrames[0].data, QByteArray(data));
+        }
+    }
+}
+
+void Test::sameTxTest()
+{
+    IlQByteArray data =
+        {0x82, 0x00, 0xFF, 0x55, 0x12, 0x45, 0x3F, 0xBA};
+    Id id(0x235, Id::Type::Std);
+    int nrep = 100;
+
+    // do once to set the ID
+    mIntfc->transmitTo(data, id);
+    mIntfc->receiveFrames(100);
+
+    QBENCHMARK
+    {
+        for(int i = 0; i < nrep; ++i)
+        {
+            mIntfc->transmitTo(data, id);
         }
     }
 }
