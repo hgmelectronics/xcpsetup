@@ -33,7 +33,7 @@ void GranularTimeSerialPort::setLogging(bool on)
 }
 void GranularTimeSerialPort::setTimeout(int msec)
 {
-    mTimeout = msec;
+    mTimeout = qint64(msec) * 1000000;
 }
 void GranularTimeSerialPort::setInterCharTimeout(int msec)
 {
@@ -41,6 +41,7 @@ void GranularTimeSerialPort::setInterCharTimeout(int msec)
         mInterCharTimeout = (1000 * 10 + baudRate() - 1) / baudRate();   // divide, rounding up
     else
         mInterCharTimeout = msec;
+    qDebug() << "mInterCharTimeout" << mInterCharTimeout;
 }
 QByteArray GranularTimeSerialPort::readGranular(qint64 maxlen)
 {
@@ -50,7 +51,7 @@ QByteArray GranularTimeSerialPort::readGranular(qint64 maxlen)
     while(1)
     {
         int bytesLeft = maxlen - ret.size();
-        if(timer.hasExpired(mTimeout) || bytesLeft <= 0)
+        if(timer.nsecsElapsed() > mTimeout || bytesLeft <= 0)
             break;
         waitForReadyRead(mInterCharTimeout);
         QByteArray data = read(bytesLeft);

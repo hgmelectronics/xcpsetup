@@ -168,7 +168,7 @@ void Io::run()
         mLines.swap(incompleteLines);
 
         // Send data from mTransmitQueue, unless we're waiting for the device to "settle"
-        if(mSendTimer.hasExpired(ELM_RECOVERY_MSEC) && !mTransmitQueue.empty())
+        if(mSendTimer.nsecsElapsed() > ELM_RECOVERY_NSEC && !mTransmitQueue.empty())
         {
             mPromptReady = false;
             QByteArray data = mTransmitQueue.get().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
@@ -365,7 +365,8 @@ QList<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter, bool
     QElapsedTimer timer;
     timer.start();
 
-    while(!timer.hasExpired(timeoutMsec) && !frames.size())
+    qint64 timeoutNsec = qint64(timeoutMsec) * 1000000;
+    while(timer.nsecsElapsed() <= timeoutNsec && !frames.size())
     {
         int queueReadTimeout = std::max(qint64(timeoutMsec) - timer.elapsed() / 1000000, qint64(0));
 

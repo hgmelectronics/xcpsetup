@@ -58,7 +58,7 @@ private:
     void run() Q_DECL_OVERRIDE;
 
     static constexpr int TICK_MSEC = 1;
-    static constexpr int ELM_RECOVERY_MSEC = 2;
+    static constexpr qint64 ELM_RECOVERY_NSEC = 2000000;
     static constexpr int READ_SIZE = 4096;
     static constexpr char EOL = '\r';
 
