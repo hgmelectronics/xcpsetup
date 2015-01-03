@@ -8,20 +8,43 @@
 
 int main(int argc, char **argv)
 {
-    for(const auto &port : QSerialPortInfo::availablePorts())
-    {
-        qDebug() << "Available serial port:" << port.portName();
-    }
-    QString devname("ttyUSB0");
-    /*QTextStream qin(stdin, QIODevice::ReadOnly);
+    QCoreApplication app(argc, argv);
+    QTextStream qin(stdin, QIODevice::ReadOnly);
     QTextStream qout(stdout, QIODevice::WriteOnly);
 
-    qout << "This test requires a functional CAN with another node that receives any packet with even ID and echoes it with ID incremented.";
-    qout << "Enter ELM327 serial device: ";
-    qin >> devname;*/
-    QCoreApplication app(argc, argv);
+    qout << "This test requires a functional CAN with another node that receives any packet with even ID and echoes it with ID incremented.\n";
 
-    SetupTools::Xcp::Interface::Can::Elm327::Test test(devname);
+    int iPort = 0;
+    qDebug() << "Available serial ports:";
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    for(const auto &port : ports)
+    {
+        qDebug() << iPort << port.portName() << port.description();
+        ++iPort;
+    }
+
+    QString devName;
+    if(ports.size() == 0)
+    {
+        qDebug() << "No serial ports detected";
+        exit(1);
+    }
+    else if(ports.size() == 1)
+    {
+        qDebug() << "One serial port detected, using it";
+        devName = ports[0].portName();
+    }
+    else
+    {
+        int devIdx;
+        qout << "Enter index of ELM327 serial port: ";
+        qout.flush();
+        qin >> devIdx;
+        Q_ASSERT(devIdx < ports.size());
+        devName = ports[devIdx].portName();
+    }
+
+    SetupTools::Xcp::Interface::Can::Elm327::Test test(devName);
 
     return QTest::qExec(&test, argc, argv);
 }
