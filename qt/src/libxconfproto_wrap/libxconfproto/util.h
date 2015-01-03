@@ -15,11 +15,19 @@ public:
     explicit GranularTimeSerialPort(const QString &name, QObject *parent = Q_NULLPTR);
     explicit GranularTimeSerialPort(const QSerialPortInfo &info, QObject *parent = Q_NULLPTR);
     virtual ~GranularTimeSerialPort() {}
+    void setLogging(bool on);
     void setTimeout(int msec);
     void setInterCharTimeout(int msec = -1);    // Any value <= 0 means auto calculate
     QByteArray readGranular(qint64 maxlen);
+    void fullClear();
+    double elapsedSecs();
+protected:
+    virtual qint64 readData(char *data, qint64 maxSize);
+    virtual qint64 writeData(const char *data, qint64 maxSize);
 private:
     int mTimeout, mInterCharTimeout;
+    QElapsedTimer mLogTimer;
+    bool mLogData;
 };
 
 template <typename T>
@@ -54,7 +62,7 @@ template <typename T>
 class PythonicQueue
 {
 public:
-    boost::optional<T> get(unsigned long timeoutMsec = 0)
+    boost::optional<T> get(int timeoutMsec = 0)
     {
         QMutexLocker locker(&mMutex);
 
@@ -72,7 +80,7 @@ public:
         }
     }
 
-    QList<T> getAll(unsigned long timeoutMsec = 0)
+    QList<T> getAll(int timeoutMsec = 0)
     {
         QMutexLocker locker(&mMutex);
         QList<T> ret;
@@ -105,6 +113,12 @@ private:
     QList<T> mQueue;
     QMutex mMutex;
     QWaitCondition mCond;
+};
+
+class IlQByteArray : public QByteArray
+{
+public:
+    IlQByteArray(std::initializer_list<quint8> c);
 };
 
 }   // namespace SetupTools

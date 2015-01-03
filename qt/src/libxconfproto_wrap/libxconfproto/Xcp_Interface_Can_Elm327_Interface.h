@@ -47,13 +47,13 @@ public:
     Io(GranularTimeSerialPort &port, QObject *parent = NULL);
     ~Io();    // QThread has a non-virtual dtor - do not destroy an Elm327Io from a pointer to QThread!!!
     void sync();
-    void syncAndGetPrompt(unsigned long timeoutMsec, int retries = 5);
-    QList<Frame> getRcvdFrames(unsigned long timeoutMsec);
-    QList<QByteArray> getRcvdCmdResp(unsigned long timeoutMsec);
+    void syncAndGetPrompt(int timeoutMsec, int retries = 5);
+    QList<Frame> getRcvdFrames(int timeoutMsec);
+    QList<QByteArray> getRcvdCmdResp(int timeoutMsec);
     void flushCmdResp();
     void write(QByteArray data);
     bool isPromptReady();
-    bool waitPromptReady(unsigned long timeoutMsec);
+    bool waitPromptReady(int timeoutMsec);
 private:
     void run() Q_DECL_OVERRIDE;
 
@@ -88,15 +88,17 @@ class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface
 {
     Q_OBJECT
 public:
-    Interface(const QSerialPortInfo & portInfo, QObject *parent = NULL);
+    Interface(const QSerialPortInfo & portInfo, bool serialLog = false, QObject *parent = NULL);
     virtual ~Interface();
     virtual void connect(SlaveId addr);                      //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
     virtual void disconnect();                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
     virtual void transmit(const QByteArray & data);             //!< Send one XCP packet to the slave
     virtual void transmitTo(const QByteArray & data, Id id); //!< Send one CAN frame to an arbitrary ID
-    virtual QList<Frame> receiveFrames(unsigned long timeoutMsec, const Filter filter, bool (*validator)(const Frame &));
+    virtual QList<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL);
     virtual void setBitrate(int bps);                           //!< Set the bitrate used on the interface
     virtual void setFilter(Filter filt);                     //!< Set the CAN filter used on the interface
+    void setSerialLog(bool on);
+    double elapsedSecs();
 private:
     enum class CheckOk { No, Yes };
 
@@ -107,8 +109,9 @@ private:
 
     static constexpr int TIMEOUT_MSEC = 200;
     static constexpr int FINDBAUD_TIMEOUT_MSEC = 50;
-    static constexpr int FINDBAUD_ATTEMPTS = 2;
+    static constexpr int FINDBAUD_ATTEMPTS = 3;
     static constexpr int SWITCHBAUD_TIMEOUT_MSEC = 1280;
+    static constexpr int SWITCHBAUD_DELAY_MSEC = 25;
     static constexpr int POSSIBLE_BAUDRATES [] = { 500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200 };
     static constexpr int DESIRED_BAUDRATE = 500000;
     static constexpr double BRG_HZ = 4000000;

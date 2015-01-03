@@ -45,9 +45,9 @@ class MultipleReplies : public ConnException {};
 struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
 {
 public:
-    XcpPtr(u_int32_t addr_in = 0, u_int8_t ext_in = 0);
-    u_int32_t addr;
-    u_int8_t ext;
+    XcpPtr(quint32 addr_in = 0, quint8 ext_in = 0);
+    quint32 addr;
+    quint8 ext;
 };
 
 class LIBXCONFPROTOSHARED_EXPORT XcpConnection : public QObject

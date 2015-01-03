@@ -31,7 +31,7 @@ public:
     Interface(QObject *parent = NULL);
     virtual ~Interface() {}
     virtual void transmit(const QByteArray & data) = 0;         //!< Send one XCP packet to the slave
-    virtual QList<QByteArray> receive(unsigned long timeoutMsec) = 0; //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual QList<QByteArray> receive(int timeoutMsec) = 0; //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
 };
 
 }   // namespace Interface

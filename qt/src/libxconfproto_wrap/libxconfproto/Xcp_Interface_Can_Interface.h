@@ -22,13 +22,13 @@ public:
     enum class Type { Std, Ext };
 
     Id();
-    Id(u_int32_t addr_in, Type ext_in);
-    bool operator==(const Id &rhs);
-    bool operator!=(const Id &rhs);
+    Id(quint32 addr_in, Type ext_in);
 
-    u_int32_t addr;
+    quint32 addr;
     Type type;
 };
+bool operator==(const Id &lhs, const Id &rhs);
+bool operator!=(const Id &lhs, const Id &rhs);
 
 struct LIBXCONFPROTOSHARED_EXPORT SlaveId
 {
@@ -40,17 +40,21 @@ struct LIBXCONFPROTOSHARED_EXPORT Filter
 {
 public:
     Filter();
-    Filter(Id filt_in, u_int32_t maskId_in, bool maskEff_in);
+    Filter(Id filt_in, quint32 maskId_in, bool maskEff_in);
     bool Matches(Id id) const;
 
     Id filt;
-    u_int32_t maskId;
+    quint32 maskId;
     bool maskEff;
 };
 
 struct LIBXCONFPROTOSHARED_EXPORT Frame
 {
 public:
+    Frame();
+    Frame(Id id_in, const QByteArray &data_in);
+    Frame(quint32 id_in, Id::Type idType_in, const QByteArray &data_in);
+
     Id id;
     QByteArray data;
 };
@@ -69,8 +73,8 @@ public:
     virtual void disconnect() = 0;                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
     virtual void transmit(const QByteArray & data) = 0;             //!< Send one XCP packet to the slave
     virtual void transmitTo(const QByteArray & data, Id id) = 0;    //!< Send one CAN frame to an arbitrary ID
-    virtual QList<QByteArray> receive(unsigned long timeoutMsec);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
-    virtual QList<Frame> receiveFrames(unsigned long timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
+    virtual QList<QByteArray> receive(int timeoutMsec);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual QList<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
     virtual void setBitrate(int bps) = 0;                           //!< Set the bitrate used on the interface
     virtual void setFilter(Filter filt) = 0;                        //!< Set the CAN filter used on the interface
 protected:

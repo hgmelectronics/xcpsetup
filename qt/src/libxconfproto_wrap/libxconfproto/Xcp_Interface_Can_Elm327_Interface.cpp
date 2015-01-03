@@ -14,7 +14,7 @@ namespace Elm327
 Io::Io(GranularTimeSerialPort &port, QObject *parent) :
     QThread(parent),
     mPort(port),
-    mPromptReady(false),
+    mPromptReady(true), // Process of finding baudrate leaves ELM at a prompt
     mTerminate(false)
 {
     mPort.setTimeout(TICK_MSEC);
@@ -32,7 +32,7 @@ void Io::sync()
     mPipelineClearCond.wait(locker.mutex());
 }
 
-void Io::syncAndGetPrompt(unsigned long timeoutMsec, int retries)
+void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 {
     sync();
 
@@ -50,12 +50,12 @@ void Io::syncAndGetPrompt(unsigned long timeoutMsec, int retries)
     throw NoResponse();
 }
 
-QList<Frame> Io::getRcvdFrames(unsigned long timeoutMsec)
+QList<Frame> Io::getRcvdFrames(int timeoutMsec)
 {
     return mRcvdFrameQueue.getAll(timeoutMsec);
 }
 
-QList<QByteArray> Io::getRcvdCmdResp(unsigned long timeoutMsec)
+QList<QByteArray> Io::getRcvdCmdResp(int timeoutMsec)
 {
     return mRcvdCmdRespQueue.getAll(timeoutMsec);
 }
@@ -76,7 +76,7 @@ bool Io::isPromptReady()
     return mPromptReady;    // don't need to bother with the mutex/condition since this is just a poll
 }
 
-bool Io::waitPromptReady(unsigned long timeoutMsec)
+bool Io::waitPromptReady(int timeoutMsec)
 {
     QMutexLocker locker(&mPromptReadyMutex);
     if(mPromptReady)
@@ -115,12 +115,15 @@ void Io::run()
                     }
                 }
             }
+            if(newLine.size())
+                mLines.append(newLine);
         }
 
         // Process lines from mLines, putting any incomplete line that may exist back into mLines
         QList<QByteArray> incompleteLines;
         for(QByteArray & line : mLines)
         {
+            //qDebug() << mPort.elapsedSecs() << "ELM327 IO line" << line.toPercentEncoding();
             if(line.endsWith(EOL))
             {
                 line.chop(1);
@@ -156,7 +159,7 @@ void Io::run()
             }
             else
             {
-                if(line == "\r")
+                if(line == ">")
                     setPromptReady = true;
                 else
                     incompleteLines.append(line);
@@ -167,6 +170,7 @@ void Io::run()
         // Send data from mTransmitQueue, unless we're waiting for the device to "settle"
         if(mSendTimer.hasExpired(ELM_RECOVERY_MSEC) && !mTransmitQueue.empty())
         {
+            mPromptReady = false;
             QByteArray data = mTransmitQueue.get().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
             mPort.write(data); // write() is *probably* synchronous
             mSendTimer.start();
@@ -191,14 +195,21 @@ void Io::run()
 
 constexpr int Interface::POSSIBLE_BAUDRATES[];
 
-Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
+Interface::Interface(const QSerialPortInfo & portInfo, bool serialLog, QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
     mPort(portInfo),
     mIntfcIsStn(false)
 {
+    mPort.setLogging(serialLog);
+    if(!mPort.open(QIODevice::ReadWrite))
+    {
+        qCritical("Failed to open serial port");
+        throw SerialError();
+    }
     bool foundBaud = false;
     for(auto baud : POSSIBLE_BAUDRATES)
     {
+        qDebug() << "Trying" << baud << "baud";
         mPort.setBaudRate(baud);
         mPort.setTimeout(FINDBAUD_TIMEOUT_MSEC);
         mPort.setInterCharTimeout();
@@ -206,7 +217,7 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
         bool commEstablished = false;
         for(int i = 0; i < FINDBAUD_ATTEMPTS; ++i)
         {
-            mPort.clear();
+            mPort.fullClear();
             mPort.write("\r");
             QByteArray findBaudRes = mPort.readGranular(16384);
             if(findBaudRes.size() > 0 && findBaudRes.endsWith(">"))
@@ -227,20 +238,23 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
         {
             // try to switch baudrate to desired
             mPort.setTimeout(SWITCHBAUD_TIMEOUT_MSEC);
-            mPort.clear();
+            mPort.fullClear();
             mPort.write(QString("ATBRD%1\r").arg(qRound(BRG_HZ / DESIRED_BAUDRATE), 2, 16, QChar('0')).toLatin1());
-            if(mPort.readGranular(2) == "OK")
+            QByteArray brdRes = mPort.readGranular(12);
+            if(brdRes.contains("OK"))
             {
                 // Device allows baudrate change, proceed with switch
                 mPort.setBaudRate(DESIRED_BAUDRATE);
                 mPort.setInterCharTimeout();
-                mPort.clear();
+                mPort.fullClear();
+                qDebug() << "Switched to" << mPort.baudRate() << "baud";
                 QByteArray switchBaudRes = mPort.readGranular(11);
+                qDebug() << "switchBaudRes ==" << switchBaudRes.toPercentEncoding();
                 if(switchBaudRes.startsWith("ELM327"))
                 {
                     // Baudrate switch successful, send a CR to confirm we're on board
+                    mPort.fullClear();
                     mPort.write("\r");
-                    mPort.clear();
                     if(mPort.readGranular(2) != "OK")
                     {
                         qCritical("Unexpected response from ELM327 when confirming UART baudrate switch");
@@ -254,7 +268,7 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
                     mPort.setInterCharTimeout();
 
                     mPort.write("\r");
-                    mPort.clear();
+                    mPort.fullClear();
                     if(!mPort.readGranular(1024).endsWith(">"))
                     {
                         qCritical("Failed to recover from unsuccessful ELM327 baudrate switch");
@@ -276,6 +290,7 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
         qCritical("Failed to find ELM327 UART baudrate");
         throw SerialError();
     }
+    qDebug() << "Established communication at" << mPort.baudRate() << "baud";
 
     mIo = QSharedPointer<Io>(new Io(mPort, this));
     runCmdWithCheck("ATWS", CheckOk::No);   // Software reset
@@ -341,23 +356,18 @@ void Interface::transmitTo(const QByteArray & data, Id id)
     mIo->write(data.toHex() + "\r");
 }
 
-QList<Frame> Interface::receiveFrames(unsigned long timeoutMsec, const Filter filter, bool (*validator)(const Frame &))
+QList<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter, bool (*validator)(const Frame &))
 {
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
-
-    if(!mSlaveAddr)
-        return QList<Frame>();
 
     QList<Frame> frames;
 
     QElapsedTimer timer;
     timer.start();
 
-    while(!timer.hasExpired(timeoutMsec))
+    while(!timer.hasExpired(timeoutMsec) && !frames.size())
     {
-        int queueReadTimeout = 0;
-        if(!frames.size())
-            queueReadTimeout = std::max(qint64(timeoutMsec) - timer.elapsed() / 1000000, qint64(0));
+        int queueReadTimeout = std::max(qint64(timeoutMsec) - timer.elapsed() / 1000000, qint64(0));
 
         for(const Frame & newFrame : mIo->getRcvdFrames(queueReadTimeout))
         {
@@ -379,6 +389,14 @@ void Interface::setFilter(Filter filt)
 {
     mFilter = filt;
     doSetFilter(filt);
+}
+void Interface::setSerialLog(bool on)
+{
+    mPort.setLogging(on);
+}
+double Interface::elapsedSecs()
+{
+    return mPort.elapsedSecs();
 }
 
 void Interface::runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy)
@@ -411,53 +429,32 @@ void Interface::runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy)
 }
 void Interface::doSetFilter(const Filter & filter)
 {
-    QString stdFilter, stdMask;
-    bool stdUsed = false;
-
-    if((!filter.maskEff || filter.filt.type == Id::Type::Std)        // Does filter either not care about standard/extended or match only standard?
-            && !(filter.filt.addr & 0x1FFFF800))  // Does filter have 1s only in low 11 bits (so it can be satisfied by a standard ID)?
-    {
-        stdFilter = QString("%1").arg(filter.filt.addr & 0x7FF, 3, 16, QChar('0'));  // Masking with 0x7FF not necessary here b/c of condition above, but included for consistency
-        stdMask = QString("%1").arg(filter.maskId & 0x7FF, 3, 16, QChar('0'));
-        stdUsed = true;
-    }
-    else
-    {
-        stdFilter = "7FF";  // Set a filter that will match nothing
-        stdMask = "000";
-    }
-
-    QString extFilter, extMask;
-    bool extUsed = false;
-
-    if(!filter.maskEff || filter.filt.type == Id::Type::Ext)          // Does filter either not care about standard/extended or match only extended?
-    {
-        extFilter = QString("%1").arg(filter.filt.addr & 0x1FFFFFFF, 8, 16, QChar('0'));
-        extMask = QString("%1").arg(filter.maskId & 0x1FFFFFFF, 8, 16, QChar('0'));
-        extUsed = true;
-    }
-    else
-    {
-        extFilter = "1FFFFFFF";  // Set a filter that will match nothing
-        extMask = "00000000";
-    }
-
+    QString stdFilter = QString("%1").arg(filter.filt.addr & 0x7FF, 3, 16, QChar('0'));
+    QString stdMask = QString("%1").arg(filter.maskId & 0x7FF, 3, 16, QChar('0'));
+    QString extFilter = QString("%1").arg(filter.filt.addr & 0x1FFFFFFF, 8, 16, QChar('0'));
+    QString extMask = QString("%1").arg(filter.maskId & 0x1FFFFFFF, 8, 16, QChar('0'));
     if(mIntfcIsStn)
     {
+        runCmdWithCheck("STFCFC");
         runCmdWithCheck("STFCP");
-        if(stdUsed)
+        runCmdWithCheck("STFCB");
+        runCmdWithCheck("ATCF00000000");
+        runCmdWithCheck("ATCM00000000");
+        if(!filter.maskEff || filter.filt.type == Id::Type::Std)
             runCmdWithCheck(QString("STFAP%1,%2").arg(stdFilter, stdMask).toLatin1());
-        if(extUsed)
+        if(!filter.maskEff || filter.filt.type == Id::Type::Ext)
             runCmdWithCheck(QString("STFAP%1,%2").arg(extFilter, extMask).toLatin1());
     }
     else
     {
-        runCmdWithCheck(QString("ATCF%1").arg(stdFilter).toLatin1());
-        runCmdWithCheck(QString("ATCM%1").arg(stdMask).toLatin1());
+        // ELM327 does not support filters that can distinguish by EFF, so ignore it
         runCmdWithCheck(QString("ATCF%1").arg(extFilter).toLatin1());
         runCmdWithCheck(QString("ATCM%1").arg(extMask).toLatin1());
     }
-    mIo->write("ATMA\r");
+    if(mIntfcIsStn)
+        mIo->write("STM\r");
+    else
+        mIo->write("ATMA\r");
     mCfgdFilter = filter;
 }
 bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
@@ -488,24 +485,28 @@ bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
 }
 void Interface::updateBitrateTxType()
 {
-    Q_ASSERT(mTxAddrIsStd);
     Q_ASSERT(mBitrate);
 
     bool newBitrate = (!mCfgdBitrate || mCfgdBitrate.get() != mBitrate.get());
-    bool newAddrType = (!mCfgdTxAddrIsStd || mCfgdTxAddrIsStd.get() != mTxAddrIsStd.get());
+    bool newAddrType = (mTxAddrIsStd && (!mCfgdTxAddrIsStd || mCfgdTxAddrIsStd.get() != mTxAddrIsStd.get()));
 
     if(newBitrate || newAddrType)
     {
         int newDivisor;
         bool newOptTqPerBit;
-        if(!calcBitrateParams(newDivisor, newOptTqPerBit))
+        if(calcBitrateParams(newDivisor, newOptTqPerBit))
+        {
+            mBitrateDivisor = newDivisor;
+            mOptTqPerBit = newOptTqPerBit;
+        }
+        else
         {
             qCritical("CAN bitrate %d cannot be generated by ELM327", mBitrate.get());
             throw ConfigError();
         }
 
         quint8 canOptions = 0x60;
-        if(mTxAddrIsStd.get())
+        if(mTxAddrIsStd && mTxAddrIsStd.get())
             canOptions |= 0x80;
         if(mOptTqPerBit)
             canOptions |= 0x10;
@@ -519,8 +520,13 @@ void Interface::updateBitrateTxType()
         runCmdWithCheck("ATSTff");              // Set maximum timeout = 1.02 s
         runCmdWithCheck("ATCSM0", CheckOk::No); // Try to set silent monitoring; some knockoff ELM327s don't support this command but seem to work OK anyway
 
+        if(mSlaveAddr)
+            doSetFilter(ExactFilter(mSlaveAddr.get().res));
+        else
+            doSetFilter(mFilter);
         mCfgdBitrate = mBitrate.get();
-        mCfgdTxAddrIsStd = mTxAddrIsStd.get();
+        if(mTxAddrIsStd)
+            mCfgdTxAddrIsStd = mTxAddrIsStd.get();
     }
 }
 
