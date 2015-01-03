@@ -28,7 +28,8 @@ HEADERS += \
     Xcp_Connection.h \
     Xcp_Interface_Interface.h \
     Xcp_Interface_Can_Interface.h \
-    Xcp_Interface_Can_Elm327_Interface.h
+    Xcp_Interface_Can_Elm327_Interface.h \
+    Xcp_Exception.h
 
 unix {
     target.path = /usr/lib

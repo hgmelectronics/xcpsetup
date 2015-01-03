@@ -5,14 +5,12 @@
 #include <QByteArray>
 #include <QList>
 #include <QException>
+#include "Xcp_Exception.h"
 
 namespace SetupTools
 {
 namespace Xcp
 {
-
-class Exception : public QException {};
-
 namespace Interface
 {
 
