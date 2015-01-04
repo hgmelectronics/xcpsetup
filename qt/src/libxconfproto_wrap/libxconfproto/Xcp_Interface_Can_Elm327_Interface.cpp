@@ -31,11 +31,8 @@ Io::~Io()
 }
 void Io::sync()
 {
-    if(!mTransmitQueue.empty())
-    {
-        QMutexLocker locker(&mPipelineClearMutex);
-        mPipelineClearCond.wait(locker.mutex());
-    }
+    QMutexLocker locker(&mPipelineClearMutex);
+    mPipelineClearCond.wait(locker.mutex());
 }
 
 void Io::syncAndGetPrompt(int timeoutMsec, int retries)
@@ -46,11 +43,9 @@ void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 
     for(int i = 0; i < retries; ++i)
     {
-        mTransmitQueue.put({'\r'});
+        write({'\r'});
         if(waitPromptReady(timeoutMsec))
-        {
             return;
-        }
     }
 
     qCritical("Failed to obtain prompt from ELM327");
@@ -100,6 +95,7 @@ void Io::run()
             return;
 
         bool setPromptReady = false;
+        bool setPipelineClear = true;
 
         Q_ASSERT(mLines.size() <= 1);
 
@@ -181,13 +177,11 @@ void Io::run()
         if(mSendTimer.nsecsElapsed() > ELM_RECOVERY_NSEC && !mTransmitQueue.empty())
         {
             mPromptReady = false;
-            {
-                QMutexLocker locker(&(mTransmitQueue.mutex()));
-                std::vector<quint8> data = mTransmitQueue.getLocked().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
-                mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt docs
-            }
+            std::vector<quint8> data = mTransmitQueue.get().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
+            mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt docs
             mSendTimer.start();
             setPromptReady = false;
+            setPipelineClear = false;
         }
 
         if(setPromptReady)
@@ -197,7 +191,7 @@ void Io::run()
             mPromptReadyCond.wakeAll();
         }
 
-        if(mTransmitQueue.empty())
+        if(setPipelineClear && mTransmitQueue.empty())
         {
             QMutexLocker locker(&mPipelineClearMutex);
             mPipelineClearCond.wakeAll();
