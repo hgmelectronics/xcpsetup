@@ -2,10 +2,10 @@
 #define XCP_INTERFACE_INTERFACE_H
 
 #include <QtCore>
-#include <QByteArray>
-#include <QList>
+#include <list>
 #include <QException>
 #include "Xcp_Exception.h"
+#include "util.h"
 
 namespace SetupTools
 {
@@ -28,8 +28,8 @@ class Interface : public QObject
 public:
     Interface(QObject *parent = NULL);
     virtual ~Interface() {}
-    virtual void transmit(const QByteArray & data) = 0;         //!< Send one XCP packet to the slave
-    virtual QList<QByteArray> receive(int timeoutMsec) = 0; //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual void transmit(const std::vector<quint8> & data) = 0;         //!< Send one XCP packet to the slave
+    virtual std::vector<std::vector<quint8> > receive(int timeoutMsec) = 0; //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
 };
 
 }   // namespace Interface

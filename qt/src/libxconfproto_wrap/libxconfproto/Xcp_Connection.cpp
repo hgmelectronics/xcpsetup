@@ -10,15 +10,6 @@ namespace SetupTools
 namespace Xcp
 {
 
-bool operator==(const XcpPtr &lhs, const XcpPtr &rhs)
-{
-    return (lhs.addr == rhs.addr && lhs.ext == rhs.ext);
-}
-bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
-{
-    return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
-}
-
 XcpConnection::XcpConnection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec, QObject *parent) :
     QObject(parent),
     mIntfc(intfc),
@@ -31,7 +22,9 @@ void XcpConnection::open()
 {
     static constexpr char OPMSG[] = "connecting to slave";
 
-    QByteArray reply = transact({0xFF, 0x00}, 8, OPMSG);
+    std::vector<quint8> reply = transact({0xFF, 0x00}, 8, OPMSG);
+    if(reply[0] != uchar(0xFF))
+        throwReply(reply, OPMSG);
     mSupportsCalPage = reply[1] & 0x01;
     mSupportsPgm = reply[1] & 0x10;
     mIsBigEndian = reply[2] & 0x01;
@@ -64,13 +57,13 @@ void XcpConnection::open()
 void XcpConnection::close()
 {
     static constexpr char OPMSG[] = "disconnecting from slave";
-    static const IlQByteArray QUERY = {0xFE};
+    static const std::vector<quint8> QUERY = {0xFE};
 
     mConnected = false;
     transact(QUERY, 1, OPMSG);
 }
 
-QByteArray XcpConnection::upload(XcpPtr base, int len)
+std::vector<quint8> XcpConnection::upload(XcpPtr base, int len)
 {
     Q_ASSERT(mConnected);
     if(len % mAddrGran)
@@ -78,19 +71,20 @@ QByteArray XcpConnection::upload(XcpPtr base, int len)
 
     int remBytes = len;
     XcpPtr packetPtr = base;
-    QByteArray ret;
+    std::vector<quint8> ret;
 
     while(remBytes > 0)
     {
         int packetBytes = std::min(remBytes, mMaxUpPayload);
-        ret.append(uploadSegment(packetPtr, packetBytes));
+        std::vector<quint8> seg(uploadSegment(packetPtr, packetBytes));
+        ret.insert(ret.end(), seg.begin(), seg.end());
         remBytes -= packetBytes;
         packetPtr.addr += packetBytes;
     }
     return ret;
 }
 
-void XcpConnection::download(XcpPtr base, const QByteArray &data)
+void XcpConnection::download(XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(mConnected);
     if(data.size() % mAddrGran)
@@ -100,12 +94,12 @@ void XcpConnection::download(XcpPtr base, const QByteArray &data)
 
     int remBytes = data.size();
     XcpPtr packetPtr = base;
-    const char *packetDataPtr = data.data();
+    const uchar *packetDataPtr = data.data();
 
     while(remBytes > 0)
     {
         int packetBytes = std::min(remBytes, mMaxDownPayload);
-        downloadSegment(packetPtr, QByteArray(packetDataPtr, packetBytes));
+        downloadSegment(packetPtr, std::vector<quint8>(packetDataPtr, packetDataPtr + packetBytes));
         remBytes -= packetBytes;
         packetDataPtr += packetBytes;
         packetPtr.addr += packetBytes;
@@ -115,6 +109,8 @@ void XcpConnection::download(XcpPtr base, const QByteArray &data)
 void XcpConnection::nvWrite()
 {
     Q_ASSERT(mConnected);
+    if(!mSupportsCalPage)
+        throw InvalidOperation();
 
 }
 
@@ -124,7 +120,7 @@ void XcpConnection::setCalPage(quint8 segment, quint8 page)
     if(!mSupportsCalPage)
         throw InvalidOperation();
 
-    IlQByteArray query({0xEB, 0x03, segment, page});
+    std::vector<quint8> query({0xEB, 0x03, segment, page});
 
     mCalcMta.reset();   // standard does not define what happens to MTA
 
@@ -148,7 +144,7 @@ void XcpConnection::programClear(XcpPtr base, int len)
 {
     Q_ASSERT(mConnected && mPgmStarted);
 
-    IlQByteArray query({0xD1, 0x00, 0, 0, 0, 0, 0, 0});
+    std::vector<quint8> query({0xD1, 0x00, 0, 0, 0, 0, 0, 0});
     toSlaveEndian<quint32>(len, query.data() + 4);
 
     mCalcMta.reset();   // standard does not define what happens to MTA
@@ -166,7 +162,7 @@ void XcpConnection::programClear(XcpPtr base, int len)
     tryQuery(action);
 }
 
-void XcpConnection::programRange(XcpPtr base, const QByteArray &data)
+void XcpConnection::programRange(XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(mConnected && mPgmStarted);
 
@@ -184,23 +180,23 @@ void XcpConnection::programReset()
 
 }
 
-QByteArray XcpConnection::transact(const QByteArray &cmd, int minReplyBytes, const char *msg, int timeoutMsec)
+std::vector<quint8> XcpConnection::transact(const std::vector<quint8> &cmd, int minReplyBytes, const char *msg, int timeoutMsec)
 {
     mIntfc->transmit(cmd);
 
-    QList<QByteArray> replies = mIntfc->receive(timeoutMsec < 0 ? mTimeoutMsec : timeoutMsec);
+    std::vector<std::vector<quint8> > replies = mIntfc->receive(timeoutMsec < 0 ? mTimeoutMsec : timeoutMsec);
 
     if(replies.size() == 0)
         throw Timeout();
 
     Q_ASSERT(minReplyBytes > 0);
-    if(replies.size() > 1 || replies[0].size() < minReplyBytes || quint8(replies[0][0]) != 0xFF)
+    if(replies.size() > 1 || replies[0].size() < size_t(minReplyBytes))
         throwReplies(replies, msg);
 
     return replies[0];
 }
 
-void XcpConnection::throwReplies(const QList<QByteArray> &replies, const char *msg)
+void XcpConnection::throwReplies(const std::vector<std::vector<quint8> > &replies, const char *msg)
 {
     typedef std::pair<QString, SlaveError> ErrCodeData;
     static const std::map<quint8, ErrCodeData> ERR_CODE_MAP =
@@ -237,8 +233,11 @@ void XcpConnection::throwReplies(const QList<QByteArray> &replies, const char *m
     if(replies.size() > 1)
     {
         qCritical("Multiple replies received%s", appendMsg);
-        for(const QByteArray &reply : replies)
-            qDebug() << "  " << reply.toHex();
+        for(const std::vector<quint8> &reply : replies)
+        {
+            QByteArray replyArr(reinterpret_cast<const char *>(reply.data()), reply.size());
+            qDebug() << "Received" << replyArr.toHex();
+        }
         throw MultipleReplies();
     }
 
@@ -258,34 +257,39 @@ void XcpConnection::throwReplies(const QList<QByteArray> &replies, const char *m
         throw codeData.second;
     }
     else
+    {
+        QByteArray replyArr(reinterpret_cast<const char *>(replies[0].data()), replies[0].size());
+        qDebug() << "Received" << replyArr.toHex();
         throw BadReply();
+    }
 }
-void XcpConnection::throwReply(const QByteArray &reply, const char *msg)
+void XcpConnection::throwReply(const std::vector<quint8> &reply, const char *msg)
 {
-    throwReplies(QList<QByteArray>({reply}), msg);
+    throwReplies(std::vector<std::vector<quint8> >({reply}), msg);
 }
 
-QByteArray XcpConnection::uploadSegment(XcpPtr base, int len)
+std::vector<quint8> XcpConnection::uploadSegment(XcpPtr base, int len)
 {
-    QByteArray ret;
+    std::vector<quint8> ret;
 
     std::function<void (void)> action = [this, base, len, &ret]()
     {
         static constexpr char OPMSG[] = "uploading data";
 
-        QByteArray query;
-        QByteArray reply;
+        std::vector<quint8> query;
+        std::vector<quint8> reply;
         if(mCalcMta && mCalcMta.get() == base)
-            query = IlQByteArray({0xF5, quint8(len / mAddrGran)});
+            query = std::vector<quint8>({0xF5, quint8(len / mAddrGran)});
         else
         {
-            query = IlQByteArray({0xF4, quint8(len / mAddrGran), 0, base.ext, 0, 0, 0, 0});
+            query = std::vector<quint8>({0xF4, quint8(len / mAddrGran), 0, base.ext, 0, 0, 0, 0});
             toSlaveEndian<quint32>(base.addr, query.data() + 4);
         }
 
         try
         {
             reply = transact(query, mAddrGran + len, OPMSG);
+            //FIXME now check 0xFF on all transact() calls
         } catch(ConnException)
         {
             mCalcMta.reset();
@@ -294,8 +298,7 @@ QByteArray XcpConnection::uploadSegment(XcpPtr base, int len)
 
         mCalcMta = XcpPtr(base.addr + len / mAddrGran, base.ext);
 
-        reply.truncate(mAddrGran + len);
-        ret = reply.right(len);
+        ret = std::move(std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len));
     };
 
     tryQuery(action);
@@ -303,12 +306,12 @@ QByteArray XcpConnection::uploadSegment(XcpPtr base, int len)
     return ret;
 }
 
-void XcpConnection::downloadSegment(XcpPtr base, const QByteArray &data)
+void XcpConnection::downloadSegment(XcpPtr base, const std::vector<quint8> &data)
 {
-    IlQByteArray query({0xF0, quint8(data.size() / mAddrGran)});
+    std::vector<quint8> query({0xF0, quint8(data.size() / mAddrGran)});
     if(mAddrGran > 2)
         query.resize(mAddrGran);
-    query.append(data);
+    query.insert(query.end(), data.begin(), data.end());
 
     std::function<void (void)> action = [this, base, query]()
     {
@@ -333,7 +336,7 @@ void XcpConnection::downloadSegment(XcpPtr base, const QByteArray &data)
 void XcpConnection::setMta(XcpPtr ptr)
 {
     static constexpr char OPMSG[] = "setting slave Memory Transfer Address";
-    IlQByteArray query({0xF6, 0, 0, ptr.ext, 0, 0, 0, 0});
+    std::vector<quint8> query({0xF6, 0, 0, ptr.ext, 0, 0, 0, 0});
     toSlaveEndian<quint32>(ptr.addr, query.data() + 4);
 
     try
@@ -381,14 +384,14 @@ void XcpConnection::tryQuery(std::function<void (void)> &action)
 
 void XcpConnection::synch()
 {
-    mIntfc->transmit(IlQByteArray({0xFC}));
+    mIntfc->transmit(std::vector<quint8>({0xFC}));
 
-    QList<QByteArray> replies = mIntfc->receive(mTimeoutMsec);
+    std::vector<std::vector<quint8> > replies = mIntfc->receive(mTimeoutMsec);
 
     if(replies.size() == 0)
         throw Timeout();
 
-    if(replies.size() > 1 || replies[0] != IlQByteArray({0xFE, 0x00}))
+    if(replies.size() > 1 || replies[0] != std::vector<quint8>({0xFE, 0x00}))
         throwReplies(replies, "resynchronizing");
 }
 

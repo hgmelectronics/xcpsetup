@@ -52,11 +52,11 @@ struct LIBXCONFPROTOSHARED_EXPORT Frame
 {
 public:
     Frame();
-    Frame(Id id_in, const QByteArray &data_in);
-    Frame(quint32 id_in, Id::Type idType_in, const QByteArray &data_in);
+    Frame(Id id_in, const std::vector<quint8> &data_in);
+    Frame(quint32 id_in, Id::Type idType_in, const std::vector<quint8> &data_in);
 
     Id id;
-    QByteArray data;
+    std::vector<quint8> data;
 };
 
 Filter LIBXCONFPROTOSHARED_EXPORT ExactFilter(Id addr);
@@ -71,10 +71,10 @@ public:
     virtual ~Interface() {}
     virtual void connect(SlaveId addr) = 0;                         //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
     virtual void disconnect() = 0;                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
-    virtual void transmit(const QByteArray & data) = 0;             //!< Send one XCP packet to the slave
-    virtual void transmitTo(const QByteArray & data, Id id) = 0;    //!< Send one CAN frame to an arbitrary ID
-    virtual QList<QByteArray> receive(int timeoutMsec);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
-    virtual QList<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
+    virtual void transmit(const std::vector<quint8> & data) = 0;             //!< Send one XCP packet to the slave
+    virtual void transmitTo(const std::vector<quint8> & data, Id id) = 0;    //!< Send one CAN frame to an arbitrary ID
+    virtual std::vector<std::vector<quint8> > receive(int timeoutMsec);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual std::vector<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
     virtual void setBitrate(int bps) = 0;                           //!< Set the bitrate used on the interface
     virtual void setFilter(Filter filt) = 0;                        //!< Set the CAN filter used on the interface
 protected:

@@ -3,7 +3,7 @@
 namespace SetupTools
 {
 
-GranularTimeSerialPort::GranularTimeSerialPort(QObject *parent) :
+SerialPort::SerialPort(QObject *parent) :
     QSerialPort(parent),
     mTimeout(0),
     mInterCharTimeout(0),
@@ -11,7 +11,7 @@ GranularTimeSerialPort::GranularTimeSerialPort(QObject *parent) :
 {
     mLogTimer.start();
 }
-GranularTimeSerialPort::GranularTimeSerialPort(const QString &name, QObject *parent) :
+SerialPort::SerialPort(const QString &name, QObject *parent) :
     QSerialPort(name, parent),
     mTimeout(0),
     mInterCharTimeout(0),
@@ -19,7 +19,7 @@ GranularTimeSerialPort::GranularTimeSerialPort(const QString &name, QObject *par
 {
     mLogTimer.start();
 }
-GranularTimeSerialPort::GranularTimeSerialPort(const QSerialPortInfo &info, QObject *parent) :
+SerialPort::SerialPort(const QSerialPortInfo &info, QObject *parent) :
     QSerialPort(info, parent),
     mTimeout(0),
     mInterCharTimeout(0),
@@ -27,57 +27,57 @@ GranularTimeSerialPort::GranularTimeSerialPort(const QSerialPortInfo &info, QObj
 {
     mLogTimer.start();
 }
-void GranularTimeSerialPort::setLogging(bool on)
+void SerialPort::setLogging(bool on)
 {
     mLogData = on;
 }
-void GranularTimeSerialPort::setTimeout(int msec)
+void SerialPort::setTimeout(int msec)
 {
     mTimeout = qint64(msec) * 1000000;
 }
-void GranularTimeSerialPort::setInterCharTimeout(int msec)
+void SerialPort::setInterCharTimeout(int msec)
 {
     if(msec <= 0)
         mInterCharTimeout = (1000 * 10 + baudRate() - 1) / baudRate();   // divide, rounding up
     else
         mInterCharTimeout = msec;
 }
-QByteArray GranularTimeSerialPort::readGranular(qint64 maxlen)
+std::vector<quint8> SerialPort::readGranular(qint64 maxlen)
 {
     QElapsedTimer timer;
     timer.start();
-    QByteArray ret;
+    std::vector<quint8> ret;
     while(1)
     {
         int bytesLeft = maxlen - ret.size();
         if(timer.nsecsElapsed() > mTimeout || bytesLeft <= 0)
             break;
         waitForReadyRead(mInterCharTimeout);
-        QByteArray data = read(bytesLeft);
+        std::vector<quint8> data(read(bytesLeft));
         Q_ASSERT(data.size() <= bytesLeft);
         if(data.size() > 0)
-            ret.append(data);
+            ret.insert(ret.end(), data.begin(), data.end());
         else if(ret.size() > 0)
             break;
     }
     return ret;
 }
-void GranularTimeSerialPort::fullClear()
+void SerialPort::fullClear()
 {
     clear();
     while(1)
     {
-        char bitbucket[1024];
+        quint8 bitbucket[1024];
         if(read(bitbucket, sizeof(bitbucket)) == 0)
             break;
     }
 }
-double GranularTimeSerialPort::elapsedSecs()
+double SerialPort::elapsedSecs()
 {
     return mLogTimer.nsecsElapsed() / double(1000000000);
 }
 
-qint64 GranularTimeSerialPort::readData(char *data, qint64 maxSize)
+qint64 SerialPort::readData(char *data, qint64 maxSize)
 {
     qint64 res = QSerialPort::readData(data, maxSize);
     if(mLogData && res > 0)
@@ -88,7 +88,7 @@ qint64 GranularTimeSerialPort::readData(char *data, qint64 maxSize)
     }
     return res;
 }
-qint64 GranularTimeSerialPort::writeData(const char *data, qint64 maxSize)
+qint64 SerialPort::writeData(const char *data, qint64 maxSize)
 {
     qint64 res = QSerialPort::writeData(data, maxSize);
     if(mLogData && res > 0)
@@ -98,12 +98,6 @@ qint64 GranularTimeSerialPort::writeData(const char *data, qint64 maxSize)
         qDebug() << mLogTimer.nsecsElapsed() / double(1000000000) << "Serial TX" << arr.toPercentEncoding();
     }
     return res;
-}
-
-IlQByteArray::IlQByteArray(std::initializer_list<quint8> c)
-{
-    resize(c.size());
-    std::copy(c.begin(), c.end(), reinterpret_cast<quint8 *>(data()));
 }
 
 }   // namespace SetupTools

@@ -61,11 +61,11 @@ Frame::Frame() :
     id(),
     data()
 {}
-Frame::Frame(Id id_in, const QByteArray &data_in) :
+Frame::Frame(Id id_in, const std::vector<quint8> &data_in) :
     id(id_in),
     data(data_in)
 {}
-Frame::Frame(quint32 id_in, Id::Type idType_in, const QByteArray &data_in) :
+Frame::Frame(quint32 id_in, Id::Type idType_in, const std::vector<quint8> &data_in) :
     id(id_in, idType_in),
     data(data_in)
 {}
@@ -82,16 +82,16 @@ Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Interface(parent)
 {}
 
-QList<QByteArray> LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec)
+std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec)
 {
     if(!mSlaveAddr)
-        return QList<QByteArray>();
+        return std::vector<std::vector<quint8> >();
 
-    QList<Frame> frames = receiveFrames(timeoutMsec, ExactFilter(mSlaveAddr.get().res), &SetupTools::Xcp::Interface::Can::validateXcp);
+    std::vector<Frame> frames = receiveFrames(timeoutMsec, ExactFilter(mSlaveAddr.get().res), &SetupTools::Xcp::Interface::Can::validateXcp);
 
-    QList<QByteArray> pkts;
+    std::vector<std::vector<quint8> > pkts;
     for(auto &frame: frames)
-        pkts.append(frame.data);
+        pkts.push_back(frame.data);
     return pkts;
 }
 

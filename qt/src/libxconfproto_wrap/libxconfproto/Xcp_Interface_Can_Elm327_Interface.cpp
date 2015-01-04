@@ -1,4 +1,5 @@
 #include "Xcp_Interface_Can_Elm327_Interface.h"
+#include <algorithm>
 
 namespace SetupTools
 {
@@ -11,7 +12,9 @@ namespace Can
 namespace Elm327
 {
 
-Io::Io(GranularTimeSerialPort &port, QObject *parent) :
+static const std::vector<quint8> OK_VEC({'O', 'K'});
+
+Io::Io(SerialPort &port, QObject *parent) :
     QThread(parent),
     mPort(port),
     mPromptReady(true), // Process of finding baudrate leaves ELM at a prompt
@@ -28,34 +31,38 @@ Io::~Io()
 }
 void Io::sync()
 {
-    QMutexLocker locker(&mPipelineClearMutex);
-    mPipelineClearCond.wait(locker.mutex());
+    if(!mTransmitQueue.empty())
+    {
+        QMutexLocker locker(&mPipelineClearMutex);
+        mPipelineClearCond.wait(locker.mutex());
+    }
 }
 
 void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 {
     sync();
-
     if(isPromptReady())
         return;
 
     for(int i = 0; i < retries; ++i)
     {
-        write("\r");
+        mTransmitQueue.put({'\r'});
         if(waitPromptReady(timeoutMsec))
+        {
             return;
+        }
     }
 
     qCritical("Failed to obtain prompt from ELM327");
     throw NoResponse();
 }
 
-QList<Frame> Io::getRcvdFrames(int timeoutMsec)
+std::vector<Frame> Io::getRcvdFrames(int timeoutMsec)
 {
     return mRcvdFrameQueue.getAll(timeoutMsec);
 }
 
-QList<QByteArray> Io::getRcvdCmdResp(int timeoutMsec)
+std::vector<std::vector<quint8> > Io::getRcvdCmdResp(int timeoutMsec)
 {
     return mRcvdCmdRespQueue.getAll(timeoutMsec);
 }
@@ -65,7 +72,7 @@ void Io::flushCmdResp()
     mRcvdCmdRespQueue.getAll(0);    // ignore the return value -> it gets destroyed
 }
 
-void Io::write(QByteArray data)
+void Io::write(const std::vector<quint8> &data)
 {
     mTransmitQueue.put(data);
     sync();
@@ -93,47 +100,49 @@ void Io::run()
             return;
 
         bool setPromptReady = false;
-        bool setPipelineClear = true;
 
         Q_ASSERT(mLines.size() <= 1);
 
         // Get data from the serial port and put it into mLines (a list of lines, all ending with CR except possibly the last one, which is the line we're receiving right now)
         {
-            QByteArray buffer = mPort.readGranular(READ_SIZE);
-            QByteArray newLine;
-            if(!mLines.isEmpty())
-                newLine = mLines.takeFirst();
-            for(char c : buffer)
+            std::vector<quint8> buffer = mPort.readGranular(READ_SIZE);
+            std::vector<quint8> newLine;
+            if(!mLines.empty())
+            {
+                newLine = mLines[0];
+                mLines.pop_back();
+            }
+            for(uchar c : buffer)
             {
                 if(c != '\0')   // Ignore nulls, which ELM documentation says may be emitted in error
                 {
-                    newLine.append(c);
+                    newLine.push_back(c);
                     if(c == EOL)
                     {
-                        mLines.append(newLine);
+                        mLines.push_back(newLine);
                         newLine.clear();
                     }
                 }
             }
             if(newLine.size())
-                mLines.append(newLine);
+                mLines.push_back(newLine);
         }
 
         // Process lines from mLines, putting any incomplete line that may exist back into mLines
-        QList<QByteArray> incompleteLines;
-        for(QByteArray & line : mLines)
+        std::vector<std::vector<quint8> > incompleteLines;
+        for(std::vector<quint8> & line : mLines)
         {
             //qDebug() << mPort.elapsedSecs() << "ELM327 IO line" << line.toPercentEncoding();
-            if(line.endsWith(EOL))
+            if(*(line.end() - 1) == EOL)
             {
-                line.chop(1);
-                if(!line.isEmpty()) {
+                line.pop_back();
+                if(!line.empty()) {
                     if(containsNonHex(line))\
                         mRcvdCmdRespQueue.put(line);
                     else
                     {
                         Frame frame;
-                        int idLen;
+                        size_t idLen;
                         if(line.size() % 2 == 1)
                         {
                             frame.id.type = Id::Type::Std;
@@ -147,8 +156,9 @@ void Io::run()
 
                         if(line.size() >= idLen)
                         {
-                            frame.id.addr = line.left(idLen).toUInt(NULL, 16);
-                            frame.data = QByteArray::fromHex(line.mid(idLen));
+                            frame.id.addr = QByteArray(reinterpret_cast<char *>(line.data()), idLen).toUInt(NULL, 16);
+                            QByteArray dataArr(QByteArray::fromHex(QByteArray(reinterpret_cast<char *>(line.data() + idLen), line.size() - idLen)));
+                            frame.data = std::vector<quint8>(reinterpret_cast<quint8 *>(dataArr.data()), reinterpret_cast<quint8 *>(dataArr.data() + dataArr.size()));
                             mRcvdFrameQueue.put(frame);
                         }
                         else
@@ -159,10 +169,10 @@ void Io::run()
             }
             else
             {
-                if(line == ">")
+                if(line.size() == 1 && line[0] == '>')
                     setPromptReady = true;
                 else
-                    incompleteLines.append(line);
+                    incompleteLines.push_back(line);
             }
         }
         mLines.swap(incompleteLines);
@@ -171,11 +181,13 @@ void Io::run()
         if(mSendTimer.nsecsElapsed() > ELM_RECOVERY_NSEC && !mTransmitQueue.empty())
         {
             mPromptReady = false;
-            QByteArray data = mTransmitQueue.get().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
-            mPort.write(data); // write() is *probably* synchronous
+            {
+                QMutexLocker locker(&(mTransmitQueue.mutex()));
+                std::vector<quint8> data = mTransmitQueue.getLocked().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
+                mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt docs
+            }
             mSendTimer.start();
             setPromptReady = false;
-            setPipelineClear = false;
         }
 
         if(setPromptReady)
@@ -185,7 +197,7 @@ void Io::run()
             mPromptReadyCond.wakeAll();
         }
 
-        if(setPipelineClear && mTransmitQueue.empty())
+        if(mTransmitQueue.empty())
         {
             QMutexLocker locker(&mPipelineClearMutex);
             mPipelineClearCond.wakeAll();
@@ -219,8 +231,8 @@ Interface::Interface(const QSerialPortInfo & portInfo, bool serialLog, QObject *
         {
             mPort.fullClear();
             mPort.write("\r");
-            QByteArray findBaudRes = mPort.readGranular(16384);
-            if(findBaudRes.size() > 0 && findBaudRes.endsWith(">"))
+            std::vector<quint8> findBaudRes = mPort.readGranular(16384);
+            if(findBaudRes.size() > 0 && *(findBaudRes.end() - 1) == '>')
             {
                 commEstablished = true;
                 break;
@@ -240,22 +252,23 @@ Interface::Interface(const QSerialPortInfo & portInfo, bool serialLog, QObject *
             mPort.setTimeout(SWITCHBAUD_TIMEOUT_MSEC);
             mPort.fullClear();
             mPort.write(QString("ATBRD%1\r").arg(qRound(BRG_HZ / DESIRED_BAUDRATE), 2, 16, QChar('0')).toLatin1());
-            QByteArray brdRes = mPort.readGranular(12);
-            if(brdRes.contains("OK"))
+            std::vector<quint8> brdRes(mPort.readGranular(12));
+            if(std::search(brdRes.begin(), brdRes.end(), OK_VEC.begin(), OK_VEC.end()) != brdRes.end())
             {
                 // Device allows baudrate change, proceed with switch
                 mPort.setBaudRate(DESIRED_BAUDRATE);
                 mPort.setInterCharTimeout();
                 mPort.fullClear();
                 qDebug() << "Switched to" << mPort.baudRate() << "baud";
-                QByteArray switchBaudRes = mPort.readGranular(11);
-                qDebug() << "switchBaudRes ==" << switchBaudRes.toPercentEncoding();
-                if(switchBaudRes.startsWith("ELM327"))
+                std::vector<quint8> switchBaudRes(mPort.readGranular(11));
+                static const std::vector<quint8> SWITCH_BAUD_RES_SUBSTR({'E','L','M','3','2','7'});
+                if(switchBaudRes.size() >= SWITCH_BAUD_RES_SUBSTR.size()
+                        && std::equal(SWITCH_BAUD_RES_SUBSTR.begin(), SWITCH_BAUD_RES_SUBSTR.end(), switchBaudRes.begin()))
                 {
                     // Baudrate switch successful, send a CR to confirm we're on board
                     mPort.fullClear();
                     mPort.write("\r");
-                    if(mPort.readGranular(2) != "OK")
+                    if(mPort.readGranular(2) != OK_VEC)
                     {
                         qCritical("Unexpected response from ELM327 when confirming UART baudrate switch");
                         throw UnexpectedResponse();
@@ -269,7 +282,8 @@ Interface::Interface(const QSerialPortInfo & portInfo, bool serialLog, QObject *
 
                     mPort.write("\r");
                     mPort.fullClear();
-                    if(!mPort.readGranular(1024).endsWith(">"))
+                    std::vector<quint8> recoverRes(mPort.readGranular(1024));
+                    if(recoverRes.size() < 1 || *(recoverRes.end() - 1) != '>')
                     {
                         qCritical("Failed to recover from unsuccessful ELM327 baudrate switch");
                         throw UnexpectedResponse();
@@ -323,13 +337,13 @@ void Interface::disconnect()
     doSetFilter(mFilter);
 }
 
-void Interface::transmit(const QByteArray & data)
+void Interface::transmit(const std::vector<quint8> & data)
 {
     Q_ASSERT(mSlaveAddr);
     transmitTo(data, mSlaveAddr.get().cmd);
 }
 
-void Interface::transmitTo(const QByteArray & data, Id id)
+void Interface::transmitTo(const std::vector<quint8> & data, Id id)
 {
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
     mTxAddrIsStd = (id.type == Id::Type::Std);
@@ -353,28 +367,28 @@ void Interface::transmitTo(const QByteArray & data, Id id)
         mIo->syncAndGetPrompt(TIMEOUT_MSEC);    // Not synchronized by calling _runCmdWithCheck(), so do it here
     }
 
-    mIo->write(data.toHex() + "\r");
+    mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + "\r");
 }
 
-QList<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter, bool (*validator)(const Frame &))
+std::vector<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter, bool (*validator)(const Frame &))
 {
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
-
-    QList<Frame> frames;
 
     QElapsedTimer timer;
     timer.start();
 
+    std::vector<Frame> frames;
+
     qint64 timeoutNsec = qint64(timeoutMsec) * 1000000;
     while(timer.nsecsElapsed() <= timeoutNsec && !frames.size())
     {
-        int queueReadTimeout = std::max(qint64(timeoutMsec) - timer.elapsed() / 1000000, qint64(0));
+        int queueReadTimeout = std::max(timeoutMsec - int(timer.elapsed()), 0);
 
         for(const Frame & newFrame : mIo->getRcvdFrames(queueReadTimeout))
         {
             if(filter.Matches(newFrame.id) &&
                     (!validator || validator(newFrame)))
-                frames.append(newFrame);
+                frames.push_back(newFrame);
         }
     }
 
@@ -400,22 +414,28 @@ double Interface::elapsedSecs()
     return mPort.elapsedSecs();
 }
 
-void Interface::runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy)
+void Interface::runCmdWithCheck(const std::vector<quint8> &cmd, CheckOk checkOkPolicy)
 {
     mIo->syncAndGetPrompt(TIMEOUT_MSEC);
     mIo->flushCmdResp();
-    mIo->write(cmd + "\r");
+    {
+        std::vector<quint8> tx(cmd);
+        tx.push_back('\r');
+        mIo->write(tx);
+    }
     if(!mIo->waitPromptReady(TIMEOUT_MSEC))
     {
-        qCritical("No prompt from ELM327 after executing %s", cmd.constData());
+        std::vector<quint8> cmdNt(cmd);
+        cmdNt.push_back('\0');
+        qCritical("No prompt from ELM327 after executing %s", cmdNt.data());
         throw NoResponse();
     }
     if(checkOkPolicy == CheckOk::Yes)
     {
         bool gotOk = false;
-        for(const QByteArray & response : mIo->getRcvdCmdResp(0))
+        for(const std::vector<quint8> & response : mIo->getRcvdCmdResp(0))
         {
-            if(response.contains("OK"))
+            if(std::search(response.begin(), response.end(), OK_VEC.begin(), OK_VEC.end()) != response.end())
             {
                 gotOk = true;
                 break;
@@ -423,7 +443,9 @@ void Interface::runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy)
         }
         if(!gotOk)
         {
-            qCritical("No OK from ELM327 after executing %s", cmd.constData());
+            std::vector<quint8> cmdNt(cmd);
+            cmdNt.push_back('\0');
+            qCritical("No OK from ELM327 after executing %s", cmdNt.data());
             throw NoResponse();
         }
     }

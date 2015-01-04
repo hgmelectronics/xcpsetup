@@ -2,9 +2,9 @@
 #define XCP_CONNECTION_H
 
 #include <QObject>
-#include <QVector>
 #include <QSharedPointer>
 #include <boost/optional.hpp>
+#include <vector>
 
 #include "libxconfproto_global.h"
 #include "Xcp_Interface_Interface.h"
@@ -47,13 +47,23 @@ class MultipleReplies : public ConnException {};
 struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
 {
 public:
-    XcpPtr(quint32 addr_in = 0, quint8 ext_in = 0);
+    inline XcpPtr(quint32 addr_in = 0, quint8 ext_in = 0) :
+        addr(addr_in),
+        ext(ext_in)
+    {}
+
     quint32 addr;
     quint8 ext;
 };
 
-bool operator==(const XcpPtr &lhs, const XcpPtr &rhs);
-bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs);
+inline bool operator==(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    return (lhs.addr == rhs.addr && lhs.ext == rhs.ext);
+}
+inline bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
+}
 
 class LIBXCONFPROTOSHARED_EXPORT XcpConnection : public QObject
 {
@@ -62,13 +72,13 @@ public:
     explicit XcpConnection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec = 0, QObject *parent = 0);
     void open();
     void close();
-    QByteArray upload(XcpPtr base, int len);
-    void download(XcpPtr base, const QByteArray &data);
+    std::vector<quint8> upload(XcpPtr base, int len);
+    void download(XcpPtr base, const std::vector<quint8> &data);
     void nvWrite();
     void setCalPage(quint8 segment, quint8 page);
     void programStart();
     void programClear(XcpPtr base, int len);
-    void programRange(XcpPtr base, const QByteArray &data);
+    void programRange(XcpPtr base, const std::vector<quint8> &data);
     void programVerify(quint32 crc);
     void programReset();
     template <typename T>
@@ -117,11 +127,11 @@ public:
 signals:
 public slots:
 private:
-    static void throwReplies(const QList<QByteArray> &replies, const char *msg = NULL);
-    static void throwReply(const QByteArray &reply, const char *msg = NULL);
-    QByteArray transact(const QByteArray &cmd, int minReplyBytes, const char *msg = NULL, int timeoutMsec = -1);
-    QByteArray uploadSegment(XcpPtr base, int len);
-    void downloadSegment(XcpPtr base, const QByteArray &data);
+    static void throwReplies(const std::vector<std::vector<quint8> > &replies, const char *msg = NULL);
+    static void throwReply(const std::vector<quint8> &reply, const char *msg = NULL);
+    std::vector<quint8> transact(const std::vector<quint8> &cmd, int minReplyBytes, const char *msg = NULL, int timeoutMsec = -1);
+    std::vector<quint8> uploadSegment(XcpPtr base, int len);
+    void downloadSegment(XcpPtr base, const std::vector<quint8> &data);
     void setMta(XcpPtr ptr);
     void tryQuery(std::function<void (void)> &action);
     void synch();
