@@ -502,12 +502,12 @@ class Connection(object):
         if self._calcMTA != ptr:
             self._setMTA(ptr)
             
-        lenDataAG = int(len(data) % self._addressGranularity)
+        lenDataAG = int(len(data) / self._addressGranularity)
         
         if self._addressGranularity < 4:
             request = struct.pack(self._byteorder + "BB", 0xF0, lenDataAG) + data
         else:
-            request = struct.pack(self._byteorder + "BBxx", 0xF4, lenDataAG) + data
+            request = struct.pack(self._byteorder + "BBxx", 0xF0, lenDataAG) + data
         
         decodeFormat = "B"
         
