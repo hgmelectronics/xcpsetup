@@ -125,7 +125,7 @@ public:
     {
         QMutexLocker locker(&mMutex);
 
-        return getLocked(locker.mutex(), timeoutMsec);
+        return getLocked(timeoutMsec);
     }
 
     std::vector<T> getAllLocked(int timeoutMsec = 0)
