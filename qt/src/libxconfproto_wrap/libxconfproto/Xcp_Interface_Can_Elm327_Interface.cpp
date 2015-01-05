@@ -374,7 +374,7 @@ std::vector<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter
     std::vector<Frame> frames;
 
     qint64 timeoutNsec = qint64(timeoutMsec) * 1000000;
-    while(timer.nsecsElapsed() <= timeoutNsec && !frames.size())
+    do
     {
         int queueReadTimeout = std::max(timeoutMsec - int(timer.elapsed()), 0);
 
@@ -384,7 +384,7 @@ std::vector<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter
                     (!validator || validator(newFrame)))
                 frames.push_back(newFrame);
         }
-    }
+    } while(timer.nsecsElapsed() <= timeoutNsec && !frames.size());
 
     return frames;
 }
