@@ -132,6 +132,8 @@ private:
     std::vector<quint8> transact(const std::vector<quint8> &cmd, int minReplyBytes, const char *msg = NULL, int timeoutMsec = -1);
     std::vector<quint8> uploadSegment(XcpPtr base, int len);
     void downloadSegment(XcpPtr base, const std::vector<quint8> &data);
+    void programPacket(XcpPtr base, const std::vector<quint8> &data);
+    void programBlock(XcpPtr base, const std::vector<quint8> &data);
     void setMta(XcpPtr ptr);
     void tryQuery(std::function<void (void)> &action);
     void synch();
@@ -146,6 +148,7 @@ private:
     int mAddrGran, mMaxCto, mMaxDownPayload, mMaxUpPayload;
 
     bool mPgmStarted, mPgmMasterBlockMode;
+    int mPgmMaxCto, mPgmMaxBlocksize, mPgmMaxDownPayload;
     boost::optional<XcpPtr> mCalcMta;
 };
 
