@@ -643,9 +643,9 @@ class Connection(object):
             
             payloadBytes = min(remBytes, self._pgmMaxDownloadPayload)
             if self._addressGranularity == 1 or self._addressGranularity == 2:
-                reqHdr = struct.pack(self._byteorder + "BB", cmdCode, self.byteToAG(remBytes))
+                reqHdr = struct.pack(self._byteorder + "BB", cmdCode, self.byteToAG(payloadBytes))
             else:
-                reqHdr = struct.pack(self._byteorder + "BBxx", cmdCode, self.byteToAG(remBytes))
+                reqHdr = struct.pack(self._byteorder + "BBxx", cmdCode, self.byteToAG(payloadBytes))
             
             startOffset = len(data) - remBytes
             endOffset = startOffset + payloadBytes
