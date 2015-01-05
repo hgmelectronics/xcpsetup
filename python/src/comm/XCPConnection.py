@@ -579,15 +579,15 @@ class Connection(object):
     def _action_program_start(self):
         request = struct.pack(self._byteorder + "B", 0xD2)
         reply, replyData = self._transaction(request, "BxBBBBB")
-        if reply[0] != 0xFF or reply[2] < 8:
+        if reply[0] != 0xFF or reply[3] < 8:
             RaiseReply(replyData, 'starting program')
-        if reply[1] & 0x01:
+        if reply[2] & 0x01:
             self._pgmMasterBlockMode = True
         else:
             self._pgmMasterBlockMode = False
-        self._pgmMaxCTO = reply[2]
-        self._pgmMaxBS = reply[3]
-        self._pgmMinST = reply[4]
+        self._pgmMaxCTO = reply[3]
+        self._pgmMaxBS = reply[4]
+        self._pgmMinST = reply[5]
         self._pgmMaxDownloadPayload = self.byteToAG(self._pgmMaxCTO - 2) * self._addressGranularity
         self._calcMTA = None
         self._pgmStarted = True
