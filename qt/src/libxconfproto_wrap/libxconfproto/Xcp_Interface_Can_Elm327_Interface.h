@@ -48,6 +48,7 @@ public:
     ~Io();    // QThread has a non-virtual dtor - do not destroy an Elm327Io from a pointer to QThread!!!
     void sync();
     void syncAndGetPrompt(int timeoutMsec, int retries = 5);
+    void waitForStartup();
     std::vector<Frame> getRcvdFrames(int timeoutMsec);
     std::vector<std::vector<quint8> > getRcvdCmdResp(int timeoutMsec);
     void flushCmdResp();
@@ -60,6 +61,8 @@ public:
 
     bool isPromptReady();
     bool waitPromptReady(int timeoutMsec);
+public slots:
+    void wakeup();
 private:
     void run() Q_DECL_OVERRIDE;
 
@@ -71,7 +74,6 @@ private:
     SerialPort &mPort;
 
     std::vector<std::vector<quint8> > mLines;
-    QElapsedTimer mSendTimer;
 
     PythonicQueue<Frame> mRcvdFrameQueue;
     PythonicQueue<std::vector<quint8> > mRcvdCmdRespQueue;
@@ -83,6 +85,13 @@ private:
     QMutex mPromptReadyMutex;
     QWaitCondition mPromptReadyCond;
     bool mPromptReady;
+
+    QMutex mWakeupMutex;
+    QWaitCondition mWakeupCond;
+    QTimer mElmRecoveryTimer;
+
+    QMutex mStartupMutex;
+    QWaitCondition mStartupCond;
 
     bool mTerminate;
 };
@@ -98,7 +107,6 @@ public:
     virtual ~Interface();
     virtual void connect(SlaveId addr);                      //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
     virtual void disconnect();                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
-    virtual void transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
     virtual void transmitTo(const std::vector<quint8> & data, Id id); //!< Send one CAN frame to an arbitrary ID
     virtual std::vector<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL);
     virtual void setBitrate(int bps);                           //!< Set the bitrate used on the interface
@@ -125,7 +133,7 @@ private:
     void updateBitrateTxType();
     bool calcBitrateParams(int &divisor, bool &useOptTqPerBit);
 
-    static constexpr int TIMEOUT_MSEC = 200;
+    static constexpr int TIMEOUT_MSEC = 2000;
     static constexpr int FINDBAUD_TIMEOUT_MSEC = 50;
     static constexpr int FINDBAUD_ATTEMPTS = 3;
     static constexpr int SWITCHBAUD_TIMEOUT_MSEC = 1280;

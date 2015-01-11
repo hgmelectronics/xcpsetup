@@ -18,21 +18,38 @@ Io::Io(SerialPort &port, QObject *parent) :
     QThread(parent),
     mPort(port),
     mPromptReady(true), // Process of finding baudrate leaves ELM at a prompt
+    mElmRecoveryTimer(this),
     mTerminate(false)
 {
     mPort.setTimeout(TICK_MSEC);
-    mSendTimer.start();
+    mElmRecoveryTimer.setSingleShot(true);
+    mElmRecoveryTimer.setInterval(ELM_RECOVERY_NSEC / 1000000);
     start();
 }
 Io::~Io()
 {
     mTerminate = true;
+    wakeup();
     wait();
 }
+void Io::waitForStartup()
+{
+    QMutexLocker locker(&mStartupMutex);
+    mStartupCond.wait(locker.mutex());
+}
+
 void Io::sync()
 {
-    QMutexLocker locker(&mPipelineClearMutex);
-    mPipelineClearCond.wait(locker.mutex());
+    mWakeupMutex.lock();
+    if(mTransmitQueue.empty())
+    {
+        mWakeupMutex.unlock();
+    }
+    else {
+        QMutexLocker locker(&mPipelineClearMutex);
+        mWakeupMutex.unlock();
+        mPipelineClearCond.wait(locker.mutex());
+    }
 }
 
 void Io::syncAndGetPrompt(int timeoutMsec, int retries)
@@ -43,7 +60,11 @@ void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 
     for(int i = 0; i < retries; ++i)
     {
-        write({'\r'});
+        {
+            QMutexLocker locker(&mWakeupMutex);
+            mTransmitQueue.put({'\r'});
+            mWakeupCond.wakeAll();
+        }
         if(waitPromptReady(timeoutMsec))
             return;
     }
@@ -69,7 +90,11 @@ void Io::flushCmdResp()
 
 void Io::write(const std::vector<quint8> &data)
 {
-    mTransmitQueue.put(data);
+    {
+        QMutexLocker locker(&mWakeupMutex);
+        mTransmitQueue.put(data);
+        mWakeupCond.wakeAll();
+    }
     sync();
 }
 
@@ -87,21 +112,36 @@ bool Io::waitPromptReady(int timeoutMsec)
         return mPromptReadyCond.wait(locker.mutex(), timeoutMsec);
 }
 
+void Io::wakeup()
+{
+    QMutexLocker locker(&mWakeupMutex);\
+    mWakeupCond.wakeAll();
+}
+
 void Io::run()
 {
+    connect(&mPort, &SetupTools::SerialPort::readyRead, this, &Io::wakeup); // might be OK in ctor but this should definitely give the right thread affinity
+    connect(&mElmRecoveryTimer, &QTimer::timeout, this, &Io::wakeup);
+
+    QMutexLocker locker(&mWakeupMutex);
+    {
+        QMutexLocker startupLocker(&mStartupMutex);
+        mStartupCond.wakeAll();
+    }
     while(1)
     {
-        if(mTerminate)
-            return;
-
         bool setPromptReady = false;
-        bool setPipelineClear = true;
 
         Q_ASSERT(mLines.size() <= 1);
 
+        mWakeupCond.wait(locker.mutex());
+
+        if(mTerminate)
+            return;
+
         // Get data from the serial port and put it into mLines (a list of lines, all ending with CR except possibly the last one, which is the line we're receiving right now)
         {
-            std::vector<quint8> buffer = mPort.readGranular(READ_SIZE);
+            std::vector<quint8> buffer = mPort.read(READ_SIZE);
             std::vector<quint8> newLine;
             if(!mLines.empty())
             {
@@ -174,14 +214,13 @@ void Io::run()
         mLines.swap(incompleteLines);
 
         // Send data from mTransmitQueue, unless we're waiting for the device to "settle"
-        if(mSendTimer.nsecsElapsed() > ELM_RECOVERY_NSEC && !mTransmitQueue.empty())
+        if(!mElmRecoveryTimer.isActive() && !mTransmitQueue.empty())
         {
             mPromptReady = false;
             std::vector<quint8> data = mTransmitQueue.get().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
             mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt docs
-            mSendTimer.start();
+            mElmRecoveryTimer.start();
             setPromptReady = false;
-            setPipelineClear = false;
         }
 
         if(setPromptReady)
@@ -191,7 +230,7 @@ void Io::run()
             mPromptReadyCond.wakeAll();
         }
 
-        if(setPipelineClear && mTransmitQueue.empty())
+        if(mTransmitQueue.empty())
         {
             QMutexLocker locker(&mPipelineClearMutex);
             mPipelineClearCond.wakeAll();
@@ -301,7 +340,9 @@ Interface::Interface(const QSerialPortInfo & portInfo, bool serialLog, QObject *
     qDebug() << "Established communication at" << mPort.baudRate() << "baud";
 
     mIo = QSharedPointer<Io>(new Io(mPort, this));
+    mIo->waitForStartup();
     runCmdWithCheck("ATWS", CheckOk::No);   // Software reset
+    QThread::msleep(20);
     runCmdWithCheck("ATE0");                // Turn off echo
     runCmdWithCheck("ATL0");                // Turn off newlines
     runCmdWithCheck("ATS0");                // Turn off spaces
@@ -329,12 +370,6 @@ void Interface::disconnect()
 {
     mSlaveAddr.reset();
     doSetFilter(mFilter);
-}
-
-void Interface::transmit(const std::vector<quint8> & data)
-{
-    Q_ASSERT(mSlaveAddr);
-    transmitTo(data, mSlaveAddr.get().cmd);
 }
 
 void Interface::transmitTo(const std::vector<quint8> & data, Id id)
