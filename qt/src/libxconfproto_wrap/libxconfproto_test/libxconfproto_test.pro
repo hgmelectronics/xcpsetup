@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = elm327
+SUBDIRS = elm327 \
+    xcpconnection

@@ -54,7 +54,7 @@ std::vector<quint8> SerialPort::readGranular(qint64 maxlen)
             break;
         waitForReadyRead(mInterCharTimeout);
         std::vector<quint8> data(read(bytesLeft));
-        Q_ASSERT(data.size() <= bytesLeft);
+        Q_ASSERT(int(data.size()) <= bytesLeft);
         if(data.size() > 0)
             ret.insert(ret.end(), data.begin(), data.end());
         else if(ret.size() > 0)

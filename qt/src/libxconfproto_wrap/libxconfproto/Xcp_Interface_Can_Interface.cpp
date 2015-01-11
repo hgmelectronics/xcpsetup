@@ -78,9 +78,15 @@ bool validateXcp(const Frame &frame)
         return false;
 }
 
-Interface::Interface(QObject *parent) :
+LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Interface(parent)
 {}
+
+void LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
+{
+    Q_ASSERT(mSlaveAddr);
+    transmitTo(data, mSlaveAddr.get().cmd);
+}
 
 std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec)
 {

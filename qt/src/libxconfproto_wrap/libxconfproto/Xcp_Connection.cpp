@@ -443,8 +443,8 @@ void XcpConnection::downloadSegment(XcpPtr base, const std::vector<quint8> &data
 
 void XcpConnection::programPacket(XcpPtr base, const std::vector<quint8> &data)
 {
-    Q_ASSERT(data.size() % mAddrGran == 0);
-    Q_ASSERT(data.size() <= mPgmMaxDownPayload);
+    Q_ASSERT(int(data.size()) % mAddrGran == 0);
+    Q_ASSERT(int(data.size()) <= mPgmMaxDownPayload);
 
     std::vector<quint8> query({0xD0, quint8(data.size() / mAddrGran)});
     if(mAddrGran > 2)
@@ -475,8 +475,8 @@ void XcpConnection::programPacket(XcpPtr base, const std::vector<quint8> &data)
 
 void XcpConnection::programBlock(XcpPtr base, const std::vector<quint8> &data)
 {
-    Q_ASSERT(data.size() % mAddrGran == 0);
-    Q_ASSERT(data.size() <= mPgmMaxBlocksize * mPgmMaxDownPayload);
+    Q_ASSERT(int(data.size()) % mAddrGran == 0);
+    Q_ASSERT(int(data.size()) <= mPgmMaxBlocksize * mPgmMaxDownPayload);
 
     std::function<void (void)> action = [this, base, data]()
     {
