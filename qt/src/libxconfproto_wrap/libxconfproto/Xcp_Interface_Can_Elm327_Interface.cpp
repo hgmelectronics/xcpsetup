@@ -14,42 +14,189 @@ namespace Elm327
 
 static const std::vector<quint8> OK_VEC({'O', 'K'});
 
-Io::Io(SerialPort &port, QObject *parent) :
-    QThread(parent),
+IoCore::IoCore(SerialPort &port, QObject *parent) :
+    QObject(parent),
     mPort(port),
-    mPromptReady(true), // Process of finding baudrate leaves ELM at a prompt
-    mElmRecoveryTimer(this),
-    mTerminate(false)
+    mRecoveryTimer(this)
 {
-    mPort.setTimeout(TICK_MSEC);
-    mElmRecoveryTimer.setSingleShot(true);
-    mElmRecoveryTimer.setInterval(ELM_RECOVERY_NSEC / 1000000);
-    start();
+    mRecoveryTimer.setSingleShot(true);
+    mRecoveryTimer.setInterval(ELM_RECOVERY_MSEC);
 }
-Io::~Io()
+
+void IoCore::init()
 {
-    mTerminate = true;
-    wakeup();
-    wait();
+    connect(&mPort, &SerialPort::readyRead, this, &IoCore::portReadyRead);
+    connect(&mRecoveryTimer, &QTimer::timeout, &mRecoveryMutex, &QMutex::unlock);
 }
-void Io::waitForStartup()
+
+void IoCore::write(const std::vector<quint8> &data)
 {
-    QMutexLocker locker(&mStartupMutex);
-    mStartupCond.wait(locker.mutex());
+
+}
+
+void IoCore::portReadyRead()
+{
+    // Get data from the serial port and put it into mLines (a list of lines, all ending with CR except possibly the last one, which is the line we're receiving right now)
+    {
+        std::vector<quint8> buffer = mPort.read(mPort.bytesAvailable());
+        std::vector<quint8> newLine;
+        if(!mLines.empty())
+        {
+            newLine = mLines[0];
+            mLines.pop_back();
+        }
+        for(uchar c : buffer)
+        {
+            if(c != '\0')   // Ignore nulls, which ELM documentation says may be emitted in error
+            {
+                newLine.push_back(c);
+                if(c == EOL)
+                {
+                    mLines.push_back(newLine);
+                    newLine.clear();
+                }
+            }
+        }
+        if(newLine.size())
+            mLines.push_back(newLine);
+    }
+
+    // Process lines from mLines, putting any incomplete line that may exist back into mLines
+    std::vector<std::vector<quint8> > incompleteLines;
+    for(std::vector<quint8> & line : mLines)
+    {
+        //qDebug() << mPort.elapsedSecs() << "ELM327 IO line" << line.toPercentEncoding();
+        if(*(line.end() - 1) == EOL)
+        {
+            line.pop_back();
+            if(!line.empty()) {
+                if(containsNonHex(line))\
+                    mRcvdCmdRespQueue.put(line);
+                else
+                {
+                    Frame frame;
+                    size_t idLen;
+                    if(line.size() % 2 == 1)
+                    {
+                        frame.id.type = Id::Type::Std;
+                        idLen = 3;
+                    }
+                    else
+                    {
+                        frame.id.type = Id::Type::Ext;
+                        idLen = 8;
+                    }
+
+                    if(line.size() >= idLen)
+                    {
+                        frame.id.addr = QByteArray(reinterpret_cast<char *>(line.data()), idLen).toUInt(NULL, 16);
+                        QByteArray dataArr(QByteArray::fromHex(QByteArray(reinterpret_cast<char *>(line.data() + idLen), line.size() - idLen)));
+                        frame.data = std::vector<quint8>(reinterpret_cast<quint8 *>(dataArr.data()), reinterpret_cast<quint8 *>(dataArr.data() + dataArr.size()));
+                        mRcvdFrameQueue.put(frame);
+                    }
+                    else
+                        mRcvdCmdRespQueue.put(line);    // too short to be valid
+
+                }
+            }
+        }
+        else
+        {
+            if(line.size() == 1 && line[0] == '>')
+            {
+                mPromptMutex.tryLock();
+                mPromptMutex.unlock();
+            }
+            else
+                incompleteLines.push_back(line);
+        }
+    }
+    mLines.swap(incompleteLines);
+}
+
+void IoCore::waitForReadyWrite()
+{
+    mRecoveryMutex.lock();
+    mRecoveryMutex.unlock();
+}
+
+void IoCore::write(const std::vector<quint8> &data)
+{
+    Q_ASSERT(mRecoveryMutex.tryLock());
+    mPromptMutex.tryLock();
+    mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt docs
+    mPipelineMutex.tryLock();
+    mPipelineMutex.unlock();
+    mRecoveryTimer.start();
+}
+
+bool IoCore::isPromptReady()
+{
+    if(mPromptMutex.tryLock())
+    {
+        mPromptMutex.unlock();
+        return true;
+    }
+    else
+        return false;
+}
+
+bool IoCore::waitPromptReady(int timeoutMsec)
+{
+    if(mPromptMutex.tryLock(timeoutMsec))
+    {
+        mPromptMutex.unlock();
+        return true;
+    }
+    else
+        return false;
+}
+
+std::vector<Frame> IoCore::getRcvdFrames(int timeoutMsec)
+{
+    return mRcvdFrameQueue.getAll(timeoutMsec);
+}
+
+std::vector<std::vector<quint8> > IoCore::getRcvdCmdResp(int timeoutMsec)
+{
+    return mRcvdCmdRespQueue.getAll(timeoutMsec);
+}
+
+void IoCore::waitForPipelineClear()
+{
+    mPipelineMutex.lock();
+    mPipelineMutex.unlock();
+}
+
+Io::Io(SerialPort &port, QObject *parent) :
+    QObject(parent),
+    mIoCore(port)
+{
+    mIoCore.moveToThread(&mThread);
+    mIoCore.init();
+    connect(this, &Io::doWrite, &mIoCore, &IoCore::write);
+    mThread.start();
+}
+
+void Io::write(const std::vector<quint8> &data)
+{
+    mIoCore.waitForReadyWrite();
+    doWrite(data);
 }
 
 void Io::sync()
 {
-    mWakeupMutex.lock();
-    if(mTransmitQueue.empty())
-    {
-        mWakeupMutex.unlock();
-    }
-    else {
-        QMutexLocker locker(&mPipelineClearMutex);
-        mWakeupMutex.unlock();
-        mPipelineClearCond.wait(locker.mutex());
-    }
+    mIoCore.waitForPipelineClear();
+}
+
+bool Io::isPromptReady()
+{
+    return mIoCore.isPromptReady();
+}
+
+bool Io::waitPromptReady(int timeoutMsec)
+{
+    return mIoCore.waitPromptReady(timeoutMsec);
 }
 
 void Io::syncAndGetPrompt(int timeoutMsec, int retries)
@@ -71,16 +218,6 @@ void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 
     qCritical("Failed to obtain prompt from ELM327");
     throw NoResponse();
-}
-
-std::vector<Frame> Io::getRcvdFrames(int timeoutMsec)
-{
-    return mRcvdFrameQueue.getAll(timeoutMsec);
-}
-
-std::vector<std::vector<quint8> > Io::getRcvdCmdResp(int timeoutMsec)
-{
-    return mRcvdCmdRespQueue.getAll(timeoutMsec);
 }
 
 void Io::flushCmdResp()
