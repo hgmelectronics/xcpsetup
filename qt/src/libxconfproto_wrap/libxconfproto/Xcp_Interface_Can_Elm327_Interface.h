@@ -62,6 +62,7 @@ private:
     std::list<std::vector<quint8> > mTransmitQueue;
     PythonicEvent mPromptReady, mWriteComplete;
     QTimer mRecoveryTimer;
+    QTimer mPollTimer;
 };
 
 class Io : public QObject

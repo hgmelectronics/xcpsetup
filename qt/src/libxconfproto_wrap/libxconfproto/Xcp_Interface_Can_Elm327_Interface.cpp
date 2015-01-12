@@ -19,10 +19,13 @@ IoTask::IoTask(SerialPort &port, QObject *parent) :
     mPort(port),
     mPromptReady(this),
     mWriteComplete(this),
-    mRecoveryTimer(this)
+    mRecoveryTimer(this),
+    mPollTimer(this)
 {
     mRecoveryTimer.setSingleShot(true);
     mRecoveryTimer.setInterval(ELM327_RECOVERY_MSEC);
+    mPollTimer.setSingleShot(false);
+    mPollTimer.setInterval(1);
     mPromptReady.set();
     mWriteComplete.set();
 }
@@ -31,6 +34,7 @@ void IoTask::init()
 {
     connect(&mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
     connect(&mRecoveryTimer, &QTimer::timeout, this, &IoTask::recoveryTimerDone);
+    connect(&mPollTimer, &QTimer::timeout, this, &IoTask::portReadyRead);
 }
 
 std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
