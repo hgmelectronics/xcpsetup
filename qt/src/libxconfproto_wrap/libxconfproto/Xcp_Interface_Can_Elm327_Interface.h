@@ -50,7 +50,7 @@ public slots:
     void recoveryTimerDone();
 private:
     static constexpr uchar EOL = '\r';
-    static constexpr int ELM327_RECOVERY_MSEC = 1;
+    static constexpr int ELM327_RECOVERY_MSEC = 3;
 
     void doWrite(const std::vector<quint8> &data);
 
