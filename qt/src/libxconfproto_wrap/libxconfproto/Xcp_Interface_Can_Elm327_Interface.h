@@ -46,7 +46,7 @@ public:
     void clearWriteComplete();
 public slots:
     void portReadyRead();
-    void queueWrite(std::vector<quint8> data);
+    void queueWrite(std::vector<quint8> data, bool recoveryRequired);
     void recoveryTimerDone();
 private:
     static constexpr uchar EOL = '\r';
@@ -75,17 +75,17 @@ public:
     std::vector<Frame> getRcvdFrames(int timeoutMsec);
     std::vector<std::vector<quint8> > getRcvdCmdResp(int timeoutMsec);
     void flushCmdResp();
-    void write(const std::vector<quint8> &data);
-    inline void write(const QByteArray &data)
+    void write(const std::vector<quint8> &data, bool recoveryRequired);
+    inline void write(const QByteArray &data, bool recoveryRequired)
     {
         std::vector<quint8> dataVec(reinterpret_cast<const quint8 *>(data.begin()), reinterpret_cast<const quint8 *>(data.end()));
-        write(dataVec);
+        write(dataVec, recoveryRequired);
     }
 
     bool isPromptReady();
     bool waitPromptReady(int timeoutMsec);
 signals:
-    void queueWrite(std::vector<quint8> data);
+    void queueWrite(std::vector<quint8> data, bool recoveryRequired);
 private:
     static constexpr uchar EOL = '\r';
 

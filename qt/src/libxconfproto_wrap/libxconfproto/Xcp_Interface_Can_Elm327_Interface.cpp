@@ -141,9 +141,9 @@ void IoTask::portReadyRead()
     mLines.swap(incompleteLines);
 }
 
-void IoTask::queueWrite(std::vector<quint8> data)
+void IoTask::queueWrite(std::vector<quint8> data, bool recoveryRequired)
 {
-    if(!mRecoveryTimer.isActive())
+    if(!mRecoveryTimer.isActive() || !recoveryRequired)
     {
         doWrite(data);
     }
@@ -200,7 +200,7 @@ void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 
     for(int i = 0; i < retries; ++i)
     {
-        queueWrite({'\r'});
+        queueWrite({'\r'}, false);
         if(waitPromptReady(timeoutMsec))
             return;
     }
@@ -224,10 +224,10 @@ void Io::flushCmdResp()
     mTask.getRcvdCmdResp(0);    // ignore the return value -> it gets destroyed
 }
 
-void Io::write(const std::vector<quint8> &data)
+void Io::write(const std::vector<quint8> &data, bool recoveryRequired)
 {
     mTask.clearWriteComplete();
-    emit queueWrite(data);
+    emit queueWrite(data, recoveryRequired);
 }
 
 bool Io::isPromptReady()
@@ -396,7 +396,7 @@ void Interface::transmitTo(const std::vector<quint8> & data, Id id)
         mIo->syncAndGetPrompt(TIMEOUT_MSEC);    // Not synchronized by calling _runCmdWithCheck(), so do it here
     }
 
-    mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + "\r");
+    mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + "\r", false);
 }
 
 std::vector<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter, bool (*validator)(const Frame &))
@@ -450,7 +450,7 @@ void Interface::runCmdWithCheck(const std::vector<quint8> &cmd, CheckOk checkOkP
     {
         std::vector<quint8> tx(cmd);
         tx.push_back('\r');
-        mIo->write(tx);
+        mIo->write(tx, true);
     }
     if(!mIo->waitPromptReady(TIMEOUT_MSEC))
     {
@@ -504,9 +504,9 @@ void Interface::doSetFilter(const Filter & filter)
         runCmdWithCheck(QString("ATCM%1").arg(extMask).toLatin1());
     }
     if(mIntfcIsStn)
-        mIo->write("STM\r");
+        mIo->write("STM\r", true);
     else
-        mIo->write("ATMA\r");
+        mIo->write("ATMA\r", true);
     mCfgdFilter = filter;
 }
 bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
