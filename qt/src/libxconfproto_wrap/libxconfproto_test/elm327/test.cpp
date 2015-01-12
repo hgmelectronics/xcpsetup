@@ -19,7 +19,7 @@ Test::Test(const QString &devName, QObject *parent) :
 void Test::initTestCase()
 {
     QSerialPortInfo info(mDevName);
-    mIntfc = new Interface(info, true, this);
+    mIntfc = new Interface(info, false, this);
     mIntfc->setBitrate(250000);
     mIntfc->setFilter(Filter());    // filter that matches everything
 }

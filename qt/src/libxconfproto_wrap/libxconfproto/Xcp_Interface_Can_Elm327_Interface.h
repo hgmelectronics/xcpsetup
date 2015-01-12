@@ -1,6 +1,7 @@
 #ifndef XCP_INTERFACE_CAN_ELM327_INTERFACE_H
 #define XCP_INTERFACE_CAN_ELM327_INTERFACE_H
 
+#include <QObject>
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <memory>
@@ -31,34 +32,35 @@ class SerialError : public Exception {};
 
 class ConfigError : public Exception {};
 
-class IoCore : public QObject
+class IoTask : public QObject
 {
     Q_OBJECT
 public:
-    IoCore(SerialPort &port, QObject *parent = NULL);
+    IoTask(SerialPort &port, QObject *parent = NULL);
     void init();
-    bool isPromptReady();
-    bool waitPromptReady(int timeoutMsec);
     std::vector<Frame> getRcvdFrames(int timeoutMsec);
     std::vector<std::vector<quint8> > getRcvdCmdResp(int timeoutMsec);
-    void waitForReadyWrite();
-    void waitForPipelineClear();
-private slots:
+    bool isPromptReady();
+    bool waitPromptReady(int timeoutMsec);
+    void waitWriteComplete();
+    void clearWriteComplete();
+public slots:
     void portReadyRead();
-    void write(std::vector<quint8> data);
+    void queueWrite(std::vector<quint8> data);
+    void recoveryTimerDone();
 private:
-    static constexpr int READ_SIZE = 4096;
     static constexpr uchar EOL = '\r';
-    static constexpr int ELM327_RECOVERY_MSEC = 2;
+    static constexpr int ELM327_RECOVERY_MSEC = 1;
+
+    void doWrite(const std::vector<quint8> &data);
 
     SerialPort &mPort;
 
     std::vector<std::vector<quint8> > mLines;
     PythonicQueue<Frame> mRcvdFrameQueue;
     PythonicQueue<std::vector<quint8> > mRcvdCmdRespQueue;
-
-    QMutex mRecoveryMutex, mPromptMutex, mPipelineMutex;
-
+    std::list<std::vector<quint8> > mTransmitQueue;
+    PythonicEvent mPromptReady, mWriteComplete;
     QTimer mRecoveryTimer;
 };
 
@@ -67,6 +69,7 @@ class Io : public QObject
     Q_OBJECT
 public:
     Io(SerialPort &port, QObject *parent = NULL);
+    ~Io();
     void sync();
     void syncAndGetPrompt(int timeoutMsec, int retries = 5);
     std::vector<Frame> getRcvdFrames(int timeoutMsec);
@@ -82,10 +85,12 @@ public:
     bool isPromptReady();
     bool waitPromptReady(int timeoutMsec);
 signals:
-    void doWrite(std::vector<quint8> data);
+    void queueWrite(std::vector<quint8> data);
 private:
+    static constexpr uchar EOL = '\r';
+
+    IoTask mTask;
     QThread mThread;
-    IoCore mIoCore;
 };
 
 /*!
@@ -135,7 +140,7 @@ private:
     void updateBitrateTxType();
     bool calcBitrateParams(int &divisor, bool &useOptTqPerBit);
 
-    static constexpr int TIMEOUT_MSEC = 2000;
+    static constexpr int TIMEOUT_MSEC = 200;
     static constexpr int FINDBAUD_TIMEOUT_MSEC = 50;
     static constexpr int FINDBAUD_ATTEMPTS = 3;
     static constexpr int SWITCHBAUD_TIMEOUT_MSEC = 1280;

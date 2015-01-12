@@ -100,4 +100,33 @@ qint64 SerialPort::writeData(const char *data, qint64 maxSize)
     return res;
 }
 
+PythonicEvent::PythonicEvent(QObject *parent) :
+    QObject(parent),
+    mFlag(false)
+{}
+PythonicEvent::~PythonicEvent() {}
+bool PythonicEvent::isSet()
+{
+    QMutexLocker locker(&mMutex);
+    return mFlag;
+}
+void PythonicEvent::set()
+{
+    QMutexLocker locker(&mMutex);
+    mFlag = true;
+    mCond.wakeAll();
+}
+void PythonicEvent::clear()
+{
+    QMutexLocker locker(&mMutex);
+    mFlag = false;
+}
+bool PythonicEvent::wait(unsigned long timeoutMsec)
+{
+    QMutexLocker locker(&mMutex);
+    if(mFlag)
+        return true;
+    return mCond.wait(locker.mutex(), timeoutMsec);
+}
+
 }   // namespace SetupTools
