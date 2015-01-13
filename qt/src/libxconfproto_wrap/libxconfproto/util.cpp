@@ -126,7 +126,15 @@ bool PythonicEvent::wait(unsigned long timeoutMsec)
     QMutexLocker locker(&mMutex);
     if(mFlag)
         return true;
-    return mCond.wait(locker.mutex(), timeoutMsec);
+    if(mCond.wait(locker.mutex(), timeoutMsec))
+        return true;
+    return mFlag;
+    /*
+     * Recheck of mFlag may not have any effect - but if implementation is such that this thread can be
+     * preempted after taking timestamp for timeout and before beginning wait, it seems plausible that
+     * this thread will never actually check the condition (since thread setting the condition will be prevented
+     * from getting the mutex until after timeout has expired).
+     */
 }
 
 }   // namespace SetupTools

@@ -201,6 +201,7 @@ void Io::syncAndGetPrompt(int timeoutMsec, int retries)
     for(int i = 0; i < retries; ++i)
     {
         queueWrite({'\r'}, false);
+        sync();
         if(waitPromptReady(timeoutMsec))
             return;
     }

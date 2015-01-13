@@ -197,7 +197,7 @@ public slots:
 private:
     QMutex mMutex;
     QWaitCondition mCond;
-    bool mFlag;
+    volatile bool mFlag;
 };
 
 }   // namespace SetupTools
