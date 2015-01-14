@@ -20,9 +20,9 @@ TEMPLATE = app
 SOURCES += main.cpp \
     test.cpp
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/release/ -llibxconfproto
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/debug/ -llibxconfproto
-else:unix: LIBS += -L$$OUT_PWD/../../libxconfproto/ -llibxconfproto
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/release/ -lxconfproto
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/debug/ -lxconfproto
+else:unix: LIBS += -L$$OUT_PWD/../../libxconfproto/ -lxconfproto
 
 INCLUDEPATH += $$PWD/../../libxconfproto
 DEPENDPATH += $$PWD/../../libxconfproto

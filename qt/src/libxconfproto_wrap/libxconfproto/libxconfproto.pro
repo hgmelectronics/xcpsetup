@@ -10,7 +10,7 @@ QT       -= gui
 
 QMAKE_CXXFLAGS += -std=c++11
 
-TARGET = libxconfproto
+TARGET = xconfproto
 TEMPLATE = lib
 
 DEFINES += LIBXCONFPROTO_LIBRARY
