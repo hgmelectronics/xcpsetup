@@ -46,13 +46,10 @@ public:
     void clearWriteComplete();
 public slots:
     void portReadyRead();
-    void queueWrite(std::vector<quint8> data);
-    void recoveryTimerDone();
+    void write(std::vector<quint8> data);
 private:
     static constexpr uchar EOL = '\r';
-    static constexpr int ELM327_RECOVERY_MSEC = 1;
-
-    void doWrite(const std::vector<quint8> &data);
+    static constexpr int PROMPT_DELAY_USEC = 200;
 
     SerialPort &mPort;
 
@@ -61,7 +58,6 @@ private:
     PythonicQueue<std::vector<quint8> > mRcvdCmdRespQueue;
     std::list<std::vector<quint8> > mTransmitQueue;
     PythonicEvent mPromptReady, mWriteComplete;
-    QTimer mRecoveryTimer;
 };
 
 class Io : public QObject

@@ -18,11 +18,8 @@ IoTask::IoTask(SerialPort &port, QObject *parent) :
     QObject(parent),
     mPort(port),
     mPromptReady(this),
-    mWriteComplete(this),
-    mRecoveryTimer(this)
+    mWriteComplete(this)
 {
-    mRecoveryTimer.setSingleShot(true);
-    mRecoveryTimer.setInterval(ELM327_RECOVERY_MSEC);
     mPromptReady.set();
     mWriteComplete.set();
 }
@@ -30,7 +27,6 @@ IoTask::IoTask(SerialPort &port, QObject *parent) :
 void IoTask::init()
 {
     connect(&mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
-    connect(&mRecoveryTimer, &QTimer::timeout, this, &IoTask::recoveryTimerDone);
 }
 
 std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
@@ -133,7 +129,10 @@ void IoTask::portReadyRead()
         else
         {
             if(line.size() == 1 && line[0] == '>')
+            {
+                QThread::usleep(PROMPT_DELAY_USEC);
                 mPromptReady.set();
+            }
             else
                 incompleteLines.push_back(line);
         }
@@ -141,32 +140,9 @@ void IoTask::portReadyRead()
     mLines.swap(incompleteLines);
 }
 
-void IoTask::queueWrite(std::vector<quint8> data)
-{
-    if(!mRecoveryTimer.isActive())
-    {
-        doWrite(data);
-    }
-    else
-    {
-        mTransmitQueue.push_back(data);
-    }
-}
-
-void IoTask::recoveryTimerDone()
-{
-    if(!mTransmitQueue.empty())
-    {
-        std::vector<quint8> data = std::move(mTransmitQueue.front());
-        mTransmitQueue.pop_front();
-        doWrite(data);
-    }
-}
-
-void IoTask::doWrite(const std::vector<quint8> &data)
+void IoTask::write(std::vector<quint8> data)
 {
     mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt code
-    mRecoveryTimer.start();
     mWriteComplete.set();
 }
 
@@ -178,7 +154,7 @@ Io::Io(SerialPort &port, QObject *parent) :
     port.moveToThread(&mThread);
     mThread.start();
     mTask.init();
-    connect(this, &Io::queueWrite, &mTask, &IoTask::queueWrite, Qt::QueuedConnection);
+    connect(this, &Io::queueWrite, &mTask, &IoTask::write, Qt::QueuedConnection);
 }
 
 Io::~Io()
