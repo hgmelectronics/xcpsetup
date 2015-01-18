@@ -10,7 +10,7 @@ namespace SetupTools
 namespace Xcp
 {
 
-XcpConnection::XcpConnection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec, QObject *parent) :
+Connection::Connection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec, QObject *parent) :
     QObject(parent),
     mIntfc(intfc),
     mTimeoutMsec(timeoutMsec),
@@ -18,7 +18,7 @@ XcpConnection::XcpConnection(QSharedPointer<Interface::Interface> intfc, int tim
     mConnected(false)
 {}
 
-void XcpConnection::open()
+void Connection::open()
 {
     static constexpr char OPMSG[] = "connecting to slave";
 
@@ -54,7 +54,7 @@ void XcpConnection::open()
     mConnected = true;
 }
 
-void XcpConnection::close()
+void Connection::close()
 {
     static constexpr char OPMSG[] = "disconnecting from slave";
 
@@ -64,7 +64,7 @@ void XcpConnection::close()
         throwReply(reply);
 }
 
-std::vector<quint8> XcpConnection::upload(XcpPtr base, int len)
+std::vector<quint8> Connection::upload(XcpPtr base, int len)
 {
     Q_ASSERT(mConnected);
     if(len % mAddrGran)
@@ -85,7 +85,7 @@ std::vector<quint8> XcpConnection::upload(XcpPtr base, int len)
     return ret;
 }
 
-void XcpConnection::download(XcpPtr base, const std::vector<quint8> &data)
+void Connection::download(XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(mConnected);
     if(data.size() % mAddrGran)
@@ -107,7 +107,7 @@ void XcpConnection::download(XcpPtr base, const std::vector<quint8> &data)
     }
 }
 
-void XcpConnection::nvWrite()
+void Connection::nvWrite()
 {
     Q_ASSERT(mConnected);
     if(!mSupportsCalPage)
@@ -149,7 +149,7 @@ void XcpConnection::nvWrite()
     tryQuery(action);
 }
 
-void XcpConnection::setCalPage(quint8 segment, quint8 page)
+void Connection::setCalPage(quint8 segment, quint8 page)
 {
     Q_ASSERT(mConnected);
     if(!mSupportsCalPage)
@@ -171,7 +171,7 @@ void XcpConnection::setCalPage(quint8 segment, quint8 page)
     tryQuery(action);
 }
 
-void XcpConnection::programStart()
+void Connection::programStart()
 {
     Q_ASSERT(mConnected);
 
@@ -198,7 +198,7 @@ void XcpConnection::programStart()
     tryQuery(action);
 }
 
-void XcpConnection::programClear(XcpPtr base, int len)
+void Connection::programClear(XcpPtr base, int len)
 {
     Q_ASSERT(mConnected && mPgmStarted);
 
@@ -222,7 +222,7 @@ void XcpConnection::programClear(XcpPtr base, int len)
     tryQuery(action);
 }
 
-void XcpConnection::programRange(XcpPtr base, const std::vector<quint8> &data)
+void Connection::programRange(XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(mConnected && mPgmStarted);
     if(data.size() % mAddrGran)
@@ -231,7 +231,7 @@ void XcpConnection::programRange(XcpPtr base, const std::vector<quint8> &data)
     std::vector<quint8>::const_iterator dataIt = data.begin();
     while(dataIt != data.end())
     {
-        XcpPtr startPtr(base.addr + std::distance(data.begin(), dataIt) / mAddrGran, base.ext);
+        XcpPtr startPtr = {quint32(base.addr + std::distance(data.begin(), dataIt) / mAddrGran), base.ext};
         if(mPgmMasterBlockMode)
         {
             int blockBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxBlocksize * mPgmMaxDownPayload));
@@ -249,7 +249,7 @@ void XcpConnection::programRange(XcpPtr base, const std::vector<quint8> &data)
     }
 }
 
-void XcpConnection::programVerify(quint32 crc)
+void Connection::programVerify(quint32 crc)
 {
     Q_ASSERT(mConnected && mPgmStarted);
 
@@ -269,7 +269,7 @@ void XcpConnection::programVerify(quint32 crc)
     tryQuery(action);
 }
 
-void XcpConnection::programReset()
+void Connection::programReset()
 {
     Q_ASSERT(mConnected && mPgmStarted);
 
@@ -285,7 +285,7 @@ void XcpConnection::programReset()
     tryQuery(action);
 }
 
-std::vector<quint8> XcpConnection::transact(const std::vector<quint8> &cmd, int minReplyBytes, const char *msg, int timeoutMsec)
+std::vector<quint8> Connection::transact(const std::vector<quint8> &cmd, int minReplyBytes, const char *msg, int timeoutMsec)
 {
     mIntfc->transmit(cmd);
 
@@ -301,7 +301,7 @@ std::vector<quint8> XcpConnection::transact(const std::vector<quint8> &cmd, int 
     return replies[0];
 }
 
-void XcpConnection::throwReplies(const std::vector<std::vector<quint8> > &replies, const char *msg)
+void Connection::throwReplies(const std::vector<std::vector<quint8> > &replies, const char *msg)
 {
     typedef std::pair<QString, SlaveError> ErrCodeData;
     static const std::map<quint8, ErrCodeData> ERR_CODE_MAP =
@@ -356,7 +356,12 @@ void XcpConnection::throwReplies(const std::vector<std::vector<quint8> > &replie
             codeData = itCodeData->second;
         else
             codeData = ERR_CODE_UNDEF;
-        qCritical("Slave error: %s%s", reinterpret_cast<const char *>(codeData.first.constData()), appendMsg);
+        const char *codeDesc = reinterpret_cast<const char *>(codeData.first.toLocal8Bit().constData());
+        char msg[strlen(codeDesc) + strlen(appendMsg) + 15];
+        strcpy(msg, "Slave error: ");
+        strcat(msg, codeDesc);
+        strcat(msg, appendMsg);
+        qCritical("%s", msg);
 
         // Throw appropriate exception for error code
         throw codeData.second;
@@ -368,12 +373,12 @@ void XcpConnection::throwReplies(const std::vector<std::vector<quint8> > &replie
         throw BadReply();
     }
 }
-void XcpConnection::throwReply(const std::vector<quint8> &reply, const char *msg)
+void Connection::throwReply(const std::vector<quint8> &reply, const char *msg)
 {
     throwReplies(std::vector<std::vector<quint8> >({reply}), msg);
 }
 
-std::vector<quint8> XcpConnection::uploadSegment(XcpPtr base, int len)
+std::vector<quint8> Connection::uploadSegment(XcpPtr base, int len)
 {
     std::vector<quint8> ret;
 
@@ -402,7 +407,7 @@ std::vector<quint8> XcpConnection::uploadSegment(XcpPtr base, int len)
             throw;
         }
 
-        mCalcMta = XcpPtr(base.addr + len / mAddrGran, base.ext);
+        mCalcMta = {base.addr + len / mAddrGran, base.ext};
 
         ret = std::move(std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len));
     };
@@ -412,7 +417,7 @@ std::vector<quint8> XcpConnection::uploadSegment(XcpPtr base, int len)
     return ret;
 }
 
-void XcpConnection::downloadSegment(XcpPtr base, const std::vector<quint8> &data)
+void Connection::downloadSegment(XcpPtr base, const std::vector<quint8> &data)
 {
     std::vector<quint8> query({0xF0, quint8(data.size() / mAddrGran)});
     if(mAddrGran > 2)
@@ -441,7 +446,7 @@ void XcpConnection::downloadSegment(XcpPtr base, const std::vector<quint8> &data
     tryQuery(action);
 }
 
-void XcpConnection::programPacket(XcpPtr base, const std::vector<quint8> &data)
+void Connection::programPacket(XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(int(data.size()) % mAddrGran == 0);
     Q_ASSERT(int(data.size()) <= mPgmMaxDownPayload);
@@ -473,7 +478,7 @@ void XcpConnection::programPacket(XcpPtr base, const std::vector<quint8> &data)
     tryQuery(action);
 }
 
-void XcpConnection::programBlock(XcpPtr base, const std::vector<quint8> &data)
+void Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(int(data.size()) % mAddrGran == 0);
     Q_ASSERT(int(data.size()) <= mPgmMaxBlocksize * mPgmMaxDownPayload);
@@ -550,7 +555,7 @@ void XcpConnection::programBlock(XcpPtr base, const std::vector<quint8> &data)
     tryQuery(action);
 }
 
-void XcpConnection::setMta(XcpPtr ptr)
+void Connection::setMta(XcpPtr ptr)
 {
     static constexpr char OPMSG[] = "setting slave Memory Transfer Address";
     std::vector<quint8> query({0xF6, 0, 0, ptr.ext, 0, 0, 0, 0});
@@ -569,7 +574,7 @@ void XcpConnection::setMta(XcpPtr ptr)
     mCalcMta = ptr;
 }
 
-void XcpConnection::tryQuery(std::function<void (void)> &action)
+void Connection::tryQuery(std::function<void (void)> &action)
 {
     int failures = 0;
     while(failures < MAX_RETRIES)
@@ -601,7 +606,7 @@ void XcpConnection::tryQuery(std::function<void (void)> &action)
     throw Timeout();
 }
 
-void XcpConnection::synch()
+void Connection::synch()
 {
     mIntfc->transmit(std::vector<quint8>({0xFC}));
 

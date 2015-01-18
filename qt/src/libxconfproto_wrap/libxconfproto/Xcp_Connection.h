@@ -46,12 +46,6 @@ class MultipleReplies : public ConnException {};
 
 struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
 {
-public:
-    inline XcpPtr(quint32 addr_in = 0, quint8 ext_in = 0) :
-        addr(addr_in),
-        ext(ext_in)
-    {}
-
     quint32 addr;
     quint8 ext;
 };
@@ -65,11 +59,11 @@ inline bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
     return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
 }
 
-class LIBXCONFPROTOSHARED_EXPORT XcpConnection : public QObject
+class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
 {
     Q_OBJECT
 public:
-    explicit XcpConnection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec = 0, QObject *parent = 0);
+    explicit Connection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec = 0, QObject *parent = 0);
     void open();
     void close();
     std::vector<quint8> upload(XcpPtr base, int len);

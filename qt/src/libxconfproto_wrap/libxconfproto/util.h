@@ -181,5 +181,25 @@ private:
     QWaitCondition mCond;
 };
 
+class PythonicEvent : public QObject
+{
+    Q_OBJECT
+public:
+    explicit PythonicEvent(QObject *parent = 0);
+    virtual ~PythonicEvent();
+    bool isSet();
+    bool wait(unsigned long timeoutMsec = ULONG_MAX);
+signals:
+public slots:
+    void set();
+    void clear();
+private:
+    QMutex mMutex;
+    QWaitCondition mCond;
+    bool mFlag;
+};
+
+std::string demangleName(const char *mangled);
+
 }   // namespace SetupTools
 #endif // UTIL_H

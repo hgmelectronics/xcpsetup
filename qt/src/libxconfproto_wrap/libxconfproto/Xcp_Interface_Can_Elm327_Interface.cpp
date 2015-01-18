@@ -300,7 +300,7 @@ Interface::Interface(const QSerialPortInfo & portInfo, bool serialLog, QObject *
     }
     qDebug() << "Established communication at" << mPort.baudRate() << "baud";
 
-    mIo = QSharedPointer<Io>(new Io(mPort, this));
+    mIo = QSharedPointer<Io>(new Io(mPort, NULL));
     runCmdWithCheck("ATWS", CheckOk::No);   // Software reset
     runCmdWithCheck("ATE0");                // Turn off echo
     runCmdWithCheck("ATL0");                // Turn off newlines

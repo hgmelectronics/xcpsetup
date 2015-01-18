@@ -1,4 +1,6 @@
 #include "util.h"
+#include <cxxabi.h>
+#include <memory>
 
 namespace SetupTools
 {
@@ -98,6 +100,47 @@ qint64 SerialPort::writeData(const char *data, qint64 maxSize)
         qDebug() << mLogTimer.nsecsElapsed() / double(1000000000) << "Serial TX" << arr.toPercentEncoding();
     }
     return res;
+}
+
+PythonicEvent::PythonicEvent(QObject *parent) :
+    QObject(parent),
+    mFlag(false)
+{}
+PythonicEvent::~PythonicEvent() {}
+bool PythonicEvent::isSet()
+{
+    QMutexLocker locker(&mMutex);
+    return mFlag;
+}
+void PythonicEvent::set()
+{
+    QMutexLocker locker(&mMutex);
+    mFlag = true;
+    mCond.wakeAll();
+}
+void PythonicEvent::clear()
+{
+    QMutexLocker locker(&mMutex);
+    mFlag = false;
+}
+bool PythonicEvent::wait(unsigned long timeoutMsec)
+{
+    QMutexLocker locker(&mMutex);
+    if(mFlag)
+        return true;
+    return mCond.wait(locker.mutex(), timeoutMsec);
+}
+
+std::string demangleName(const char *mangled)
+{
+    int status = 1;
+
+    std::unique_ptr<char, void(*)(void*)> res {
+        abi::__cxa_demangle(mangled, NULL, NULL, &status),
+        std::free
+    };
+
+    return (status == 0) ? res.get() : mangled ;
 }
 
 }   // namespace SetupTools
