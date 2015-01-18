@@ -1,4 +1,7 @@
 #include "testingslave.h"
+#include <boost/crc.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <numeric>
 
 TestingSlave::TestingSlave(QSharedPointer<SetupTools::Xcp::Interface::Loopback::Interface> intfc, QObject *parent) :
     QThread(parent),
@@ -101,9 +104,89 @@ void TestingSlave::setSendsEvStoreCal(bool enable)
     QMutexLocker locker(&mConfigMutex);
     mSendsEvStoreCal = enable;
 }
-void TestingSlave::setCrcCalc(quint32 (*func)(boost::iterator_range<std::vector<quint8>::iterator>))
+void TestingSlave::setCksumType(SetupTools::Xcp::CksumType type)
 {
     QMutexLocker locker(&mConfigMutex);
+    Q_ASSERT(type != SetupTools::Xcp::CksumType::XCP_USER_DEFINED);
+    switch(type) {
+        case SetupTools::Xcp::CksumType::XCP_ADD_11:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                return std::accumulate(data.begin(), data.end(), quint8(0));
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_ADD_12:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                return std::accumulate(data.begin(), data.end(), quint16(0));
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_ADD_14:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                return std::accumulate(data.begin(), data.end(), quint32(0));
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_ADD_22:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                Q_ASSERT(data.size() % 2 == 0);
+                boost::iterator_range<const quint16 *> wordData(reinterpret_cast<const quint16 *>(&*data.begin()), reinterpret_cast<const quint16 *>(&*data.end()));
+                return std::accumulate(wordData.begin(), wordData.end(), quint16(0));
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_ADD_24:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                Q_ASSERT(data.size() % 2 == 0);
+                boost::iterator_range<const quint16 *> wordData(reinterpret_cast<const quint16 *>(&*data.begin()), reinterpret_cast<const quint16 *>(&*data.end()));
+                return std::accumulate(wordData.begin(), wordData.end(), quint32(0));
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_ADD_44:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                Q_ASSERT(data.size() % 4 == 0);
+                boost::iterator_range<const quint32 *> dwordData(reinterpret_cast<const quint32 *>(&*data.begin()), reinterpret_cast<const quint32 *>(&*data.end()));
+                return std::accumulate(dwordData.begin(), dwordData.end(), quint32(0));
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_CRC_16:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                boost::crc_16_type computer;
+                computer.process_block(&*data.begin(), &*data.end());
+                return computer.checksum();
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_CRC_16_CITT:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                boost::crc_ccitt_type computer;
+                computer.process_block(&*data.begin(), &*data.end());
+                return computer.checksum();
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_CRC_32:
+            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+            {
+                boost::crc_32_type computer;
+                computer.process_block(&*data.begin(), &*data.end());
+                return computer.checksum();
+            };
+            break;
+        case SetupTools::Xcp::CksumType::XCP_USER_DEFINED:
+            Q_ASSERT(type != SetupTools::Xcp::CksumType::XCP_USER_DEFINED);
+            break;
+        default:
+            Q_ASSERT(0);
+            break;
+    }
+}
+void TestingSlave::setCrcCalc(std::function<quint32(boost::iterator_range<std::vector<quint8>::const_iterator>)> func)
+{
+    QMutexLocker locker(&mConfigMutex);
+    mCksumType = SetupTools::Xcp::CksumType::XCP_USER_DEFINED;
     mCrcCalc = func;
 }
 
@@ -346,6 +429,42 @@ void TestingSlave::run()
                         }
                     }
                     transmitWithDelay(OpType::ShortUpload, reply);
+                    break;
+                case BUILD_CHECKSUM:
+                    if(packet.size() < 8)
+                    {
+                        reply = {0xFE, ERR_CMD_SYNTAX};
+                    }
+                    else
+                    {
+                        size_t nElem = fromSlaveEndian<quint32>(packet.data() + 4);
+
+                        auto subRange = findMemRange(nElem, mIsProgramMode ? MemType::Prog : MemType::Calib);
+                        if(subRange)
+                        {
+                            Q_ASSERT(mCrcCalc);
+                            quint32 checksum = mCrcCalc({subRange.get().begin(), subRange.get().end()});
+                            static const std::map<SetupTools::Xcp::CksumType, quint8> CKSUM_TYPE_CODES = {
+                                {SetupTools::Xcp::CksumType::XCP_ADD_11, 0x01},
+                                {SetupTools::Xcp::CksumType::XCP_ADD_12, 0x02},
+                                {SetupTools::Xcp::CksumType::XCP_ADD_14, 0x03},
+                                {SetupTools::Xcp::CksumType::XCP_ADD_22, 0x04},
+                                {SetupTools::Xcp::CksumType::XCP_ADD_24, 0x05},
+                                {SetupTools::Xcp::CksumType::XCP_ADD_44, 0x06},
+                                {SetupTools::Xcp::CksumType::XCP_CRC_16, 0x07},
+                                {SetupTools::Xcp::CksumType::XCP_CRC_16_CITT, 0x08},
+                                {SetupTools::Xcp::CksumType::XCP_CRC_32, 0x09},
+                                {SetupTools::Xcp::CksumType::XCP_USER_DEFINED, 0xFF}
+                            };
+                            reply = {0xFF, CKSUM_TYPE_CODES.at(mCksumType), 0, 0, 0, 0, 0, 0};
+                            toSlaveEndian<quint32>(checksum, reply.data() + 4);
+                        }
+                        else
+                        {
+                            reply = {0xFE, ERR_OUT_OF_RANGE};
+                        }
+                    }
+                    transmitWithDelay(OpType::BuildChecksum, reply);
                     break;
                 case DOWNLOAD:
                     if(mIsProgramMode)

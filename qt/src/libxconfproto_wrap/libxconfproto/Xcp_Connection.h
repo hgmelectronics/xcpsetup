@@ -44,6 +44,19 @@ class SlaveErrorUndefined : public SlaveError {};
 
 class MultipleReplies : public ConnException {};
 
+enum class CksumType {
+    XCP_ADD_11,
+    XCP_ADD_12,
+    XCP_ADD_14,
+    XCP_ADD_22,
+    XCP_ADD_24,
+    XCP_ADD_44,
+    XCP_CRC_16,
+    XCP_CRC_16_CITT,    // [sic]; it's CCITT but the XCP standard leaves out a C
+    XCP_CRC_32,
+    XCP_USER_DEFINED
+};
+
 struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
 {
     quint32 addr;
@@ -58,6 +71,8 @@ inline bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
 {
     return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
 }
+
+quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 
 class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
 {
@@ -75,6 +90,7 @@ public:
     void programRange(XcpPtr base, const std::vector<quint8> &data);
     void programVerify(quint32 crc);
     void programReset();
+    std::pair<CksumType, quint32> buildChecksum(XcpPtr base, int len);
     template <typename T>
     T fromSlaveEndian(const uchar *src)
     {

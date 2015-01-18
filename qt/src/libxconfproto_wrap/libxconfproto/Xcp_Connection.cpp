@@ -2,6 +2,9 @@
 
 #include <string.h>
 #include <QtEndian>
+#include <boost/crc.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <numeric>
 
 #include "util.h"
 
@@ -9,6 +12,71 @@ namespace SetupTools
 {
 namespace Xcp
 {
+
+quint32 computeCksum(CksumType type, const std::vector<quint8> &data)
+{
+    switch(type)
+    {
+        case CksumType::XCP_ADD_11:
+            return std::accumulate(data.begin(), data.end(), quint8(0));
+            break;
+        case CksumType::XCP_ADD_12:
+            return std::accumulate(data.begin(), data.end(), quint16(0));
+            break;
+        case CksumType::XCP_ADD_14:
+            return std::accumulate(data.begin(), data.end(), quint32(0));
+            break;
+        case CksumType::XCP_ADD_22:
+            Q_ASSERT(data.size() % 2 == 0);
+            {
+                boost::iterator_range<const quint16 *> wordData(reinterpret_cast<const quint16 *>(data.data()), reinterpret_cast<const quint16 *>(data.data() + data.size()));
+                return std::accumulate(wordData.begin(), wordData.end(), quint16(0));
+            }
+            break;
+        case CksumType::XCP_ADD_24:
+            Q_ASSERT(data.size() % 2 == 0);
+            {
+                boost::iterator_range<const quint16 *> wordData(reinterpret_cast<const quint16 *>(data.data()), reinterpret_cast<const quint16 *>(data.data() + data.size()));
+                return std::accumulate(wordData.begin(), wordData.end(), quint32(0));
+            }
+            break;
+        case CksumType::XCP_ADD_44:
+            Q_ASSERT(data.size() % 4 == 0);
+            {
+                boost::iterator_range<const quint32 *> dwordData(reinterpret_cast<const quint32 *>(data.data()), reinterpret_cast<const quint32 *>(data.data() + data.size()));
+                return std::accumulate(dwordData.begin(), dwordData.end(), quint32(0));
+            }
+            break;
+        case CksumType::XCP_CRC_16:
+            {
+                boost::crc_16_type computer;
+                computer.process_block(data.data(), data.data() + data.size());
+                return computer.checksum();
+            }
+            break;
+        case CksumType::XCP_CRC_16_CITT:
+            {
+                boost::crc_ccitt_type computer;
+                computer.process_block(data.data(), data.data() + data.size());
+                return computer.checksum();
+            }
+            break;
+        case CksumType::XCP_CRC_32:
+            {
+                boost::crc_32_type computer;
+                computer.process_block(data.data(), data.data() + data.size());
+                return computer.checksum();
+            }
+            break;
+        case CksumType::XCP_USER_DEFINED:
+            Q_ASSERT(type != CksumType::XCP_USER_DEFINED);
+            break;
+        default:
+            Q_ASSERT(0);
+            break;
+    }
+    return 0;
+}
 
 Connection::Connection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec, QObject *parent) :
     QObject(parent),
@@ -553,6 +621,59 @@ void Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
     };
 
     tryQuery(action);
+}
+
+std::pair<CksumType, quint32> Connection::buildChecksum(XcpPtr base, int len)
+{
+    std::pair<CksumType, quint32> ret;
+
+    std::function<void (void)> action = [this, base, len, &ret]()
+    {
+        static constexpr char OPMSG[] = "building checksum";
+        static const std::map<quint8, CksumType> CKSUM_TYPE_CODES = {
+            {0x01, CksumType::XCP_ADD_11},
+            {0x02, CksumType::XCP_ADD_12},
+            {0x03, CksumType::XCP_ADD_14},
+            {0x04, CksumType::XCP_ADD_22},
+            {0x05, CksumType::XCP_ADD_24},
+            {0x06, CksumType::XCP_ADD_44},
+            {0x07, CksumType::XCP_CRC_16},
+            {0x08, CksumType::XCP_CRC_16_CITT},
+            {0x09, CksumType::XCP_CRC_32},
+            {0xFF, CksumType::XCP_USER_DEFINED}
+        };
+
+        std::vector<quint8> query;
+        std::vector<quint8> reply;
+
+        if(!mCalcMta || mCalcMta.get() != base)
+            setMta(base);
+
+        query = {0xF3, 0, 0, 0, 0, 0, 0, 0};
+        toSlaveEndian<quint32>(len, query.data() + 4);
+
+        try
+        {
+            reply = transact(query, 8, OPMSG);
+            if(reply[0] != 0xFF)
+                throwReply(reply);
+
+            decltype(CKSUM_TYPE_CODES)::const_iterator type = CKSUM_TYPE_CODES.find(reply[1]);
+            if(type == CKSUM_TYPE_CODES.end())
+                throwReply(reply);
+
+            mCalcMta = base;
+            ret = {type->second, fromSlaveEndian<quint32>(reply.data() + 4)};
+        } catch(ConnException)
+        {
+            mCalcMta.reset();
+            throw;
+        }
+    };
+
+    tryQuery(action);
+
+    return ret;
 }
 
 void Connection::setMta(XcpPtr ptr)

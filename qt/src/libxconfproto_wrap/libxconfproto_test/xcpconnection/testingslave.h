@@ -8,6 +8,7 @@
 #include <Xcp_Connection.h>
 #include <util.h>
 #include <map>
+#include <functional>
 #include <boost/range/iterator_range.hpp>
 
 class TestingSlave : public QThread
@@ -150,7 +151,8 @@ public:
     void setMasterBlockSupport(bool enable);
     void setPgmMasterBlockSupport(bool enable);
     void setSendsEvStoreCal(bool enable);
-    void setCrcCalc(quint32 (*func)(boost::iterator_range<std::vector<quint8>::iterator>));
+    void setCksumType(SetupTools::Xcp::CksumType type);
+    void setCrcCalc(std::function<quint32(boost::iterator_range<std::vector<quint8>::const_iterator>)> func); // sets user-defined checksum type
     int addMemRange(MemType type, SetupTools::Xcp::XcpPtr base, size_t len, quint8 segment = 0, std::vector<quint8> validPages = {0});
     int addMemRange(MemType type, SetupTools::Xcp::XcpPtr base, std::vector<quint8> data, quint8 segment = 0, std::vector<quint8> validPages = {0});
     const std::vector<quint8> &getMemRange(int idx);
@@ -233,7 +235,8 @@ private:
     std::map<OpType, ResponseDelay> mResponseDelay;
     std::map<int, MemRange> mMemRanges;
     int mNextMemRangeIdx;
-    quint32 (*mCrcCalc)(boost::iterator_range<std::vector<quint8>::iterator>);
+    SetupTools::Xcp::CksumType mCksumType;
+    std::function<quint32(boost::iterator_range<std::vector<quint8>::const_iterator>)> mCrcCalc;
 
     bool mIsConnected;
     bool mIsProgramMode;
