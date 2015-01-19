@@ -202,6 +202,21 @@ public:
         else
             return qToLittleEndian<T>(src);
     }
+    template <typename A, typename D>
+    A additiveChecksum(boost::iterator_range<std::vector<quint8>::const_iterator> data)
+    {
+        Q_ASSERT(data.size() % sizeof(D) == 0);
+        const D *it = reinterpret_cast<const D *>(&*data.begin());
+        const D *end = reinterpret_cast<const D *>(&*data.end());
+
+        A accum;
+        while(it != end)
+        {
+            accum += toSlaveEndian<D>(*it);
+            ++it;
+        }
+        return accum;
+    }
 signals:
 
 public slots:

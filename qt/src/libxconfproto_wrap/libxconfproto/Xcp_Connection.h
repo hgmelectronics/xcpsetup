@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <boost/optional.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <vector>
 
 #include "libxconfproto_global.h"
@@ -133,6 +134,21 @@ public:
         else
             return qToLittleEndian<T>(src);
     }
+    template <typename A, typename D>
+    A additiveChecksum(boost::iterator_range<std::vector<quint8>::const_iterator> data)
+    {
+        Q_ASSERT(data.size() % sizeof(D) == 0);
+        const D *it = reinterpret_cast<const D *>(&*data.begin());
+        const D *end = reinterpret_cast<const D *>(&*data.end());
+
+        A accum;
+        while(it != end)
+        {
+            accum += toSlaveEndian<D>(*it);
+            ++it;
+        }
+        return accum;
+    }
 
 signals:
 public slots:
@@ -147,6 +163,7 @@ private:
     void setMta(XcpPtr ptr);
     void tryQuery(std::function<void (void)> &action);
     void synch();
+    quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 
     static constexpr int MAX_RETRIES = 10;
 

@@ -199,7 +199,5 @@ private:
     bool mFlag;
 };
 
-std::string demangleName(const char *mangled);
-
 }   // namespace SetupTools
 #endif // UTIL_H

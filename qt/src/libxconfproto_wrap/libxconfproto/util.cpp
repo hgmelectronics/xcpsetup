@@ -1,6 +1,4 @@
 #include "util.h"
-#include <cxxabi.h>
-#include <memory>
 
 namespace SetupTools
 {
@@ -129,18 +127,6 @@ bool PythonicEvent::wait(unsigned long timeoutMsec)
     if(mFlag)
         return true;
     return mCond.wait(locker.mutex(), timeoutMsec);
-}
-
-std::string demangleName(const char *mangled)
-{
-    int status = 1;
-
-    std::unique_ptr<char, void(*)(void*)> res {
-        abi::__cxa_demangle(mangled, NULL, NULL, &status),
-        std::free
-    };
-
-    return (status == 0) ? res.get() : mangled ;
 }
 
 }   // namespace SetupTools

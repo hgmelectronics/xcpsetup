@@ -104,52 +104,36 @@ void TestingSlave::setSendsEvStoreCal(bool enable)
     QMutexLocker locker(&mConfigMutex);
     mSendsEvStoreCal = enable;
 }
+
 void TestingSlave::setCksumType(SetupTools::Xcp::CksumType type)
 {
     QMutexLocker locker(&mConfigMutex);
     Q_ASSERT(type != SetupTools::Xcp::CksumType::XCP_USER_DEFINED);
+    mCksumType = type;
     switch(type) {
         case SetupTools::Xcp::CksumType::XCP_ADD_11:
-            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
-            {
-                return std::accumulate(data.begin(), data.end(), quint8(0));
-            };
+            mCrcCalc = [this](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+                { return additiveChecksum<quint8, quint8>(data); };
             break;
         case SetupTools::Xcp::CksumType::XCP_ADD_12:
-            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
-            {
-                return std::accumulate(data.begin(), data.end(), quint16(0));
-            };
+            mCrcCalc = [this](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+                { return additiveChecksum<quint16, quint8>(data); };
             break;
         case SetupTools::Xcp::CksumType::XCP_ADD_14:
-            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
-            {
-                return std::accumulate(data.begin(), data.end(), quint32(0));
-            };
+            mCrcCalc = [this](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+                { return additiveChecksum<quint32, quint8>(data); };
             break;
         case SetupTools::Xcp::CksumType::XCP_ADD_22:
-            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
-            {
-                Q_ASSERT(data.size() % 2 == 0);
-                boost::iterator_range<const quint16 *> wordData(reinterpret_cast<const quint16 *>(&*data.begin()), reinterpret_cast<const quint16 *>(&*data.end()));
-                return std::accumulate(wordData.begin(), wordData.end(), quint16(0));
-            };
+            mCrcCalc = [this](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+                { return additiveChecksum<quint16, quint16>(data); };
             break;
         case SetupTools::Xcp::CksumType::XCP_ADD_24:
-            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
-            {
-                Q_ASSERT(data.size() % 2 == 0);
-                boost::iterator_range<const quint16 *> wordData(reinterpret_cast<const quint16 *>(&*data.begin()), reinterpret_cast<const quint16 *>(&*data.end()));
-                return std::accumulate(wordData.begin(), wordData.end(), quint32(0));
-            };
+            mCrcCalc = [this](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+                { return additiveChecksum<quint32, quint16>(data); };
             break;
         case SetupTools::Xcp::CksumType::XCP_ADD_44:
-            mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
-            {
-                Q_ASSERT(data.size() % 4 == 0);
-                boost::iterator_range<const quint32 *> dwordData(reinterpret_cast<const quint32 *>(&*data.begin()), reinterpret_cast<const quint32 *>(&*data.end()));
-                return std::accumulate(dwordData.begin(), dwordData.end(), quint32(0));
-            };
+            mCrcCalc = [this](boost::iterator_range<std::vector<quint8>::const_iterator> data)
+                { return additiveChecksum<quint32, quint32>(data); };
             break;
         case SetupTools::Xcp::CksumType::XCP_CRC_16:
             mCrcCalc = [](boost::iterator_range<std::vector<quint8>::const_iterator> data)
@@ -612,7 +596,7 @@ void TestingSlave::run()
                     else
                     {
                         quint32 clearRange = fromSlaveEndian<quint32>(packet.data() + 4);
-                        if(reply[1] == 0)
+                        if(packet[1] == 0)
                         {
                             auto subRange = findMemRange(clearRange, MemType::Calib);
                             if(subRange)
@@ -626,7 +610,7 @@ void TestingSlave::run()
                                 reply = {0xFE, ERR_OUT_OF_RANGE};
                             }
                         }
-                        else    // if(reply[1] == 0x01)
+                        else    // if(packet[1] == 0x01)
                         {
                             if(!(clearRange & 0x03))
                             {

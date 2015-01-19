@@ -13,39 +13,27 @@ namespace SetupTools
 namespace Xcp
 {
 
-quint32 computeCksum(CksumType type, const std::vector<quint8> &data)
+quint32 Connection::computeCksum(CksumType type, const std::vector<quint8> &data)
 {
     switch(type)
     {
         case CksumType::XCP_ADD_11:
-            return std::accumulate(data.begin(), data.end(), quint8(0));
+            return additiveChecksum<quint8, quint8>(data);
             break;
         case CksumType::XCP_ADD_12:
-            return std::accumulate(data.begin(), data.end(), quint16(0));
+            return additiveChecksum<quint16, quint8>(data);
             break;
         case CksumType::XCP_ADD_14:
-            return std::accumulate(data.begin(), data.end(), quint32(0));
+            return additiveChecksum<quint32, quint8>(data);
             break;
         case CksumType::XCP_ADD_22:
-            Q_ASSERT(data.size() % 2 == 0);
-            {
-                boost::iterator_range<const quint16 *> wordData(reinterpret_cast<const quint16 *>(data.data()), reinterpret_cast<const quint16 *>(data.data() + data.size()));
-                return std::accumulate(wordData.begin(), wordData.end(), quint16(0));
-            }
+            return additiveChecksum<quint16, quint16>(data);
             break;
         case CksumType::XCP_ADD_24:
-            Q_ASSERT(data.size() % 2 == 0);
-            {
-                boost::iterator_range<const quint16 *> wordData(reinterpret_cast<const quint16 *>(data.data()), reinterpret_cast<const quint16 *>(data.data() + data.size()));
-                return std::accumulate(wordData.begin(), wordData.end(), quint32(0));
-            }
+            return additiveChecksum<quint32, quint16>(data);
             break;
         case CksumType::XCP_ADD_44:
-            Q_ASSERT(data.size() % 4 == 0);
-            {
-                boost::iterator_range<const quint32 *> dwordData(reinterpret_cast<const quint32 *>(data.data()), reinterpret_cast<const quint32 *>(data.data() + data.size()));
-                return std::accumulate(dwordData.begin(), dwordData.end(), quint32(0));
-            }
+            return additiveChecksum<quint32, quint32>(data);
             break;
         case CksumType::XCP_CRC_16:
             {
@@ -371,31 +359,8 @@ std::vector<quint8> Connection::transact(const std::vector<quint8> &cmd, int min
 
 void Connection::throwReplies(const std::vector<std::vector<quint8> > &replies, const char *msg)
 {
-    typedef std::pair<QString, SlaveError> ErrCodeData;
-    static const std::map<quint8, ErrCodeData> ERR_CODE_MAP =
-    {
-        {0x10, {"busy", SlaveErrorBusy()}},
-        {0x11, {"DAQ active", SlaveErrorDaqActive()}},
-        {0x12, {"program active", SlaveErrorPgmActive()}},
-        {0x20, {"command unknown", SlaveErrorCmdUnknown()}},
-        {0x21, {"command syntax invalid", SlaveErrorCmdSyntax()}},
-        {0x22, {"parameter out of range", SlaveErrorOutOfRange()}},
-        {0x23, {"write protected", SlaveErrorWriteProtected()}},
-        {0x24, {"access denied", SlaveErrorAccessDenied()}},
-        {0x25, {"access locked", SlaveErrorAccessLocked()}},
-        {0x26, {"page invalid", SlaveErrorPageNotValid()}},
-        {0x27, {"page mode invalid", SlaveErrorModeNotValid()}},
-        {0x28, {"segment invalid", SlaveErrorSegmentNotValid()}},
-        {0x29, {"sequence", SlaveErrorSequence()}},
-        {0x2A, {"DAQ configuration invalid", SlaveErrorDAQConfig()}},
-        {0x30, {"memory overflow", SlaveErrorMemoryOverflow()}},
-        {0x31, {"generic", SlaveErrorGeneric()}},
-        {0x32, {"program verify failed", SlaveErrorVerify()}}
-    };
-    static const ErrCodeData ERR_CODE_UNDEF = {"undefined error code", SlaveErrorUndefined()};
-    char appendMsg[256];
+    char appendMsg[(msg ? strlen(msg) : 0) + 2];
     Q_ASSERT(replies.size() >= 1);
-    Q_ASSERT(!msg || strlen(msg) < sizeof(appendMsg) - 2);
     if(msg) {
         strcpy(appendMsg, " ");
         strcat(appendMsg, msg);
@@ -416,23 +381,37 @@ void Connection::throwReplies(const std::vector<std::vector<quint8> > &replies, 
 
     if(replies[0].size() == 2 && quint8(replies[0][0]) == 0xFE)
     {
-        // Look up message for error code, print to qCritical along with caller supplied message
-        ErrCodeData codeData;
-        typedef decltype(ERR_CODE_MAP) CodeMapType;
-        CodeMapType::const_iterator itCodeData = ERR_CODE_MAP.find(quint8(replies[0][1]));
-        if(itCodeData != ERR_CODE_MAP.end())
-            codeData = itCodeData->second;
-        else
-            codeData = ERR_CODE_UNDEF;
-        const char *codeDesc = reinterpret_cast<const char *>(codeData.first.toLocal8Bit().constData());
-        char msg[strlen(codeDesc) + strlen(appendMsg) + 15];
-        strcpy(msg, "Slave error: ");
-        strcat(msg, codeDesc);
-        strcat(msg, appendMsg);
-        qCritical("%s", msg);
+        const char *appendBase = &*appendMsg;   // capturing appendMsg causes g++ 4.8.2 internal error
+        auto printMsg = [appendBase](const char *codeDesc)
+        {
+            char msg[strlen(codeDesc) + strlen(appendBase) + 15];
+            strcpy(msg, "Slave error: ");
+            strcat(msg, codeDesc);
+            strcat(msg, appendBase);
+            qCritical("%s", msg);
+        };
 
-        // Throw appropriate exception for error code
-        throw codeData.second;
+        switch(replies[0][1])
+        {
+            case 0x10:  printMsg("busy");                       throw SlaveErrorBusy();             break;
+            case 0x11:  printMsg("DAQ active");                 throw SlaveErrorDaqActive();        break;
+            case 0x12:  printMsg("program active");             throw SlaveErrorPgmActive();        break;
+            case 0x20:  printMsg("command unknown");            throw SlaveErrorCmdUnknown();       break;
+            case 0x21:  printMsg("command syntax invalid");     throw SlaveErrorCmdSyntax();        break;
+            case 0x22:  printMsg("parameter out of range");     throw SlaveErrorOutOfRange();       break;
+            case 0x23:  printMsg("write protected");            throw SlaveErrorWriteProtected();   break;
+            case 0x24:  printMsg("access denied");              throw SlaveErrorAccessDenied();     break;
+            case 0x25:  printMsg("access locked");              throw SlaveErrorAccessLocked();     break;
+            case 0x26:  printMsg("page invalid");               throw SlaveErrorPageNotValid();     break;
+            case 0x27:  printMsg("page mode invalid");          throw SlaveErrorModeNotValid();     break;
+            case 0x28:  printMsg("segment invalid");            throw SlaveErrorSegmentNotValid();  break;
+            case 0x29:  printMsg("sequence");                   throw SlaveErrorSequence();         break;
+            case 0x2A:  printMsg("DAQ configuration invalid");  throw SlaveErrorDAQConfig();        break;
+            case 0x30:  printMsg("memory overflow");            throw SlaveErrorMemoryOverflow();   break;
+            case 0x31:  printMsg("generic");                    throw SlaveErrorGeneric();          break;
+            case 0x32:  printMsg("program verify failed");      throw SlaveErrorVerify();           break;
+            default:    printMsg("undefined error code");       throw SlaveErrorUndefined();        break;
+        }
     }
     else
     {

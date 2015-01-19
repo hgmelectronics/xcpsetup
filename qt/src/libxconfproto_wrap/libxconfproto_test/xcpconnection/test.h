@@ -3,32 +3,50 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
+#include <functional>
 
 #include <Xcp_Connection.h>
 #include <Xcp_Interface_Loopback_Interface.h>
 #include "testingslave.h"
+
+typedef std::pair<SetupTools::Xcp::CksumType, quint32> CksumPair;
+Q_DECLARE_METATYPE(CksumPair)
 
 namespace SetupTools
 {
 namespace Xcp
 {
 
-class EbusBoardTest : public QObject
+class Test : public QObject
 {
     Q_OBJECT
+
 public:
-    EbusBoardTest(QObject *parent = 0);
-    virtual ~EbusBoardTest() {}
+    Test(QObject *parent = 0);
+    virtual ~Test() {}
 
 private slots:
     void initTestCase();
-    void connectTest();
-    void uploadTest();
-    void downloadUploadTest();
-
+    void connect();
+    void upload_data();
+    void upload();
+    void downloadUpload_data();
+    void downloadUpload();
+    void downloadCksum_data();
+    void downloadCksum();
+    void uploadOutOfRange_data();
+    void uploadOutOfRange();
+    void downloadUploadSmall_data();
+    void downloadUploadSmall();
+    void downloadNvWrite_data();
+    void downloadNvWrite();
+    void altCalPage();
+    void programSequence_data();
+    void programSequence();
 private:
-    static const int CONN_TIMEOUT = 100;
-    static const int CONN_NVWRITE_TIMEOUT = 200;
+    void updateAg(int ag);
+    static const int CONN_TIMEOUT = 50;
+    static const int CONN_NVWRITE_TIMEOUT = 100;
     QSharedPointer<Interface::Loopback::Interface> mIntfc;
     Connection *mConn;
     TestingSlave *mSlave;
