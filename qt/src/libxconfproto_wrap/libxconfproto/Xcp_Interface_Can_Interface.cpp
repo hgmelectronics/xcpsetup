@@ -87,7 +87,7 @@ LIBXCONFPROTOSHARED_EXPORT Frame::operator QString()
 
 bool validateXcp(const Frame &frame)
 {
-    if(frame.data.size() > 0 && (quint8(frame.data[0]) == 0xFF || quint8(frame.data[1]) == 0xFE))
+    if(frame.data.size() > 0 && (quint8(frame.data[0]) == 0xFF || quint8(frame.data[0]) == 0xFE))
         return true;
     else
         return false;

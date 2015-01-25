@@ -423,7 +423,7 @@ void Connection::throwReplies(const std::vector<std::vector<quint8> > &replies, 
         throw MultipleReplies();
     }
 
-    if(replies[0].size() == 2 && quint8(replies[0][0]) == 0xFE)
+    if(replies[0].size() >= 2 && quint8(replies[0][0]) == 0xFE)
     {
         const char *appendBase = &*appendMsg;   // capturing appendMsg causes g++ 4.8.2 internal error
         auto printMsg = [appendBase](const char *codeDesc)
