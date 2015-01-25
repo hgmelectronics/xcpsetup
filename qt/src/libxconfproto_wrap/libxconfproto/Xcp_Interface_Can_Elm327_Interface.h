@@ -60,6 +60,7 @@ public:
 
     bool isPromptReady();
     bool waitPromptReady(int timeoutMsec);
+    void setPacketLog(bool enable);
 private:
     void run() Q_DECL_OVERRIDE;
 
@@ -69,6 +70,7 @@ private:
     static constexpr uchar EOL = '\r';
 
     SerialPort &mPort;
+    bool mPacketLogEnabled;
 
     std::vector<std::vector<quint8> > mLines;
     QElapsedTimer mSendTimer;
@@ -94,7 +96,7 @@ class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface
 {
     Q_OBJECT
 public:
-    Interface(const QSerialPortInfo & portInfo, bool serialLog = false, QObject *parent = NULL);
+    Interface(const QSerialPortInfo & portInfo, QObject *parent = NULL);
     virtual ~Interface();
     virtual void connect(SlaveId addr);                      //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
     virtual void disconnect();                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
@@ -105,6 +107,7 @@ public:
     virtual void setFilter(Filter filt);                     //!< Set the CAN filter used on the interface
     void setSerialLog(bool on);
     double elapsedSecs();
+    virtual void setPacketLog(bool enable);
 private:
     enum class CheckOk { No, Yes };
 

@@ -23,6 +23,7 @@ public:
 
     Id();
     Id(quint32 addr_in, Type ext_in);
+    operator QString();
 
     quint32 addr;
     Type type;
@@ -54,6 +55,7 @@ public:
     Frame();
     Frame(Id id_in, const std::vector<quint8> &data_in);
     Frame(quint32 id_in, Id::Type idType_in, const std::vector<quint8> &data_in);
+    operator QString();
 
     Id id;
     std::vector<quint8> data;
@@ -77,8 +79,10 @@ public:
     virtual std::vector<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
     virtual void setBitrate(int bps) = 0;                           //!< Set the bitrate used on the interface
     virtual void setFilter(Filter filt) = 0;                        //!< Set the CAN filter used on the interface
+    virtual void setPacketLog(bool enable);
 protected:
     boost::optional<SlaveId> mSlaveAddr;
+    bool mPacketLogEnabled;
 };
 
 }   // namespace Can

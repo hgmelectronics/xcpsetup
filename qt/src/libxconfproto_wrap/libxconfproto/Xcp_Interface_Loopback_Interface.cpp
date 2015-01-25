@@ -15,6 +15,9 @@ LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
 
 void LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
 {
+    //QByteArray arr;
+    //arr.setRawData(reinterpret_cast<const char *>(data.data()), data.size());
+    //qDebug() << "Master TX" << arr.toPercentEncoding();
     mSlaveReceiveQueue.put(data);
 }
 
@@ -25,6 +28,9 @@ std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::receive(
 
 void LIBXCONFPROTOSHARED_EXPORT Interface::slaveTransmit(const std::vector<quint8> & data)
 {
+    //QByteArray arr;
+    //arr.setRawData(reinterpret_cast<const char *>(data.data()), data.size());
+    //qDebug() << "Slave TX" << arr.toPercentEncoding();
     mMasterReceiveQueue.put(data);
 }
 

@@ -66,13 +66,37 @@ quint32 Connection::computeCksum(CksumType type, const std::vector<quint8> &data
     return 0;
 }
 
-Connection::Connection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec, QObject *parent) :
+Connection::Connection(QObject *parent) :
     QObject(parent),
-    mIntfc(intfc),
-    mTimeoutMsec(timeoutMsec),
-    mNvWriteTimeoutMsec(nvWriteTimeoutMsec),
+    mTimeoutMsec(0),
+    mNvWriteTimeoutMsec(0),
     mConnected(false)
 {}
+
+Interface::Interface *Connection::intfc() {
+    return mIntfc;
+}
+
+void Connection::setIntfc(Interface::Interface *intfc) {
+    mIntfc = intfc;
+}
+
+int Connection::timeout() {
+    return mTimeoutMsec;
+}
+
+void Connection::setTimeout(int msec) {
+    mTimeoutMsec = msec;
+}
+
+int Connection::nvWriteTimeout() {
+    return mNvWriteTimeoutMsec;
+}
+
+void Connection::setNvWriteTimeout(int msec) {
+    mNvWriteTimeoutMsec = msec;
+}
+
 
 void Connection::open()
 {
@@ -136,7 +160,7 @@ std::vector<quint8> Connection::upload(XcpPtr base, int len)
         std::vector<quint8> seg(uploadSegment(packetPtr, packetBytes));
         ret.insert(ret.end(), seg.begin(), seg.end());
         remBytes -= packetBytes;
-        packetPtr.addr += packetBytes;
+        packetPtr.addr += packetBytes / mAddrGran;
     }
     return ret;
 }
@@ -159,7 +183,7 @@ void Connection::download(XcpPtr base, const std::vector<quint8> &data)
         downloadSegment(packetPtr, std::vector<quint8>(packetDataPtr, packetDataPtr + packetBytes));
         remBytes -= packetBytes;
         packetDataPtr += packetBytes;
-        packetPtr.addr += packetBytes;
+        packetPtr.addr += packetBytes / mAddrGran;
     }
 }
 
@@ -172,9 +196,20 @@ void Connection::nvWrite()
     std::function<void (void)> action = [this]()
     {
         static constexpr char SET_REQ_OPMSG[] = "writing nonvolatile memory";
-        std::vector<quint8> setReqReply = transact({0xF9, 0x01, 0x00, 0x00}, 1, SET_REQ_OPMSG);
-        if(setReqReply[0] != 0xFF)
-            throwReply(setReqReply, SET_REQ_OPMSG);
+        // do not use transact() since slave might send two packets (reply plus EV_STORE_CAL)
+        mIntfc->transmit({0xF9, 0x01, 0x00, 0x00});
+        std::vector<std::vector<quint8> > setReqReplies = mIntfc->receive(mTimeoutMsec);
+
+        if(setReqReplies.size() == 0)
+            throw Timeout();
+
+        for(std::vector<quint8> &reply : setReqReplies)
+        {
+            if(reply.size() >= 2 && reply[0] == 0xFD && reply[1] == 0x03)
+                return; // Device sent EV_STORE_CAL: write is complete
+            else if(reply.size() < 1 || reply[0] != 0xFF)
+                throwReply(reply, SET_REQ_OPMSG);
+        }
 
         QElapsedTimer timer;
         timer.start();
@@ -191,12 +226,19 @@ void Connection::nvWrite()
 
             for(std::vector<quint8> &reply : getStsReplies)
             {
-                if(reply.size() >= 2 && reply[0] == 0xFF && !(reply[1] & 0x01))
-                    return; // Device answered poll to say write complete
+                if(reply.size() >= 2 && reply[0] == 0xFF)
+                {
+                    if(!(reply[1] & 0x01))
+                        return; // Device answered poll to say write complete
+                }
                 else if(reply.size() >= 2 && reply[0] == 0xFD && reply[1] == 0x03)
+                {
                     return; // Device sent EV_STORE_CAL: write is complete
+                }
                 else
+                {
                     throwReply(reply, GET_STS_OPMSG);
+                }
             }
         }
         throw Timeout();    // Exited while() loop due to timeout
@@ -256,10 +298,12 @@ void Connection::programStart()
 
 void Connection::programClear(XcpPtr base, int len)
 {
+    if(len % mAddrGran)
+        throw AddrGranError();
     Q_ASSERT(mConnected && mPgmStarted);
 
     std::vector<quint8> query({0xD1, 0x00, 0, 0, 0, 0, 0, 0});
-    toSlaveEndian<quint32>(len, query.data() + 4);
+    toSlaveEndian<quint32>(len / mAddrGran, query.data() + 4);
 
     mCalcMta.reset();   // standard does not define what happens to MTA
 
@@ -282,7 +326,7 @@ void Connection::programRange(XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(mConnected && mPgmStarted);
     if(data.size() % mAddrGran)
-        throw InvalidOperation();
+        throw AddrGranError();
 
     std::vector<quint8>::const_iterator dataIt = data.begin();
     while(dataIt != data.end())
@@ -447,7 +491,10 @@ std::vector<quint8> Connection::uploadSegment(XcpPtr base, int len)
         {
             reply = transact(query, mAddrGran + len, OPMSG);
             if(reply[0] != 0xFF)
+            {
+                mCalcMta.reset();
                 throwReply(reply);
+            }
         } catch(ConnException)
         {
             mCalcMta.reset();
@@ -482,7 +529,11 @@ void Connection::downloadSegment(XcpPtr base, const std::vector<quint8> &data)
         {
             std::vector<quint8> reply = transact(query, 1, OPMSG);
             if(reply[0] != 0xFF)
+            {
+                mCalcMta.reset();
                 throwReply(reply);
+            }
+            mCalcMta = {base.addr + query[1], base.ext};
         } catch(ConnException)
         {
             mCalcMta.reset();
@@ -604,6 +655,8 @@ void Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
 
 std::pair<CksumType, quint32> Connection::buildChecksum(XcpPtr base, int len)
 {
+    if(len % mAddrGran != 0)
+        throw InvalidOperation();
     std::pair<CksumType, quint32> ret;
 
     std::function<void (void)> action = [this, base, len, &ret]()
@@ -629,7 +682,7 @@ std::pair<CksumType, quint32> Connection::buildChecksum(XcpPtr base, int len)
             setMta(base);
 
         query = {0xF3, 0, 0, 0, 0, 0, 0, 0};
-        toSlaveEndian<quint32>(len, query.data() + 4);
+        toSlaveEndian<quint32>(len / mAddrGran, query.data() + 4);
 
         try
         {

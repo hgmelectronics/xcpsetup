@@ -19,6 +19,14 @@ LIBXCONFPROTOSHARED_EXPORT Id::Id(quint32 addr_in, Type ext_in) :
     type(ext_in)
 {}
 
+LIBXCONFPROTOSHARED_EXPORT Id::operator QString()
+{
+    if(type == Type::Std)
+        return QString("%1").arg(addr, 3, 16, QChar('0'));
+    else
+        return QString("x%1").arg(addr, 8, 16, QChar('0'));
+}
+
 bool LIBXCONFPROTOSHARED_EXPORT operator==(const Id &lhs, const Id &rhs)
 {
     return (lhs.addr == rhs.addr && lhs.type == rhs.type);
@@ -70,6 +78,13 @@ Frame::Frame(quint32 id_in, Id::Type idType_in, const std::vector<quint8> &data_
     data(data_in)
 {}
 
+LIBXCONFPROTOSHARED_EXPORT Frame::operator QString()
+{
+    QByteArray dataArr(reinterpret_cast<const char *>(data.data()), data.size());
+
+    return QString(id) + " " + dataArr.toHex();
+}
+
 bool validateXcp(const Frame &frame)
 {
     if(frame.data.size() > 0 && (quint8(frame.data[0]) == 0xFF || quint8(frame.data[1]) == 0xFE))
@@ -99,6 +114,11 @@ std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::receive(
     for(auto &frame: frames)
         pkts.push_back(frame.data);
     return pkts;
+}
+
+void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
+{
+    mPacketLogEnabled = enable;
 }
 
 }   // namespace Can

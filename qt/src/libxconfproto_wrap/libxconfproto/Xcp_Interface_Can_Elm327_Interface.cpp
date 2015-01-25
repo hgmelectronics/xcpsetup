@@ -17,6 +17,7 @@ static const std::vector<quint8> OK_VEC({'O', 'K'});
 Io::Io(SerialPort &port, QObject *parent) :
     QThread(parent),
     mPort(port),
+    mPacketLogEnabled(false),
     mPromptReady(true), // Process of finding baudrate leaves ELM at a prompt
     mTerminate(false)
 {
@@ -156,6 +157,8 @@ void Io::run()
                             QByteArray dataArr(QByteArray::fromHex(QByteArray(reinterpret_cast<char *>(line.data() + idLen), line.size() - idLen)));
                             frame.data = std::vector<quint8>(reinterpret_cast<quint8 *>(dataArr.data()), reinterpret_cast<quint8 *>(dataArr.data() + dataArr.size()));
                             mRcvdFrameQueue.put(frame);
+                            if(mPacketLogEnabled)
+                                qDebug() << QString(frame);
                         }
                         else
                             mRcvdCmdRespQueue.put(line);    // too short to be valid
@@ -199,14 +202,18 @@ void Io::run()
     }
 }
 
+void Io::setPacketLog(bool enable)
+{
+    mPacketLogEnabled = enable;
+}
+
 constexpr int Interface::POSSIBLE_BAUDRATES[];
 
-Interface::Interface(const QSerialPortInfo & portInfo, bool serialLog, QObject *parent) :
+Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
     mPort(portInfo),
     mIntfcIsStn(false)
 {
-    mPort.setLogging(serialLog);
     if(!mPort.open(QIODevice::ReadWrite))
     {
         qCritical("Failed to open serial port");
@@ -361,6 +368,12 @@ void Interface::transmitTo(const std::vector<quint8> & data, Id id)
         mIo->syncAndGetPrompt(TIMEOUT_MSEC);    // Not synchronized by calling _runCmdWithCheck(), so do it here
     }
 
+    if(mPacketLogEnabled)
+    {
+        Frame frame(id, data);
+        qDebug() << QString(frame);
+    }
+
     mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + "\r");
 }
 
@@ -399,9 +412,14 @@ void Interface::setFilter(Filter filt)
     mFilter = filt;
     doSetFilter(filt);
 }
-void Interface::setSerialLog(bool on)
+void LIBXCONFPROTOSHARED_EXPORT Interface::setSerialLog(bool on)
 {
     mPort.setLogging(on);
+}
+void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
+{
+    mPacketLogEnabled = enable;
+    mIo->setPacketLog(enable);
 }
 double Interface::elapsedSecs()
 {

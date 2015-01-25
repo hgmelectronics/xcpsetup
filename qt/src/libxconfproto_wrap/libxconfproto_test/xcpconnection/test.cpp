@@ -39,15 +39,18 @@ Test::Test(QObject *parent) : QObject(parent) {}
 
 void Test::initTestCase()
 {
-    mIntfc = QSharedPointer<Interface::Loopback::Interface>::create();
-    mConn = new SetupTools::Xcp::Connection(mIntfc, CONN_TIMEOUT, CONN_NVWRITE_TIMEOUT, this);
+    mIntfc = new Interface::Loopback::Interface();
+    mConn = new SetupTools::Xcp::Connection(this);
+    mConn->setIntfc(mIntfc);
+    mConn->setTimeout(CONN_TIMEOUT);
+    mConn->setNvWriteTimeout(CONN_NVWRITE_TIMEOUT);
     mSlave = new TestingSlave(mIntfc, this);
     updateAg(1);
     mSlave->setBigEndian(false);
     mSlave->setPgmMasterBlockSupport(true);
     mSlave->setSendsEvStoreCal(true);
     mSlave->addMemRange(TestingSlave::MemType::Calib, {0x400, 0}, 0x400);
-    mSlave->addMemRange(TestingSlave::MemType::Calib, {0x400, 0}, 0x400, 1, {0, 3});
+    mSlave->addMemRange(TestingSlave::MemType::Calib, {0x10000, 0}, 0x400, 1, {0, 3});
     mSlave->addMemRange(TestingSlave::MemType::Prog, {0x08004000, 0}, 0x7A800);
 }
 
@@ -116,7 +119,7 @@ void Test::downloadUpload()
     {
         mConn->open();
         XcpPtr base = {quint32(0x515/ag), 0};
-        std::vector<quint8> data(VectorFromQByteArray("Please do not press this button again."));
+        std::vector<quint8> data(VectorFromQByteArray("Please do not press this button again..."));
         mConn->download(base, data);
         std::vector<quint8> uploadData = mConn->upload(base, data.size());
         QCOMPARE(uploadData, data);
@@ -254,7 +257,7 @@ void Test::downloadNvWrite_data()
     QTest::newRow("Instant completion, no EV_STORE_CAL") << 0 << false << false;
     QTest::newRow("10ms") << 10 << true << false;
     QTest::newRow("10ms, no EV_STORE_CAL") << 10 << false << false;
-    QTest::newRow("110ms") << 110 << true << true;
+    QTest::newRow("200ms") << 200 << true << true;
 }
 
 /**
@@ -268,7 +271,7 @@ void Test::downloadNvWrite()
     updateAg(1);
     try
     {
-        mSlave->setResponseDelay(TestingSlave::OpType::NvWrite, delayMsec, 1);
+        mSlave->setResponseDelay(TestingSlave::OpType::NvWrite, delayMsec, 100);
         mSlave->setSendsEvStoreCal(sendEvStoreCal);
         mConn->open();
         XcpPtr base = {0x515, 0};
@@ -276,6 +279,7 @@ void Test::downloadNvWrite()
         std::vector<quint8> data(reinterpret_cast<const quint8 *>(dataArr.begin()), reinterpret_cast<const quint8 *>(dataArr.end()));
         mConn->download(base, data);
         mConn->nvWrite();
+        mSlave->setResponseDelay(TestingSlave::OpType::NvWrite, 0, 0);
         if(expectFail)
             QFAIL("Exception not thrown as it should have been");
         std::vector<quint8> uploadData = mConn->upload(base, data.size());
@@ -284,7 +288,12 @@ void Test::downloadNvWrite()
     }
     catch(Timeout &exc)
     {
-        if(!expectFail)
+        if(expectFail)
+        {
+            QThread::msleep(200);
+            mIntfc->receive(0); // flush the buffers so we don't get confused on next operation
+        }
+        else
             FailOnExc(exc);
     }
     catch(ConnException &exc)
@@ -302,21 +311,9 @@ void Test::altCalPage()
     try
     {
         mConn->open();
-        XcpPtr base = {0x600, 0};
-        QByteArray data1Arr("Please do not press this button again.");
-        std::vector<quint8> data1(reinterpret_cast<const quint8 *>(data1Arr.begin()), reinterpret_cast<const quint8 *>(data1Arr.end()));
-        QByteArray data2Arr("Look at me, brain the size of a planet...");
-        std::vector<quint8> data2(reinterpret_cast<const quint8 *>(data2Arr.begin()), reinterpret_cast<const quint8 *>(data2Arr.end()));
-        mConn->setCalPage(1, 3);
-        mConn->download(base, data1);
         mConn->setCalPage(0, 0);
-        mConn->download(base, data2);
+        mConn->setCalPage(1, 0);
         mConn->setCalPage(1, 3);
-        std::vector<quint8> uploadData1 = mConn->upload(base, data1.size());
-        mConn->setCalPage(0, 0);
-        std::vector<quint8> uploadData2 = mConn->upload(base, data2.size());
-        QCOMPARE(uploadData1, data1);
-        QCOMPARE(uploadData2, data2);
         mConn->close();
     }
     catch(ConnException &exc)
@@ -347,7 +344,7 @@ void Test::programSequence()
     try
     {
         mConn->open();
-        XcpPtr base = {0x0804000, 0};
+        XcpPtr base = {quint32(0x08004000 / ag), 0};
         std::vector<quint8> prog(VectorFromQByteArray(
                                      "Four score and seven years ago our fathers brought forth on this continent "
                                      "a new nation, conceived in liberty, and dedicated to the proposition that all "

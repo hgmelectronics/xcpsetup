@@ -78,8 +78,17 @@ quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(Interface::Interface *intfc READ intfc WRITE setIntfc)
+    Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
+    Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
 public:
-    explicit Connection(QSharedPointer<Interface::Interface> intfc, int timeoutMsec, int nvWriteTimeoutMsec = 0, QObject *parent = 0);
+    explicit Connection(QObject *parent = 0);
+    Interface::Interface *intfc(void);
+    void setIntfc(Interface::Interface *intfc);
+    int timeout(void);
+    void setTimeout(int msec);
+    int nvWriteTimeout(void);
+    void setNvWriteTimeout(int msec);
     void open();
     void close();
     std::vector<quint8> upload(XcpPtr base, int len);
@@ -167,7 +176,7 @@ private:
 
     static constexpr int MAX_RETRIES = 10;
 
-    QSharedPointer<Interface::Interface> mIntfc;
+    Interface::Interface *mIntfc;
     int mTimeoutMsec, mNvWriteTimeoutMsec;
 
     bool mConnected;

@@ -137,7 +137,7 @@ public:
         std::vector<quint8> validPages;
     };
 
-    explicit TestingSlave(QSharedPointer<SetupTools::Xcp::Interface::Loopback::Interface> intfc, QObject *parent = 0); // starts thread
+    explicit TestingSlave(SetupTools::Xcp::Interface::Loopback::Interface *intfc, QObject *parent = 0); // starts thread
     ~TestingSlave();
     void setAg(int ag);
     void setMaxCto(quint8 bytes);
@@ -234,7 +234,7 @@ private:
     static const int RECEIVE_TIMEOUT = 10;
 
 
-    QSharedPointer<SetupTools::Xcp::Interface::Loopback::Interface> mIntfc;
+    SetupTools::Xcp::Interface::Loopback::Interface *mIntfc;
     QMutex mConfigMutex;
     QElapsedTimer mNvWriteTimer;
 
@@ -257,7 +257,6 @@ private:
     bool mIsProgramMode;
     boost::optional<quint8> mProgramBlockModeRemBytes;
     bool mStoreCalReqSet;
-    quint8 mSegment;
     SetupTools::Xcp::XcpPtr mMta;
 };
 

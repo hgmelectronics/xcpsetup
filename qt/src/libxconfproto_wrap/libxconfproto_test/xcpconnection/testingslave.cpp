@@ -3,7 +3,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <numeric>
 
-TestingSlave::TestingSlave(QSharedPointer<SetupTools::Xcp::Interface::Loopback::Interface> intfc, QObject *parent) :
+TestingSlave::TestingSlave(SetupTools::Xcp::Interface::Loopback::Interface *intfc, QObject *parent) :
     QThread(parent),
     mIntfc(intfc),
     mTerminate(false),
@@ -25,9 +25,9 @@ TestingSlave::TestingSlave(QSharedPointer<SetupTools::Xcp::Interface::Loopback::
     mIsConnected(false),
     mIsProgramMode(false),
     mStoreCalReqSet(false),
-    mSegment(0),
     mMta({0, 0})
 {
+    mNvWriteTimer.invalidate();
     start();
 }
 
@@ -309,7 +309,6 @@ void TestingSlave::run()
                         mIsProgramMode = false;
                         mProgramBlockModeRemBytes.reset();
                         mStoreCalReqSet = false;
-                        mSegment = 0;
                         mMta = {0, 0};
 
                         transmitWithDelay(OpType::Connect, reply);
@@ -339,6 +338,7 @@ void TestingSlave::run()
                     transmitWithDelay(OpType::GetCommModeInfo, reply);
                     break;
                 case SET_REQUEST:
+                    mStoreCalReqSet = true;
                     reply = {0xFF};
                     transmitWithDelay(OpType::SetRequest, reply);
                     mNvWriteDelayMsec = getResponseDelay(OpType::NvWrite);
@@ -598,7 +598,7 @@ void TestingSlave::run()
                         quint32 clearRange = fromSlaveEndian<quint32>(packet.data() + 4);
                         if(packet[1] == 0)
                         {
-                            auto subRange = findMemRange(clearRange, MemType::Calib);
+                            auto subRange = findMemRange(clearRange, MemType::Prog);
                             if(subRange)
                             {
                                 for(quint8 &byte : subRange.get())
@@ -708,7 +708,7 @@ void TestingSlave::run()
                     {
                         reply = {0xFE, ERR_CMD_SYNTAX};
                     }
-                    else if(packet[1] != 1 || fromSlaveEndian<quint16>(packet.data() + 2) != 0x0001)
+                    else if(packet[1] != 1 || fromSlaveEndian<quint16>(packet.data() + 2) != 0x0002)
                     {
                         reply = {0xFE, ERR_OUT_OF_RANGE};
                     }
@@ -752,12 +752,11 @@ boost::optional<boost::iterator_range<std::vector<quint8>::iterator> > TestingSl
     for(std::pair<const int, MemRange> &memRange : mMemRanges)
     {
         if(memRange.second.type == type
-                && mSegment == memRange.second.segment
                 && mMta.ext == memRange.second.base.ext
-                && mMta.addr >= memRange.second.base.addr
-                && mMta.addr + nElem <= memRange.second.base.addr + memRange.second.data.size() / mAg)
+                && mMta.addr * mAg >= memRange.second.base.addr
+                && (mMta.addr + nElem) * mAg <= memRange.second.base.addr + memRange.second.data.size())
         {
-            size_t offset = (mMta.addr - memRange.second.base.addr) * mAg;
+            size_t offset = mMta.addr * mAg - memRange.second.base.addr;
             std::vector<quint8>::iterator itBegin = memRange.second.data.begin() + offset;
             return boost::iterator_range<std::vector<quint8>::iterator>(itBegin, itBegin + nElem * mAg);
         }
