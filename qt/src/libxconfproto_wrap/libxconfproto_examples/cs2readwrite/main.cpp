@@ -11,11 +11,11 @@ int main(int argc, char *argv[])
     QTextStream qout(stdout, QIODevice::WriteOnly);
 
     int iPort = 0;
-    qout << "Available serial ports:";
+    qout << "Available serial ports:\n";
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
     for(const auto &port : ports)
     {
-        qout << iPort << port.portName() << port.description();
+        qout << iPort << " " << port.portName() << " " << port.description() << "\n";
         ++iPort;
     }
     qout.flush();
@@ -23,13 +23,13 @@ int main(int argc, char *argv[])
     QString serialDevName;
     if(ports.size() == 0)
     {
-        qout << "No serial ports detected";
+        qout << "No serial ports detected\n";
         qout.flush();
         exit(1);
     }
     else if(ports.size() == 1)
     {
-        qout << "One serial port detected, using it";
+        qout << "One serial port detected, using it\n";
         qout.flush();
         serialDevName = ports[0].portName();
     }
