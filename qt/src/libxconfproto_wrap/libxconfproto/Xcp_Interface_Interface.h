@@ -14,15 +14,15 @@ namespace Xcp
 namespace Interface
 {
 
-class Exception : public ::SetupTools::Xcp::Exception {};
+class LIBXCONFPROTOSHARED_EXPORT Exception : public ::SetupTools::Xcp::Exception {};
 
 /*!
- * \brief Abstract base class for interfaces. Doesn't contain Connect() or the notion of packets
- * since this might be used for USB (one-to-one) or CAN (many devices on the bus, all addressable
- * by the host).
+ * \brief Base class for interfaces (not abstract so dummies can be created by QML, but will fail assertion if dummy used.)
+ * Doesn't contain Connect() or the notion of packets since this might be used for USB (one-to-one)
+ * or CAN (many devices on the bus, all addressable by the host).
  */
 
-class Interface : public QObject
+class LIBXCONFPROTOSHARED_EXPORT Interface : public QObject
 {
     Q_OBJECT
 public:

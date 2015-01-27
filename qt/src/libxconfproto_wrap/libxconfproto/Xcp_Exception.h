@@ -2,13 +2,14 @@
 #define XCP_EXCEPTION_H
 
 #include <QException>
+#include "libxconfproto_global.h"
 
 namespace SetupTools
 {
 namespace Xcp
 {
 
-class Exception : public QException {};
+class LIBXCONFPROTOSHARED_EXPORT Exception : public QException {};
 
 }
 }

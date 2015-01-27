@@ -44,7 +44,7 @@ private:
     Factory *mFactory;
 };
 
-QList<Factory *> getInterfacesAvail(QObject *parent = 0);
+QList<Factory *> LIBXCONFPROTOSHARED_EXPORT getInterfacesAvail(QObject *parent = 0);
 
 class LIBXCONFPROTOSHARED_EXPORT Registry : public QObject
 {

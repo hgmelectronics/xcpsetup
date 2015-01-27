@@ -24,15 +24,15 @@ namespace Can
 namespace Elm327
 {
 
-class Exception : public ::SetupTools::Xcp::Interface::Exception {};
+class LIBXCONFPROTOSHARED_EXPORT Exception : public ::SetupTools::Xcp::Interface::Exception {};
 
-class UnexpectedResponse : public Exception {};
+class LIBXCONFPROTOSHARED_EXPORT UnexpectedResponse : public Exception {};
 
-class NoResponse : public UnexpectedResponse {};
+class LIBXCONFPROTOSHARED_EXPORT NoResponse : public UnexpectedResponse {};
 
-class SerialError : public Exception {};
+class LIBXCONFPROTOSHARED_EXPORT SerialError : public Exception {};
 
-class ConfigError : public Exception {};
+class LIBXCONFPROTOSHARED_EXPORT ConfigError : public Exception {};
 
 /*!
  * \brief ELM327 I/O thread class
@@ -43,7 +43,7 @@ class ConfigError : public Exception {};
  * (indicating readiness to receive commands) set the prompt-ready condition.
  */
 
-class Io : public QThread
+class LIBXCONFPROTOSHARED_EXPORT Io : public QThread
 {
     Q_OBJECT
 public:
@@ -174,7 +174,7 @@ private:
 };
 
 
-QList<Factory *> getInterfacesAvail(QObject *parent = 0);
+QList<Factory *> LIBXCONFPROTOSHARED_EXPORT getInterfacesAvail(QObject *parent = 0);
 
 }   // namespace Elm327
 }   // namespace Can
