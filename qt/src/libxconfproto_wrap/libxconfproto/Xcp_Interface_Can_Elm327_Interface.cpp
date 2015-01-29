@@ -565,6 +565,35 @@ void Interface::updateBitrateTxType()
     }
 }
 
+Factory::Factory(QSerialPortInfo info, QObject *parent) :
+    SetupTools::Xcp::Interface::Can::Factory(parent),
+    mPortInfo(info)
+{}
+
+SetupTools::Xcp::Interface::Can::Interface *Factory::make(QObject *parent)
+{
+    return new Interface(mPortInfo, parent);
+}
+QString Factory::text()
+{
+    return "ELM327 on " + mPortInfo.portName() + " (" + mPortInfo.description() + ")";
+}
+
+QList<Factory *> getInterfacesAvail(QObject *parent)
+{
+    QList<Factory *> ret;
+    for(const auto &portInfo : QSerialPortInfo::availablePorts()) {
+        if(!portInfo.isBusy()) {
+            QSerialPort port(portInfo);
+            if(port.open(QIODevice::ReadWrite)) {
+                port.close();
+                ret.append(new Factory(portInfo, parent));
+            }
+        }
+    }
+    return ret;
+}
+
 }   // namespace Elm327
 }   // namespace Can
 }   // namespace Interface

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core serialport testlib
+QT       += core serialport testlib quick
 
 QT       -= gui
 

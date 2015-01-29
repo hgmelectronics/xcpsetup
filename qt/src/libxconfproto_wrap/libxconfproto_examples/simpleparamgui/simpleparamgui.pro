@@ -1,13 +1,12 @@
-# Add more folders to ship with the application, here
-folder_01.source = qml/simpleparamgui
-folder_01.target = qml
-DEPLOYMENTFOLDERS = folder_01
-
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp
+
+QT += qml quick widgets
+
+RESOURCES += qml.qrc
 
 QMAKE_CXXFLAGS += -std=c++11
 
@@ -24,3 +23,7 @@ else:unix: LIBS += -L$$OUT_PWD/../../libxconfproto/ -lxconfproto
 
 INCLUDEPATH += $$PWD/../../libxconfproto
 DEPENDPATH += $$PWD/../../libxconfproto
+
+OTHER_FILES += \
+    main.qml \
+    MainForm.qml

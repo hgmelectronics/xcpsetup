@@ -28,8 +28,8 @@ class Interface : public QObject
 public:
     Interface(QObject *parent = NULL);
     virtual ~Interface() {}
-    virtual void transmit(const std::vector<quint8> & data) = 0;         //!< Send one XCP packet to the slave
-    virtual std::vector<std::vector<quint8> > receive(int timeoutMsec) = 0; //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual void transmit(const std::vector<quint8> & data);         //!< Send one XCP packet to the slave
+    virtual std::vector<std::vector<quint8> > receive(int timeoutMsec); //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
 };
 
 }   // namespace Interface

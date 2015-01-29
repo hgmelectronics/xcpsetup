@@ -1,6 +1,8 @@
 #ifndef XCP_INTERFACE_CAN_ELM327_INTERFACE_H
 #define XCP_INTERFACE_CAN_ELM327_INTERFACE_H
 
+#include "libxconfproto_global.h"
+
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <memory>
@@ -8,6 +10,7 @@
 #include <QThread>
 #include <QtGlobal>
 #include "Xcp_Interface_Can_Interface.h"
+#include "Xcp_Interface_Can_Registry.h"
 #include "util.h"
 
 namespace SetupTools
@@ -156,6 +159,22 @@ private:
     boost::optional<bool> mCfgdTxAddrIsStd;
     boost::optional<Filter> mCfgdFilter;
 };
+
+class LIBXCONFPROTOSHARED_EXPORT Factory : public ::SetupTools::Xcp::Interface::Can::Factory
+{
+    Q_OBJECT
+    Q_PROPERTY(QString text READ text CONSTANT)
+public:
+    Factory(QSerialPortInfo info, QObject *parent = 0);
+    virtual ~Factory() {}
+    virtual SetupTools::Xcp::Interface::Can::Interface *make(QObject *parent = 0);
+    virtual QString text();
+private:
+    QSerialPortInfo mPortInfo;
+};
+
+
+QList<Factory *> getInterfacesAvail(QObject *parent = 0);
 
 }   // namespace Elm327
 }   // namespace Can

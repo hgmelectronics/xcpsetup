@@ -78,28 +78,28 @@ quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Interface::Interface *intfc READ intfc WRITE setIntfc)
+    Q_PROPERTY(QObject *intfc READ intfc WRITE setIntfc)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
 public:
     explicit Connection(QObject *parent = 0);
-    Interface::Interface *intfc(void);
-    void setIntfc(Interface::Interface *intfc);
+    QObject *intfc(void);
+    void setIntfc(QObject *intfc);
     int timeout(void);
     void setTimeout(int msec);
     int nvWriteTimeout(void);
     void setNvWriteTimeout(int msec);
-    void open();
-    void close();
-    std::vector<quint8> upload(XcpPtr base, int len);
-    void download(XcpPtr base, const std::vector<quint8> &data);
-    void nvWrite();
-    void setCalPage(quint8 segment, quint8 page);
-    void programStart();
-    void programClear(XcpPtr base, int len);
-    void programRange(XcpPtr base, const std::vector<quint8> &data);
-    void programVerify(quint32 crc);
-    void programReset();
+    Q_INVOKABLE void open();
+    Q_INVOKABLE void close();
+    Q_INVOKABLE std::vector<quint8> upload(XcpPtr base, int len);
+    Q_INVOKABLE void download(XcpPtr base, const std::vector<quint8> &data);
+    Q_INVOKABLE void nvWrite();
+    Q_INVOKABLE void setCalPage(quint8 segment, quint8 page);
+    Q_INVOKABLE void programStart();
+    Q_INVOKABLE void programClear(XcpPtr base, int len);
+    Q_INVOKABLE void programRange(XcpPtr base, const std::vector<quint8> &data);
+    Q_INVOKABLE void programVerify(quint32 crc);
+    Q_INVOKABLE void programReset();
     std::pair<CksumType, quint32> buildChecksum(XcpPtr base, int len);
     template <typename T>
     T fromSlaveEndian(const uchar *src)
@@ -186,6 +186,21 @@ private:
     bool mPgmStarted, mPgmMasterBlockMode;
     int mPgmMaxCto, mPgmMaxBlocksize, mPgmMaxDownPayload;
     boost::optional<XcpPtr> mCalcMta;
+};
+
+class LIBXCONFPROTOSHARED_EXPORT SimpleDataLayer : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QObject *conn READ conn WRITE setConn)
+public:
+    SimpleDataLayer();
+
+    QObject *conn(void);
+    void setConn(QObject *conn);
+    Q_INVOKABLE quint32 uploadUint32(quint32 base);
+    Q_INVOKABLE void downloadUint32(quint32 base, quint32 data);
+private:
+    Connection *mConn;
 };
 
 }   // namespace Xcp

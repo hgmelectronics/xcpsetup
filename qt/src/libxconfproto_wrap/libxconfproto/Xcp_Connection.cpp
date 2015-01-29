@@ -73,12 +73,12 @@ Connection::Connection(QObject *parent) :
     mConnected(false)
 {}
 
-Interface::Interface *Connection::intfc() {
+QObject *Connection::intfc() {
     return mIntfc;
 }
 
-void Connection::setIntfc(Interface::Interface *intfc) {
-    mIntfc = intfc;
+void Connection::setIntfc(QObject *intfc) {
+    mIntfc = qobject_cast<Interface::Interface *>(intfc);
 }
 
 int Connection::timeout() {
@@ -770,6 +770,37 @@ void Connection::synch()
 
     if(replies.size() > 1 || replies[0] != std::vector<quint8>({0xFE, 0x00}))
         throwReplies(replies, "resynchronizing");
+}
+
+SimpleDataLayer::SimpleDataLayer() : mConn(NULL) {}
+
+QObject *SimpleDataLayer::conn(void)
+{
+    return mConn;
+}
+
+void SimpleDataLayer::setConn(QObject *conn)
+{
+    mConn = qobject_cast<Connection *>(conn);
+}
+
+quint32 SimpleDataLayer::uploadUint32(quint32 base)
+{
+    Q_ASSERT(mConn);
+    SetupTools::Xcp::XcpPtr ptr = {base, 0};
+    std::vector<quint8> dataVec = mConn->upload(ptr, 4);
+    Q_ASSERT(dataVec.size() == 4);
+    return mConn->fromSlaveEndian<quint32>(dataVec.data());
+}
+
+void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
+{
+    Q_ASSERT(mConn);
+    SetupTools::Xcp::XcpPtr ptr = {base, 0};
+    std::vector<quint8> dataVec;
+    dataVec.assign(4, 0);
+    mConn->toSlaveEndian<quint32>(data, dataVec.data());
+    mConn->download(ptr, dataVec);
 }
 
 }   // namespace Xcp

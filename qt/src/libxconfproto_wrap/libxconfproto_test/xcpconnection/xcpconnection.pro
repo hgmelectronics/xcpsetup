@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core testlib
+QT       += core testlib quick
 
 QT       -= gui
 

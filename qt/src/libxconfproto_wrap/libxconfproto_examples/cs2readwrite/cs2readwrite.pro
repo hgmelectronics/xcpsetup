@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core serialport
+QT       += core serialport quick
 
 QT       -= gui
 
