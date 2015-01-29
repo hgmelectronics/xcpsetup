@@ -64,7 +64,7 @@ private:
     QList<Info *> mInfosAvail;
 };
 
-QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
+LIBXCONFPROTOSHARED_EXPORT QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
 }
 }
