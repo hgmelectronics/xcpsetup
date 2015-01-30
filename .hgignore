@@ -2,7 +2,8 @@ syntax: glob
 
 __pycache__
 *.pyc
-build
+build*
 dist
 MANIFEST
 local
+*.user
