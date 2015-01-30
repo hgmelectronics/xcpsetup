@@ -234,11 +234,6 @@ bool Io::waitPromptReady(int timeoutMsec)
     return mTask.waitPromptReady(timeoutMsec);
 }
 
-void Io::setPacketLog(bool enable)
-{
-	mPacketLogEnabled = enable;
-}
-
 void Io::setSerialLog(bool on)
 {
 	mTask.setSerialLog(on);
@@ -456,7 +451,6 @@ void LIBXCONFPROTOSHARED_EXPORT Interface::setSerialLog(bool on)
 void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
-    mIo->setPacketLog(enable);
 }
 double Interface::elapsedSecs()
 {
