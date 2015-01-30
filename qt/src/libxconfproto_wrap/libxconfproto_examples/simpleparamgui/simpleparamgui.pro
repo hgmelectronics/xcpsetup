@@ -1,6 +1,8 @@
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
+TEMPLATE = app
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp
 
@@ -14,8 +16,7 @@ QMAKE_CXXFLAGS += -std=c++11
 # target.path =
 
 # Please do not modify the following two lines. Required for deployment.
-include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
-qtcAddDeployment()
+include(deployment.pri)
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/release/ -lxconfproto
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/debug/ -lxconfproto

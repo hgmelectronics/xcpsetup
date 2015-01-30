@@ -2,7 +2,6 @@
 #include <QtQml>
 #include <Xcp_Interface_Can_Elm327_Interface.h>
 #include <Xcp_Connection.h>
-#include "qtquick2applicationviewer.h"
 
 int main(int argc, char *argv[])
 {
