@@ -22,7 +22,6 @@ Io::Io(SerialPort &port, QObject *parent) :
     mTerminate(false)
 {
     mPort.setTimeout(TICK_MSEC);
-    mSendTimer.start();
     start();
 }
 Io::~Io()
@@ -90,6 +89,8 @@ bool Io::waitPromptReady(int timeoutMsec)
 
 void Io::run()
 {
+    mSendTimer = new QElapsedTimer();
+    mSendTimer->start();
     while(1)
     {
         if(mTerminate)
@@ -177,12 +178,12 @@ void Io::run()
         mLines.swap(incompleteLines);
 
         // Send data from mTransmitQueue, unless we're waiting for the device to "settle"
-        if(mSendTimer.nsecsElapsed() > ELM_RECOVERY_NSEC && !mTransmitQueue.empty())
+        if(mSendTimer->nsecsElapsed() > ELM_RECOVERY_NSEC && !mTransmitQueue.empty())
         {
             mPromptReady = false;
             std::vector<quint8> data = mTransmitQueue.get().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
             mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt docs
-            mSendTimer.start();
+            mSendTimer->start();
             setPromptReady = false;
             setPipelineClear = false;
         }

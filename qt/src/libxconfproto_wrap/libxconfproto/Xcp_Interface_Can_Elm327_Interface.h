@@ -76,7 +76,7 @@ private:
     bool mPacketLogEnabled;
 
     std::vector<std::vector<quint8> > mLines;
-    QElapsedTimer mSendTimer;
+    QElapsedTimer *mSendTimer;
 
     PythonicQueue<Frame> mRcvdFrameQueue;
     PythonicQueue<std::vector<quint8> > mRcvdCmdRespQueue;
