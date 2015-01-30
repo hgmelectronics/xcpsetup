@@ -14,25 +14,175 @@ namespace Elm327
 
 static const std::vector<quint8> OK_VEC({'O', 'K'});
 
-Io::Io(SerialPort &port, QObject *parent) :
-    QThread(parent),
+IoTask::IoTask(SerialPort &port, QObject *parent) :
+    QObject(parent),
     mPort(port),
-    mPacketLogEnabled(false),
-    mPromptReady(true), // Process of finding baudrate leaves ELM at a prompt
-    mTerminate(false)
+    mPromptReady(this),
+    mWriteComplete(this)
 {
-    mPort.setTimeout(TICK_MSEC);
-    start();
+    mPromptReady.set();
+    mWriteComplete.set();
 }
+
+void IoTask::init()
+{
+    connect(&mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
+    connect(&mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
+}
+
+std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
+{
+    return mRcvdFrameQueue.getAll(timeoutMsec);
+}
+
+std::vector<std::vector<quint8> > IoTask::getRcvdCmdResp(int timeoutMsec)
+{
+    return mRcvdCmdRespQueue.getAll(timeoutMsec);
+}
+
+bool IoTask::isPromptReady()
+{
+    return mPromptReady.isSet();
+}
+
+bool IoTask::waitPromptReady(int timeoutMsec)
+{
+    return mPromptReady.wait(timeoutMsec);
+}
+
+void IoTask::waitWriteComplete()
+{
+    mWriteComplete.wait();
+}
+
+void IoTask::clearWriteComplete()
+{
+    mWriteComplete.clear();
+    mPromptReady.clear();
+}
+
+void IoTask::portReadyRead()
+{
+    // Get data from the serial port and put it into mLines (a list of lines, all ending with CR except possibly the last one, which is the line we're receiving right now)
+    {
+        std::vector<quint8> buffer = mPort.read(mPort.bytesAvailable());
+        std::vector<quint8> newLine;
+        if(!mLines.empty())
+        {
+            newLine = mLines[0];
+            mLines.pop_back();
+        }
+        for(uchar c : buffer)
+        {
+            if(c != '\0')   // Ignore nulls, which ELM documentation says may be emitted in error
+            {
+                newLine.push_back(c);
+                if(c == EOL)
+                {
+                    mLines.push_back(newLine);
+                    newLine.clear();
+                }
+            }
+        }
+        if(newLine.size())
+            mLines.push_back(newLine);
+    }
+
+    // Process lines from mLines, putting any incomplete line that may exist back into mLines
+    std::vector<std::vector<quint8> > incompleteLines;
+    for(std::vector<quint8> & line : mLines)
+    {
+        //qDebug() << mPort.elapsedSecs() << "ELM327 IO line" << line.toPercentEncoding();
+        if(*(line.end() - 1) == EOL)
+        {
+            line.pop_back();
+            if(!line.empty()) {
+                if(containsNonHex(line))\
+                    mRcvdCmdRespQueue.put(line);
+                else
+                {
+                    Frame frame;
+                    size_t idLen;
+                    if(line.size() % 2 == 1)
+                    {
+                        frame.id.type = Id::Type::Std;
+                        idLen = 3;
+                    }
+                    else
+                    {
+                        frame.id.type = Id::Type::Ext;
+                        idLen = 8;
+                    }
+
+                    if(line.size() >= idLen)
+                    {
+                        frame.id.addr = QByteArray(reinterpret_cast<char *>(line.data()), idLen).toUInt(NULL, 16);
+                        QByteArray dataArr(QByteArray::fromHex(QByteArray(reinterpret_cast<char *>(line.data() + idLen), line.size() - idLen)));
+                        frame.data = std::vector<quint8>(reinterpret_cast<quint8 *>(dataArr.data()), reinterpret_cast<quint8 *>(dataArr.data() + dataArr.size()));
+                        mRcvdFrameQueue.put(frame);
+                    }
+                    else
+                        mRcvdCmdRespQueue.put(line);    // too short to be valid
+
+                }
+            }
+        }
+        else
+        {
+            if(line.size() == 1 && line[0] == '>')
+            {
+                QThread::usleep(PROMPT_DELAY_USEC);
+                mPromptReady.set();
+            }
+            else
+                incompleteLines.push_back(line);
+        }
+    }
+    mLines.swap(incompleteLines);
+}
+
+void IoTask::write(std::vector<quint8> data)
+{
+    {
+        QMutexLocker locker(&mPendingTxBytesMutex);
+        mPendingTxBytes += data.size();
+    }
+    mPort.write(data.data(), data.size());
+}
+
+void IoTask::portBytesWritten(qint64 bytes)
+{
+    QMutexLocker locker(&mPendingTxBytesMutex);
+    mPendingTxBytes -= bytes;
+    if(mPendingTxBytes == 0)
+        mWriteComplete.set();
+}
+
+void IoTask::setSerialLog(bool on)
+{
+	mPort.setLogging(on);
+}
+
+Io::Io(SerialPort &port, QObject *parent) :
+    QObject(parent),
+    mTask(port)
+{
+    mTask.moveToThread(&mThread);
+    port.moveToThread(&mThread);
+    mThread.start();
+    mTask.init();
+    connect(this, &Io::queueWrite, &mTask, &IoTask::write, Qt::QueuedConnection);
+}
+
 Io::~Io()
 {
-    mTerminate = true;
-    wait();
+    mThread.quit();
+    mThread.wait();
 }
+
 void Io::sync()
 {
-    QMutexLocker locker(&mPipelineClearMutex);
-    mPipelineClearCond.wait(locker.mutex());
+    mTask.waitWriteComplete();
 }
 
 void Io::syncAndGetPrompt(int timeoutMsec, int retries)
@@ -43,7 +193,7 @@ void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 
     for(int i = 0; i < retries; ++i)
     {
-        write({'\r'});
+        queueWrite({'\r'});
         if(waitPromptReady(timeoutMsec))
             return;
     }
@@ -54,158 +204,44 @@ void Io::syncAndGetPrompt(int timeoutMsec, int retries)
 
 std::vector<Frame> Io::getRcvdFrames(int timeoutMsec)
 {
-    return mRcvdFrameQueue.getAll(timeoutMsec);
+    return mTask.getRcvdFrames(timeoutMsec);
 }
 
 std::vector<std::vector<quint8> > Io::getRcvdCmdResp(int timeoutMsec)
 {
-    return mRcvdCmdRespQueue.getAll(timeoutMsec);
+    return mTask.getRcvdCmdResp(timeoutMsec);
 }
 
 void Io::flushCmdResp()
 {
-    mRcvdCmdRespQueue.getAll(0);    // ignore the return value -> it gets destroyed
+    mTask.getRcvdCmdResp(0);    // ignore the return value -> it gets destroyed
 }
 
 void Io::write(const std::vector<quint8> &data)
 {
-    mTransmitQueue.put(data);
-    sync();
+    mTask.clearWriteComplete();
+    emit queueWrite(data);
+    mTask.waitWriteComplete();
 }
 
 bool Io::isPromptReady()
 {
-    return mPromptReady;    // don't need to bother with the mutex/condition since this is just a poll
+    return mTask.isPromptReady();
 }
 
 bool Io::waitPromptReady(int timeoutMsec)
 {
-    QMutexLocker locker(&mPromptReadyMutex);
-    if(mPromptReady)
-        return true;
-    else
-        return mPromptReadyCond.wait(locker.mutex(), timeoutMsec);
-}
-
-void Io::run()
-{
-    mSendTimer = new QElapsedTimer();
-    mSendTimer->start();
-    while(1)
-    {
-        if(mTerminate)
-            return;
-
-        bool setPromptReady = false;
-        bool setPipelineClear = true;
-
-        Q_ASSERT(mLines.size() <= 1);
-
-        // Get data from the serial port and put it into mLines (a list of lines, all ending with CR except possibly the last one, which is the line we're receiving right now)
-        {
-            std::vector<quint8> buffer = mPort.readGranular(READ_SIZE);
-            std::vector<quint8> newLine;
-            if(!mLines.empty())
-            {
-                newLine = mLines[0];
-                mLines.pop_back();
-            }
-            for(uchar c : buffer)
-            {
-                if(c != '\0')   // Ignore nulls, which ELM documentation says may be emitted in error
-                {
-                    newLine.push_back(c);
-                    if(c == EOL)
-                    {
-                        mLines.push_back(newLine);
-                        newLine.clear();
-                    }
-                }
-            }
-            if(newLine.size())
-                mLines.push_back(newLine);
-        }
-
-        // Process lines from mLines, putting any incomplete line that may exist back into mLines
-        std::vector<std::vector<quint8> > incompleteLines;
-        for(std::vector<quint8> & line : mLines)
-        {
-            //qDebug() << mPort.elapsedSecs() << "ELM327 IO line" << line.toPercentEncoding();
-            if(*(line.end() - 1) == EOL)
-            {
-                line.pop_back();
-                if(!line.empty()) {
-                    if(containsNonHex(line))\
-                        mRcvdCmdRespQueue.put(line);
-                    else
-                    {
-                        Frame frame;
-                        size_t idLen;
-                        if(line.size() % 2 == 1)
-                        {
-                            frame.id.type = Id::Type::Std;
-                            idLen = 3;
-                        }
-                        else
-                        {
-                            frame.id.type = Id::Type::Ext;
-                            idLen = 8;
-                        }
-
-                        if(line.size() >= idLen)
-                        {
-                            frame.id.addr = QByteArray(reinterpret_cast<char *>(line.data()), idLen).toUInt(NULL, 16);
-                            QByteArray dataArr(QByteArray::fromHex(QByteArray(reinterpret_cast<char *>(line.data() + idLen), line.size() - idLen)));
-                            frame.data = std::vector<quint8>(reinterpret_cast<quint8 *>(dataArr.data()), reinterpret_cast<quint8 *>(dataArr.data() + dataArr.size()));
-                            mRcvdFrameQueue.put(frame);
-                            if(mPacketLogEnabled)
-                                qDebug() << QString(frame);
-                        }
-                        else
-                            mRcvdCmdRespQueue.put(line);    // too short to be valid
-
-                    }
-                }
-            }
-            else
-            {
-                if(line.size() == 1 && line[0] == '>')
-                    setPromptReady = true;
-                else
-                    incompleteLines.push_back(line);
-            }
-        }
-        mLines.swap(incompleteLines);
-
-        // Send data from mTransmitQueue, unless we're waiting for the device to "settle"
-        if(mSendTimer->nsecsElapsed() > ELM_RECOVERY_NSEC && !mTransmitQueue.empty())
-        {
-            mPromptReady = false;
-            std::vector<quint8> data = mTransmitQueue.get().get();   // mTransmitQueue.get() returns a boost::optional, but we know it's set because of condition above
-            mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt docs
-            mSendTimer->start();
-            setPromptReady = false;
-            setPipelineClear = false;
-        }
-
-        if(setPromptReady)
-        {
-            QMutexLocker locker(&mPromptReadyMutex);
-            mPromptReady = true;
-            mPromptReadyCond.wakeAll();
-        }
-
-        if(setPipelineClear && mTransmitQueue.empty())
-        {
-            QMutexLocker locker(&mPipelineClearMutex);
-            mPipelineClearCond.wakeAll();
-        }
-    }
+    return mTask.waitPromptReady(timeoutMsec);
 }
 
 void Io::setPacketLog(bool enable)
 {
-    mPacketLogEnabled = enable;
+	mPacketLogEnabled = enable;
+}
+
+void Io::setSerialLog(bool on)
+{
+	mTask.setSerialLog(on);
 }
 
 constexpr int Interface::POSSIBLE_BAUDRATES[];
@@ -308,7 +344,7 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
     }
     qDebug() << "Established communication at" << mPort.baudRate() << "baud";
 
-    mIo = QSharedPointer<Io>(new Io(mPort, NULL));
+    mIo = QSharedPointer<Io>(new Io(mPort, this));
     runCmdWithCheck("ATWS", CheckOk::No);   // Software reset
     runCmdWithCheck("ATE0");                // Turn off echo
     runCmdWithCheck("ATL0");                // Turn off newlines
@@ -415,7 +451,7 @@ void Interface::setFilter(Filter filt)
 }
 void LIBXCONFPROTOSHARED_EXPORT Interface::setSerialLog(bool on)
 {
-    mPort.setLogging(on);
+    mIo->setSerialLog(on);
 }
 void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
 {

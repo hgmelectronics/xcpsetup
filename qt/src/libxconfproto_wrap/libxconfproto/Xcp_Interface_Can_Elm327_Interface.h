@@ -2,7 +2,7 @@
 #define XCP_INTERFACE_CAN_ELM327_INTERFACE_H
 
 #include "libxconfproto_global.h"
-
+#include <QObject>
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <memory>
@@ -34,21 +34,45 @@ class LIBXCONFPROTOSHARED_EXPORT SerialError : public Exception {};
 
 class LIBXCONFPROTOSHARED_EXPORT ConfigError : public Exception {};
 
-/*!
- * \brief ELM327 I/O thread class
- *
- * Reads input, discards zero bytes (which ELM docs say can sometimes be inserted in error),
- * packages completed lines that appear to be CAN frames and places them in the receive queue.
- * Lines that are not packets and not empty are placed in the command response queue, and command prompts from the ELM327
- * (indicating readiness to receive commands) set the prompt-ready condition.
- */
+class IoTask : public QObject
+{
+    Q_OBJECT
+public:
+    IoTask(SerialPort &port, QObject *parent = NULL);
+    void init();
+    std::vector<Frame> getRcvdFrames(int timeoutMsec);
+    std::vector<std::vector<quint8> > getRcvdCmdResp(int timeoutMsec);
+    bool isPromptReady();
+    bool waitPromptReady(int timeoutMsec);
+    void waitWriteComplete();
+    void clearWriteComplete();
+	void setSerialLog(bool on);
+public slots:
+    void portReadyRead();
+    void portBytesWritten(qint64 bytes);
+    void write(std::vector<quint8> data);
+private:
+    static constexpr uchar EOL = '\r';
+    static constexpr int PROMPT_DELAY_USEC = 200;
 
-class LIBXCONFPROTOSHARED_EXPORT Io : public QThread
+    SerialPort &mPort;
+	bool mPacketLogEnabled;
+    qint64 mPendingTxBytes;
+    QMutex mPendingTxBytesMutex;
+
+    std::vector<std::vector<quint8> > mLines;
+    PythonicQueue<Frame> mRcvdFrameQueue;
+    PythonicQueue<std::vector<quint8> > mRcvdCmdRespQueue;
+    std::list<std::vector<quint8> > mTransmitQueue;
+    PythonicEvent mPromptReady, mWriteComplete;
+};
+
+class LIBXCONFPROTOSHARED_EXPORT Io : public QObject
 {
     Q_OBJECT
 public:
     Io(SerialPort &port, QObject *parent = NULL);
-    ~Io();    // QThread has a non-virtual dtor - do not destroy an Elm327Io from a pointer to QThread!!!
+    ~Io();
     void sync();
     void syncAndGetPrompt(int timeoutMsec, int retries = 5);
     std::vector<Frame> getRcvdFrames(int timeoutMsec);
@@ -64,33 +88,25 @@ public:
     bool isPromptReady();
     bool waitPromptReady(int timeoutMsec);
     void setPacketLog(bool enable);
+	void setSerialLog(bool enable);
+signals:
+    void queueWrite(std::vector<quint8> data);
 private:
-    void run() Q_DECL_OVERRIDE;
-
-    static constexpr int TICK_MSEC = 1;
-    static constexpr qint64 ELM_RECOVERY_NSEC = 2000000;
-    static constexpr int READ_SIZE = 4096;
     static constexpr uchar EOL = '\r';
 
-    SerialPort &mPort;
-    bool mPacketLogEnabled;
-
-    std::vector<std::vector<quint8> > mLines;
-    QElapsedTimer *mSendTimer;
-
-    PythonicQueue<Frame> mRcvdFrameQueue;
-    PythonicQueue<std::vector<quint8> > mRcvdCmdRespQueue;
-    PythonicQueue<std::vector<quint8> > mTransmitQueue;
-
-    QMutex mPipelineClearMutex;
-    QWaitCondition mPipelineClearCond;
-
-    QMutex mPromptReadyMutex;
-    QWaitCondition mPromptReadyCond;
-    bool mPromptReady;
-
-    bool mTerminate;
+    IoTask mTask;
+    QThread mThread;
 };
+
+/*!
+ * \brief ELM327 I/O thread class
+ *
+ * Reads input, discards zero bytes (which ELM docs say can sometimes be inserted in error),
+ * packages completed lines that appear to be CAN frames and places them in the receive queue.
+ * Lines that are not packets and not empty are placed in the command response queue, and command prompts from the ELM327
+ * (indicating readiness to receive commands) set the prompt-ready condition.
+ */
+
 
 /*!
  * \brief Implementation of CanInterface for the ELM327/STN1110

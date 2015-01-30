@@ -2,6 +2,7 @@
 #define UTIL_H
 
 #include <boost/optional.hpp>
+#include <QObject>
 #include <QtSerialPort/QtSerialPort>
 #include <QThread>
 #include <QByteArray>
