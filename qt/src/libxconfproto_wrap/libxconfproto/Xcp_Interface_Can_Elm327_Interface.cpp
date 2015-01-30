@@ -27,6 +27,7 @@ IoTask::IoTask(SerialPort &port, QObject *parent) :
 void IoTask::init()
 {
     connect(&mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
+    connect(&mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
 }
 
 std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
@@ -142,8 +143,19 @@ void IoTask::portReadyRead()
 
 void IoTask::write(std::vector<quint8> data)
 {
-    mPort.write(data.data(), data.size()); // write() is believed synchronous based on Qt code
-    mWriteComplete.set();
+    {
+        QMutexLocker locker(&mPendingTxBytesMutex);
+        mPendingTxBytes += data.size();
+    }
+    mPort.write(data.data(), data.size());
+}
+
+void IoTask::portBytesWritten(qint64 bytes)
+{
+    QMutexLocker locker(&mPendingTxBytesMutex);
+    mPendingTxBytes -= bytes;
+    if(mPendingTxBytes == 0)
+        mWriteComplete.set();
 }
 
 Io::Io(SerialPort &port, QObject *parent) :
@@ -204,6 +216,7 @@ void Io::write(const std::vector<quint8> &data)
 {
     mTask.clearWriteComplete();
     emit queueWrite(data);
+    mTask.waitWriteComplete();
 }
 
 bool Io::isPromptReady()

@@ -46,12 +46,15 @@ public:
     void clearWriteComplete();
 public slots:
     void portReadyRead();
+    void portBytesWritten(qint64 bytes);
     void write(std::vector<quint8> data);
 private:
     static constexpr uchar EOL = '\r';
     static constexpr int PROMPT_DELAY_USEC = 200;
 
     SerialPort &mPort;
+    qint64 mPendingTxBytes;
+    QMutex mPendingTxBytesMutex;
 
     std::vector<std::vector<quint8> > mLines;
     PythonicQueue<Frame> mRcvdFrameQueue;
