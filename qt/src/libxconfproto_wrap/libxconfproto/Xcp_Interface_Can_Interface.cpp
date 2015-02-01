@@ -94,7 +94,8 @@ bool validateXcp(const Frame &frame)
 }
 
 LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
-    ::SetupTools::Xcp::Interface::Interface(parent)
+    ::SetupTools::Xcp::Interface::Interface(parent),
+    mPacketLogEnabled(false)
 {}
 
 void LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)

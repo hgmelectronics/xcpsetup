@@ -17,6 +17,8 @@ static const std::vector<quint8> OK_VEC({'O', 'K'});
 IoTask::IoTask(SerialPort &port, QObject *parent) :
     QObject(parent),
     mPort(port),
+    mPacketLogEnabled(false),
+    mPendingTxBytes(0),
     mPromptReady(this),
     mWriteComplete(this)
 {
