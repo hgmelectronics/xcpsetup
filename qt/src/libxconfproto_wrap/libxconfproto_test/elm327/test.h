@@ -34,6 +34,8 @@ private slots:
     void sameTxTest();
 
 private:
+    constexpr static const int TIMEOUT_MSEC = 1000;
+
     QString mDevName;
     Interface *mIntfc;
 };

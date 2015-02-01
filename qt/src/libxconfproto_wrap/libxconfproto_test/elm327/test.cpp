@@ -60,7 +60,7 @@ void Test::echoTest()
                     mIntfc->transmitTo(data, id);
                     if(id.addr % 2 == 0)
                     {
-                        std::vector<Frame> rxFrames = mIntfc->receiveFrames(100);
+                        std::vector<Frame> rxFrames = mIntfc->receiveFrames(TIMEOUT_MSEC);
                         QCOMPARE(rxFrames.size(), size_t(1));
                         QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
                         QCOMPARE(rxFrames[0].id.type, id.type);
@@ -97,7 +97,7 @@ void Test::filterTest()
             mIntfc->transmitTo(data, id);
             if(((id.addr + 1) & filter.maskId) == filter.filt.addr)
             {
-                std::vector<Frame> rxFrames = mIntfc->receiveFrames(100);
+                std::vector<Frame> rxFrames = mIntfc->receiveFrames(TIMEOUT_MSEC);
                 QCOMPARE(rxFrames.size(), size_t(1));
                 QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
                 QCOMPARE(rxFrames[0].id.type, id.type);
@@ -124,7 +124,7 @@ void Test::sameEchoTest()
         for(int i = 0; i < nrep; ++i)
         {
             mIntfc->transmitTo(data, id);
-            std::vector<Frame> rxFrames = mIntfc->receiveFrames(100);
+            std::vector<Frame> rxFrames = mIntfc->receiveFrames(TIMEOUT_MSEC);
             QCOMPARE(rxFrames.size(), size_t(1));
             QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
             QCOMPARE(rxFrames[0].id.type, id.type);
@@ -136,8 +136,8 @@ void Test::sameEchoTest()
 void Test::sameTxTest()
 {
     std::vector<quint8> data =
-        {0x82, 0x00, 0xFF, 0x55, 0x12, 0x45, 0x3F, 0xBA};
-    Id id(0x235, Id::Type::Std);
+        {0x29, 0x00, 0xFF, 0x55, 0x12, 0x45, 0x3F, 0xBA};
+    Id id(0x159, Id::Type::Std);
     int nrep = 100;
 
     // do once to set the ID
