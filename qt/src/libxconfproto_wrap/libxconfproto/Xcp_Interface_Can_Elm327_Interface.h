@@ -54,7 +54,6 @@ public slots:
 private:
     constexpr static const uchar EOL = '\r';
     constexpr static const int PROMPT_DELAY_USEC = 200;
-    constexpr static const int READ_POLL_INTERVAL_MSEC = 20;
 
     SerialPort &mPort;
 	bool mPacketLogEnabled;
@@ -96,9 +95,11 @@ signals:
     void queueWrite(std::vector<quint8> data);
 private:
     constexpr static const uchar EOL = '\r';
+    constexpr static const int READ_POLL_INTERVAL_MSEC = 20;
 
     IoTask mTask;
     QThread mThread;
+    QTimer mReadPollTimer;
 };
 
 /*!

@@ -29,14 +29,7 @@ IoTask::IoTask(SerialPort &port, QObject *parent) :
 void IoTask::init()
 {
     connect(&mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
-
     connect(&mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
-
-        // Also run portReadyRead every so often in case signal gets hung up (?)
-    mReadPollTimer = new QTimer(this);
-    mReadPollTimer->setSingleShot(false);
-    connect(mReadPollTimer, &QTimer::timeout, this, &IoTask::portReadyRead);
-    mReadPollTimer->start(READ_POLL_INTERVAL_MSEC);
 }
 
 std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
@@ -183,7 +176,10 @@ Io::Io(SerialPort &port, QObject *parent) :
     mThread.start();
     connect(this, &Io::initTask, &mTask, &IoTask::init, Qt::QueuedConnection);
     connect(this, &Io::queueWrite, &mTask, &IoTask::write, Qt::QueuedConnection);
+    connect(&mReadPollTimer, &QTimer::timeout, &mTask, &IoTask::portReadyRead, Qt::QueuedConnection);
     emit initTask();
+    mReadPollTimer.setSingleShot(false);
+    mReadPollTimer.start(READ_POLL_INTERVAL_MSEC);
 }
 
 Io::~Io()
