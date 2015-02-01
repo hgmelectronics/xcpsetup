@@ -155,7 +155,7 @@ void IoTask::write(std::vector<quint8> data)
 void IoTask::portBytesWritten(qint64 bytes)
 {
     QMutexLocker locker(&mPendingTxBytesMutex);
-    mPendingTxBytes -= bytes;
+    mPendingTxBytes = std::max(mPendingTxBytes - bytes, qint64(0)); // coerce since first call to this function always seems to be a spurious one with bytes==1
     if(mPendingTxBytes == 0)
         mWriteComplete.set();
 }
