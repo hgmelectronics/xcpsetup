@@ -52,8 +52,9 @@ public slots:
     void portBytesWritten(qint64 bytes);
     void write(std::vector<quint8> data);
 private:
-    static constexpr uchar EOL = '\r';
-    static constexpr int PROMPT_DELAY_USEC = 200;
+    constexpr static const uchar EOL = '\r';
+    constexpr static const int PROMPT_DELAY_USEC = 200;
+    constexpr static const int READ_POLL_INTERVAL_MSEC = 20;
 
     SerialPort &mPort;
 	bool mPacketLogEnabled;
@@ -92,7 +93,7 @@ public:
 signals:
     void queueWrite(std::vector<quint8> data);
 private:
-    static constexpr uchar EOL = '\r';
+    constexpr static const uchar EOL = '\r';
 
     IoTask mTask;
     QThread mThread;
@@ -147,19 +148,19 @@ private:
     void updateBitrateTxType();
     bool calcBitrateParams(int &divisor, bool &useOptTqPerBit);
 
-    static constexpr int TIMEOUT_MSEC = 200;
-    static constexpr int FINDBAUD_TIMEOUT_MSEC = 50;
-    static constexpr int FINDBAUD_ATTEMPTS = 3;
-    static constexpr int SWITCHBAUD_TIMEOUT_MSEC = 1280;
-    static constexpr int SWITCHBAUD_DELAY_MSEC = 25;
-    static constexpr int POSSIBLE_BAUDRATES [] = { 500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200 };
-    static constexpr int DESIRED_BAUDRATE = 500000;
-    static constexpr double BRG_HZ = 4000000;
+    constexpr static const int TIMEOUT_MSEC = 200;
+    constexpr static const int FINDBAUD_TIMEOUT_MSEC = 50;
+    constexpr static const int FINDBAUD_ATTEMPTS = 3;
+    constexpr static const int SWITCHBAUD_TIMEOUT_MSEC = 1280;
+    constexpr static const int SWITCHBAUD_DELAY_MSEC = 25;
+    constexpr static const int POSSIBLE_BAUDRATES [] = { 500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200 };
+    constexpr static const int DESIRED_BAUDRATE = 500000;
+    constexpr static const double BRG_HZ = 4000000;
 
-    static constexpr double CAN_TQ_CLOCK_HZ = 4000000;
-    static constexpr int STD_TQ_PER_BIT = 8;
-    static constexpr int OPT_TQ_PER_BIT = 7;
-    static constexpr double CAN_BITRATE_TOL = 0.001;
+    constexpr static const double CAN_TQ_CLOCK_HZ = 4000000;
+    constexpr static const int STD_TQ_PER_BIT = 8;
+    constexpr static const int OPT_TQ_PER_BIT = 7;
+    constexpr static const double CAN_BITRATE_TOL = 0.001;
 
     SerialPort mPort;
     QSharedPointer<Io> mIo;
