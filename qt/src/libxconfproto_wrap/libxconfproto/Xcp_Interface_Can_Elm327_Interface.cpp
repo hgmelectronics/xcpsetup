@@ -29,7 +29,14 @@ IoTask::IoTask(SerialPort &port, QObject *parent) :
 void IoTask::init()
 {
     connect(&mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
+
     connect(&mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
+
+        // Also run portReadyRead every so often in case signal gets hung up (?)
+    mReadPollTimer = new QTimer(this);
+    mReadPollTimer->setSingleShot(false);
+    connect(mReadPollTimer, &QTimer::timeout, this, &IoTask::portReadyRead);
+    mReadPollTimer->start(READ_POLL_INTERVAL_MSEC);
 }
 
 std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
@@ -65,6 +72,8 @@ void IoTask::clearWriteComplete()
 
 void IoTask::portReadyRead()
 {
+    if(!mPort.bytesAvailable()) // probably fired by the poll timer
+        return;
     // Get data from the serial port and put it into mLines (a list of lines, all ending with CR except possibly the last one, which is the line we're receiving right now)
     {
         std::vector<quint8> buffer = mPort.read(mPort.bytesAvailable());

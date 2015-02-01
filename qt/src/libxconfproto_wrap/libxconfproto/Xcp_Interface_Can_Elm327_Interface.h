@@ -60,6 +60,7 @@ private:
 	bool mPacketLogEnabled;
     qint64 mPendingTxBytes;
     QMutex mPendingTxBytesMutex;
+    QTimer *mReadPollTimer;
 
     std::vector<std::vector<quint8> > mLines;
     PythonicQueue<Frame> mRcvdFrameQueue;
