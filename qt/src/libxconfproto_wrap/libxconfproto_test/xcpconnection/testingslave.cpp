@@ -720,11 +720,12 @@ void TestingSlave::run()
                         {
                             if(memRange.second.type == MemType::Prog
                                     && mMta.ext == memRange.second.base.ext
-                                    && mMta.addr >= memRange.second.base.addr
-                                    && mMta.addr <= memRange.second.base.addr + memRange.second.data.size() / mAg)
+                                    && mMta.addr * mAg >= memRange.second.base.addr
+                                    && mMta.addr * mAg <= memRange.second.base.addr + memRange.second.data.size())
                             {
                                 Q_ASSERT(mCrcCalc);
-                                quint32 checksum = mCrcCalc({memRange.second.data.begin(), memRange.second.data.end()});
+                                quint32 nBytes = mMta.addr * mAg - memRange.second.base.addr;
+                                quint32 checksum = mCrcCalc({memRange.second.data.begin(), memRange.second.data.begin() + nBytes});
                                 if(checksum == masterChecksum)
                                     reply = {0xFF};
                                 else

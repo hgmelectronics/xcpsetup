@@ -197,18 +197,39 @@ void Connection::nvWrite()
     {
         static constexpr char SET_REQ_OPMSG[] = "writing nonvolatile memory";
         // do not use transact() since slave might send two packets (reply plus EV_STORE_CAL)
-        mIntfc->transmit({0xF9, 0x01, 0x00, 0x00});
-        std::vector<std::vector<quint8> > setReqReplies = mIntfc->receive(mTimeoutMsec);
-
-        if(setReqReplies.size() == 0)
-            throw Timeout();
-
-        for(std::vector<quint8> &reply : setReqReplies)
         {
-            if(reply.size() >= 2 && reply[0] == 0xFD && reply[1] == 0x03)
-                return; // Device sent EV_STORE_CAL: write is complete
-            else if(reply.size() < 1 || reply[0] != 0xFF)
-                throwReply(reply, SET_REQ_OPMSG);
+            mIntfc->transmit({0xF9, 0x01, 0x00, 0x00});
+            bool setReqRepliedTo = false;
+            bool writeComplete = false;
+            QElapsedTimer replyTimer;
+            replyTimer.start();
+
+            while(1)
+            {
+                int timeout = std::max(mTimeoutMsec - int(replyTimer.elapsed()), 0);
+                std::vector<std::vector<quint8> > replies = mIntfc->receive(timeout);
+
+                if(replies.size() == 0)
+                    throw Timeout();
+
+                for(std::vector<quint8> &reply : replies)
+                {
+                    if(reply.size() >= 1 && reply[0] == 0xFF)
+                        setReqRepliedTo = true;
+                    else if(reply.size() >= 2 && reply[0] == 0xFD && reply[1] == 0x03)
+                        writeComplete = true;
+                    else
+                        throwReply(reply, SET_REQ_OPMSG);
+                }
+                if(setReqRepliedTo)
+                {
+                    if(writeComplete)
+                        return;
+                    else
+                        break;
+                }
+            }
+
         }
 
         QElapsedTimer timer;
@@ -219,29 +240,49 @@ void Connection::nvWrite()
 
             // do not use transact() since slave might send two packets (reply plus EV_STORE_CAL)
             mIntfc->transmit({0xFD});
-            std::vector<std::vector<quint8> > getStsReplies = mIntfc->receive(mTimeoutMsec);
+            bool getStsRepliedTo = false;
+            bool writeComplete = false;
+            QElapsedTimer replyTimer;
+            replyTimer.start();
 
-            if(getStsReplies.size() == 0)
-                throw Timeout();
-
-            for(std::vector<quint8> &reply : getStsReplies)
+            while(1)
             {
-                if(reply.size() >= 2 && reply[0] == 0xFF)
+                int timeout = std::max(mTimeoutMsec - int(replyTimer.elapsed()), 0);
+                std::vector<std::vector<quint8> > replies = mIntfc->receive(timeout);
+
+                if(replies.size() == 0)
+                    throw Timeout();
+
+                for(std::vector<quint8> &reply : replies)
                 {
-                    if(!(reply[1] & 0x01))
-                        return; // Device answered poll to say write complete
+                    if(reply.size() >= 2 && reply[0] == 0xFF)
+                    {
+                        getStsRepliedTo = true;
+                        if(!(reply[1] & 0x01))
+                            writeComplete = true;
+                    }
+                    else if(reply.size() >= 2 && reply[0] == 0xFD && reply[1] == 0x03)
+                    {
+                        writeComplete = true;
+                    }
+                    else
+                    {
+                        throwReply(reply, GET_STS_OPMSG);
+                    }
                 }
-                else if(reply.size() >= 2 && reply[0] == 0xFD && reply[1] == 0x03)
+
+                if(getStsRepliedTo)
                 {
-                    return; // Device sent EV_STORE_CAL: write is complete
-                }
-                else
-                {
-                    throwReply(reply, GET_STS_OPMSG);
+                    if(writeComplete)
+                        return;
+                    else
+                        break;  // Write not complete, but this GET_STATUS was answered, so we can send another
                 }
             }
+            int msecsLeft = mNvWriteTimeoutMsec / NUM_NV_WRITE_POLLS - int(replyTimer.elapsed());
+            QThread::msleep(std::max(msecsLeft, 0));
         }
-        throw Timeout();    // Exited while() loop due to timeout
+        throw Timeout();    // Exited outer while() loop due to timeout
     };
 
     tryQuery(action);
@@ -549,12 +590,13 @@ void Connection::programPacket(XcpPtr base, const std::vector<quint8> &data)
     Q_ASSERT(int(data.size()) % mAddrGran == 0);
     Q_ASSERT(int(data.size()) <= mPgmMaxDownPayload);
 
-    std::vector<quint8> query({0xD0, quint8(data.size() / mAddrGran)});
+    quint32 nElem = data.size() / mAddrGran;
+    std::vector<quint8> query({0xD0, quint8(nElem)});
     if(mAddrGran > 2)
         query.resize(mAddrGran);
     query.insert(query.end(), data.begin(), data.end());
 
-    std::function<void (void)> action = [this, base, query]()
+    std::function<void (void)> action = [this, base, query, nElem]()
     {
         static constexpr char OPMSG[] = "downloading program data";
 
@@ -571,6 +613,7 @@ void Connection::programPacket(XcpPtr base, const std::vector<quint8> &data)
             mCalcMta.reset();
             throw;
         }
+        mCalcMta.get().addr += nElem;
     };
 
     tryQuery(action);
@@ -615,7 +658,7 @@ void Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
             }
 
             int payloadBytes = std::min(remBytes, mPgmMaxDownPayload);
-            std::vector<quint8> query = {quint8(isFirstPacket ? 0xD0 : 0xCA), quint8(payloadBytes)};
+            std::vector<quint8> query = {quint8(isFirstPacket ? 0xD0 : 0xCA), quint8(remBytes / mAddrGran)};
             if(mAddrGran > 2)
                 query.resize(mAddrGran);
             std::vector<quint8>::const_iterator dataStartIt = data.end() - remBytes;

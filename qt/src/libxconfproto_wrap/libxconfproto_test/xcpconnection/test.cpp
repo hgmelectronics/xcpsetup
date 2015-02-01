@@ -52,6 +52,7 @@ void Test::initTestCase()
     mSlave->addMemRange(TestingSlave::MemType::Calib, {0x400, 0}, 0x400);
     mSlave->addMemRange(TestingSlave::MemType::Calib, {0x10000, 0}, 0x400, 1, {0, 3});
     mSlave->addMemRange(TestingSlave::MemType::Prog, {0x08004000, 0}, 0x7A800);
+    //mIntfc->setPacketLog(true);
 }
 
 /**
@@ -393,8 +394,8 @@ void Test::programSequence()
         mConn->programReset();
 
         // now a command that requires calibration mode, to confirm the reset worked
-        XcpPtr calBase = {0x515, 0};
-        std::vector<quint8> calData(VectorFromQByteArray("Please do not press this button again."));
+        XcpPtr calBase = {quint32(0x514 / ag), 0};
+        std::vector<quint8> calData(VectorFromQByteArray("Please do not press this button again..."));
         mConn->download(calBase, calData);
     }
     catch(ConnException &exc)

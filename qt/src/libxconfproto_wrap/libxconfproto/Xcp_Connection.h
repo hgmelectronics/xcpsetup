@@ -174,7 +174,8 @@ private:
     void synch();
     quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 
-    static constexpr int MAX_RETRIES = 10;
+    constexpr static const int MAX_RETRIES = 10;
+    constexpr static const int NUM_NV_WRITE_POLLS = 10;
 
     Interface::Interface *mIntfc;
     int mTimeoutMsec, mNvWriteTimeoutMsec;

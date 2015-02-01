@@ -10,14 +10,20 @@ namespace Loopback
 {
 
 LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
-    ::SetupTools::Xcp::Interface::Interface(parent)
-{}
+    ::SetupTools::Xcp::Interface::Interface(parent),
+    mPacketLogEnabled(false)
+{
+    mPacketTimer.start();
+}
 
 void LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
 {
-    //QByteArray arr;
-    //arr.setRawData(reinterpret_cast<const char *>(data.data()), data.size());
-    //qDebug() << "Master TX" << arr.toPercentEncoding();
+    if(mPacketLogEnabled)
+    {
+        QByteArray arr;
+        arr.setRawData(reinterpret_cast<const char *>(data.data()), data.size());
+        qDebug() << mPacketTimer.nsecsElapsed() / 1000000000.0 << "Master TX" << arr.toPercentEncoding();
+    }
     mSlaveReceiveQueue.put(data);
 }
 
@@ -28,15 +34,23 @@ std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::receive(
 
 void LIBXCONFPROTOSHARED_EXPORT Interface::slaveTransmit(const std::vector<quint8> & data)
 {
-    //QByteArray arr;
-    //arr.setRawData(reinterpret_cast<const char *>(data.data()), data.size());
-    //qDebug() << "Slave TX" << arr.toPercentEncoding();
+    if(mPacketLogEnabled)
+    {
+        QByteArray arr;
+        arr.setRawData(reinterpret_cast<const char *>(data.data()), data.size());
+        qDebug() << mPacketTimer.nsecsElapsed() / 1000000000.0 << "Slave TX" << arr.toPercentEncoding();
+    }
     mMasterReceiveQueue.put(data);
 }
 
 std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::slaveReceive(int timeoutMsec)
 {
     return mSlaveReceiveQueue.getAll(timeoutMsec);
+}
+
+void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
+{
+    mPacketLogEnabled = enable;
 }
 
 }   // namespace Can
