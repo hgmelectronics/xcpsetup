@@ -181,8 +181,9 @@ Io::Io(SerialPort &port, QObject *parent) :
     mTask.moveToThread(&mThread);
     port.moveToThread(&mThread);
     mThread.start();
-    mTask.init();
+    connect(this, &Io::initTask, &mTask, &IoTask::init, Qt::QueuedConnection);
     connect(this, &Io::queueWrite, &mTask, &IoTask::write, Qt::QueuedConnection);
+    emit initTask();
 }
 
 Io::~Io()

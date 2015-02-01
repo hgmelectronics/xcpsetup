@@ -39,7 +39,6 @@ class IoTask : public QObject
     Q_OBJECT
 public:
     IoTask(SerialPort &port, QObject *parent = NULL);
-    void init();
     std::vector<Frame> getRcvdFrames(int timeoutMsec);
     std::vector<std::vector<quint8> > getRcvdCmdResp(int timeoutMsec);
     bool isPromptReady();
@@ -48,6 +47,7 @@ public:
     void clearWriteComplete();
 	void setSerialLog(bool on);
 public slots:
+    void init();
     void portReadyRead();
     void portBytesWritten(qint64 bytes);
     void write(std::vector<quint8> data);
@@ -92,6 +92,7 @@ public:
     void setPacketLog(bool enable);
 	void setSerialLog(bool enable);
 signals:
+    void initTask();
     void queueWrite(std::vector<quint8> data);
 private:
     constexpr static const uchar EOL = '\r';
