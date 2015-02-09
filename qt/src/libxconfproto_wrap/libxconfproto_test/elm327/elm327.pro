@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core serialport testlib quick
+QT       += core testlib quick
 
 QT       -= gui
 
@@ -29,3 +29,10 @@ DEPENDPATH += $$PWD/../../libxconfproto
 
 HEADERS += \
     test.h
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../qextserialport/release/ -lQt5ExtSerialPort
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../qextserialport/debug/ -lQt5ExtSerialPort
+else:unix: LIBS += -L$$OUT_PWD/../../qextserialport/ -lQt5ExtSerialPort
+
+INCLUDEPATH += $$PWD/../../qextserialport
+DEPENDPATH += $$PWD/../../qextserialport

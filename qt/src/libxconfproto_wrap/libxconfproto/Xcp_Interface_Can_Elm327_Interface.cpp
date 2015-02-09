@@ -249,9 +249,9 @@ void Io::setSerialLog(bool on)
 
 constexpr int Interface::POSSIBLE_BAUDRATES[];
 
-Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
+Interface::Interface(const QString & portName, QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mPort(portInfo),
+    mPort(portName),
     mIntfcIsStn(false)
 {
     if(!mPort.open(QIODevice::ReadWrite))
@@ -263,7 +263,7 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
     for(auto baud : POSSIBLE_BAUDRATES)
     {
         qDebug() << "Trying" << baud << "baud";
-        mPort.setBaudRate(baud);
+        mPort.setBaudRate(BaudRateType(baud));  // forcibly cast into BaudRateType since Windows actually can handle 500k
         mPort.setTimeout(FINDBAUD_TIMEOUT_MSEC);
         mPort.setInterCharTimeout();
 
@@ -297,7 +297,7 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
             if(std::search(brdRes.begin(), brdRes.end(), OK_VEC.begin(), OK_VEC.end()) != brdRes.end())
             {
                 // Device allows baudrate change, proceed with switch
-                mPort.setBaudRate(DESIRED_BAUDRATE);
+                mPort.setBaudRate(BaudRateType(DESIRED_BAUDRATE));
                 mPort.setInterCharTimeout();
                 mPort.fullClear();
                 qDebug() << "Switched to" << mPort.baudRate() << "baud";
@@ -318,7 +318,7 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
                 else
                 {
                     // Baudrate switch unsuccessful, try to recover
-                    mPort.setBaudRate(baud);
+                    mPort.setBaudRate(BaudRateType(baud));
                     mPort.setInterCharTimeout();
 
                     mPort.write("\r");
@@ -605,32 +605,25 @@ void Interface::updateBitrateTxType()
     }
 }
 
-Factory::Factory(QSerialPortInfo info, QObject *parent) :
+Factory::Factory(QextPortInfo info, QObject *parent) :
     SetupTools::Xcp::Interface::Can::Factory(parent),
     mPortInfo(info)
 {}
 
 SetupTools::Xcp::Interface::Can::Interface *Factory::make(QObject *parent)
 {
-    return new Interface(mPortInfo, parent);
+    return new Interface(mPortInfo.portName, parent);
 }
 QString Factory::text()
 {
-    return "ELM327 on " + mPortInfo.portName() + " (" + mPortInfo.description() + ")";
+    return "ELM327 on " + mPortInfo.portName + " (" + mPortInfo.friendName + ")";
 }
 
 QList<Factory *> getInterfacesAvail(QObject *parent)
 {
     QList<Factory *> ret;
-    for(const auto &portInfo : QSerialPortInfo::availablePorts()) {
-        if(!portInfo.isBusy()) {
-            QSerialPort port(portInfo);
-            if(port.open(QIODevice::ReadWrite)) {
-                port.close();
-                ret.append(new Factory(portInfo, parent));
-            }
-        }
-    }
+    for(const QextPortInfo &portInfo : getValidSerialPorts())
+        ret.append(new Factory(portInfo, parent));
     return ret;
 }
 

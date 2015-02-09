@@ -6,7 +6,8 @@
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <memory>
-#include <QtSerialPort/QtSerialPort>
+#include <src/qextserialport.h>
+#include <src/qextserialenumerator.h>
 #include <QThread>
 #include <QtGlobal>
 #include "Xcp_Interface_Can_Interface.h"
@@ -119,7 +120,7 @@ class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface
 {
     Q_OBJECT
 public:
-    Interface(const QSerialPortInfo & portInfo, QObject *parent = NULL);
+    Interface(const QString & portName, QObject *parent = NULL);
     virtual ~Interface();
     virtual void connect(SlaveId addr);                      //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
     virtual void disconnect();                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
@@ -185,12 +186,12 @@ class LIBXCONFPROTOSHARED_EXPORT Factory : public ::SetupTools::Xcp::Interface::
     Q_OBJECT
     Q_PROPERTY(QString text READ text CONSTANT)
 public:
-    Factory(QSerialPortInfo info, QObject *parent = 0);
+    Factory(QextPortInfo info, QObject *parent = 0);
     virtual ~Factory() {}
     virtual SetupTools::Xcp::Interface::Can::Interface *make(QObject *parent = 0);
     virtual QString text();
 private:
-    QSerialPortInfo mPortInfo;
+    QextPortInfo mPortInfo;
 };
 
 

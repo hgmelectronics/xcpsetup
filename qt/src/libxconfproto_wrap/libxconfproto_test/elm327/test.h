@@ -5,7 +5,7 @@
 #include <QtTest/QtTest>
 #include <QIODevice>
 #include <QTextStream>
-#include <QtSerialPort/QtSerialPort>
+#include "util.h"
 
 #include <Xcp_Interface_Can_Elm327_Interface.h>
 

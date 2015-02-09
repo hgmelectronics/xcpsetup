@@ -1,9 +1,9 @@
 #include <QtTest/QtTest>
 #include <QIODevice>
 #include <QTextStream>
-#include <QtSerialPort/QtSerialPort>
 #include <QtGlobal>
 
+#include "util.h"
 #include "test.h"
 
 int main(int argc, char **argv)
@@ -16,10 +16,10 @@ int main(int argc, char **argv)
 
     int iPort = 0;
     qDebug() << "Available serial ports:";
-    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-    for(const auto &port : ports)
+    QList<QextPortInfo> ports = SetupTools::getValidSerialPorts();
+    for(const QextPortInfo &port : ports)
     {
-        qDebug() << iPort << port.portName() << port.description();
+        qDebug() << iPort << port.portName << port.friendName;
         ++iPort;
     }
 
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     else if(ports.size() == 1)
     {
         qDebug() << "One serial port detected, using it";
-        devName = ports[0].portName();
+        devName = ports[0].portName;
     }
     else
     {
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
         qout.flush();
         qin >> devIdx;
         Q_ASSERT(devIdx < ports.size());
-        devName = ports[devIdx].portName();
+        devName = ports[devIdx].portName;
     }
 
     SetupTools::Xcp::Interface::Can::Elm327::Test test(devName);

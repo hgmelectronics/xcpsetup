@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = libxconfproto libxconfproto_test \
+SUBDIRS = qextserialport libxconfproto libxconfproto_test \
     libxconfproto_examples

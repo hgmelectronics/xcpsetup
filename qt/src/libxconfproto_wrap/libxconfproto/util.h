@@ -3,20 +3,25 @@
 
 #include <boost/optional.hpp>
 #include <QObject>
-#include <QtSerialPort/QtSerialPort>
+#include <src/qextserialport.h>
+#include <src/qextserialenumerator.h>
 #include <QThread>
 #include <QByteArray>
 #include <deque>
+#include <QElapsedTimer>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QWaitCondition>
 
 namespace SetupTools
 {
 
-class SerialPort : public QSerialPort
+class SerialPort : public QextSerialPort
 {
 public:
     explicit SerialPort(QObject *parent = Q_NULLPTR);
     explicit SerialPort(const QString &name, QObject *parent = Q_NULLPTR);
-    explicit SerialPort(const QSerialPortInfo &info, QObject *parent = Q_NULLPTR);
+    explicit SerialPort(const QextPortInfo &info, QObject *parent = Q_NULLPTR);
     virtual ~SerialPort() {}
     void setLogging(bool on);
     void setTimeout(int msec);
@@ -24,7 +29,7 @@ public:
     std::vector<quint8> readGranular(qint64 maxlen);
     inline qint64 read(quint8 *data, qint64 maxlen)
     {
-        return QSerialPort::read(reinterpret_cast<char *>(data), maxlen);
+        return QextSerialPort::read(reinterpret_cast<char *>(data), maxlen);
     }
     inline std::vector<quint8> read(qint64 maxlen)
     {
@@ -39,19 +44,19 @@ public:
     }
     inline qint64 write(const quint8 *data, qint64 maxlen)
     {
-        return QSerialPort::write(reinterpret_cast<const char *>(data), maxlen);
+        return QextSerialPort::write(reinterpret_cast<const char *>(data), maxlen);
     }
     inline qint64 write(const std::vector<quint8> &data)
     {
-        return QSerialPort::write(reinterpret_cast<const char *>(data.data()), data.size());
+        return QextSerialPort::write(reinterpret_cast<const char *>(data.data()), data.size());
     }
     inline qint64 write(const QByteArray &data)
     {
-        return QSerialPort::write(data);
+        return QextSerialPort::write(data);
     }
     inline qint64 write(const char *data)
     {
-        return QSerialPort::write(data);
+        return QextSerialPort::write(data);
     }
 
     void fullClear();
@@ -65,6 +70,8 @@ private:
     QElapsedTimer mLogTimer;
     bool mLogData;
 };
+
+QList<QextPortInfo> getValidSerialPorts();
 
 template <typename T>
 bool containsNonHex(const T & container)

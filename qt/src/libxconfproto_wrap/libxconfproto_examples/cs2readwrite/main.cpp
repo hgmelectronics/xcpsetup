@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
 
     int iPort = 0;
     qout << "Available serial ports:\n";
-    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-    for(const auto &port : ports)
+    QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
+    for(const QextPortInfo &port : ports)
     {
-        qout << iPort << " " << port.portName() << " " << port.description() << "\n";
+        qout << iPort << " " << port.portName << " " << port.friendName << "\n";
         ++iPort;
     }
     qout.flush();
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     {
         qout << "One serial port detected, using it\n";
         qout.flush();
-        serialDevName = ports[0].portName();
+        serialDevName = ports[0].portName;
     }
     else
     {
@@ -40,11 +40,10 @@ int main(int argc, char *argv[])
         qout.flush();
         qin >> devIdx;
         Q_ASSERT(devIdx < ports.size());
-        serialDevName = ports[devIdx].portName();
+        serialDevName = ports[devIdx].portName;
     }
 
-    QSerialPortInfo info(serialDevName);
-    SetupTools::Xcp::Interface::Can::Elm327::Interface* intfc = new SetupTools::Xcp::Interface::Can::Elm327::Interface(info, NULL);
+    SetupTools::Xcp::Interface::Can::Elm327::Interface* intfc = new SetupTools::Xcp::Interface::Can::Elm327::Interface(serialDevName, NULL);
     intfc->setBitrate(250000);
     intfc->setFilter(SetupTools::Xcp::Interface::Can::Filter());    // filter that matches everything
     intfc->connect({{0x18FCD403, SetupTools::Xcp::Interface::Can::Id::Type::Ext}, {0x18FCD4F9, SetupTools::Xcp::Interface::Can::Id::Type::Ext}});

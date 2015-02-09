@@ -1,10 +1,11 @@
 #include "util.h"
+#include <QDebug>
 
 namespace SetupTools
 {
 
 SerialPort::SerialPort(QObject *parent) :
-    QSerialPort(parent),
+    QextSerialPort(QextSerialPort::EventDriven, parent),
     mTimeout(0),
     mInterCharTimeout(0),
     mLogData(false)
@@ -12,15 +13,15 @@ SerialPort::SerialPort(QObject *parent) :
     mLogTimer.start();
 }
 SerialPort::SerialPort(const QString &name, QObject *parent) :
-    QSerialPort(name, parent),
+    QextSerialPort(name, QextSerialPort::EventDriven, parent),
     mTimeout(0),
     mInterCharTimeout(0),
     mLogData(false)
 {
     mLogTimer.start();
 }
-SerialPort::SerialPort(const QSerialPortInfo &info, QObject *parent) :
-    QSerialPort(info, parent),
+SerialPort::SerialPort(const QextPortInfo &info, QObject *parent) :
+    QextSerialPort(info.portName, QextSerialPort::EventDriven, parent),
     mTimeout(0),
     mInterCharTimeout(0),
     mLogData(false)
@@ -64,11 +65,16 @@ std::vector<quint8> SerialPort::readGranular(qint64 maxlen)
 }
 void SerialPort::fullClear()
 {
-    clear();
+    QextSerialPort::flush();
     while(1)
     {
         quint8 bitbucket[1024];
-        if(read(bitbucket, sizeof(bitbucket)) == 0)
+        qint64 bytesToRead = bytesAvailable();
+        if(bytesToRead < 0)
+            return;
+        if(bytesToRead > qint64(sizeof(bitbucket)))
+            bytesToRead = sizeof(bitbucket);
+        if(read(bitbucket, bytesToRead) == 0)
             break;
     }
 }
@@ -79,7 +85,7 @@ double SerialPort::elapsedSecs()
 
 qint64 SerialPort::readData(char *data, qint64 maxSize)
 {
-    qint64 res = QSerialPort::readData(data, maxSize);
+    qint64 res = QextSerialPort::readData(data, maxSize);
     if(mLogData && res > 0)
     {
         QByteArray arr;
@@ -90,7 +96,7 @@ qint64 SerialPort::readData(char *data, qint64 maxSize)
 }
 qint64 SerialPort::writeData(const char *data, qint64 maxSize)
 {
-    qint64 res = QSerialPort::writeData(data, maxSize);
+    qint64 res = QextSerialPort::writeData(data, maxSize);
     if(mLogData && res > 0)
     {
         QByteArray arr;
@@ -98,6 +104,36 @@ qint64 SerialPort::writeData(const char *data, qint64 maxSize)
         qDebug() << mLogTimer.nsecsElapsed() / double(1000000000) << "Serial TX" << arr.toPercentEncoding();
     }
     return res;
+}
+
+QList<QextPortInfo> getValidSerialPorts()
+{
+    QList<QextPortInfo> ret;
+    for(const auto &portInfo : QextSerialEnumerator::getPorts()) {
+        QextSerialPort port(portInfo.portName);
+
+        port.open(QIODevice::ReadOnly);
+        if(!port.isOpen())
+            continue;
+
+        /*port.flush();
+        while(1)
+        {
+            char bitbucket[1024];
+            qint64 bytesToRead = port.bytesAvailable();
+            if(bytesToRead < 0)
+                break;
+            if(bytesToRead > qint64(sizeof(bitbucket)))
+                bytesToRead = sizeof(bitbucket);
+            if(port.read(bitbucket, bytesToRead) == 0)
+                break;
+        }*/
+        if(port.bytesAvailable() >= 0)
+            ret.append(portInfo);
+        if(port.isOpen())
+            port.close();
+    }
+    return ret;
 }
 
 PythonicEvent::PythonicEvent(QObject *parent) :

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core serialport quick
+QT       += core quick
 
 QT       -= gui
 
@@ -25,3 +25,10 @@ else:unix: LIBS += -L$$OUT_PWD/../../libxconfproto/ -lxconfproto
 
 INCLUDEPATH += $$PWD/../../libxconfproto
 DEPENDPATH += $$PWD/../../libxconfproto
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../qextserialport/release/ -lQt5ExtSerialPort
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../qextserialport/debug/ -lQt5ExtSerialPort
+else:unix: LIBS += -L$$OUT_PWD/../../qextserialport/ -lQt5ExtSerialPort
+
+INCLUDEPATH += $$PWD/../../qextserialport
+DEPENDPATH += $$PWD/../../qextserialport
