@@ -114,7 +114,7 @@ QList<QextPortInfo> getValidSerialPorts()
     QList<QextPortInfo> validPortInfos;
 
     for(const auto &portInfo : QextSerialEnumerator::getPorts()) {
-        if(BLACKLIST_NAMES.count(portInfo.portName))
+        if(BLACKLIST_NAMES.find(portInfo.portName) != BLACKLIST_NAMES.end())
             continue;
 
         QextSerialPort port(portInfo.portName);
