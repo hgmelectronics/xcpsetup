@@ -7,7 +7,7 @@
 # macx:CONFIG += qesp_mac_framework
 
 # Uncomment following line if you want to enable udev for linux
-# linux*:CONFIG += qesp_linux_udev
+linux*:CONFIG += qesp_linux_udev
 
 # Note: you can create a ".qmake.cache" file, then copy these lines to it.
 # If so, you can avoid to change this project file.
@@ -94,3 +94,5 @@ target.path = $$[QT_INSTALL_LIBS]
 features.files = extserialport.prf
 features.path = $$[QMAKE_MKSPECS]/features
 INSTALLS += target features
+
+DEFINES += QESP_NO_PORTABILITY_WARN

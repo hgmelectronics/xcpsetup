@@ -110,6 +110,10 @@ QList<QextPortInfo> getValidSerialPorts()
 {
     QList<QextPortInfo> ret;
     for(const auto &portInfo : QextSerialEnumerator::getPorts()) {
+        if(portInfo.portName == "/dev/tty"
+                || portInfo.portName == "/dev/ptmx")
+            continue;
+
         QextSerialPort port(portInfo.portName);
 
         port.open(QIODevice::ReadOnly);
