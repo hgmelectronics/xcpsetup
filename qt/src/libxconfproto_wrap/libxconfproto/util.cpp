@@ -1,5 +1,6 @@
 #include "util.h"
 #include <QDebug>
+#include <set>
 
 namespace SetupTools
 {
@@ -108,10 +109,12 @@ qint64 SerialPort::writeData(const char *data, qint64 maxSize)
 
 QList<QextPortInfo> getValidSerialPorts()
 {
-    QList<QextPortInfo> ret;
+    static const std::set<QString> BLACKLIST_NAMES = {"/dev/tty", "/dev/ptmx"};
+
+    QList<QextPortInfo> validPortInfos;
+
     for(const auto &portInfo : QextSerialEnumerator::getPorts()) {
-        if(portInfo.portName == "/dev/tty"
-                || portInfo.portName == "/dev/ptmx")
+        if(BLACKLIST_NAMES.count(portInfo.portName))
             continue;
 
         QextSerialPort port(portInfo.portName);
@@ -133,11 +136,11 @@ QList<QextPortInfo> getValidSerialPorts()
                 break;
         }*/
         if(port.bytesAvailable() >= 0)
-            ret.append(portInfo);
+            validPortInfos.append(portInfo);
         if(port.isOpen())
             port.close();
     }
-    return ret;
+    return validPortInfos;
 }
 
 PythonicEvent::PythonicEvent(QObject *parent) :
