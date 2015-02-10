@@ -25,7 +25,7 @@ defineReplace(qextLibraryName) {
    CONFIG(debug, debug|release) {
       !debug_and_release|build_pass {
           mac:LIBRARY_NAME = $${LIBRARY_NAME}_debug
-          else:win32:LIBRARY_NAME = $${LIBRARY_NAME}d
+          else:win32:LIBRARY_NAME = $${LIBRARY_NAME}
       }
    }
    return($$LIBRARY_NAME)
@@ -96,3 +96,5 @@ features.path = $$[QMAKE_MKSPECS]/features
 INSTALLS += target features
 
 DEFINES += QESP_NO_PORTABILITY_WARN
+
+LIBS += -lwinmm

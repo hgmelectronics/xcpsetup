@@ -1,6 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include "libxconfproto_global.h"
 #include <boost/optional.hpp>
 #include <QObject>
 #include <src/qextserialport.h>
@@ -16,7 +17,7 @@
 namespace SetupTools
 {
 
-class SerialPort : public QextSerialPort
+class LIBXCONFPROTOSHARED_EXPORT SerialPort : public QextSerialPort
 {
 public:
     explicit SerialPort(QObject *parent = Q_NULLPTR);
@@ -71,7 +72,7 @@ private:
     bool mLogData;
 };
 
-QList<QextPortInfo> getValidSerialPorts();
+QList<QextPortInfo> LIBXCONFPROTOSHARED_EXPORT getValidSerialPorts();
 
 template <typename T>
 bool containsNonHex(const T & container)
@@ -189,7 +190,7 @@ private:
     QWaitCondition mCond;
 };
 
-class PythonicEvent : public QObject
+class LIBXCONFPROTOSHARED_EXPORT PythonicEvent : public QObject
 {
     Q_OBJECT
 public:
