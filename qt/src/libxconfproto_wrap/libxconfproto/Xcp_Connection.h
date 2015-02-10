@@ -150,7 +150,7 @@ public:
         const D *it = reinterpret_cast<const D *>(&*data.begin());
         const D *end = reinterpret_cast<const D *>(&*data.end());
 
-        A accum;
+        A accum = 0;
         while(it != end)
         {
             accum += toSlaveEndian<D>(*it);
