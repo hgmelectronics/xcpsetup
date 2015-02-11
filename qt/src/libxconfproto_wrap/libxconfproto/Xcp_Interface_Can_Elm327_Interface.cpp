@@ -22,7 +22,6 @@ IoTask::IoTask(SerialPort &port, QObject *parent) :
     mPromptReady(this),
     mWriteComplete(this)
 {
-    mPromptReady.set();
     mWriteComplete.set();
 }
 
@@ -266,28 +265,20 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
         qCritical("Failed to open serial port");
         throw SerialError();
     }
+    mIo = QSharedPointer<Io>(new Io(mPort, this));
     bool foundBaud = false;
     for(auto baud : POSSIBLE_BAUDRATES)
     {
         qDebug() << "Trying" << baud << "baud";
-        mPort.setBaudRate(baud);
-        mPort.setTimeout(FINDBAUD_TIMEOUT_MSEC);
-        mPort.setInterCharTimeout();
+        mPort.setBaudRate(baud);  // forcibly cast into BaudRateType since Windows actually can handle 500k
 
-        bool commEstablished = false;
-        for(int i = 0; i < FINDBAUD_ATTEMPTS; ++i)
+        try
         {
-            mPort.fullClear();
-            mPort.write("\r");
-            std::vector<quint8> findBaudRes = mPort.readGranular(16384);
-            if(findBaudRes.size() > 0 && *(findBaudRes.end() - 1) == '>')
-            {
-                commEstablished = true;
-                break;
-            }
+            mIo->syncAndGetPrompt(FINDBAUD_TIMEOUT_MSEC, FINDBAUD_ATTEMPTS);
         }
-        if(!commEstablished)
+        catch(NoResponse) {
             continue;
+        }
 
         if(baud == DESIRED_BAUDRATE)
         {
@@ -297,55 +288,56 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
         else
         {
             // try to switch baudrate to desired
-            mPort.setTimeout(SWITCHBAUD_TIMEOUT_MSEC);
-            mPort.fullClear();
-            mPort.write(QString("ATBRD%1\r").arg(qRound(BRG_HZ / DESIRED_BAUDRATE), 2, 16, QChar('0')).toLatin1());
-            std::vector<quint8> brdRes(mPort.readGranular(12));
-            if(std::search(brdRes.begin(), brdRes.end(), OK_VEC.begin(), OK_VEC.end()) != brdRes.end())
-            {
-                // Device allows baudrate change, proceed with switch
-                mPort.setBaudRate(DESIRED_BAUDRATE);
-                mPort.setInterCharTimeout();
-                mPort.fullClear();
-                qDebug() << "Switched to" << mPort.baudRate() << "baud";
-                std::vector<quint8> switchBaudRes(mPort.readGranular(11));
-                static const std::vector<quint8> SWITCH_BAUD_RES_SUBSTR({'E','L','M','3','2','7'});
-                if(switchBaudRes.size() >= SWITCH_BAUD_RES_SUBSTR.size()
-                        && std::equal(SWITCH_BAUD_RES_SUBSTR.begin(), SWITCH_BAUD_RES_SUBSTR.end(), switchBaudRes.begin()))
-                {
-                    // Baudrate switch successful, send a CR to confirm we're on board
-                    mPort.fullClear();
-                    mPort.write("\r");
-                    if(mPort.readGranular(2) != OK_VEC)
-                    {
-                        qCritical("Unexpected response from ELM327 when confirming UART baudrate switch");
-                        throw UnexpectedResponse();
-                    }
-                }
-                else
-                {
-                    // Baudrate switch unsuccessful, try to recover
-                    mPort.setBaudRate(baud);
-                    mPort.setInterCharTimeout();
 
-                    mPort.write("\r");
-                    mPort.fullClear();
-                    std::vector<quint8> recoverRes(mPort.readGranular(1024));
-                    if(recoverRes.size() < 1 || *(recoverRes.end() - 1) != '>')
-                    {
-                        qCritical("Failed to recover from unsuccessful ELM327 baudrate switch");
-                        throw UnexpectedResponse();
-                    }
-                }
-                foundBaud = true;
-                break;
+            mIo->getRcvdCmdResp(0); // dump anything received during initial baudrate detect
+
+            try
+            {
+                QByteArray cmd = QString("ATBRD%1\r").arg(qRound(BRG_HZ / DESIRED_BAUDRATE), 2, 16, QChar('0')).toLatin1();
+                runCmdCheckResp(cmd, QByteArray("OK"), TIMEOUT_MSEC);
             }
-            else
+            catch(NoResponse)
             {
                 // Device does not allow baudrate change, but we found its operating baudrate
                 foundBaud = true;
                 break;
             }
+
+            mPort.setBaudRate(DESIRED_BAUDRATE);
+            qDebug() << "Switched to" << mPort.baudRate() << "baud";
+
+            try
+            {
+                runCmdCheckResp(QByteArray("\r"), QByteArray("ELM327"), TIMEOUT_MSEC);
+            }
+            catch(NoResponse)
+            {
+                // Baudrate switch unsuccessful, try to recover
+                mPort.setBaudRate(baud);
+                try
+                {
+                    mIo->syncAndGetPrompt(BAUD_RECOVERY_TIMEOUT_MSEC);
+                }
+                catch(NoResponse)
+                {
+                    qCritical("Failed to recover from unsuccessful ELM327 baudrate switch");
+                    throw UnexpectedResponse();
+                }
+            }
+
+            // Baudrate switch successful, send a CR to confirm we're on board
+            try
+            {
+                runCmdCheckResp(QByteArray("\r"), QByteArray("OK"), TIMEOUT_MSEC);
+            }
+            catch(NoResponse)
+            {
+                qCritical("Unexpected response from ELM327 when confirming UART baudrate switch");
+                throw UnexpectedResponse();
+            }
+
+            foundBaud = true;
+            break;
         }
     }
     if(!foundBaud) {
@@ -354,7 +346,6 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
     }
     qDebug() << "Established communication at" << mPort.baudRate() << "baud";
 
-    mIo = QSharedPointer<Io>(new Io(mPort, this));
     runCmdWithCheck("ATWS", CheckOk::No);   // Software reset
     runCmdWithCheck("ATE0");                // Turn off echo
     runCmdWithCheck("ATL0");                // Turn off newlines
@@ -507,6 +498,27 @@ void Interface::runCmdWithCheck(const std::vector<quint8> &cmd, CheckOk checkOkP
             throw NoResponse();
         }
     }
+}
+void Interface::runCmdCheckResp(const std::vector<quint8> &cmd, const std::vector<quint8> &respSubstr, int timeoutMsec)
+{
+    Q_ASSERT(cmd.size());
+    mIo->write(cmd);
+    QElapsedTimer cmdTimer;
+    cmdTimer.start();
+    while(1)
+    {
+        int timeout = timeoutMsec - int(cmdTimer.elapsed());
+        if(timeout < 0)
+            break;
+
+        std::vector<std::vector<quint8> > cmdResp = mIo->getRcvdCmdResp(timeout);
+        for(const std::vector<quint8> &resp : cmdResp)
+        {
+            if(std::search(resp.begin(), resp.end(), respSubstr.begin(), respSubstr.end()) != resp.end())
+                return;
+        }
+    }
+    throw NoResponse();
 }
 void Interface::doSetFilter(const Filter & filter)
 {

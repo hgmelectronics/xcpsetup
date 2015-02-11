@@ -146,6 +146,13 @@ private:
         std::copy(cmd, cmd + strlen(cmd), reinterpret_cast<char *>(cmdVec.data()));
         runCmdWithCheck(cmdVec, checkOkPolicy);
     }
+    void runCmdCheckResp(const std::vector<quint8> &cmd, const std::vector<quint8> &respSubstr, int timeoutMsec);
+    inline void runCmdCheckResp(const QByteArray &cmd, const QByteArray &respSubstr, int timeoutMsec)
+    {
+        std::vector<quint8> cmdVec(reinterpret_cast<const quint8 *>(cmd.begin()), reinterpret_cast<const quint8 *>(cmd.end()));
+        std::vector<quint8> respSubstrVec(reinterpret_cast<const quint8 *>(respSubstr.begin()), reinterpret_cast<const quint8 *>(respSubstr.end()));
+        runCmdCheckResp(cmdVec, respSubstrVec, timeoutMsec);
+    }
 
     void doSetFilter(const Filter & filt);
     void updateBitrateTxType();
@@ -154,6 +161,7 @@ private:
     constexpr static const int TIMEOUT_MSEC = 200;
     constexpr static const int FINDBAUD_TIMEOUT_MSEC = 50;
     constexpr static const int FINDBAUD_ATTEMPTS = 3;
+    constexpr static const int BAUD_RECOVERY_TIMEOUT_MSEC = 500;
     constexpr static const int SWITCHBAUD_TIMEOUT_MSEC = 1280;
     constexpr static const int SWITCHBAUD_DELAY_MSEC = 25;
     constexpr static const int POSSIBLE_BAUDRATES [] = { 500000, 115200, 38400, 9600, 230400, 460800, 57600, 28800, 14400, 4800, 2400, 1200 };
