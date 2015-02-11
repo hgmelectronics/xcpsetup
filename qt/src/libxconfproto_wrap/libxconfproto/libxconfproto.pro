@@ -39,3 +39,7 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+win32 {
+    DEFINES += SPINWAIT
+}

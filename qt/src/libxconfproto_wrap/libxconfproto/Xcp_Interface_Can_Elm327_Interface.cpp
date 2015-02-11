@@ -135,7 +135,14 @@ void IoTask::portReadyRead()
         {
             if(line.size() == 1 && line[0] == '>')
             {
+#ifdef SPINWAIT
+                QElapsedTimer promptTimer;
+                promptTimer.start();
+                while(promptTimer.nsecsElapsed() < (PROMPT_DELAY_USEC * 1000)) {} // spin
+#else
                 QThread::usleep(PROMPT_DELAY_USEC);
+#endif
+
                 mPromptReady.set();
             }
             else
