@@ -15,9 +15,19 @@ QList<QString> Registry::avail()
 Interface *Registry::make(QString uri)
 {
     Interface *ret;
-    if((ret = Can::Registry::make(uri)))
-        return ret;
-    return NULL;
+    ret = Can::Registry::make(uri);
+    /*if(!ret)
+        ret = Usb::Registry::make(uri);*/
+    return ret;
+}
+
+QString Registry::desc(QString uri)
+{
+    QString ret;
+    ret = Can::Registry::desc(uri);
+    /*if(!ret.length())
+        ret = Usb::Registry::desc(uri);*/
+    return ret;
 }
 
 } // namespace Interface

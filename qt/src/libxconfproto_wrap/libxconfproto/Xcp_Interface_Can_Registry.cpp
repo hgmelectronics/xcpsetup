@@ -83,9 +83,19 @@ QList<QString> Registry::avail()
 Interface *Registry::make(QString uri)
 {
     Interface *ret;
-    if((ret = Elm327::Registry::make(uri)))
-        return ret;
-    return NULL;
+    ret = Elm327::Registry::make(uri);
+    /*if(!ret)
+        ret = Ics::Registry::make(uri);*/
+    return ret;
+}
+
+QString Registry::desc(QString uri)
+{
+    QString ret;
+    ret = Elm327::Registry::desc(uri);
+    /*if(!ret.length())
+        ret = Ics::Registry::desc(uri);*/
+    return ret;
 }
 
 }

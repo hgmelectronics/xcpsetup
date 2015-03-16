@@ -72,6 +72,7 @@ class LIBXCONFPROTOSHARED_EXPORT Registry
 public:
     static QList<QString> avail();
     static Interface *make(QString uri);
+    static QString desc(QString uri);
 };
 
 }

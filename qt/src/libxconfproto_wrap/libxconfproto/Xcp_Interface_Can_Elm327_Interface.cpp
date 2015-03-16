@@ -713,6 +713,15 @@ Interface *Registry::make(QString uriStr)
     return intfc;
 }
 
+QString Registry::desc(QString uriStr)
+{
+    QUrl uri(uriStr);
+    if(QString::compare(uri.scheme(), "elm327", Qt::CaseInsensitive) != 0)
+        return QString("");
+
+    return QString("ELM327/STN1110 on %1").arg(uri.path());
+}
+
 }   // namespace Elm327
 }   // namespace Can
 }   // namespace Interface

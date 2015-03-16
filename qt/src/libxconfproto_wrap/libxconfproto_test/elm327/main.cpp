@@ -16,10 +16,10 @@ int main(int argc, char **argv)
 
     int iUri = 0;
     qDebug() << "Available interfaces:";
-    QList<QString> uris = SetupTools::Xcp::Interface::Can::Elm327::Registry().avail();
+    QList<QString> uris = SetupTools::Xcp::Interface::Can::Elm327::Registry::avail();
     for(const auto &uri : uris)
     {
-        qDebug() << iUri << uri;
+        qDebug() << iUri << SetupTools::Xcp::Interface::Can::Elm327::Registry::desc(uri);
         ++iUri;
     }
 
