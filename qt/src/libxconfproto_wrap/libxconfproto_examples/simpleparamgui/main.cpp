@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    qmlRegisterSingletonType<SetupTools::Xcp::Interface::Can::Registry>("com.setuptools", 1, 0, "XcpCanInterfaceRegistry", SetupTools::Xcp::Interface::Can::registryProvider);
+    qmlRegisterSingletonType<SetupTools::Xcp::Interface::Can::LegacyRegistry>("com.setuptools", 1, 0, "XcpCanInterfaceRegistry", SetupTools::Xcp::Interface::Can::registryProvider);
     qmlRegisterType<SetupTools::Xcp::Interface::Can::Info>("com.setuptools", 1, 0, "XcpCanInterfaceInfo");
     qmlRegisterInterface<SetupTools::Xcp::Interface::Can::Interface>("XcpCanInterface");
     qmlRegisterType<SetupTools::Xcp::Interface::Interface>("com.setuptools", 1, 0, "XcpInterface");

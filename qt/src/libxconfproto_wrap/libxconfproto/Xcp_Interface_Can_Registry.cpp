@@ -41,7 +41,7 @@ QList<Factory *> getInterfacesAvail(QObject *parent)
     return ret;
 }
 
-Registry::Registry(QObject *parent) :
+LegacyRegistry::LegacyRegistry(QObject *parent) :
     QObject(parent),
     mFactoriesAvail(getInterfacesAvail(this))
 {
@@ -49,20 +49,20 @@ Registry::Registry(QObject *parent) :
         mInfosAvail.push_back(new Info(factory, this));
 }
 
-QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> Registry::avail()
+QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> LegacyRegistry::avail()
 {
     return QQmlListProperty<SetupTools::Xcp::Interface::Can::Info>(this, NULL, &listPropCount, &listPropAt);
 }
 
-Info *Registry::listPropAt(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> *property, int index)
+Info *LegacyRegistry::listPropAt(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> *property, int index)
 {
-    Registry *registry = qobject_cast<Registry *>(property->object);
+    LegacyRegistry *registry = qobject_cast<LegacyRegistry *>(property->object);
     return registry->mInfosAvail.at(index);
 }
 
-int Registry::listPropCount(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> *property)
+int LegacyRegistry::listPropCount(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> *property)
 {
-    Registry *registry = qobject_cast<Registry *>(property->object);
+    LegacyRegistry *registry = qobject_cast<LegacyRegistry *>(property->object);
     return registry->mInfosAvail.size();
 }
 
@@ -70,15 +70,23 @@ QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);
-    return new Registry();
+    return new LegacyRegistry();
 }
 
-MasterRegistry::MasterRegistry(QObject *parent) : CompositeRegistry(parent)
+QList<QString> Registry::avail()
 {
-    mChildren.append(new Elm327::Registry(this));
+    QList<QString> ret;
+    ret.append(Elm327::Registry::avail());
+    return ret;
 }
 
-MasterRegistry::~MasterRegistry() {}
+Interface *Registry::make(QString uri)
+{
+    Interface *ret;
+    if((ret = Elm327::Registry::make(uri)))
+        return ret;
+    return NULL;
+}
 
 }
 }

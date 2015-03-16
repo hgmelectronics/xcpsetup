@@ -14,37 +14,36 @@ int main(int argc, char **argv)
 
     qDebug() << "This test requires a functional CAN with another node that receives any packet with even ID and echoes it with ID incremented.";
 
-    int iPort = 0;
-    qDebug() << "Available serial ports:";
-    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-    for(const auto &port : ports)
+    int iUri = 0;
+    qDebug() << "Available interfaces:";
+    QList<QString> uris = SetupTools::Xcp::Interface::Can::Elm327::Registry().avail();
+    for(const auto &uri : uris)
     {
-        qDebug() << iPort << port.portName() << port.description();
-        ++iPort;
+        qDebug() << iUri << uri;
+        ++iUri;
     }
 
-    QString devName;
-    if(ports.size() == 0)
+    QString uri;
+    if(uris.size() == 0)
     {
-        qDebug() << "No serial ports detected";
+        qDebug() << "No interfaces detected";
         exit(1);
     }
-    else if(ports.size() == 1)
+    else if(uris.size() == 1)
     {
-        qDebug() << "One serial port detected, using it";
-        devName = ports[0].portName();
+        qDebug() << "One interface detected, using it";
+        uri = uris[0];
     }
     else
     {
-        int devIdx;
-        qout << "Enter index of ELM327 serial port: ";
+        qout << "Enter index of ELM327 interface: ";
         qout.flush();
-        qin >> devIdx;
-        Q_ASSERT(devIdx < ports.size());
-        devName = ports[devIdx].portName();
+        qin >> iUri;
+        Q_ASSERT(iUri < uris.size());
+        uri = uris[iUri];
     }
 
-    SetupTools::Xcp::Interface::Can::Elm327::Test test(devName);
+    SetupTools::Xcp::Interface::Can::Elm327::Test test(uri);
 
     return QTest::qExec(&test, argc, argv);
 }

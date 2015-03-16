@@ -11,16 +11,14 @@ namespace Can
 namespace Elm327
 {
 
-Test::Test(const QString &devName, QObject *parent) :
+Test::Test(const QString &intfcUri, QObject *parent) :
     QObject(parent),
-    mDevName(devName)
+    mDevUri(intfcUri)
 {}
 
 void Test::initTestCase()
 {
-    QSerialPortInfo info(mDevName);
-    mIntfc = new Interface(info, this);
-    mIntfc->setBitrate(250000);
+    mIntfc = qobject_cast<Interface *>(Registry().make(mDevUri));
     mIntfc->setFilter(Filter());    // filter that matches everything
 }
 

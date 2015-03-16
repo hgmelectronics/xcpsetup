@@ -673,21 +673,22 @@ QList<Factory *> getInterfacesAvail(QObject *parent)
     return ret;
 }
 
-Registry::Registry(QObject *parent) : ::SetupTools::Xcp::Interface::Registry(parent)
+QList<QString> Registry::avail()
 {
+    QList<QString> ret;
     for(QSerialPortInfo portInfo : getPortsAvail())
-        mAvailUri.append(QString("elm327:%1?bitrate=250000?filter=00000000:00000000").arg(portInfo.portName()));
+        ret.append(QString("elm327:%1?bitrate=250000?filter=00000000:00000000").arg(portInfo.portName()));
+    return ret;
 }
 
-Registry::~Registry() {}
-
-Xcp::Interface::Interface *Registry::make(QString uri)
+Interface *Registry::make(QString uriStr)
 {
-    QUrl url(uri);
-    if(QString::compare(url.scheme(), "elm327", Qt::CaseInsensitive) != 0)
+    QUrl uri(uriStr);
+    if(QString::compare(uri.scheme(), "elm327", Qt::CaseInsensitive) != 0)
         return NULL;
+    QUrlQuery uriQuery(uri.query());
 
-    QSerialPortInfo portInfo(url.path());
+    QSerialPortInfo portInfo(uri.path());
     if(portInfo.isBusy() || portInfo.isNull())
         return NULL;
 
@@ -696,6 +697,17 @@ Xcp::Interface::Interface *Registry::make(QString uri)
     {
         delete intfc;
         return NULL;
+    }
+
+    bool setBitrate = false;
+    int bitrate = uriQuery.queryItemValue("bitrate").toInt(&setBitrate);
+    if(setBitrate)
+    {
+        if(intfc->setBitrate(bitrate) != OpResult::Success)
+        {
+            delete intfc;
+            return NULL;
+        }
     }
 
     return intfc;

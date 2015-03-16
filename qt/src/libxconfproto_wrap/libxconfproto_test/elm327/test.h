@@ -36,7 +36,7 @@ private slots:
 private:
     constexpr static const int TIMEOUT_MSEC = 1000;
 
-    QString mDevName;
+    QString mDevUri;
     Interface *mIntfc;
 };
 }

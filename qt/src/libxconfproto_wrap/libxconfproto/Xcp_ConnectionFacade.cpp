@@ -50,7 +50,7 @@ QString ConnectionFacade::intfcUri()
 void ConnectionFacade::setIntfcUri(QString val)
 {
     mIntfcUri = val;
-    mConn->setIntfc(Interface::MasterRegistry().make(mIntfcUri));
+    mConn->setIntfc(Interface::Registry().make(mIntfcUri));
 }
 
 int ConnectionFacade::timeout()

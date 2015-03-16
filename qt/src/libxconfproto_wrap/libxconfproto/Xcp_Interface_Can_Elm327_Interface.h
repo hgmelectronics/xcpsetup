@@ -210,13 +210,11 @@ QList<QSerialPortInfo> LIBXCONFPROTOSHARED_EXPORT getPortsAvail();
 
 QList<Factory *> LIBXCONFPROTOSHARED_EXPORT getInterfacesAvail(QObject *parent = 0);
 
-class LIBXCONFPROTOSHARED_EXPORT Registry : public Xcp::Interface::Registry
+class LIBXCONFPROTOSHARED_EXPORT Registry
 {
-    Q_OBJECT
 public:
-    explicit Registry(QObject *parent = 0);
-    virtual ~Registry();
-    Xcp::Interface::Interface *make(QString uri);
+    static QList<QString> avail();
+    static Interface *make(QString uri);
 };
 
 }   // namespace Elm327

@@ -5,44 +5,20 @@ namespace SetupTools {
 namespace Xcp {
 namespace Interface {
 
-Registry::Registry(QObject *parent) : QObject(parent) {}
-
-Registry::~Registry() {}
-
-const QList<QString> &Registry::avail()
+QList<QString> Registry::avail()
 {
-    return mAvailUri;
+    QList<QString> ret;
+    ret.append(Can::Registry::avail());
+    return ret;
 }
 
-
-CompositeRegistry::CompositeRegistry(QObject *parent) : Registry(parent) {}
-
-CompositeRegistry::~CompositeRegistry() {}
-
-void CompositeRegistry::add(Registry *reg)
+Interface *Registry::make(QString uri)
 {
-    mChildren.append(reg);
-    reg->setParent(this);
-    mAvailUri.append(reg->avail());
-}
-
-Interface *CompositeRegistry::make(QString uri)
-{
-    for(Registry *child : mChildren)
-    {
-        Interface *intfc = child->make(uri);
-        if(intfc != NULL)
-            return intfc;
-    }
+    Interface *ret;
+    if((ret = Can::Registry::make(uri)))
+        return ret;
     return NULL;
 }
-
-
-MasterRegistry::MasterRegistry(QObject *parent) : CompositeRegistry(parent) {
-    mChildren.append(new Can::MasterRegistry(this));
-}
-
-MasterRegistry::~MasterRegistry() {}
 
 } // namespace Interface
 } // namespace Xcp

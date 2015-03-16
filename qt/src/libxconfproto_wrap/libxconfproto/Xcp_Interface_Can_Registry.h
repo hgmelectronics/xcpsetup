@@ -47,13 +47,13 @@ private:
 
 QList<Factory *> LIBXCONFPROTOSHARED_EXPORT getInterfacesAvail(QObject *parent = 0);
 
-class LIBXCONFPROTOSHARED_EXPORT Registry : public QObject
+class LIBXCONFPROTOSHARED_EXPORT LegacyRegistry : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> avail READ avail CONSTANT)
 public:
-    explicit Registry(QObject *parent = 0);
-    virtual ~Registry() {}
+    explicit LegacyRegistry(QObject *parent = 0);
+    virtual ~LegacyRegistry() {}
     static Info *listPropAt(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> *property, int index);
     static int listPropCount(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> *property);
     QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> avail();
@@ -67,12 +67,11 @@ private:
 
 LIBXCONFPROTOSHARED_EXPORT QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
-class LIBXCONFPROTOSHARED_EXPORT MasterRegistry : public CompositeRegistry
+class LIBXCONFPROTOSHARED_EXPORT Registry
 {
-    Q_OBJECT
 public:
-    explicit MasterRegistry(QObject *parent = 0);
-    virtual ~MasterRegistry();
+    static QList<QString> avail();
+    static Interface *make(QString uri);
 };
 
 }
