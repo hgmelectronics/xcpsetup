@@ -273,9 +273,9 @@ Interface::~Interface() {}
 OpResult Interface::setup(const QSerialPortInfo *portInfo)
 {
     if(portInfo)
-        mPort = new SerialPort(*portInfo, this);
+        mPort = new SerialPort(*portInfo);
     else if(mPortInfo)
-        mPort = new SerialPort(*mPortInfo, this);
+        mPort = new SerialPort(*mPortInfo);
     else
         return OpResult::InvalidOperation;
 
@@ -677,7 +677,7 @@ QList<QString> Registry::avail()
 {
     QList<QString> ret;
     for(QSerialPortInfo portInfo : getPortsAvail())
-        ret.append(QString("elm327:%1?bitrate=250000?filter=00000000:00000000").arg(portInfo.portName()));
+        ret.append(QString("elm327:%1?bitrate=250000&filter=00000000:00000000").arg(portInfo.portName()));
     return ret;
 }
 
@@ -700,7 +700,8 @@ Interface *Registry::make(QString uriStr)
     }
 
     bool setBitrate = false;
-    int bitrate = uriQuery.queryItemValue("bitrate").toInt(&setBitrate);
+    QString bitrateStr = uriQuery.queryItemValue("bitrate");
+    int bitrate = bitrateStr.toInt(&setBitrate);
     if(setBitrate)
     {
         if(intfc->setBitrate(bitrate) != OpResult::Success)

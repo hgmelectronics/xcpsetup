@@ -18,7 +18,8 @@ Test::Test(const QString &intfcUri, QObject *parent) :
 
 void Test::initTestCase()
 {
-    mIntfc = qobject_cast<Interface *>(Registry().make(mDevUri));
+    mIntfc = qobject_cast<Interface *>(Registry::make(mDevUri));
+    mIntfc->setParent(this);
     mIntfc->setFilter(Filter());    // filter that matches everything
 }
 
