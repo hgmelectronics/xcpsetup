@@ -60,7 +60,8 @@ void Test::echoTest()
                     mIntfc->transmitTo(data, id);
                     if(id.addr % 2 == 0)
                     {
-                        std::vector<Frame> rxFrames = mIntfc->receiveFrames(TIMEOUT_MSEC);
+                        std::vector<Frame> rxFrames;
+                        QCOMPARE(mIntfc->receiveFrames(TIMEOUT_MSEC, rxFrames), OpResult::Success);
                         QCOMPARE(rxFrames.size(), size_t(1));
                         QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
                         QCOMPARE(rxFrames[0].id.type, id.type);
@@ -97,7 +98,8 @@ void Test::filterTest()
             mIntfc->transmitTo(data, id);
             if(((id.addr + 1) & filter.maskId) == filter.filt.addr)
             {
-                std::vector<Frame> rxFrames = mIntfc->receiveFrames(TIMEOUT_MSEC);
+                std::vector<Frame> rxFrames;
+                QCOMPARE(mIntfc->receiveFrames(TIMEOUT_MSEC, rxFrames), OpResult::Success);
                 QCOMPARE(rxFrames.size(), size_t(1));
                 QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
                 QCOMPARE(rxFrames[0].id.type, id.type);
@@ -117,14 +119,18 @@ void Test::sameEchoTest()
 
     // do once to set the ID
     mIntfc->transmitTo(data, id);
-    mIntfc->receiveFrames(100);
+    {
+        std::vector<Frame> rxFrames;
+        mIntfc->receiveFrames(100, rxFrames);
+    }
 
     QBENCHMARK
     {
         for(int i = 0; i < nrep; ++i)
         {
             mIntfc->transmitTo(data, id);
-            std::vector<Frame> rxFrames = mIntfc->receiveFrames(TIMEOUT_MSEC);
+            std::vector<Frame> rxFrames;
+            QCOMPARE(mIntfc->receiveFrames(TIMEOUT_MSEC, rxFrames), OpResult::Success);
             QCOMPARE(rxFrames.size(), size_t(1));
             QCOMPARE(rxFrames[0].id.addr, id.addr + 1);
             QCOMPARE(rxFrames[0].id.type, id.type);
@@ -142,7 +148,10 @@ void Test::sameTxTest()
 
     // do once to set the ID
     mIntfc->transmitTo(data, id);
-    mIntfc->receiveFrames(100);
+    {
+        std::vector<Frame> rxFrames;
+        mIntfc->receiveFrames(100, rxFrames);
+    }
 
     QBENCHMARK
     {

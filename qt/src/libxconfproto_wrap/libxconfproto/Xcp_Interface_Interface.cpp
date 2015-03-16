@@ -11,15 +11,17 @@ Interface::Interface(QObject *parent) :
     QObject(parent)
 {}
 
-void Interface::transmit(const std::vector<quint8> & data) {
+OpResult Interface::transmit(const std::vector<quint8> & data) {
     Q_UNUSED(data);
     Q_ASSERT(0);
+    return OpResult::InvalidOperation;
 }
 
-std::vector<std::vector<quint8> > Interface::receive(int timeoutMsec) {
+OpResult Interface::receive(int timeoutMsec, std::vector<std::vector<quint8> > &out) {
     Q_UNUSED(timeoutMsec);
+    Q_UNUSED(out);
     Q_ASSERT(0);
-    return std::vector<std::vector<quint8> >();
+    return OpResult::InvalidOperation;
 }
 
 }

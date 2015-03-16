@@ -16,7 +16,7 @@ LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
     mPacketTimer.start();
 }
 
-void LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
 {
     if(mPacketLogEnabled)
     {
@@ -25,11 +25,13 @@ void LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & 
         qDebug() << mPacketTimer.nsecsElapsed() / 1000000000.0 << "Master TX" << arr.toPercentEncoding();
     }
     mSlaveReceiveQueue.put(data);
+    return OpResult::Success;
 }
 
-std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec)
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec, std::vector<std::vector<quint8> > &out)
 {
-    return mMasterReceiveQueue.getAll(timeoutMsec);
+    out = mMasterReceiveQueue.getAll(timeoutMsec);
+    return OpResult::Success;
 }
 
 void LIBXCONFPROTOSHARED_EXPORT Interface::slaveTransmit(const std::vector<quint8> & data)

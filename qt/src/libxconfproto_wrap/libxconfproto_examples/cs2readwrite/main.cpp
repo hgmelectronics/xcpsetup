@@ -62,7 +62,8 @@ int main(int argc, char *argv[])
     qin >> xcpAddr;
 
     SetupTools::Xcp::XcpPtr ptr = {xcpAddr, 0};
-    std::vector<quint8> dataVec = conn->upload(ptr, 4);
+    std::vector<quint8> dataVec;
+    conn->upload(ptr, 4, &dataVec);
     Q_ASSERT(dataVec.size() == 4);
     quint32 value = conn->fromSlaveEndian<quint32>(dataVec.data());
     qout << "Present value: " << value << "\n";

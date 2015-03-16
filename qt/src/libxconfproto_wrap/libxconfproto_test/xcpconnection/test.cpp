@@ -3,6 +3,18 @@
 #include <cxxabi.h>
 #include <boost/crc.hpp>
 
+namespace QTest
+{
+template<>
+char *toString(const SetupTools::Xcp::OpResult &res)
+{
+    QByteArray ba = "OpResult(";
+    ba += QByteArray::number(static_cast<int>(res));
+    ba += ")";
+    return qstrdup(ba.data());
+}
+}
+
 namespace SetupTools
 {
 namespace Xcp
@@ -44,6 +56,7 @@ void Test::initTestCase()
     mConn->setIntfc(mIntfc);
     mConn->setTimeout(CONN_TIMEOUT);
     mConn->setNvWriteTimeout(CONN_NVWRITE_TIMEOUT);
+    mConn->setResetTimeout(CONN_RESET_TIMEOUT);
     mSlave = new TestingSlave(mIntfc, this);
     updateAg(1);
     mSlave->setBigEndian(false);
@@ -60,15 +73,8 @@ void Test::initTestCase()
  */
 void Test::connect()
 {
-    try
-    {
-        mConn->open();
-        mConn->close();
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
-    }
+    QCOMPARE(mConn->open(), OpResult::Success);
+    QCOMPARE(mConn->close(), OpResult::Success);
 }
 
 void Test::upload_data()
@@ -86,19 +92,13 @@ void Test::upload()
 {
     QFETCH(int, ag);
     updateAg(ag);
-    try
-    {
-        mConn->open();
-        std::vector<quint8> data = mConn->upload({quint32(0x400/ag), 0}, 64);
-        std::vector<quint8> expectedData;
-        expectedData.assign(64, 0);
-        QCOMPARE(data, expectedData);
-        mConn->close();
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
-    }
+    QCOMPARE(mConn->open(), OpResult::Success);
+    std::vector<quint8> data;
+    QCOMPARE(mConn->upload({quint32(0x400/ag), 0}, 64, &data), OpResult::Success);
+    std::vector<quint8> expectedData;
+    expectedData.assign(64, 0);
+    QCOMPARE(data, expectedData);
+    QCOMPARE(mConn->close(), OpResult::Success);
 }
 
 void Test::downloadUpload_data()
@@ -116,20 +116,14 @@ void Test::downloadUpload()
 {
     QFETCH(int, ag);
     updateAg(ag);
-    try
-    {
-        mConn->open();
-        XcpPtr base = {quint32(0x515/ag), 0};
-        std::vector<quint8> data(VectorFromQByteArray("Please do not press this button again..."));
-        mConn->download(base, data);
-        std::vector<quint8> uploadData = mConn->upload(base, data.size());
-        QCOMPARE(uploadData, data);
-        mConn->close();
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
-    }
+    QCOMPARE(mConn->open(), OpResult::Success);
+    XcpPtr base = {quint32(0x515/ag), 0};
+    std::vector<quint8> data(VectorFromQByteArray("Please do not press this button again..."));
+    QCOMPARE(mConn->download(base, data), OpResult::Success);
+    std::vector<quint8> uploadData;
+    QCOMPARE(mConn->upload(base, data.size(), &uploadData), OpResult::Success);
+    QCOMPARE(uploadData, data);
+    QCOMPARE(mConn->close(), OpResult::Success);
 }
 
 void Test::downloadCksum_data()
@@ -157,25 +151,18 @@ void Test::downloadCksum()
     QFETCH(int, ag);
     QFETCH(CksumPair, expectedCksum);
     updateAg(ag);
-    try
-    {
-        mConn->open();
-        XcpPtr base = {quint32(0x400/ag), 0};
-        QByteArray dataArr("Please do not press this button again..."); // Make it 40 bytes long so all checksum types work
-        std::vector<quint8> data(reinterpret_cast<const quint8 *>(dataArr.begin()), reinterpret_cast<const quint8 *>(dataArr.end()));
-        mConn->download(base, data);
+    QCOMPARE(mConn->open(), OpResult::Success);
+    XcpPtr base = {quint32(0x400/ag), 0};
+    QByteArray dataArr("Please do not press this button again..."); // Make it 40 bytes long so all checksum types work
+    std::vector<quint8> data(reinterpret_cast<const quint8 *>(dataArr.begin()), reinterpret_cast<const quint8 *>(dataArr.end()));
+    QCOMPARE(mConn->download(base, data), OpResult::Success);
 
-        mSlave->setCksumType(expectedCksum.first);
-        std::pair<SetupTools::Xcp::CksumType, quint32> cksum;
-        cksum = mConn->buildChecksum(base, data.size());
-        QCOMPARE(cksum, expectedCksum);
+    mSlave->setCksumType(expectedCksum.first);
+    std::pair<SetupTools::Xcp::CksumType, quint32> cksum;
+    QCOMPARE(mConn->buildChecksum(base, data.size(), &cksum.first, &cksum.second), OpResult::Success);
+    QCOMPARE(cksum, expectedCksum);
 
-        mConn->close();
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
-    }
+    QCOMPARE(mConn->close(), OpResult::Success);
 }
 
 void Test::uploadOutOfRange_data()
@@ -193,21 +180,10 @@ void Test::uploadOutOfRange()
 {
     QFETCH(int, ag);
     updateAg(ag);
-    try
-    {
-        mConn->open();
-        mConn->upload({quint32(0x7FE/ag), 0}, 64);
-        QFAIL("Failed to throw exception");
-    }
-    catch(SlaveErrorOutOfRange)
-    {
-        // do nothing - expected result
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
-    }
-    mConn->close();
+    QCOMPARE(mConn->open(), OpResult::Success);
+    std::vector<quint8> data;
+    QCOMPARE(mConn->upload({quint32(0x7FE/ag), 0}, 64, &data), OpResult::SlaveErrorOutOfRange);
+    QCOMPARE(mConn->close(), OpResult::Success);
 }
 
 void Test::downloadUploadSmall_data()
@@ -233,20 +209,14 @@ void Test::downloadUploadSmall()
     QFETCH(int, uploadBase);
     QFETCH(QByteArray, uploadDataArr);
     updateAg(ag);
-    try
-    {
-        mConn->open();
-        std::vector<quint8> downloadData(reinterpret_cast<const quint8 *>(downloadDataArr.begin()), reinterpret_cast<const quint8 *>(downloadDataArr.end()));
-        std::vector<quint8> uploadData(reinterpret_cast<const quint8 *>(uploadDataArr.begin()), reinterpret_cast<const quint8 *>(uploadDataArr.end()));
-        mConn->download(XcpPtr({quint32(downloadBase), 0}), downloadData);
-        std::vector<quint8> uploadedData = mConn->upload(XcpPtr({quint32(uploadBase), 0}), uploadData.size());
-        QCOMPARE(uploadData, uploadedData);
-        mConn->close();
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
-    }
+    QCOMPARE(mConn->open(), OpResult::Success);
+    std::vector<quint8> downloadData(reinterpret_cast<const quint8 *>(downloadDataArr.begin()), reinterpret_cast<const quint8 *>(downloadDataArr.end()));
+    std::vector<quint8> uploadData(reinterpret_cast<const quint8 *>(uploadDataArr.begin()), reinterpret_cast<const quint8 *>(uploadDataArr.end()));
+    QCOMPARE(mConn->download(XcpPtr({quint32(downloadBase), 0}), downloadData), OpResult::Success);
+    std::vector<quint8> uploadedData;
+    QCOMPARE(mConn->upload(XcpPtr({quint32(uploadBase), 0}), uploadData.size(), &uploadedData), OpResult::Success);
+    QCOMPARE(uploadData, uploadedData);
+    QCOMPARE(mConn->close(), OpResult::Success);
 }
 
 void Test::downloadNvWrite_data()
@@ -270,36 +240,25 @@ void Test::downloadNvWrite()
     QFETCH(bool, sendEvStoreCal);
     QFETCH(bool, expectFail);
     updateAg(1);
-    try
+    mSlave->setResponseDelay(TestingSlave::OpType::NvWrite, delayMsec, 100);
+    mSlave->setSendsEvStoreCal(sendEvStoreCal);
+    QCOMPARE(mConn->open(), OpResult::Success);
+    XcpPtr base = {0x515, 0};
+    QByteArray dataArr("Please do not press this button again.");
+    std::vector<quint8> data(reinterpret_cast<const quint8 *>(dataArr.begin()), reinterpret_cast<const quint8 *>(dataArr.end()));
+    QCOMPARE(mConn->download(base, data), OpResult::Success);
+    OpResult nvWriteRes = mConn->nvWrite();
+    mSlave->setResponseDelay(TestingSlave::OpType::NvWrite, 0, 0);
+    if(expectFail)
     {
-        mSlave->setResponseDelay(TestingSlave::OpType::NvWrite, delayMsec, 100);
-        mSlave->setSendsEvStoreCal(sendEvStoreCal);
-        mConn->open();
-        XcpPtr base = {0x515, 0};
-        QByteArray dataArr("Please do not press this button again.");
-        std::vector<quint8> data(reinterpret_cast<const quint8 *>(dataArr.begin()), reinterpret_cast<const quint8 *>(dataArr.end()));
-        mConn->download(base, data);
-        mConn->nvWrite();
-        mSlave->setResponseDelay(TestingSlave::OpType::NvWrite, 0, 0);
-        if(expectFail)
-            QFAIL("Exception not thrown as it should have been");
-        std::vector<quint8> uploadData = mConn->upload(base, data.size());
-        QCOMPARE(uploadData, data);
-        mConn->close();
+        QThread::msleep(200);
+        std::vector<std::vector<quint8> > dummy;
+        mIntfc->receive(0, dummy); // flush the buffers so we don't get confused on next operation
+        QCOMPARE(nvWriteRes, OpResult::Timeout);
     }
-    catch(Timeout &exc)
+    else
     {
-        if(expectFail)
-        {
-            QThread::msleep(200);
-            mIntfc->receive(0); // flush the buffers so we don't get confused on next operation
-        }
-        else
-            FailOnExc(exc);
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
+        QCOMPARE(nvWriteRes, OpResult::Success);
     }
 }
 
@@ -309,18 +268,11 @@ void Test::downloadNvWrite()
 void Test::altCalPage()
 {
     updateAg(1);
-    try
-    {
-        mConn->open();
-        mConn->setCalPage(0, 0);
-        mConn->setCalPage(1, 0);
-        mConn->setCalPage(1, 3);
-        mConn->close();
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
-    }
+    QCOMPARE(mConn->open(), OpResult::Success);
+    QCOMPARE(mConn->setCalPage(0, 0), OpResult::Success);
+    QCOMPARE(mConn->setCalPage(1, 0), OpResult::Success);
+    QCOMPARE(mConn->setCalPage(1, 3), OpResult::Success);
+    QCOMPARE(mConn->close(), OpResult::Success);
 }
 
 void Test::programSequence_data()
@@ -342,66 +294,62 @@ void Test::programSequence()
     QFETCH(bool, pgmMasterBlockSupport);
     mSlave->setPgmMasterBlockSupport(pgmMasterBlockSupport);
 
-    try
-    {
-        mConn->open();
-        XcpPtr base = {quint32(0x08004000 / ag), 0};
-        std::vector<quint8> prog(VectorFromQByteArray(
-                                     "Four score and seven years ago our fathers brought forth on this continent "
-                                     "a new nation, conceived in liberty, and dedicated to the proposition that all "
-                                     "men are created equal. Now we are engaged in a great civil war, testing "
-                                     "whether that nation, or any nation so conceived and so dedicated, can long "
-                                     "endure. We are met on a great battlefield of that war. We have come to "
-                                     "dedicate a portion of that field, as a final resting place for those who here "
-                                     "gave their lives that that nation might live. It is altogether fitting and "
-                                     "proper that we should do this. But, in a larger sense, we can not dedicate, "
-                                     "we can not consecrate, we can not hallow this ground. The brave men, living "
-                                     "and dead, who struggled here, have consecrated it, far above our poor power "
-                                     "to add or detract. The world will little note, nor long remember what we say "
-                                     "here, but it can never forget what they did here. It is for us the living, "
-                                     "rather, to be dedicated here to the unfinished work which they who fought "
-                                     "here have thus far so nobly advanced. It is rather for us to be here "
-                                     "dedicated to the great task remaining before us—that from these honored dead "
-                                     "we take increased devotion to that cause for which they gave the last full "
-                                     "measure of devotion—that we here highly resolve that these dead shall not "
-                                     "have died in vain—that this nation, under God, shall have a new birth of "
-                                     "freedom—and that government of the people, by the people, for the people, "
-                                     "shall not perish from the earth."));  // long enough to require multiple block transfers
-        boost::crc_32_type crcComputer;
-        crcComputer.process_block(&*prog.begin(), &*prog.end());
-        quint32 progCrc = crcComputer.checksum();
-        std::vector<quint8> blankForProg;
-        blankForProg.assign(prog.size(), 0xFF);
+    XcpPtr base = {quint32(0x08004000 / ag), 0};
+    std::vector<quint8> prog(VectorFromQByteArray(
+                                 "Four score and seven years ago our fathers brought forth on this continent "
+                                 "a new nation, conceived in liberty, and dedicated to the proposition that all "
+                                 "men are created equal. Now we are engaged in a great civil war, testing "
+                                 "whether that nation, or any nation so conceived and so dedicated, can long "
+                                 "endure. We are met on a great battlefield of that war. We have come to "
+                                 "dedicate a portion of that field, as a final resting place for those who here "
+                                 "gave their lives that that nation might live. It is altogether fitting and "
+                                 "proper that we should do this. But, in a larger sense, we can not dedicate, "
+                                 "we can not consecrate, we can not hallow this ground. The brave men, living "
+                                 "and dead, who struggled here, have consecrated it, far above our poor power "
+                                 "to add or detract. The world will little note, nor long remember what we say "
+                                 "here, but it can never forget what they did here. It is for us the living, "
+                                 "rather, to be dedicated here to the unfinished work which they who fought "
+                                 "here have thus far so nobly advanced. It is rather for us to be here "
+                                 "dedicated to the great task remaining before us—that from these honored dead "
+                                 "we take increased devotion to that cause for which they gave the last full "
+                                 "measure of devotion—that we here highly resolve that these dead shall not "
+                                 "have died in vain—that this nation, under God, shall have a new birth of "
+                                 "freedom—and that government of the people, by the people, for the people, "
+                                 "shall not perish from the earth."));  // long enough to require multiple block transfers
+    boost::crc_32_type crcComputer;
+    crcComputer.process_block(&*prog.begin(), &*prog.end());
+    quint32 progCrc = crcComputer.checksum();
+    std::vector<quint8> blankForProg;
+    blankForProg.assign(prog.size(), 0xFF);
 
-        mConn->programStart();
+    QCOMPARE(mConn->setState(Connection::State::Closed), OpResult::Success);
+    QCOMPARE(mConn->setState(Connection::State::PgmMode), OpResult::Success);
 
-        mConn->programClear(base, prog.size());
-        std::vector<quint8> uploadedBlank = mConn->upload(base, prog.size());
-        QCOMPARE(blankForProg, uploadedBlank);
+    QCOMPARE(mConn->programClear(base, prog.size()), OpResult::Success);
+    std::vector<quint8> uploadedBlank;
+    QCOMPARE(mConn->upload(base, prog.size(), &uploadedBlank), OpResult::Success);
+    QCOMPARE(blankForProg, uploadedBlank);
 
-        mConn->programRange(base, prog);
+    QCOMPARE(mConn->programRange(base, prog), OpResult::Success);
 
-        mSlave->setCksumType(SetupTools::Xcp::CksumType::XCP_CRC_32);
-        mConn->programVerify(progCrc);
+    mSlave->setCksumType(SetupTools::Xcp::CksumType::XCP_CRC_32);
+    QCOMPARE(mConn->programVerify(progCrc), OpResult::Success);
 
-        std::vector<quint8> uploadedProg = mConn->upload(base, prog.size());
-        QCOMPARE(prog, uploadedProg);
+    std::vector<quint8> uploadedProg;
+    QCOMPARE(mConn->upload(base, prog.size(), &uploadedProg), OpResult::Success);
+    QCOMPARE(prog, uploadedProg);
 
-        CksumPair expectedCksum = {SetupTools::Xcp::CksumType::XCP_CRC_32, progCrc};
-        CksumPair cksum = mConn->buildChecksum(base, prog.size());
-        QCOMPARE(expectedCksum, cksum);
+    CksumPair expectedCksum = {SetupTools::Xcp::CksumType::XCP_CRC_32, progCrc};
+    CksumPair cksum;
+    QCOMPARE(mConn->buildChecksum(base, prog.size(), &cksum.first, &cksum.second), OpResult::Success);
+    QCOMPARE(expectedCksum, cksum);
 
-        mConn->programReset();
+    QCOMPARE(mConn->setState(Connection::State::CalMode), OpResult::Success);
 
-        // now a command that requires calibration mode, to confirm the reset worked
-        XcpPtr calBase = {quint32(0x514 / ag), 0};
-        std::vector<quint8> calData(VectorFromQByteArray("Please do not press this button again..."));
-        mConn->download(calBase, calData);
-    }
-    catch(ConnException &exc)
-    {
-        FailOnExc(exc);
-    }
+    // now a command that requires calibration mode, to confirm the reset worked
+    XcpPtr calBase = {quint32(0x514 / ag), 0};
+    std::vector<quint8> calData(VectorFromQByteArray("Please do not press this button again..."));
+    QCOMPARE(mConn->download(calBase, calData), OpResult::Success);
 }
 
 void Test::updateAg(int ag)

@@ -47,6 +47,7 @@ private:
     void updateAg(int ag);
     static const int CONN_TIMEOUT = 50;
     static const int CONN_NVWRITE_TIMEOUT = 100;
+    static const int CONN_RESET_TIMEOUT = 100;
     Interface::Loopback::Interface *mIntfc;
     Connection *mConn;
     TestingSlave *mSlave;

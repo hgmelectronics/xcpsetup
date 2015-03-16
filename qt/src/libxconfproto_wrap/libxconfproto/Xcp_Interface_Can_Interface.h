@@ -71,15 +71,15 @@ class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface
 public:
     Interface(QObject *parent = NULL);
     virtual ~Interface() {}
-    virtual void connect(SlaveId addr) = 0;                         //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
-    virtual void disconnect() = 0;                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
-    virtual void transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
-    virtual void transmitTo(const std::vector<quint8> & data, Id id) = 0;    //!< Send one CAN frame to an arbitrary ID
-    virtual std::vector<std::vector<quint8> > receive(int timeoutMsec);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
-    virtual std::vector<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
-    virtual void setBitrate(int bps) = 0;                           //!< Set the bitrate used on the interface
-    virtual void setFilter(Filter filt) = 0;                        //!< Set the CAN filter used on the interface
-    virtual void setPacketLog(bool enable);
+    virtual OpResult connect(SlaveId addr) = 0;                         //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
+    virtual OpResult disconnect() = 0;                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
+    virtual OpResult transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
+    virtual OpResult transmitTo(const std::vector<quint8> & data, Id id) = 0;    //!< Send one CAN frame to an arbitrary ID
+    virtual OpResult receive(int timeoutMsec, std::vector<std::vector<quint8> > &out);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual OpResult receiveFrames(int timeoutMsec, std::vector<Frame> &out, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
+    virtual OpResult setBitrate(int bps) = 0;                           //!< Set the bitrate used on the interface
+    virtual OpResult setFilter(Filter filt) = 0;                        //!< Set the CAN filter used on the interface
+    virtual OpResult setPacketLog(bool enable);
 protected:
     boost::optional<SlaveId> mSlaveAddr;
     bool mPacketLogEnabled;

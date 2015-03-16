@@ -1,5 +1,5 @@
 #include "Xcp_Interface_Can_Registry.h"
-#include <Xcp_Interface_Can_Elm327_Interface.h>
+#include "Xcp_Interface_Can_Elm327_Interface.h"
 
 namespace SetupTools
 {
@@ -72,6 +72,13 @@ QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
     Q_UNUSED(scriptEngine);
     return new Registry();
 }
+
+MasterRegistry::MasterRegistry(QObject *parent) : CompositeRegistry(parent)
+{
+    mChildren.append(new Elm327::Registry(this));
+}
+
+MasterRegistry::~MasterRegistry() {}
 
 }
 }

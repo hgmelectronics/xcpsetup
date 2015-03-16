@@ -1,5 +1,6 @@
 #include "Xcp_Interface_Can_Elm327_Interface.h"
 #include <algorithm>
+#include <QUrl>
 
 namespace SetupTools
 {
@@ -14,7 +15,7 @@ namespace Elm327
 
 static const std::vector<quint8> OK_VEC({'O', 'K'});
 
-IoTask::IoTask(SerialPort &port, QObject *parent) :
+IoTask::IoTask(SerialPort *port, QObject *parent) :
     QObject(parent),
     mPort(port),
     mPacketLogEnabled(false),
@@ -27,8 +28,8 @@ IoTask::IoTask(SerialPort &port, QObject *parent) :
 
 void IoTask::init()
 {
-    connect(&mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
-    connect(&mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
+    connect(mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
+    connect(mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
 }
 
 std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
@@ -64,11 +65,11 @@ void IoTask::clearWriteComplete()
 
 void IoTask::portReadyRead()
 {
-    if(!mPort.bytesAvailable()) // probably fired by the poll timer
+    if(!mPort->bytesAvailable()) // probably fired by the poll timer
         return;
     // Get data from the serial port and put it into mLines (a list of lines, all ending with CR except possibly the last one, which is the line we're receiving right now)
     {
-        std::vector<quint8> buffer = mPort.read(mPort.bytesAvailable());
+        std::vector<quint8> buffer = mPort->read(mPort->bytesAvailable());
         std::vector<quint8> newLine;
         if(!mLines.empty())
         {
@@ -95,7 +96,7 @@ void IoTask::portReadyRead()
     std::vector<std::vector<quint8> > incompleteLines;
     for(std::vector<quint8> & line : mLines)
     {
-        //qDebug() << mPort.elapsedSecs() << "ELM327 IO line" << line.toPercentEncoding();
+        //qDebug() << mPort->elapsedSecs() << "ELM327 IO line" << line.toPercentEncoding();
         if(*(line.end() - 1) == EOL)
         {
             line.pop_back();
@@ -157,7 +158,7 @@ void IoTask::write(std::vector<quint8> data)
         QMutexLocker locker(&mPendingTxBytesMutex);
         mPendingTxBytes += data.size();
     }
-    mPort.write(data.data(), data.size());
+    mPort->write(data.data(), data.size());
 }
 
 void IoTask::portBytesWritten(qint64 bytes)
@@ -170,15 +171,15 @@ void IoTask::portBytesWritten(qint64 bytes)
 
 void IoTask::setSerialLog(bool on)
 {
-	mPort.setLogging(on);
+    mPort->setLogging(on);
 }
 
-Io::Io(SerialPort &port, QObject *parent) :
+Io::Io(SerialPort *port, QObject *parent) :
     QObject(parent),
     mTask(port)
 {
     mTask.moveToThread(&mThread);
-    port.moveToThread(&mThread);
+    port->moveToThread(&mThread);
     mThread.start();
     connect(this, &Io::initTask, &mTask, &IoTask::init, Qt::QueuedConnection);
     connect(this, &Io::queueWrite, &mTask, &IoTask::write, Qt::QueuedConnection);
@@ -199,21 +200,21 @@ void Io::sync()
     mTask.waitWriteComplete();
 }
 
-void Io::syncAndGetPrompt(int timeoutMsec, int retries)
+OpResult Io::syncAndGetPrompt(int timeoutMsec, int retries)
 {
     sync();
     if(isPromptReady())
-        return;
+        return OpResult::Success;
 
     for(int i = 0; i < retries; ++i)
     {
         queueWrite({'\r'});
         if(waitPromptReady(timeoutMsec))
-            return;
+            return OpResult::Success;
     }
 
     qCritical("Failed to obtain prompt from ELM327");
-    throw NoResponse();
+    return OpResult::IntfcNoResponse;
 }
 
 std::vector<Frame> Io::getRcvdFrames(int timeoutMsec)
@@ -255,30 +256,43 @@ void Io::setSerialLog(bool on)
 
 constexpr int Interface::POSSIBLE_BAUDRATES[];
 
-Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
+Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mPort(portInfo),
-    mIntfcIsStn(false)
+    mPortInfo(NULL),
+    mPort(NULL)
+{}
+
+Interface::Interface(const QSerialPortInfo portInfo, QObject *parent) :
+    ::SetupTools::Xcp::Interface::Can::Interface(parent),
+    mPortInfo(new QSerialPortInfo(portInfo)),
+    mPort(NULL)
+{}
+
+Interface::~Interface() {}
+
+OpResult Interface::setup(const QSerialPortInfo *portInfo)
 {
-    if(!mPort.open(QIODevice::ReadWrite))
+    if(portInfo)
+        mPort = new SerialPort(*portInfo, this);
+    else if(mPortInfo)
+        mPort = new SerialPort(*mPortInfo, this);
+    else
+        return OpResult::InvalidOperation;
+
+    if(!mPort->open(QIODevice::ReadWrite))
     {
         qCritical("Failed to open serial port");
-        throw SerialError();
+        return OpResult::IntfcIoError;
     }
-    mIo = QSharedPointer<Io>(new Io(mPort, this));
+    mIo = new Io(mPort, this);
     bool foundBaud = false;
     for(auto baud : POSSIBLE_BAUDRATES)
     {
         qDebug() << "Trying" << baud << "baud";
-        mPort.setBaudRate(baud);  // forcibly cast into BaudRateType since Windows actually can handle 500k
+        mPort->setBaudRate(baud);  // forcibly cast into BaudRateType since Windows actually can handle 500k
 
-        try
-        {
-            mIo->syncAndGetPrompt(FINDBAUD_TIMEOUT_MSEC, FINDBAUD_ATTEMPTS);
-        }
-        catch(NoResponse) {
+        if(mIo->syncAndGetPrompt(FINDBAUD_TIMEOUT_MSEC, FINDBAUD_ATTEMPTS) != OpResult::Success)
             continue;
-        }
 
         if(baud == DESIRED_BAUDRATE)
         {
@@ -291,49 +305,40 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
 
             mIo->getRcvdCmdResp(0); // dump anything received during initial baudrate detect
 
-            try
             {
                 QByteArray cmd = QString("ATBRD%1\r").arg(qRound(BRG_HZ / DESIRED_BAUDRATE), 2, 16, QChar('0')).toLatin1();
-                runCmdCheckResp(cmd, QByteArray("OK"), TIMEOUT_MSEC);
-            }
-            catch(NoResponse)
-            {
-                // Device does not allow baudrate change, but we found its operating baudrate
-                foundBaud = true;
-                break;
+                if(runCmdCheckResp(cmd, QByteArray("OK"), TIMEOUT_MSEC) != OpResult::Success)
+                {
+                    // Device does not allow baudrate change, but we found its operating baudrate
+                    foundBaud = true;
+                    break;
+                }
             }
 
-            mPort.setBaudRate(DESIRED_BAUDRATE);
-            qDebug() << "Switched to" << mPort.baudRate() << "baud";
+            mPort->setBaudRate(DESIRED_BAUDRATE);
+            qDebug() << "Switched to" << mPort->baudRate() << "baud";
 
-            try
-            {
-                runCmdCheckResp(QByteArray("\r"), QByteArray("ELM327"), TIMEOUT_MSEC);
-            }
-            catch(NoResponse)
+            if(runCmdCheckResp(QByteArray("\r"), QByteArray("ELM327"), TIMEOUT_MSEC) != OpResult::Success)
             {
                 // Baudrate switch unsuccessful, try to recover
-                mPort.setBaudRate(baud);
-                try
+                mPort->setBaudRate(baud);
+                if(mIo->syncAndGetPrompt(BAUD_RECOVERY_TIMEOUT_MSEC) == OpResult::Success)
                 {
-                    mIo->syncAndGetPrompt(BAUD_RECOVERY_TIMEOUT_MSEC);
+                    foundBaud = true;
+                    break;
                 }
-                catch(NoResponse)
+                else
                 {
                     qCritical("Failed to recover from unsuccessful ELM327 baudrate switch");
-                    throw UnexpectedResponse();
+                    return OpResult::IntfcUnexpectedResponse;
                 }
             }
 
             // Baudrate switch successful, send a CR to confirm we're on board
-            try
-            {
-                runCmdCheckResp(QByteArray("\r"), QByteArray("OK"), TIMEOUT_MSEC);
-            }
-            catch(NoResponse)
+            if(runCmdCheckResp(QByteArray("\r"), QByteArray("OK"), TIMEOUT_MSEC) != OpResult::Success)
             {
                 qCritical("Unexpected response from ELM327 when confirming UART baudrate switch");
-                throw UnexpectedResponse();
+                return OpResult::IntfcUnexpectedResponse;
             }
 
             foundBaud = true;
@@ -342,68 +347,78 @@ Interface::Interface(const QSerialPortInfo & portInfo, QObject *parent) :
     }
     if(!foundBaud) {
         qCritical("Failed to find ELM327 UART baudrate");
-        throw SerialError();
+        return OpResult::IntfcIoError;
     }
-    qDebug() << "Established communication at" << mPort.baudRate() << "baud";
+    qDebug() << "Established communication at" << mPort->baudRate() << "baud";
 
-    runCmdWithCheck("ATWS", CheckOk::No);   // Software reset
-    runCmdWithCheck("ATE0");                // Turn off echo
-    runCmdWithCheck("ATL0");                // Turn off newlines
-    runCmdWithCheck("ATS0");                // Turn off spaces
-    runCmdWithCheck("ATH1");                // Turn on headers
-    runCmdWithCheck("ATAL");                // Allow full length messages
-    try
-    {
-        runCmdWithCheck("STFCP");           // See if this is an STN device
-        mIntfcIsStn = true;
-    }
-    catch(UnexpectedResponse) {
-        mIntfcIsStn = false;                // ELM327s will error out
-    }
+    RETURN_FAIL(runCmdWithCheck("ATWS", CheckOk::No))   // Software reset
+    RETURN_FAIL(runCmdWithCheck("ATE0"))                // Turn off echo
+    RETURN_FAIL(runCmdWithCheck("ATL0"))                // Turn off newlines
+    RETURN_FAIL(runCmdWithCheck("ATS0"))                // Turn off spaces
+    RETURN_FAIL(runCmdWithCheck("ATH1"))                // Turn on headers
+    RETURN_FAIL(runCmdWithCheck("ATAL"))               // Allow full length messages
+
+    mIntfcIsStn = (runCmdWithCheck("STFCP") == OpResult::Success); // ELM327s will error out
+    return OpResult::Success;
 }
 
-Interface::~Interface() {}
-
-void Interface::connect(SlaveId addr)
+OpResult Interface::teardown()
 {
+    delete mIo;
+    mIo = NULL;
+
+    mPort->close();
+    delete mPort;
+    mPort = NULL;
+
+    return OpResult::Success;
+}
+
+OpResult Interface::connect(SlaveId addr)
+{
+    Q_ASSERT(mPort);
     mSlaveAddr = addr;
-    doSetFilter(ExactFilter(addr.res));
+    return doSetFilter(ExactFilter(addr.res));
 }
 
-void Interface::disconnect()
+OpResult Interface::disconnect()
 {
+    Q_ASSERT(mPort);
     mSlaveAddr.reset();
-    doSetFilter(mFilter);
+    return doSetFilter(mFilter);
 }
 
-void Interface::transmit(const std::vector<quint8> & data)
+OpResult Interface::transmit(const std::vector<quint8> & data)
 {
+    Q_ASSERT(mPort);
     Q_ASSERT(mSlaveAddr);
-    transmitTo(data, mSlaveAddr.get().cmd);
+    return transmitTo(data, mSlaveAddr.get().cmd);
 }
 
-void Interface::transmitTo(const std::vector<quint8> & data, Id id)
+OpResult Interface::transmitTo(const std::vector<quint8> & data, Id id)
 {
+    Q_ASSERT(mPort);
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
     mTxAddrIsStd = (id.type == Id::Type::Std);
-    updateBitrateTxType();
+
+    RETURN_FAIL(updateBitrateTxType())
 
     if(!mCfgdHeaderId || mCfgdHeaderId.get() != id)
     {
         if(id.type == Id::Type::Ext)
         {
-            runCmdWithCheck(QString("ATCP%1").arg((id.addr >> 24) & 0x1F, 2, 16, QChar('0')).toLatin1());
-            runCmdWithCheck(QString("ATSH%1").arg(id.addr & 0xFFFFFF, 6, 16, QChar('0')).toLatin1());
+            RETURN_FAIL(runCmdWithCheck(QString("ATCP%1").arg((id.addr >> 24) & 0x1F, 2, 16, QChar('0')).toLatin1()))
+            RETURN_FAIL(runCmdWithCheck(QString("ATSH%1").arg(id.addr & 0xFFFFFF, 6, 16, QChar('0')).toLatin1()))
         }
         else
         {
-            runCmdWithCheck(QString("ATSH%1").arg(id.addr & 0x7FF, 3, 16, QChar('0')).toLatin1());
+            RETURN_FAIL(runCmdWithCheck(QString("ATSH%1").arg(id.addr & 0x7FF, 3, 16, QChar('0')).toLatin1()))
         }
         mCfgdHeaderId = id;
     }
     else
     {
-        mIo->syncAndGetPrompt(TIMEOUT_MSEC);    // Not synchronized by calling _runCmdWithCheck(), so do it here
+        RETURN_FAIL(mIo->syncAndGetPrompt(TIMEOUT_MSEC))   // Not synchronized by calling _runCmdWithCheck(), so do it here
     }
 
     if(mPacketLogEnabled)
@@ -413,16 +428,15 @@ void Interface::transmitTo(const std::vector<quint8> & data, Id id)
     }
 
     mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + "\r");
+    return OpResult::Success;
 }
 
-std::vector<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter, bool (*validator)(const Frame &))
+OpResult Interface::receiveFrames(int timeoutMsec, std::vector<Frame> &out, const Filter filter, bool (*validator)(const Frame &))
 {
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
 
     QElapsedTimer timer;
     timer.start();
-
-    std::vector<Frame> frames;
 
     qint64 timeoutNsec = qint64(timeoutMsec) * 1000000;
     do
@@ -433,39 +447,40 @@ std::vector<Frame> Interface::receiveFrames(int timeoutMsec, const Filter filter
         {
             if(filter.Matches(newFrame.id) &&
                     (!validator || validator(newFrame)))
-                frames.push_back(newFrame);
+                out.push_back(newFrame);
         }
-    } while(timer.nsecsElapsed() <= timeoutNsec && !frames.size());
+    } while(timer.nsecsElapsed() <= timeoutNsec && !out.size());
 
-    return frames;
+    return OpResult::Success;
 }
 
-void Interface::setBitrate(int bps)
+OpResult Interface::setBitrate(int bps)
 {
     mBitrate = bps;
-    updateBitrateTxType();
+    return updateBitrateTxType();
 }
-void Interface::setFilter(Filter filt)
+OpResult Interface::setFilter(Filter filt)
 {
     mFilter = filt;
-    doSetFilter(filt);
+    return doSetFilter(filt);
 }
 void LIBXCONFPROTOSHARED_EXPORT Interface::setSerialLog(bool on)
 {
     mIo->setSerialLog(on);
 }
-void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
+    return OpResult::Success;
 }
 double Interface::elapsedSecs()
 {
-    return mPort.elapsedSecs();
+    return mPort->elapsedSecs();
 }
 
-void Interface::runCmdWithCheck(const std::vector<quint8> &cmd, CheckOk checkOkPolicy)
+OpResult Interface::runCmdWithCheck(const std::vector<quint8> &cmd, CheckOk checkOkPolicy)
 {
-    mIo->syncAndGetPrompt(TIMEOUT_MSEC);
+    RETURN_FAIL(mIo->syncAndGetPrompt(TIMEOUT_MSEC))
     mIo->flushCmdResp();
     {
         std::vector<quint8> tx(cmd);
@@ -477,29 +492,23 @@ void Interface::runCmdWithCheck(const std::vector<quint8> &cmd, CheckOk checkOkP
         std::vector<quint8> cmdNt(cmd);
         cmdNt.push_back('\0');
         qCritical("No prompt from ELM327 after executing %s", cmdNt.data());
-        throw NoResponse();
+        return OpResult::IntfcNoResponse;
     }
     if(checkOkPolicy == CheckOk::Yes)
     {
-        bool gotOk = false;
         for(const std::vector<quint8> & response : mIo->getRcvdCmdResp(0))
         {
             if(std::search(response.begin(), response.end(), OK_VEC.begin(), OK_VEC.end()) != response.end())
-            {
-                gotOk = true;
-                break;
-            }
+                return OpResult::Success;
         }
-        if(!gotOk)
-        {
-            std::vector<quint8> cmdNt(cmd);
-            cmdNt.push_back('\0');
-            qCritical("No OK from ELM327 after executing %s", cmdNt.data());
-            throw NoResponse();
-        }
+        std::vector<quint8> cmdNt(cmd);
+        cmdNt.push_back('\0');
+        qCritical("No OK from ELM327 after executing %s", cmdNt.data());
+        return OpResult::IntfcNoResponse;
     }
+    return OpResult::Success;
 }
-void Interface::runCmdCheckResp(const std::vector<quint8> &cmd, const std::vector<quint8> &respSubstr, int timeoutMsec)
+OpResult Interface::runCmdCheckResp(const std::vector<quint8> &cmd, const std::vector<quint8> &respSubstr, int timeoutMsec)
 {
     Q_ASSERT(cmd.size());
     mIo->write(cmd);
@@ -515,12 +524,12 @@ void Interface::runCmdCheckResp(const std::vector<quint8> &cmd, const std::vecto
         for(const std::vector<quint8> &resp : cmdResp)
         {
             if(std::search(resp.begin(), resp.end(), respSubstr.begin(), respSubstr.end()) != resp.end())
-                return;
+                return OpResult::Success;
         }
     }
-    throw NoResponse();
+    return OpResult::IntfcNoResponse;
 }
-void Interface::doSetFilter(const Filter & filter)
+OpResult Interface::doSetFilter(const Filter & filter)
 {
     QString stdFilter = QString("%1").arg(filter.filt.addr & 0x7FF, 3, 16, QChar('0'));
     QString stdMask = QString("%1").arg(filter.maskId & 0x7FF, 3, 16, QChar('0'));
@@ -528,27 +537,28 @@ void Interface::doSetFilter(const Filter & filter)
     QString extMask = QString("%1").arg(filter.maskId & 0x1FFFFFFF, 8, 16, QChar('0'));
     if(mIntfcIsStn)
     {
-        runCmdWithCheck("STFCFC");
-        runCmdWithCheck("STFCP");
-        runCmdWithCheck("STFCB");
-        runCmdWithCheck("ATCF00000000");
-        runCmdWithCheck("ATCM00000000");
+        RETURN_FAIL(runCmdWithCheck("STFCFC"))
+        RETURN_FAIL(runCmdWithCheck("STFCP"))
+        RETURN_FAIL(runCmdWithCheck("STFCB"))
+        RETURN_FAIL(runCmdWithCheck("ATCF00000000"))
+        RETURN_FAIL(runCmdWithCheck("ATCM00000000"))
         if(!filter.maskEff || filter.filt.type == Id::Type::Std)
-            runCmdWithCheck(QString("STFAP%1,%2").arg(stdFilter, stdMask).toLatin1());
+            RETURN_FAIL(runCmdWithCheck(QString("STFAP%1,%2").arg(stdFilter, stdMask).toLatin1()))
         if(!filter.maskEff || filter.filt.type == Id::Type::Ext)
-            runCmdWithCheck(QString("STFAP%1,%2").arg(extFilter, extMask).toLatin1());
+            RETURN_FAIL(runCmdWithCheck(QString("STFAP%1,%2").arg(extFilter, extMask).toLatin1()))
     }
     else
     {
         // ELM327 does not support filters that can distinguish by EFF, so ignore it
-        runCmdWithCheck(QString("ATCF%1").arg(extFilter).toLatin1());
-        runCmdWithCheck(QString("ATCM%1").arg(extMask).toLatin1());
+        RETURN_FAIL(runCmdWithCheck(QString("ATCF%1").arg(extFilter).toLatin1()))
+        RETURN_FAIL(runCmdWithCheck(QString("ATCM%1").arg(extMask).toLatin1()))
     }
     if(mIntfcIsStn)
         mIo->write("STM\r");
     else
         mIo->write("ATMA\r");
     mCfgdFilter = filter;
+    return OpResult::Success;
 }
 bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
 {
@@ -577,7 +587,7 @@ bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
             return false;
     }
 }
-void Interface::updateBitrateTxType()
+OpResult Interface::updateBitrateTxType()
 {
     Q_ASSERT(mBitrate);
 
@@ -596,7 +606,7 @@ void Interface::updateBitrateTxType()
         else
         {
             qCritical("CAN bitrate %d cannot be generated by ELM327", mBitrate.get());
-            throw ConfigError();
+            return OpResult::IntfcConfigError;
         }
 
         quint8 canOptions = 0x60;
@@ -606,22 +616,23 @@ void Interface::updateBitrateTxType()
             canOptions |= 0x10;
 
         // STN1110 requires that protocol not be set to B when altering B settings
-        runCmdWithCheck("ATSP1");
-        runCmdWithCheck(QString("ATPB%1%2").arg(canOptions, 2, 16, QChar('0')).arg(mBitrateDivisor, 2, 16, QChar('0')).toLatin1());
-        runCmdWithCheck("ATSPB");
+        RETURN_FAIL(runCmdWithCheck("ATSP1"))
+        RETURN_FAIL(runCmdWithCheck(QString("ATPB%1%2").arg(canOptions, 2, 16, QChar('0')).arg(mBitrateDivisor, 2, 16, QChar('0')).toLatin1()))
+        RETURN_FAIL(runCmdWithCheck("ATSPB"))
 
-        runCmdWithCheck("ATAT0");               // Disable adaptive timing
-        runCmdWithCheck("ATSTff");              // Set maximum timeout = 1.02 s
-        runCmdWithCheck("ATCSM0", CheckOk::No); // Try to set silent monitoring; some knockoff ELM327s don't support this command but seem to work OK anyway
+        RETURN_FAIL(runCmdWithCheck("ATAT0"))               // Disable adaptive timing
+        RETURN_FAIL(runCmdWithCheck("ATSTff"))              // Set maximum timeout = 1.02 s
+        RETURN_FAIL(runCmdWithCheck("ATCSM0", CheckOk::No)) // Try to set silent monitoring; some knockoff ELM327s don't support this command but seem to work OK anyway
 
         if(mSlaveAddr)
-            doSetFilter(ExactFilter(mSlaveAddr.get().res));
+            RETURN_FAIL(doSetFilter(ExactFilter(mSlaveAddr.get().res)))
         else
-            doSetFilter(mFilter);
+            RETURN_FAIL(doSetFilter(mFilter))
         mCfgdBitrate = mBitrate.get();
         if(mTxAddrIsStd)
             mCfgdTxAddrIsStd = mTxAddrIsStd.get();
     }
+    return OpResult::Success;
 }
 
 Factory::Factory(QSerialPortInfo info, QObject *parent) :
@@ -638,19 +649,56 @@ QString Factory::text()
     return "ELM327 on " + mPortInfo.portName() + " (" + mPortInfo.description() + ")";
 }
 
-QList<Factory *> getInterfacesAvail(QObject *parent)
+QList<QSerialPortInfo> getPortsAvail()
 {
-    QList<Factory *> ret;
-    for(const auto &portInfo : QSerialPortInfo::availablePorts()) {
+    QList<QSerialPortInfo> ret;
+    for(const auto &portInfo : QSerialPortInfo::availablePorts())
+    {
         if(!portInfo.isBusy()) {
             QSerialPort port(portInfo);
             if(port.open(QIODevice::ReadWrite)) {
                 port.close();
-                ret.append(new Factory(portInfo, parent));
+                ret.append(portInfo);
             }
         }
     }
     return ret;
+}
+
+QList<Factory *> getInterfacesAvail(QObject *parent)
+{
+    QList<Factory *> ret;
+    for(QSerialPortInfo portInfo : getPortsAvail())
+        ret.append(new Factory(portInfo, parent));
+    return ret;
+}
+
+Registry::Registry(QObject *parent) : ::SetupTools::Xcp::Interface::Registry(parent)
+{
+    for(QSerialPortInfo portInfo : getPortsAvail())
+        mAvailUri.append(QString("elm327:%1?bitrate=250000?filter=00000000:00000000").arg(portInfo.portName()));
+}
+
+Registry::~Registry() {}
+
+Xcp::Interface::Interface *Registry::make(QString uri)
+{
+    QUrl url(uri);
+    if(QString::compare(url.scheme(), "elm327", Qt::CaseInsensitive) != 0)
+        return NULL;
+
+    QSerialPortInfo portInfo(url.path());
+    if(portInfo.isBusy() || portInfo.isNull())
+        return NULL;
+
+    Interface *intfc = new Interface();
+    if(intfc->setup(&portInfo) != OpResult::Success)
+    {
+        delete intfc;
+        return NULL;
+    }
+
+    return intfc;
 }
 
 }   // namespace Elm327

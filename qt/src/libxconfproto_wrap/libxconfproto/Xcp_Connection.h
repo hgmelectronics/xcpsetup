@@ -2,7 +2,7 @@
 #define XCP_CONNECTION_H
 
 #include <QObject>
-#include <QSharedPointer>
+#include <QReadWriteLock>
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <vector>
@@ -46,6 +46,7 @@ class SlaveErrorUndefined : public SlaveError {};
 class MultipleReplies : public ConnException {};
 
 enum class CksumType {
+    Invalid,
     XCP_ADD_11,
     XCP_ADD_12,
     XCP_ADD_14,
@@ -78,6 +79,15 @@ quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
 {
     Q_OBJECT
+public:
+    enum class State {
+        IntfcInvalid,
+        Closed,
+        CalMode,
+        PgmMode
+    };
+private:
+
     Q_PROPERTY(QObject *intfc READ intfc WRITE setIntfc)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
@@ -89,18 +99,9 @@ public:
     void setTimeout(int msec);
     int nvWriteTimeout(void);
     void setNvWriteTimeout(int msec);
-    Q_INVOKABLE void open();
-    Q_INVOKABLE void close();
-    Q_INVOKABLE std::vector<quint8> upload(XcpPtr base, int len);
-    Q_INVOKABLE void download(XcpPtr base, const std::vector<quint8> &data);
-    Q_INVOKABLE void nvWrite();
-    Q_INVOKABLE void setCalPage(quint8 segment, quint8 page);
-    Q_INVOKABLE void programStart();
-    Q_INVOKABLE void programClear(XcpPtr base, int len);
-    Q_INVOKABLE void programRange(XcpPtr base, const std::vector<quint8> &data);
-    Q_INVOKABLE void programVerify(quint32 crc);
-    Q_INVOKABLE void programReset();
-    std::pair<CksumType, quint32> buildChecksum(XcpPtr base, int len);
+    int resetTimeout(void);
+    void setResetTimeout(int msec);
+    State state();
     template <typename T>
     T fromSlaveEndian(const uchar *src)
     {
@@ -158,27 +159,58 @@ public:
         }
         return accum;
     }
+    bool isOpen();
+    bool isCalMode();
+    bool isPgmMode();
 
 signals:
+    void setStateDone(OpResult result);
+    void openDone(OpResult result);
+    void closeDone(OpResult result);
+    void uploadDone(OpResult result, std::vector<quint8> data = std::vector<quint8>());
+    void downloadDone(OpResult result);
+    void nvWriteDone(OpResult result);
+    void setCalPageDone(OpResult result);
+    void programStartDone(OpResult result);
+    void programClearDone(OpResult result);
+    void programRangeDone(OpResult result);
+    void programVerifyDone(OpResult result);
+    void programResetDone(OpResult result);
+    void buildChecksumDone(OpResult result, CksumType type = CksumType::Invalid, quint32 cksum = 0);
+    void stateChanged();
 public slots:
+    OpResult setState(State);
+    OpResult open(boost::optional<int> timeoutMsec = boost::optional<int>());
+    OpResult close();
+    OpResult upload(XcpPtr base, int len, std::vector<quint8> *out);
+    OpResult download(XcpPtr base, const std::vector<quint8> data);
+    OpResult nvWrite();
+    OpResult setCalPage(quint8 segment, quint8 page);
+    OpResult programStart();
+    OpResult programClear(XcpPtr base, int len);
+    OpResult programRange(XcpPtr base, const std::vector<quint8> data);
+    OpResult programVerify(quint32 crc);
+    OpResult programReset();
+    OpResult buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
 private:
-    static void throwReplies(const std::vector<std::vector<quint8> > &replies, const char *msg = NULL);
-    static void throwReply(const std::vector<quint8> &reply, const char *msg = NULL);
-    std::vector<quint8> transact(const std::vector<quint8> &cmd, int minReplyBytes, const char *msg = NULL, int timeoutMsec = -1);
-    std::vector<quint8> uploadSegment(XcpPtr base, int len);
-    void downloadSegment(XcpPtr base, const std::vector<quint8> &data);
-    void programPacket(XcpPtr base, const std::vector<quint8> &data);
-    void programBlock(XcpPtr base, const std::vector<quint8> &data);
-    void setMta(XcpPtr ptr);
-    void tryQuery(std::function<void (void)> &action);
-    void synch();
+    static OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, const char *msg = NULL);
+    static OpResult getReplyResult(const std::vector<quint8> &reply, const char *msg = NULL);
+    OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, const char *msg = NULL, boost::optional<int> timeoutMsec = boost::optional<int>());
+    OpResult uploadSegment(XcpPtr base, int len, std::vector<quint8> &out);
+    OpResult downloadSegment(XcpPtr base, const std::vector<quint8> &data);
+    OpResult programPacket(XcpPtr base, const std::vector<quint8> &data);
+    OpResult programBlock(XcpPtr base, const std::vector<quint8> &data);
+    OpResult setMta(XcpPtr ptr);
+    OpResult tryQuery(std::function<OpResult (void)> &action);
+    OpResult synch();
     quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 
     constexpr static const int MAX_RETRIES = 10;
     constexpr static const int NUM_NV_WRITE_POLLS = 10;
 
     Interface::Interface *mIntfc;
-    int mTimeoutMsec, mNvWriteTimeoutMsec;
+    QReadWriteLock mIntfcLock;
+    int mTimeoutMsec, mNvWriteTimeoutMsec, mResetTimeoutMsec;
 
     bool mConnected;
     bool mIsBigEndian, mSupportsCalPage, mSupportsPgm;

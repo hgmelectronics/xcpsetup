@@ -98,28 +98,30 @@ LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
     mPacketLogEnabled(false)
 {}
 
-void LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
 {
     Q_ASSERT(mSlaveAddr);
-    transmitTo(data, mSlaveAddr.get().cmd);
+    return transmitTo(data, mSlaveAddr.get().cmd);
 }
 
-std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec)
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec, std::vector<std::vector<quint8> > &out)
 {
     if(!mSlaveAddr)
-        return std::vector<std::vector<quint8> >();
+        return OpResult::InvalidOperation;
 
-    std::vector<Frame> frames = receiveFrames(timeoutMsec, ExactFilter(mSlaveAddr.get().res), &SetupTools::Xcp::Interface::Can::validateXcp);
+    std::vector<Frame> frames;
+    RETURN_ON_FAIL(receiveFrames(timeoutMsec, frames, ExactFilter(mSlaveAddr.get().res), &SetupTools::Xcp::Interface::Can::validateXcp));
 
-    std::vector<std::vector<quint8> > pkts;
+    out.clear();
     for(auto &frame: frames)
-        pkts.push_back(frame.data);
-    return pkts;
+        out.push_back(frame.data);
+    return OpResult::Success;
 }
 
-void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
+    return OpResult::Success;
 }
 
 }   // namespace Can

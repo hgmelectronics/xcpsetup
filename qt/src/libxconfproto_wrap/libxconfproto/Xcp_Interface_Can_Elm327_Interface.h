@@ -11,6 +11,7 @@
 #include <QtGlobal>
 #include "Xcp_Interface_Can_Interface.h"
 #include "Xcp_Interface_Can_Registry.h"
+#include "Xcp_Interface_Registry.h"
 #include "util.h"
 
 namespace SetupTools
@@ -38,7 +39,7 @@ class IoTask : public QObject
 {
     Q_OBJECT
 public:
-    IoTask(SerialPort &port, QObject *parent = NULL);
+    IoTask(SerialPort *port, QObject *parent = NULL);
     std::vector<Frame> getRcvdFrames(int timeoutMsec);
     std::vector<std::vector<quint8> > getRcvdCmdResp(int timeoutMsec);
     bool isPromptReady();
@@ -55,7 +56,7 @@ private:
     constexpr static const uchar EOL = '\r';
     constexpr static const int PROMPT_DELAY_USEC = 200;
 
-    SerialPort &mPort;
+    SerialPort *mPort;
 	bool mPacketLogEnabled;
     qint64 mPendingTxBytes;
     QMutex mPendingTxBytesMutex;
@@ -72,10 +73,10 @@ class LIBXCONFPROTOSHARED_EXPORT Io : public QObject
 {
     Q_OBJECT
 public:
-    Io(SerialPort &port, QObject *parent = NULL);
+    Io(SerialPort *port, QObject *parent = NULL);
     ~Io();
     void sync();
-    void syncAndGetPrompt(int timeoutMsec, int retries = 5);
+    OpResult syncAndGetPrompt(int timeoutMsec, int retries = 5);
     std::vector<Frame> getRcvdFrames(int timeoutMsec);
     std::vector<std::vector<quint8> > getRcvdCmdResp(int timeoutMsec);
     void flushCmdResp();
@@ -119,43 +120,46 @@ class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface
 {
     Q_OBJECT
 public:
-    Interface(const QSerialPortInfo & portInfo, QObject *parent = NULL);
+    Interface(QObject *parent = NULL);
+    Interface(const QSerialPortInfo portInfo, QObject *parent = NULL);
     virtual ~Interface();
-    virtual void connect(SlaveId addr);                      //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
-    virtual void disconnect();                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
-    virtual void transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
-    virtual void transmitTo(const std::vector<quint8> & data, Id id); //!< Send one CAN frame to an arbitrary ID
-    virtual std::vector<Frame> receiveFrames(int timeoutMsec, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL);
-    virtual void setBitrate(int bps);                           //!< Set the bitrate used on the interface
-    virtual void setFilter(Filter filt);                     //!< Set the CAN filter used on the interface
+    virtual OpResult setup(const QSerialPortInfo *portInfo = NULL);
+    virtual OpResult teardown();
+    virtual OpResult connect(SlaveId addr);                      //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
+    virtual OpResult disconnect();                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
+    virtual OpResult transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
+    virtual OpResult transmitTo(const std::vector<quint8> & data, Id id); //!< Send one CAN frame to an arbitrary ID
+    virtual OpResult receiveFrames(int timeoutMsec, std::vector<Frame> &out, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL);
+    virtual OpResult setBitrate(int bps);                           //!< Set the bitrate used on the interface
+    virtual OpResult setFilter(Filter filt);                     //!< Set the CAN filter used on the interface
     void setSerialLog(bool on);
     double elapsedSecs();
-    virtual void setPacketLog(bool enable);
+    virtual OpResult setPacketLog(bool enable);
 private:
     enum class CheckOk { No, Yes };
 
-    void runCmdWithCheck(const std::vector<quint8> &cmd, CheckOk checkOkPolicy = CheckOk::Yes);
-    inline void runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy = CheckOk::Yes)
+    OpResult runCmdWithCheck(const std::vector<quint8> &cmd, CheckOk checkOkPolicy = CheckOk::Yes);
+    inline OpResult runCmdWithCheck(const QByteArray &cmd, CheckOk checkOkPolicy = CheckOk::Yes)
     {
         std::vector<quint8> cmdVec(reinterpret_cast<const quint8 *>(cmd.begin()), reinterpret_cast<const quint8 *>(cmd.end()));
-        runCmdWithCheck(cmdVec, checkOkPolicy);
+        return runCmdWithCheck(cmdVec, checkOkPolicy);
     }
-    inline void runCmdWithCheck(const char *cmd, CheckOk checkOkPolicy = CheckOk::Yes)
+    inline OpResult runCmdWithCheck(const char *cmd, CheckOk checkOkPolicy = CheckOk::Yes)
     {
         std::vector<quint8> cmdVec(strlen(cmd));
         std::copy(cmd, cmd + strlen(cmd), reinterpret_cast<char *>(cmdVec.data()));
-        runCmdWithCheck(cmdVec, checkOkPolicy);
+        return runCmdWithCheck(cmdVec, checkOkPolicy);
     }
-    void runCmdCheckResp(const std::vector<quint8> &cmd, const std::vector<quint8> &respSubstr, int timeoutMsec);
-    inline void runCmdCheckResp(const QByteArray &cmd, const QByteArray &respSubstr, int timeoutMsec)
+    OpResult runCmdCheckResp(const std::vector<quint8> &cmd, const std::vector<quint8> &respSubstr, int timeoutMsec);
+    inline OpResult runCmdCheckResp(const QByteArray &cmd, const QByteArray &respSubstr, int timeoutMsec)
     {
         std::vector<quint8> cmdVec(reinterpret_cast<const quint8 *>(cmd.begin()), reinterpret_cast<const quint8 *>(cmd.end()));
         std::vector<quint8> respSubstrVec(reinterpret_cast<const quint8 *>(respSubstr.begin()), reinterpret_cast<const quint8 *>(respSubstr.end()));
-        runCmdCheckResp(cmdVec, respSubstrVec, timeoutMsec);
+        return runCmdCheckResp(cmdVec, respSubstrVec, timeoutMsec);
     }
 
-    void doSetFilter(const Filter & filt);
-    void updateBitrateTxType();
+    OpResult doSetFilter(const Filter & filt);
+    OpResult updateBitrateTxType();
     bool calcBitrateParams(int &divisor, bool &useOptTqPerBit);
 
     constexpr static const int TIMEOUT_MSEC = 200;
@@ -173,8 +177,9 @@ private:
     constexpr static const int OPT_TQ_PER_BIT = 7;
     constexpr static const double CAN_BITRATE_TOL = 0.001;
 
-    SerialPort mPort;
-    QSharedPointer<Io> mIo;
+    QSerialPortInfo *mPortInfo;
+    SerialPort *mPort;
+    Io *mIo;
     bool mIntfcIsStn;
 
     boost::optional<int> mBitrate;
@@ -201,8 +206,18 @@ private:
     QSerialPortInfo mPortInfo;
 };
 
+QList<QSerialPortInfo> LIBXCONFPROTOSHARED_EXPORT getPortsAvail();
 
 QList<Factory *> LIBXCONFPROTOSHARED_EXPORT getInterfacesAvail(QObject *parent = 0);
+
+class LIBXCONFPROTOSHARED_EXPORT Registry : public Xcp::Interface::Registry
+{
+    Q_OBJECT
+public:
+    explicit Registry(QObject *parent = 0);
+    virtual ~Registry();
+    Xcp::Interface::Interface *make(QString uri);
+};
 
 }   // namespace Elm327
 }   // namespace Can

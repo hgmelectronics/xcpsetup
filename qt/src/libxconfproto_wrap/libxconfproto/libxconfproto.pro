@@ -22,7 +22,9 @@ SOURCES += \
     Xcp_Interface_Can_Interface.cpp \
     Xcp_Interface_Can_Elm327_Interface.cpp \
     Xcp_Interface_Loopback_Interface.cpp \
-    Xcp_Interface_Can_Registry.cpp
+    Xcp_Interface_Can_Registry.cpp \
+    Xcp_ConnectionFacade.cpp \
+    Xcp_Interface_Registry.cpp
 
 HEADERS += \
     libxconfproto_global.h \
@@ -33,7 +35,9 @@ HEADERS += \
     Xcp_Interface_Can_Elm327_Interface.h \
     Xcp_Exception.h \
     Xcp_Interface_Loopback_Interface.h \
-    Xcp_Interface_Can_Registry.h
+    Xcp_Interface_Can_Registry.h \
+    Xcp_ConnectionFacade.h \
+    Xcp_Interface_Registry.h
 
 unix {
     target.path = /usr/lib

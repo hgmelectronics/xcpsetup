@@ -672,6 +672,7 @@ void TestingSlave::run()
                     else
                     {
                         mIsProgramMode = false;
+                        mIsConnected = false;
                         mProgramBlockModeRemBytes.reset();
                         reply = {0xFF};
                     }

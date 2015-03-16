@@ -2,6 +2,8 @@
 
 #include <string.h>
 #include <QtEndian>
+#include <QReadLocker>
+#include <QWriteLocker>
 #include <boost/crc.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <numeric>
@@ -12,6 +14,8 @@ namespace SetupTools
 {
 namespace Xcp
 {
+
+#define RESETMTA_RETURN_ON_FAIL(value) { OpResult EMIT_RETURN__ret = value; if(EMIT_RETURN__ret != OpResult::Success) { mCalcMta.reset(); return EMIT_RETURN__ret; } }
 
 quint32 Connection::computeCksum(CksumType type, const std::vector<quint8> &data)
 {
@@ -70,41 +74,116 @@ Connection::Connection(QObject *parent) :
     QObject(parent),
     mTimeoutMsec(0),
     mNvWriteTimeoutMsec(0),
+    mResetTimeoutMsec(0),
     mConnected(false)
 {}
 
-QObject *Connection::intfc() {
+QObject *Connection::intfc()
+{
+    QReadLocker lock(&mIntfcLock);
     return mIntfc;
 }
 
-void Connection::setIntfc(QObject *intfc) {
+void Connection::setIntfc(QObject *intfc)
+{
+    QWriteLocker lock(&mIntfcLock);
     mIntfc = qobject_cast<Interface::Interface *>(intfc);
 }
 
-int Connection::timeout() {
+int Connection::timeout()
+{
     return mTimeoutMsec;
 }
 
-void Connection::setTimeout(int msec) {
+void Connection::setTimeout(int msec)
+{
     mTimeoutMsec = msec;
 }
 
-int Connection::nvWriteTimeout() {
+int Connection::nvWriteTimeout()
+{
     return mNvWriteTimeoutMsec;
 }
 
-void Connection::setNvWriteTimeout(int msec) {
+void Connection::setNvWriteTimeout(int msec)
+{
     mNvWriteTimeoutMsec = msec;
 }
 
+int Connection::resetTimeout()
+{
+    return mResetTimeoutMsec;
+}
 
-void Connection::open()
+void Connection::setResetTimeout(int msec)
+{
+    mResetTimeoutMsec = msec;
+}
+
+Connection::State Connection::state()
+{
+    QReadLocker lock(&mIntfcLock);
+    if(mIntfc == NULL)
+        return State::IntfcInvalid;
+    else if(!mConnected)
+        return State::Closed;
+    else if(!mPgmStarted)
+        return State::CalMode;
+    else
+        return State::PgmMode;
+}
+
+OpResult Connection::setState(State val)
+{
+    QReadLocker lock(&mIntfcLock);
+    if(state() == val)
+        EMIT_RETURN(setStateDone, OpResult::Success);
+    if(!mIntfc)
+        EMIT_RETURN(setStateDone, OpResult::NoIntfc);
+
+    switch(val)
+    {
+    case State::Closed:
+        EMIT_RETURN(setStateDone, close());
+        break;
+    case State::CalMode:
+        if(mConnected)
+        {
+            Q_ASSERT(mPgmStarted);
+            // need to do program reset
+            EMIT_RETURN_ON_FAIL(setStateDone, programReset());
+            EMIT_RETURN(setStateDone, open(mResetTimeoutMsec));
+        }
+        else
+        {
+            EMIT_RETURN(setStateDone, open());
+        }
+        break;
+    case State::PgmMode:
+        if(!mConnected)
+            EMIT_RETURN_ON_FAIL(setStateDone, open());
+
+        EMIT_RETURN(setStateDone, programStart());
+        break;
+    default:
+    case State::IntfcInvalid:
+        Q_ASSERT(0);
+        break;
+    }
+    return OpResult::InvalidOperation;
+}
+
+OpResult Connection::open(boost::optional<int> timeoutMsec)
 {
     static constexpr char OPMSG[] = "connecting to slave";
 
-    std::vector<quint8> reply = transact({0xFF, 0x00}, 8, OPMSG);
+    mConnected = false;
+    emit stateChanged();
+
+    std::vector<quint8> reply;
+    EMIT_RETURN_ON_FAIL(openDone, transact({0xFF, 0x00}, 8, reply, OPMSG, timeoutMsec));
     if(reply[0] != 0xFF)
-        throwReply(reply, OPMSG);
+        EMIT_RETURN(openDone, getReplyResult(reply, OPMSG));
     mSupportsCalPage = reply[1] & 0x01;
     mSupportsPgm = reply[1] & 0x10;
     mIsBigEndian = reply[2] & 0x01;
@@ -120,58 +199,74 @@ void Connection::open()
             mAddrGran = 4;
             break;
         default:
-            throwReply(reply, OPMSG);
+            EMIT_RETURN(openDone, getReplyResult(reply, OPMSG));
+            break;
     }
     mMaxCto = reply[3];
     mMaxDownPayload = ((mMaxCto - 2) / mAddrGran) * mAddrGran;
     mMaxUpPayload = ((mMaxCto - 1) / mAddrGran) * mAddrGran;
     if(reply[6] != char(0x01) || reply[7] != char(0x01))
-        throwReply(reply, OPMSG);
+        EMIT_RETURN(openDone, getReplyResult(reply, OPMSG));
 
     mCalcMta.reset();
     mPgmStarted = false;
     mPgmMasterBlockMode = false;
     mConnected = true;
+    emit stateChanged();
+
+    EMIT_RETURN(openDone, OpResult::Success);
 }
 
-void Connection::close()
+OpResult Connection::close()
 {
     static constexpr char OPMSG[] = "disconnecting from slave";
 
     mConnected = false;
-    std::vector<quint8> reply = transact({0xFE}, 1, OPMSG);
+    emit stateChanged();
+    std::vector<quint8> reply;
+    EMIT_RETURN_ON_FAIL(closeDone, transact({0xFE}, 1, reply, OPMSG));
     if(reply[0] != 0xFF)
-        throwReply(reply);
+        EMIT_RETURN(closeDone, getReplyResult(reply, OPMSG));
+
+    EMIT_RETURN(closeDone, OpResult::Success);
 }
 
-std::vector<quint8> Connection::upload(XcpPtr base, int len)
+OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
 {
-    Q_ASSERT(mConnected);
+    if(!mConnected)
+        EMIT_RETURN(uploadDone, OpResult::NotConnected);
     if(len % mAddrGran)
-        throw AddrGranError();
+        EMIT_RETURN(uploadDone, OpResult::AddrGranError);
 
     int remBytes = len;
     XcpPtr packetPtr = base;
-    std::vector<quint8> ret;
 
+    std::vector<quint8> data;
     while(remBytes > 0)
     {
         int packetBytes = std::min(remBytes, mMaxUpPayload);
-        std::vector<quint8> seg(uploadSegment(packetPtr, packetBytes));
-        ret.insert(ret.end(), seg.begin(), seg.end());
+        std::vector<quint8> seg;
+        EMIT_RETURN_ON_FAIL(uploadDone, uploadSegment(packetPtr, packetBytes, seg));
+        data.insert(data.end(), seg.begin(), seg.end());
         remBytes -= packetBytes;
         packetPtr.addr += packetBytes / mAddrGran;
     }
-    return ret;
+    emit uploadDone(OpResult::Success, data);
+    if(out)
+        *out = data;
+    return OpResult::Success;
 }
 
-void Connection::download(XcpPtr base, const std::vector<quint8> &data)
+OpResult Connection::download(XcpPtr base, const std::vector<quint8> data)
 {
-    Q_ASSERT(mConnected);
+    if(!mConnected)
+        EMIT_RETURN(downloadDone, OpResult::NotConnected);
+    if(mPgmStarted)
+        EMIT_RETURN(programClearDone, OpResult::WrongMode);
     if(data.size() % mAddrGran)
-        throw AddrGranError();
+        EMIT_RETURN(downloadDone, OpResult::AddrGranError);
     if(!mSupportsCalPage)
-        throw InvalidOperation();
+        EMIT_RETURN(downloadDone, OpResult::InvalidOperation);
 
     int remBytes = data.size();
     XcpPtr packetPtr = base;
@@ -180,25 +275,31 @@ void Connection::download(XcpPtr base, const std::vector<quint8> &data)
     while(remBytes > 0)
     {
         int packetBytes = std::min(remBytes, mMaxDownPayload);
-        downloadSegment(packetPtr, std::vector<quint8>(packetDataPtr, packetDataPtr + packetBytes));
+        EMIT_RETURN_ON_FAIL(downloadDone, downloadSegment(packetPtr, std::vector<quint8>(packetDataPtr, packetDataPtr + packetBytes)));
         remBytes -= packetBytes;
         packetDataPtr += packetBytes;
         packetPtr.addr += packetBytes / mAddrGran;
     }
+    EMIT_RETURN(downloadDone, OpResult::Success);
 }
 
-void Connection::nvWrite()
+OpResult Connection::nvWrite()
 {
-    Q_ASSERT(mConnected);
+    QReadLocker lock(&mIntfcLock);
+    Q_ASSERT(mIntfc);
+    if(!mConnected)
+        EMIT_RETURN(nvWriteDone, OpResult::NotConnected);
+    if(mPgmStarted)
+        EMIT_RETURN(programClearDone, OpResult::WrongMode);
     if(!mSupportsCalPage)
-        throw InvalidOperation();
+        EMIT_RETURN(nvWriteDone, OpResult::InvalidOperation);
 
-    std::function<void (void)> action = [this]()
+    std::function<OpResult (void)> action = [this]()
     {
         static constexpr char SET_REQ_OPMSG[] = "writing nonvolatile memory";
         // do not use transact() since slave might send two packets (reply plus EV_STORE_CAL)
         {
-            mIntfc->transmit({0xF9, 0x01, 0x00, 0x00});
+            RETURN_ON_FAIL(mIntfc->transmit({0xF9, 0x01, 0x00, 0x00}));
             bool setReqRepliedTo = false;
             bool writeComplete = false;
             QElapsedTimer replyTimer;
@@ -207,10 +308,11 @@ void Connection::nvWrite()
             while(1)
             {
                 int timeout = std::max(mTimeoutMsec - int(replyTimer.elapsed()), 0);
-                std::vector<std::vector<quint8> > replies = mIntfc->receive(timeout);
+                std::vector<std::vector<quint8> > replies;
+                RETURN_ON_FAIL(mIntfc->receive(timeout, replies));
 
                 if(replies.size() == 0)
-                    throw Timeout();
+                    return OpResult::Timeout;
 
                 for(std::vector<quint8> &reply : replies)
                 {
@@ -219,12 +321,12 @@ void Connection::nvWrite()
                     else if(reply.size() >= 2 && reply[0] == 0xFD && reply[1] == 0x03)
                         writeComplete = true;
                     else
-                        throwReply(reply, SET_REQ_OPMSG);
+                        return getReplyResult(reply, SET_REQ_OPMSG);
                 }
                 if(setReqRepliedTo)
                 {
                     if(writeComplete)
-                        return;
+                        return OpResult::Success;
                     else
                         break;
                 }
@@ -239,7 +341,7 @@ void Connection::nvWrite()
             static constexpr char GET_STS_OPMSG[] = "waiting for nonvolatile memory write to finish";
 
             // do not use transact() since slave might send two packets (reply plus EV_STORE_CAL)
-            mIntfc->transmit({0xFD});
+            RETURN_ON_FAIL(mIntfc->transmit({0xFD}));
             bool getStsRepliedTo = false;
             bool writeComplete = false;
             QElapsedTimer replyTimer;
@@ -248,10 +350,11 @@ void Connection::nvWrite()
             while(1)
             {
                 int timeout = std::max(mTimeoutMsec - int(replyTimer.elapsed()), 0);
-                std::vector<std::vector<quint8> > replies = mIntfc->receive(timeout);
+                std::vector<std::vector<quint8> > replies;
+                RETURN_ON_FAIL(mIntfc->receive(timeout, replies));
 
                 if(replies.size() == 0)
-                    throw Timeout();
+                    return OpResult::Timeout;
 
                 for(std::vector<quint8> &reply : replies)
                 {
@@ -267,14 +370,14 @@ void Connection::nvWrite()
                     }
                     else
                     {
-                        throwReply(reply, GET_STS_OPMSG);
+                        return getReplyResult(reply, GET_STS_OPMSG);
                     }
                 }
 
                 if(getStsRepliedTo)
                 {
                     if(writeComplete)
-                        return;
+                        return OpResult::Success;
                     else
                         break;  // Write not complete, but this GET_STATUS was answered, so we can send another
                 }
@@ -282,92 +385,112 @@ void Connection::nvWrite()
             int msecsLeft = mNvWriteTimeoutMsec / NUM_NV_WRITE_POLLS - int(replyTimer.elapsed());
             QThread::msleep(std::max(msecsLeft, 0));
         }
-        throw Timeout();    // Exited outer while() loop due to timeout
+        return OpResult::Timeout; // Exited outer while() loop due to timeout
     };
 
-    tryQuery(action);
+    EMIT_RETURN(nvWriteDone, tryQuery(action));
 }
 
-void Connection::setCalPage(quint8 segment, quint8 page)
+OpResult Connection::setCalPage(quint8 segment, quint8 page)
 {
-    Q_ASSERT(mConnected);
+    if(!mConnected)
+        EMIT_RETURN(setCalPageDone, OpResult::NotConnected);
+    if(mPgmStarted)
+        EMIT_RETURN(programClearDone, OpResult::WrongMode);
     if(!mSupportsCalPage)
-        throw InvalidOperation();
+        EMIT_RETURN(setCalPageDone, OpResult::InvalidOperation);
 
     std::vector<quint8> query({0xEB, 0x03, segment, page});
 
     mCalcMta.reset();   // standard does not define what happens to MTA
 
-    std::function<void (void)> action = [this, query]()
+    std::function<OpResult (void)> action = [this, query]()
     {
         static constexpr char OPMSG[] = "setting calibration segment/page";
 
-        std::vector<quint8> reply = transact(query, 1, OPMSG);
+        std::vector<quint8> reply;
+        RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
         if(reply[0] != 0xFF)
-            throwReply(reply);
+            return getReplyResult(reply, OPMSG);
+
+        return OpResult::Success;
     };
 
-    tryQuery(action);
+    EMIT_RETURN(setCalPageDone, tryQuery(action));
 }
 
-void Connection::programStart()
+OpResult Connection::programStart()
 {
-    Q_ASSERT(mConnected);
+    if(!mConnected)
+        EMIT_RETURN(programStartDone, OpResult::NotConnected);
 
-    std::function<void (void)> action = [this]()
+    std::function<OpResult (void)> action = [this]()
     {
         static constexpr char OPMSG[] = "entering program mode";
-        std::vector<quint8> reply = transact({0xD2}, 7, OPMSG);
+        std::vector<quint8> reply;
+        RETURN_ON_FAIL(transact({0xD2}, 7, reply, OPMSG));
         if(reply[0] != 0xFF)
-            throwReply(reply);
+            return getReplyResult(reply, OPMSG);
         mPgmMasterBlockMode = reply[2] & 0x01;
         mPgmMaxCto = reply[3];
         if(mPgmMaxCto < 8)
-            throwReply(reply);
+            return getReplyResult(reply, OPMSG);
         mPgmMaxBlocksize = reply[4];
         mPgmMaxDownPayload = ((mPgmMaxCto - 2) / mAddrGran) * mAddrGran;
         mCalcMta.reset();   // standard does not define what happens to MTA
         mPgmStarted = true;
+        emit stateChanged();
 
         // Compensate for erroneous implementations that gave BS as a number of bytes, not number of packets
         if(mPgmMaxBlocksize > (255 / mPgmMaxDownPayload))
             mPgmMaxBlocksize = mPgmMaxBlocksize / mPgmMaxDownPayload;
+
+        return OpResult::Success;
     };
 
-    tryQuery(action);
+    EMIT_RETURN(programStartDone, tryQuery(action));
 }
 
-void Connection::programClear(XcpPtr base, int len)
+OpResult Connection::programClear(XcpPtr base, int len)
 {
+    if(!mConnected)
+        EMIT_RETURN(programClearDone, OpResult::NotConnected);
+    if(!mPgmStarted)
+        EMIT_RETURN(programClearDone, OpResult::WrongMode);
     if(len % mAddrGran)
-        throw AddrGranError();
-    Q_ASSERT(mConnected && mPgmStarted);
+        EMIT_RETURN(programClearDone, OpResult::AddrGranError);
 
     std::vector<quint8> query({0xD1, 0x00, 0, 0, 0, 0, 0, 0});
     toSlaveEndian<quint32>(len / mAddrGran, query.data() + 4);
 
     mCalcMta.reset();   // standard does not define what happens to MTA
 
-    std::function<void (void)> action = [this, base, query]()
+    std::function<OpResult (void)> action = [this, base, query]()
     {
         static constexpr char OPMSG[] = "erasing program";
 
         if(!mCalcMta || mCalcMta.get() != base)
-            setMta(base);
+            RETURN_ON_FAIL(setMta(base));
 
-        std::vector<quint8> reply = transact(query, 1, OPMSG);
+        std::vector<quint8> reply;
+        RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
         if(reply[0] != 0xFF)
-            throwReply(reply);
+            return getReplyResult(reply, OPMSG);
+
+        return OpResult::Success;
     };
 
-    tryQuery(action);
+    EMIT_RETURN(programClearDone, tryQuery(action));
 }
 
-void Connection::programRange(XcpPtr base, const std::vector<quint8> &data)
+OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
 {
-    Q_ASSERT(mConnected && mPgmStarted);
+    if(!mConnected)
+        EMIT_RETURN(programClearDone, OpResult::NotConnected);
+    if(!mPgmStarted)
+        EMIT_RETURN(programClearDone, OpResult::WrongMode);
     if(data.size() % mAddrGran)
-        throw AddrGranError();
+        EMIT_RETURN(programRangeDone, OpResult::AddrGranError);
 
     std::vector<quint8>::const_iterator dataIt = data.begin();
     while(dataIt != data.end())
@@ -377,72 +500,92 @@ void Connection::programRange(XcpPtr base, const std::vector<quint8> &data)
         {
             int blockBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxBlocksize * mPgmMaxDownPayload));
             std::vector<quint8> blockData(dataIt, dataIt + blockBytes);
-            programBlock(startPtr, blockData);
+            EMIT_RETURN_ON_FAIL(programRangeDone, programBlock(startPtr, blockData));
             dataIt += blockBytes;
         }
         else
         {
             int packetBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxDownPayload));
             std::vector<quint8> packetData(dataIt, dataIt + packetBytes);
-            programPacket(startPtr, packetData);
+            EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData));
             dataIt += packetBytes;
         }
     }
+    return OpResult::Success;
 }
 
-void Connection::programVerify(quint32 crc)
+OpResult Connection::programVerify(quint32 crc)
 {
-    Q_ASSERT(mConnected && mPgmStarted);
+    if(!mConnected)
+        EMIT_RETURN(programClearDone, OpResult::NotConnected);
+    if(!mPgmStarted)
+        EMIT_RETURN(programClearDone, OpResult::WrongMode);
 
     std::vector<quint8> query({0xC8, 0x01, 0, 0, 0, 0, 0, 0});
     toSlaveEndian<quint16>(0x0002, query.data() + 2);
     toSlaveEndian<quint32>(crc, query.data() + 4);
 
-    std::function<void (void)> action = [this, query]()
+    std::function<OpResult (void)> action = [this, query]()
     {
         static constexpr char OPMSG[] = "verifying program";
 
-        std::vector<quint8> reply = transact(query, 1, OPMSG);
+        std::vector<quint8> reply;
+        RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
         if(reply[0] != 0xFF)
-            throwReply(reply);
+            return getReplyResult(reply, OPMSG);
+
+        return OpResult::Success;
     };
 
-    tryQuery(action);
+    EMIT_RETURN(programVerifyDone, tryQuery(action));
 }
 
-void Connection::programReset()
+OpResult Connection::programReset()
 {
-    Q_ASSERT(mConnected && mPgmStarted);
+    if(!mConnected)
+        EMIT_RETURN(programClearDone, OpResult::NotConnected);
+    if(!mPgmStarted)
+        EMIT_RETURN(programClearDone, OpResult::WrongMode);
 
-    std::function<void (void)> action = [this]()
+    std::function<OpResult (void)> action = [this]()
     {
         static constexpr char OPMSG[] = "resetting slave";
 
-        std::vector<quint8> reply = transact({0xCF}, 1, OPMSG);
+        std::vector<quint8> reply;
+        RETURN_ON_FAIL(transact({0xCF}, 1, reply, OPMSG));
         if(reply[0] != 0xFF)
-            throwReply(reply);
+            return getReplyResult(reply, OPMSG);
+
+        mConnected = false;
+        emit stateChanged();
+        return OpResult::Success;
     };
 
-    tryQuery(action);
+    EMIT_RETURN(programResetDone, tryQuery(action));
 }
 
-std::vector<quint8> Connection::transact(const std::vector<quint8> &cmd, int minReplyBytes, const char *msg, int timeoutMsec)
+OpResult Connection::transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, const char *msg, boost::optional<int> timeoutMsec)
 {
-    mIntfc->transmit(cmd);
+    QReadLocker lock(&mIntfcLock);
+    Q_ASSERT(mIntfc);
+    RETURN_ON_FAIL(mIntfc->transmit(cmd));
 
-    std::vector<std::vector<quint8> > replies = mIntfc->receive(timeoutMsec < 0 ? mTimeoutMsec : timeoutMsec);
+    std::vector<std::vector<quint8> > replies;
+
+    RETURN_ON_FAIL(mIntfc->receive(timeoutMsec.get_value_or(mTimeoutMsec), replies));
 
     if(replies.size() == 0)
-        throw Timeout();
+        return OpResult::Timeout;
 
     Q_ASSERT(minReplyBytes > 0);
     if(replies.size() > 1 || replies[0].size() < size_t(minReplyBytes))
-        throwReplies(replies, msg);
+        return getRepliesResult(replies, msg);
 
-    return replies[0];
+    out = replies[0];
+    return OpResult::Success;
 }
 
-void Connection::throwReplies(const std::vector<std::vector<quint8> > &replies, const char *msg)
+OpResult Connection::getRepliesResult(const std::vector<std::vector<quint8> > &replies, const char *msg)
 {
     char appendMsg[(msg ? strlen(msg) : 0) + 2];
     Q_ASSERT(replies.size() >= 1);
@@ -461,7 +604,7 @@ void Connection::throwReplies(const std::vector<std::vector<quint8> > &replies, 
             QByteArray replyArr(reinterpret_cast<const char *>(reply.data()), reply.size());
             qDebug() << "Received" << replyArr.toHex();
         }
-        throw MultipleReplies();
+        return OpResult::MultipleReplies;
     }
 
     if(replies[0].size() >= 2 && quint8(replies[0][0]) == 0xFE)
@@ -478,43 +621,41 @@ void Connection::throwReplies(const std::vector<std::vector<quint8> > &replies, 
 
         switch(replies[0][1])
         {
-            case 0x10:  printMsg("busy");                       throw SlaveErrorBusy();             break;
-            case 0x11:  printMsg("DAQ active");                 throw SlaveErrorDaqActive();        break;
-            case 0x12:  printMsg("program active");             throw SlaveErrorPgmActive();        break;
-            case 0x20:  printMsg("command unknown");            throw SlaveErrorCmdUnknown();       break;
-            case 0x21:  printMsg("command syntax invalid");     throw SlaveErrorCmdSyntax();        break;
-            case 0x22:  printMsg("parameter out of range");     throw SlaveErrorOutOfRange();       break;
-            case 0x23:  printMsg("write protected");            throw SlaveErrorWriteProtected();   break;
-            case 0x24:  printMsg("access denied");              throw SlaveErrorAccessDenied();     break;
-            case 0x25:  printMsg("access locked");              throw SlaveErrorAccessLocked();     break;
-            case 0x26:  printMsg("page invalid");               throw SlaveErrorPageNotValid();     break;
-            case 0x27:  printMsg("page mode invalid");          throw SlaveErrorModeNotValid();     break;
-            case 0x28:  printMsg("segment invalid");            throw SlaveErrorSegmentNotValid();  break;
-            case 0x29:  printMsg("sequence");                   throw SlaveErrorSequence();         break;
-            case 0x2A:  printMsg("DAQ configuration invalid");  throw SlaveErrorDAQConfig();        break;
-            case 0x30:  printMsg("memory overflow");            throw SlaveErrorMemoryOverflow();   break;
-            case 0x31:  printMsg("generic");                    throw SlaveErrorGeneric();          break;
-            case 0x32:  printMsg("program verify failed");      throw SlaveErrorVerify();           break;
-            default:    printMsg("undefined error code");       throw SlaveErrorUndefined();        break;
+            case 0x10:  printMsg("busy");                       return OpResult::SlaveErrorBusy;            break;
+            case 0x11:  printMsg("DAQ active");                 return OpResult::SlaveErrorDaqActive;       break;
+            case 0x12:  printMsg("program active");             return OpResult::SlaveErrorPgmActive;       break;
+            case 0x20:  printMsg("command unknown");            return OpResult::SlaveErrorCmdUnknown;      break;
+            case 0x21:  printMsg("command syntax invalid");     return OpResult::SlaveErrorCmdSyntax;       break;
+            case 0x22:  printMsg("parameter out of range");     return OpResult::SlaveErrorOutOfRange;      break;
+            case 0x23:  printMsg("write protected");            return OpResult::SlaveErrorWriteProtected;  break;
+            case 0x24:  printMsg("access denied");              return OpResult::SlaveErrorAccessDenied;    break;
+            case 0x25:  printMsg("access locked");              return OpResult::SlaveErrorAccessLocked;    break;
+            case 0x26:  printMsg("page invalid");               return OpResult::SlaveErrorPageNotValid;    break;
+            case 0x27:  printMsg("page mode invalid");          return OpResult::SlaveErrorModeNotValid;    break;
+            case 0x28:  printMsg("segment invalid");            return OpResult::SlaveErrorSegmentNotValid; break;
+            case 0x29:  printMsg("sequence");                   return OpResult::SlaveErrorSequence;        break;
+            case 0x2A:  printMsg("DAQ configuration invalid");  return OpResult::SlaveErrorDAQConfig;       break;
+            case 0x30:  printMsg("memory overflow");            return OpResult::SlaveErrorMemoryOverflow;  break;
+            case 0x31:  printMsg("generic");                    return OpResult::SlaveErrorGeneric;         break;
+            case 0x32:  printMsg("program verify failed");      return OpResult::SlaveErrorVerify;          break;
+            default:    printMsg("undefined error code");       return OpResult::SlaveErrorUndefined;       break;
         }
     }
     else
     {
         QByteArray replyArr(reinterpret_cast<const char *>(replies[0].data()), replies[0].size());
         qDebug() << "Received" << replyArr.toHex();
-        throw BadReply();
+        return OpResult::BadReply;
     }
 }
-void Connection::throwReply(const std::vector<quint8> &reply, const char *msg)
+OpResult Connection::getReplyResult(const std::vector<quint8> &reply, const char *msg)
 {
-    throwReplies(std::vector<std::vector<quint8> >({reply}), msg);
+    return getRepliesResult(std::vector<std::vector<quint8> >({reply}), msg);
 }
 
-std::vector<quint8> Connection::uploadSegment(XcpPtr base, int len)
+OpResult Connection::uploadSegment(XcpPtr base, int len, std::vector<quint8> &out)
 {
-    std::vector<quint8> ret;
-
-    std::function<void (void)> action = [this, base, len, &ret]()
+    std::function<OpResult (void)> action = [this, base, len, &out]()
     {
         static constexpr char OPMSG[] = "uploading data";
 
@@ -528,64 +669,52 @@ std::vector<quint8> Connection::uploadSegment(XcpPtr base, int len)
             toSlaveEndian<quint32>(base.addr, query.data() + 4);
         }
 
-        try
-        {
-            reply = transact(query, mAddrGran + len, OPMSG);
-            if(reply[0] != 0xFF)
-            {
-                mCalcMta.reset();
-                throwReply(reply);
-            }
-        } catch(ConnException)
+        RESETMTA_RETURN_ON_FAIL(transact(query, mAddrGran + len, reply, OPMSG));
+        if(reply[0] != 0xFF)
         {
             mCalcMta.reset();
-            throw;
+            return getReplyResult(reply, OPMSG);
         }
 
         mCalcMta = {base.addr + len / mAddrGran, base.ext};
 
-        ret = std::move(std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len));
+        out = std::move(std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len));
+        return OpResult::Success;
     };
 
-    tryQuery(action);
-
-    return ret;
+    return tryQuery(action);
 }
 
-void Connection::downloadSegment(XcpPtr base, const std::vector<quint8> &data)
+OpResult Connection::downloadSegment(XcpPtr base, const std::vector<quint8> &data)
 {
     std::vector<quint8> query({0xF0, quint8(data.size() / mAddrGran)});
     if(mAddrGran > 2)
         query.resize(mAddrGran);
     query.insert(query.end(), data.begin(), data.end());
 
-    std::function<void (void)> action = [this, base, query]()
+    std::function<OpResult (void)> action = [this, base, query]()
     {
         static constexpr char OPMSG[] = "downloading data";
 
         if(!mCalcMta || mCalcMta.get() != base)
-            setMta(base);
+            RETURN_ON_FAIL(setMta(base));
 
-        try
-        {
-            std::vector<quint8> reply = transact(query, 1, OPMSG);
-            if(reply[0] != 0xFF)
-            {
-                mCalcMta.reset();
-                throwReply(reply);
-            }
-            mCalcMta = {base.addr + query[1], base.ext};
-        } catch(ConnException)
+        std::vector<quint8> reply;
+        RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
+        if(reply[0] != 0xFF)
         {
             mCalcMta.reset();
-            throw;
+            return getReplyResult(reply, OPMSG);
         }
+
+        mCalcMta = {base.addr + query[1], base.ext};
+        return OpResult::Success;
     };
 
-    tryQuery(action);
+    return tryQuery(action);
 }
 
-void Connection::programPacket(XcpPtr base, const std::vector<quint8> &data)
+OpResult Connection::programPacket(XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(int(data.size()) % mAddrGran == 0);
     Q_ASSERT(int(data.size()) <= mPgmMaxDownPayload);
@@ -596,65 +725,60 @@ void Connection::programPacket(XcpPtr base, const std::vector<quint8> &data)
         query.resize(mAddrGran);
     query.insert(query.end(), data.begin(), data.end());
 
-    std::function<void (void)> action = [this, base, query, nElem]()
+    std::function<OpResult (void)> action = [this, base, query, nElem]()
     {
         static constexpr char OPMSG[] = "downloading program data";
 
         if(!mCalcMta || mCalcMta.get() != base)
-            setMta(base);
+            RETURN_ON_FAIL(setMta(base));
 
-        try
-        {
-            std::vector<quint8> reply = transact(query, 1, OPMSG);
-            if(reply[0] != 0xFF)
-                throwReply(reply);
-        } catch(ConnException)
+        std::vector<quint8> reply;
+        RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
+        if(reply[0] != 0xFF)
         {
             mCalcMta.reset();
-            throw;
+            return getReplyResult(reply, OPMSG);
         }
-        mCalcMta.get().addr += nElem;
+
+        mCalcMta = {base.addr + query[1], base.ext};
+        return OpResult::Success;
     };
 
-    tryQuery(action);
+    return tryQuery(action);
 }
 
-void Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
+OpResult Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
 {
+    QReadLocker lock(&mIntfcLock);
+    Q_ASSERT(mIntfc);
     Q_ASSERT(int(data.size()) % mAddrGran == 0);
     Q_ASSERT(int(data.size()) <= mPgmMaxBlocksize * mPgmMaxDownPayload);
 
-    std::function<void (void)> action = [this, base, data]()
+    std::function<OpResult (void)> action = [this, base, data]()
     {
         static constexpr char OPMSG[] = "downloading program data in block mode";
 
         if(!mCalcMta || mCalcMta.get() != base)
-            setMta(base);
+            RETURN_ON_FAIL(setMta(base));
 
         int remBytes = data.size();
         bool isFirstPacket = true;
 
         while(remBytes > 0)
         {
-            try
+            // check for a pre-existing error (from a previous operation, or a previous iter of this operation)
+            std::vector<std::vector<quint8> > replies;
+            RESETMTA_RETURN_ON_FAIL(mIntfc->receive(0, replies));
+            // if no replies, everything is OK
+            if(replies.size() > 0)
             {
-                // check for a pre-existing error (from a previous operation, or a previous iter of this operation)
-                std::vector<std::vector<quint8> > replies = mIntfc->receive(0);
-                // if no replies, everything is OK
-                if(replies.size() > 0)
+                for(const std::vector<quint8> &reply : replies)
                 {
-                    for(const std::vector<quint8> &reply : replies)
-                    {
-                        if(reply.size() < 2 || reply[0] != 0xFE || reply[1] != 0x29)
-                            throwReplies(replies, OPMSG);   // not ERR_SEQUENCE
-                    }
-                    // if replies are all ERR_SEQUENCE, raise packet lost (and potentially try again)
-                    throw PacketLost();
+                    if(reply.size() < 2 || reply[0] != 0xFE || reply[1] != 0x29)
+                        return getRepliesResult(replies, OPMSG);   // not ERR_SEQUENCE
                 }
-            } catch(ConnException)
-            {
-                mCalcMta.reset();
-                throw;
+                // if replies are all ERR_SEQUENCE, raise packet lost (and potentially try again)
+                return OpResult::PacketLost;
             }
 
             int payloadBytes = std::min(remBytes, mPgmMaxDownPayload);
@@ -664,45 +788,40 @@ void Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
             std::vector<quint8>::const_iterator dataStartIt = data.end() - remBytes;
             std::vector<quint8>::const_iterator dataEndIt = dataStartIt + payloadBytes;
             query.insert(query.end(), dataStartIt, dataEndIt);
-            mIntfc->transmit(query);
+            RESETMTA_RETURN_ON_FAIL(mIntfc->transmit(query));
             remBytes -= payloadBytes;
             mCalcMta.get().addr += payloadBytes;
 
             isFirstPacket = false;
         }
 
-        try
+        std::vector<std::vector<quint8> > replies;
+        RESETMTA_RETURN_ON_FAIL(mIntfc->receive(mTimeoutMsec, replies));
+        if(replies.size() == 0)
+            return OpResult::Timeout;
+        else if(replies.size() > 1 || replies[0].size() < 1 || replies[0][0] != 0xFF)
         {
-            std::vector<std::vector<quint8> > replies = mIntfc->receive(mTimeoutMsec);
-            if(replies.size() == 0)
-                throw Timeout();
-            else if(replies.size() > 1 || replies[0].size() < 1 || replies[0][0] != 0xFF)
+            for(const std::vector<quint8> &reply : replies)
             {
-                for(const std::vector<quint8> &reply : replies)
-                {
-                    if(reply.size() < 2 || reply[0] != 0xFE || reply[1] != 0x29)
-                        throwReplies(replies, OPMSG);   // not ERR_SEQUENCE
-                }
-                // if replies are all ERR_SEQUENCE, raise packet lost (and potentially try again)
-                throw PacketLost();
+                if(reply.size() < 2 || reply[0] != 0xFE || reply[1] != 0x29)
+                    return getRepliesResult(replies, OPMSG);   // not ERR_SEQUENCE
             }
-        } catch(ConnException)
-        {
-            mCalcMta.reset();
-            throw;
+            // if replies are all ERR_SEQUENCE, raise packet lost (and potentially try again)
+            return OpResult::PacketLost;
         }
+
+        return OpResult::Success;
     };
 
-    tryQuery(action);
+    return tryQuery(action);
 }
 
-std::pair<CksumType, quint32> Connection::buildChecksum(XcpPtr base, int len)
+OpResult Connection::buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut)
 {
     if(len % mAddrGran != 0)
-        throw InvalidOperation();
-    std::pair<CksumType, quint32> ret;
+        return OpResult::AddrGranError;
 
-    std::function<void (void)> action = [this, base, len, &ret]()
+    std::function<OpResult (void)> action = [this, base, len, typeOut, cksumOut]()
     {
         static constexpr char OPMSG[] = "building checksum";
         static const std::map<quint8, CksumType> CKSUM_TYPE_CODES = {
@@ -722,97 +841,110 @@ std::pair<CksumType, quint32> Connection::buildChecksum(XcpPtr base, int len)
         std::vector<quint8> reply;
 
         if(!mCalcMta || mCalcMta.get() != base)
-            setMta(base);
+            RETURN_ON_FAIL(setMta(base));
 
         query = {0xF3, 0, 0, 0, 0, 0, 0, 0};
         toSlaveEndian<quint32>(len / mAddrGran, query.data() + 4);
 
-        try
-        {
-            reply = transact(query, 8, OPMSG);
-            if(reply[0] != 0xFF)
-                throwReply(reply);
-
-            decltype(CKSUM_TYPE_CODES)::const_iterator type = CKSUM_TYPE_CODES.find(reply[1]);
-            if(type == CKSUM_TYPE_CODES.end())
-                throwReply(reply);
-
-            mCalcMta = base;
-            ret = {type->second, fromSlaveEndian<quint32>(reply.data() + 4)};
-        } catch(ConnException)
+        RESETMTA_RETURN_ON_FAIL(transact(query, 8, reply, OPMSG));
+        if(reply[0] != 0xFF)
         {
             mCalcMta.reset();
-            throw;
+            return getReplyResult(reply, OPMSG);
         }
+
+        decltype(CKSUM_TYPE_CODES)::const_iterator type = CKSUM_TYPE_CODES.find(reply[1]);
+        if(type == CKSUM_TYPE_CODES.end())
+        {
+            mCalcMta.reset();
+            return getReplyResult(reply, OPMSG);
+        }
+
+        mCalcMta = base;
+        if(typeOut)
+            *typeOut = type->second;
+        if(cksumOut)
+            *cksumOut = fromSlaveEndian<quint32>(reply.data() + 4);
+        emit buildChecksumDone(OpResult::Success, type->second, fromSlaveEndian<quint32>(reply.data() + 4));
+        return OpResult::Success;
     };
 
-    tryQuery(action);
-
-    return ret;
+    EMIT_RETURN_ON_FAIL(buildChecksumDone, tryQuery(action));
+    return OpResult::Success;
 }
 
-void Connection::setMta(XcpPtr ptr)
+bool Connection::isOpen() {
+    return mConnected;
+}
+
+bool Connection::isCalMode() {
+    return mConnected && !mPgmStarted;
+}
+
+bool Connection::isPgmMode() {
+    return mConnected && mPgmStarted;
+}
+
+OpResult Connection::setMta(XcpPtr ptr)
 {
     static constexpr char OPMSG[] = "setting slave Memory Transfer Address";
     std::vector<quint8> query({0xF6, 0, 0, ptr.ext, 0, 0, 0, 0});
     toSlaveEndian<quint32>(ptr.addr, query.data() + 4);
 
-    try
-    {
-        std::vector<quint8> reply = transact(query, 1, OPMSG);
-        if(reply[0] != 0xFF)
-            throwReply(reply);
-    } catch(ConnException)
+    std::vector<quint8> reply;
+    RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
+    if(reply[0] != 0xFF)
     {
         mCalcMta.reset();
-        throw;
+        return getReplyResult(reply, OPMSG);
     }
     mCalcMta = ptr;
+    return OpResult::Success;
 }
 
-void Connection::tryQuery(std::function<void (void)> &action)
+OpResult Connection::tryQuery(std::function<OpResult (void)> &action)
 {
     int failures = 0;
     while(failures < MAX_RETRIES)
     {
-        try
-        {
-            action();
-            return; // return if it succeeds
-        } catch(Timeout)
-        {
+        OpResult res = action();
+        if(res == OpResult::Success)
+            return OpResult::Success;
+        else if(res == OpResult::Timeout || res == OpResult::PacketLost)
             ++failures;
-        } catch(PacketLost)
-        {
-            ++failures;
-        }
+        else
+            return res;
 
         while(failures < MAX_RETRIES)
         {
-            try
-            {
-                synch();
+            OpResult synchRes = synch();
+            if(synchRes == OpResult::Success)
                 break;
-            } catch (Timeout)
-            {
+            else if(synchRes == OpResult::Timeout)
                 ++failures;
-            }
+            else
+                return synchRes;
         }
     }
-    throw Timeout();
+    return OpResult::Timeout;
 }
 
-void Connection::synch()
+OpResult Connection::synch()
 {
-    mIntfc->transmit(std::vector<quint8>({0xFC}));
+    QReadLocker lock(&mIntfcLock);
+    Q_ASSERT(mIntfc);
+    RETURN_ON_FAIL(mIntfc->transmit(std::vector<quint8>({0xFC})));
 
-    std::vector<std::vector<quint8> > replies = mIntfc->receive(mTimeoutMsec);
+    std::vector<std::vector<quint8> > replies;
+    RETURN_ON_FAIL(mIntfc->receive(mTimeoutMsec, replies));
 
     if(replies.size() == 0)
-        throw Timeout();
+        return OpResult::Timeout;
 
     if(replies.size() > 1 || replies[0] != std::vector<quint8>({0xFE, 0x00}))
-        throwReplies(replies, "resynchronizing");
+        return getRepliesResult(replies, "resynchronizing");
+
+    return OpResult::Success;
 }
 
 SimpleDataLayer::SimpleDataLayer() : mConn(NULL) {}
@@ -831,7 +963,8 @@ quint32 SimpleDataLayer::uploadUint32(quint32 base)
 {
     Q_ASSERT(mConn);
     SetupTools::Xcp::XcpPtr ptr = {base, 0};
-    std::vector<quint8> dataVec = mConn->upload(ptr, 4);
+    std::vector<quint8> dataVec;
+    mConn->upload(ptr, 4, &dataVec); // ignoring return values for this test case
     Q_ASSERT(dataVec.size() == 4);
     return mConn->fromSlaveEndian<quint32>(dataVec.data());
 }

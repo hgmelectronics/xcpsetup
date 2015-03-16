@@ -10,6 +10,7 @@
 #include <QtQml/QJSEngine>
 #include <QtQml/QQmlListProperty>
 #include <Xcp_Interface_Can_Interface.h>
+#include <Xcp_Interface_Registry.h>
 
 namespace SetupTools
 {
@@ -65,6 +66,14 @@ private:
 };
 
 LIBXCONFPROTOSHARED_EXPORT QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
+
+class LIBXCONFPROTOSHARED_EXPORT MasterRegistry : public CompositeRegistry
+{
+    Q_OBJECT
+public:
+    explicit MasterRegistry(QObject *parent = 0);
+    virtual ~MasterRegistry();
+};
 
 }
 }
