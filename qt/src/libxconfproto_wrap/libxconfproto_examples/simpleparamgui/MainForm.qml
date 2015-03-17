@@ -18,6 +18,7 @@ ColumnLayout {
     property alias closeButton: closeButton
     property alias readButton: readButton
     property alias writeButton: writeButton
+    property alias slaveIdField: slaveIdField
     property alias addressField: addressField
     property alias dataField: dataField
     property alias interfaceComboBox: interfaceComboBox
@@ -62,10 +63,25 @@ ColumnLayout {
         id: row2
 
         ColumnLayout {
-            id: addressColumn
+            id: slaveIdColumn
 
             Label {
                 id: label1
+                text: qsTr("Slave ID")
+            }
+
+            TextField {
+                id: slaveIdField
+                enabled: openButton.enabled
+                placeholderText: qsTr("00000000:00000000")
+            }
+        }
+
+        ColumnLayout {
+            id: addressColumn
+
+            Label {
+                id: label2
                 text: qsTr("Address")
             }
 
@@ -81,7 +97,7 @@ ColumnLayout {
         ColumnLayout {
             id: dataColumn
             Label {
-                id: label2
+                id: label3
                 text: qsTr("Data")
             }
 
@@ -96,12 +112,16 @@ ColumnLayout {
         }
     }
 
+    XcpInterfaceRegistry {
+        id: registry
+    }
+
     RowLayout {
         id: row3
 
         ComboBox {
             id: interfaceComboBox
-            model: XcpCanInterfaceRegistry.avail
+            model: registry.avail
             textRole: "text"
             visible: true
             implicitWidth: 300

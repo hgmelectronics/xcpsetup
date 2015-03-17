@@ -79,6 +79,7 @@ quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(State)
 public:
     enum class State {
         IntfcInvalid,
@@ -113,7 +114,7 @@ public:
     template <typename T>
     T fromSlaveEndian(const char *src)
     {
-        return fromSlaveEndian(reinterpret_cast<const uchar *>(src));
+        return fromSlaveEndian<T>(reinterpret_cast<const uchar *>(src));
     }
     template <typename T>
     T fromSlaveEndian(T src)
@@ -134,7 +135,7 @@ public:
     template <typename T>
     void toSlaveEndian(T src, char *dest)
     {
-        toSlaveEndian(src, reinterpret_cast<uchar *>(dest));
+        toSlaveEndian<T>(src, reinterpret_cast<uchar *>(dest));
     }
     template <typename T>
     T toSlaveEndian(T src)
@@ -219,21 +220,6 @@ private:
     bool mPgmStarted, mPgmMasterBlockMode;
     int mPgmMaxCto, mPgmMaxBlocksize, mPgmMaxDownPayload;
     boost::optional<XcpPtr> mCalcMta;
-};
-
-class LIBXCONFPROTOSHARED_EXPORT SimpleDataLayer : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QObject *conn READ conn WRITE setConn)
-public:
-    SimpleDataLayer();
-
-    QObject *conn(void);
-    void setConn(QObject *conn);
-    Q_INVOKABLE quint32 uploadUint32(quint32 base);
-    Q_INVOKABLE void downloadUint32(quint32 base, quint32 data);
-private:
-    Connection *mConn;
 };
 
 }   // namespace Xcp

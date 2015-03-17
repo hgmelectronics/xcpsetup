@@ -2,7 +2,7 @@
 #define SETUPTOOLS_XCP_CONNECTIONFACADE_H
 
 #include <QObject>
-#include <Xcp_Connection.h>
+#include "Xcp_Connection.h"
 
 namespace SetupTools {
 namespace Xcp {
@@ -20,14 +20,30 @@ public:
     ~ConnectionFacade();
     QString intfcUri();
     void setIntfcUri(QString);
+    QString slaveId();
+    void setSlaveId(QString);
     int timeout();
     void setTimeout(int);
     int nvWriteTimeout();
     void setNvWriteTimeout(int);
     int resetTimeout();
     void setResetTimeout(int);
-    Connection::State state();
-    void setState(Connection::State val);
+    ::SetupTools::Xcp::Connection::State state();
+    void setState(::SetupTools::Xcp::Connection::State val);
+
+    template <typename T>
+    T fromSlaveEndian(const uchar *src) { return mConn->fromSlaveEndian<T>(src); }
+    template <typename T>
+    T fromSlaveEndian(const char *src) { return mConn->fromSlaveEndian<T>(reinterpret_cast<const uchar *>(src)); }
+    template <typename T>
+    T fromSlaveEndian(T src) { return mConn->fromSlaveEndian<T>(src); }
+    template <typename T>
+    void toSlaveEndian(T src, uchar *dest) { mConn->toSlaveEndian<T>(src, dest); }
+    template <typename T>
+    void toSlaveEndian(T src, char *dest) { mConn->toSlaveEndian<T>(src, reinterpret_cast<uchar *>(dest)); }
+    template <typename T>
+    T toSlaveEndian(T src) { return mConn->toSlaveEndian<T>(src); }
+
 signals:
     void stateChanged();
 
@@ -81,6 +97,30 @@ private:
     QString mIntfcUri;
     Connection *mConn;
     QThread *mConnThread;
+};
+
+class LIBXCONFPROTOSHARED_EXPORT SimpleDataLayer : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QString intfcUri READ intfcUri WRITE setIntfcUri)
+    Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
+public:
+    SimpleDataLayer();
+
+    QString intfcUri(void);
+    void setIntfcUri(QString);
+    QString slaveId();
+    void setSlaveId(QString);
+signals:
+    void uploadUint32Done(OpResult result, quint32 data);
+    void downloadUint32Done(OpResult result);
+public slots:
+    void uploadUint32(quint32 base);
+    void downloadUint32(quint32 base, quint32 data);
+    void onConnUploadDone(OpResult, std::vector<quint8>);
+    void onConnDownloadDone(OpResult);
+private:
+    ConnectionFacade *mConn;
 };
 
 } // namespace Xcp

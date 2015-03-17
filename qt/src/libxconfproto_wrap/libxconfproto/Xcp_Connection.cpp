@@ -947,37 +947,5 @@ OpResult Connection::synch()
     return OpResult::Success;
 }
 
-SimpleDataLayer::SimpleDataLayer() : mConn(NULL) {}
-
-QObject *SimpleDataLayer::conn(void)
-{
-    return mConn;
-}
-
-void SimpleDataLayer::setConn(QObject *conn)
-{
-    mConn = qobject_cast<Connection *>(conn);
-}
-
-quint32 SimpleDataLayer::uploadUint32(quint32 base)
-{
-    Q_ASSERT(mConn);
-    SetupTools::Xcp::XcpPtr ptr = {base, 0};
-    std::vector<quint8> dataVec;
-    mConn->upload(ptr, 4, &dataVec); // ignoring return values for this test case
-    Q_ASSERT(dataVec.size() == 4);
-    return mConn->fromSlaveEndian<quint32>(dataVec.data());
-}
-
-void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
-{
-    Q_ASSERT(mConn);
-    SetupTools::Xcp::XcpPtr ptr = {base, 0};
-    std::vector<quint8> dataVec;
-    dataVec.assign(4, 0);
-    mConn->toSlaveEndian<quint32>(data, dataVec.data());
-    mConn->download(ptr, dataVec);
-}
-
 }   // namespace Xcp
 }   // namespace SetupTools

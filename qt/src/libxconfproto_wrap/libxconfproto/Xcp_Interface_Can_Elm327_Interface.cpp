@@ -377,8 +377,17 @@ OpResult Interface::teardown()
 OpResult Interface::connect(SlaveId addr)
 {
     Q_ASSERT(mPort);
-    mSlaveAddr = addr;
-    return doSetFilter(ExactFilter(addr.res));
+    OpResult res = doSetFilter(ExactFilter(addr.res));
+    if(res == OpResult::Success)
+    {
+        mSlaveAddr = addr;
+        return OpResult::Success;
+    }
+    else
+    {
+        mSlaveAddr.reset();
+        return res;
+    }
 }
 
 OpResult Interface::disconnect()

@@ -2,6 +2,7 @@
 #define XCP_EXCEPTION_H
 
 #include <QException>
+#include <QObject>
 #include "libxconfproto_global.h"
 
 #define EMIT_RETURN(signal, value) { OpResult EMIT_RETURN__ret = (value); emit (signal)(EMIT_RETURN__ret); return EMIT_RETURN__ret; }
@@ -16,7 +17,7 @@ namespace SetupTools
 namespace Xcp
 {
 
-enum class OpResult {
+enum OpResult {
     Success,
     NoIntfc,
     NotConnected,
@@ -49,6 +50,48 @@ enum class OpResult {
     SlaveErrorGeneric,
     SlaveErrorVerify,
     SlaveErrorUndefined
+};
+
+class OpResultWrapper : public QObject
+{
+    Q_OBJECT
+    Q_ENUMS(OpResult)
+public:
+    enum OpResult
+    {
+        Success = Xcp::OpResult::Success,
+        NoIntfc = Xcp::OpResult::NoIntfc,
+        NotConnected = Xcp::OpResult::NotConnected,
+        WrongMode = Xcp::OpResult::WrongMode,
+        IntfcConfigError = Xcp::OpResult::IntfcConfigError,
+        IntfcIoError = Xcp::OpResult::IntfcIoError,
+        IntfcUnexpectedResponse = Xcp::OpResult::IntfcUnexpectedResponse,
+        IntfcNoResponse = Xcp::OpResult::IntfcNoResponse,
+        Timeout = Xcp::OpResult::Timeout,
+        InvalidOperation = Xcp::OpResult::InvalidOperation,
+        BadReply = Xcp::OpResult::BadReply,
+        PacketLost = Xcp::OpResult::PacketLost,
+        AddrGranError = Xcp::OpResult::AddrGranError,
+        MultipleReplies = Xcp::OpResult::MultipleReplies,
+        SlaveErrorBusy = Xcp::OpResult::SlaveErrorBusy,
+        SlaveErrorDaqActive = Xcp::OpResult::SlaveErrorDaqActive,
+        SlaveErrorPgmActive = Xcp::OpResult::SlaveErrorPgmActive,
+        SlaveErrorCmdUnknown = Xcp::OpResult::SlaveErrorCmdUnknown,
+        SlaveErrorCmdSyntax = Xcp::OpResult::SlaveErrorCmdSyntax,
+        SlaveErrorOutOfRange = Xcp::OpResult::SlaveErrorOutOfRange,
+        SlaveErrorWriteProtected = Xcp::OpResult::SlaveErrorWriteProtected,
+        SlaveErrorAccessDenied = Xcp::OpResult::SlaveErrorAccessDenied,
+        SlaveErrorAccessLocked = Xcp::OpResult::SlaveErrorAccessLocked,
+        SlaveErrorPageNotValid = Xcp::OpResult::SlaveErrorPageNotValid,
+        SlaveErrorModeNotValid = Xcp::OpResult::SlaveErrorModeNotValid,
+        SlaveErrorSegmentNotValid = Xcp::OpResult::SlaveErrorSegmentNotValid,
+        SlaveErrorSequence = Xcp::OpResult::SlaveErrorSequence,
+        SlaveErrorDAQConfig = Xcp::OpResult::SlaveErrorDAQConfig,
+        SlaveErrorMemoryOverflow = Xcp::OpResult::SlaveErrorMemoryOverflow,
+        SlaveErrorGeneric = Xcp::OpResult::SlaveErrorGeneric,
+        SlaveErrorVerify = Xcp::OpResult::SlaveErrorVerify,
+        SlaveErrorUndefined = Xcp::OpResult::SlaveErrorUndefined
+    };
 };
 
 #define RETURN_FAIL(a) { OpResult res; if((res = (a)) != OpResult::Success) return res; }

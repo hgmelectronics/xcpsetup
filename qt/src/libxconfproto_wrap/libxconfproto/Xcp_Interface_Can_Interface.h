@@ -80,6 +80,7 @@ public:
     virtual OpResult setBitrate(int bps) = 0;                           //!< Set the bitrate used on the interface
     virtual OpResult setFilter(Filter filt) = 0;                        //!< Set the CAN filter used on the interface
     virtual OpResult setPacketLog(bool enable);
+    boost::optional<SlaveId> getSlaveId();
 protected:
     boost::optional<SlaveId> mSlaveAddr;
     bool mPacketLogEnabled;

@@ -21,9 +21,6 @@ ApplicationWindow {
     }
 
     MainForm {
-        property XcpInterface intfc
-        property int intfcInfoIdx
-        intfcInfoIdx: -1
         anchors.fill: parent
         openButton.onClicked: {
             if(interfaceComboBox.currentIndex >= interfaceComboBox.count) {
@@ -31,30 +28,36 @@ ApplicationWindow {
                 return;
             }
 
-            if(intfcInfoIdx != interfaceComboBox.currentIndex) {
-                intfcInfoIdx = interfaceComboBox.currentIndex
-                intfc = XcpCanInterfaceRegistry.avail[intfcInfoIdx].make()
+            if(dataLayer.intfcUri !== interfaceComboBox.model[interfaceComboBox.currentIndex].uri) {
+                dataLayer.intfcUri = interfaceComboBox.model[interfaceComboBox.currentIndex].uri
             }
-            xcpConnection.intfc = intfc
+            dataLayer.slaveId = slaveIdField.text
             openButton.enabled = false
-
-            xcpConnection.open()
-            dataLayer.conn = xcpConnection
         }
         closeButton.onClicked: {
-            xcpConnection.close()
+            dataLayer.slaveId = ""
             openButton.enabled = true
         }
         readButton.onClicked: {
+            dataLayer.uploadUint32(parseInt(addressField.text))
             dataField.text = dataLayer.uploadUint32(parseInt(addressField.text)).toString()
         }
         writeButton.onClicked: {
             dataLayer.downloadUint32(parseInt(addressField.text), parseInt(dataField.text))
         }
-    }
-
-    XcpConnection {
-        id: xcpConnection
+        Connections {
+            target: dataLayer
+            onUploadUint32Done: {
+                if(result === XcpOpResult.Success)
+                    dataField.text = data.toString()
+                else
+                    dataField.text = "Error"
+            }
+            onDownloadUint32Done: {
+                if(result !== XcpOpResult.Success)
+                    messageDialog.show("Download failed")
+            }
+        }
     }
 
     XcpSimpleDataLayer {

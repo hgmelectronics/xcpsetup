@@ -124,6 +124,11 @@ OpResult LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
     return OpResult::Success;
 }
 
+boost::optional<SlaveId> LIBXCONFPROTOSHARED_EXPORT Interface::getSlaveId()
+{
+    return mSlaveAddr;
+}
+
 }   // namespace Can
 }   // namespace Interface
 }   // namespace Xcp
