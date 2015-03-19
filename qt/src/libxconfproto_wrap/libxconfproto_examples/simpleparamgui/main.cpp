@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<SetupTools::Xcp::Interface::QmlRegistry>("com.setuptools", 1, 0, "XcpInterfaceRegistry");
     qmlRegisterType<SetupTools::Xcp::Interface::Info>("com.setuptools", 1, 0, "XcpInterfaceInfo");
-    qmlRegisterType<SetupTools::Xcp::Connection>("com.setuptools", 1, 0, "XcpConnection");  // for State enum
+    qmlRegisterType<SetupTools::Xcp::Connection>("com.setuptools", 1, 0, "XcpConnectionState");  // for State enum
     qmlRegisterType<SetupTools::Xcp::OpResultWrapper>("com.setuptools", 1, 0, "XcpOpResult");
     qmlRegisterType<SetupTools::Xcp::SimpleDataLayer>("com.setuptools", 1, 0, "XcpSimpleDataLayer");
 

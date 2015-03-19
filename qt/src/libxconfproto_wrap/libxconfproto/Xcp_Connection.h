@@ -87,6 +87,13 @@ public:
         CalMode,
         PgmMode
     };
+    enum StateIntEnum {
+        IntfcInvalid =  static_cast<int>(State::IntfcInvalid),
+        Closed =        static_cast<int>(State::Closed),
+        CalMode =       static_cast<int>(State::CalMode),
+        PgmMode =       static_cast<int>(State::PgmMode)
+    };
+
 private:
 
     Q_PROPERTY(QObject *intfc READ intfc WRITE setIntfc)
