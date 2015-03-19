@@ -40,7 +40,6 @@ ApplicationWindow {
         }
         readButton.onClicked: {
             dataLayer.uploadUint32(parseInt(addressField.text))
-            dataField.text = dataLayer.uploadUint32(parseInt(addressField.text)).toString()
         }
         writeButton.onClicked: {
             dataLayer.downloadUint32(parseInt(addressField.text), parseInt(dataField.text))
@@ -66,7 +65,7 @@ ApplicationWindow {
 
     MessageDialog {
         id: messageDialog
-        title: qsTr("May I have your attention, please?")
+        title: qsTr("Bad human!")
 
         function show(caption) {
             messageDialog.text = caption;

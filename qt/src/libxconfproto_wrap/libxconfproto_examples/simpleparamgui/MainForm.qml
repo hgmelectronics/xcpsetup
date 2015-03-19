@@ -74,6 +74,7 @@ ColumnLayout {
                 id: slaveIdField
                 enabled: openButton.enabled
                 placeholderText: qsTr("00000000:00000000")
+                implicitWidth: 200
             }
         }
 
