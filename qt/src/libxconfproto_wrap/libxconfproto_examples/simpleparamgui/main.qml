@@ -20,7 +20,27 @@ ApplicationWindow {
         }
     }
 
+    function opResultStr(opr) {
+        switch(opr) {
+        case XcpOpResult.Success:                   return "Success";
+        case XcpOpResult.NoIntfc:                   return "No interface";
+        case XcpOpResult.NotConnected:              return "Not connected";
+        case XcpOpResult.WrongMode:                 return "Wrong mode set";
+        case XcpOpResult.IntfcConfigError:          return "Interface configuration error";
+        case XcpOpResult.IntfcUnexpectedResponse:   return "Unexpected response from interface";
+        case XcpOpResult.IntfcNoResponse:           return "No response from interface";
+        case XcpOpResult.Timeout:                   return "Timeout";
+        case XcpOpResult.InvalidOperation:          return "Invalid operation attempted";
+        case XcpOpResult.BadReply:                  return "Bad XCP reply";
+        case XcpOpResult.PacketLost:                return "XCP packet lost";
+        case XcpOpResult.AddrGranError:             return "Address granularity violation";
+        case XcpOpResult.MultipleReplies:           return "Unexpected multiple replies";
+        default:                                    return "Untranslated error"
+        }
+    }
+
     MainForm {
+        id: mainForm
         anchors.fill: parent
         openButton.onClicked: {
             if(interfaceComboBox.currentIndex >= interfaceComboBox.count) {
@@ -44,23 +64,21 @@ ApplicationWindow {
         writeButton.onClicked: {
             dataLayer.downloadUint32(parseInt(addressField.text), parseInt(dataField.text))
         }
-        Connections {
-            target: dataLayer
-            onUploadUint32Done: {
-                if(result === XcpOpResult.Success)
-                    dataField.text = data.toString()
-                else
-                    dataField.text = "Error"
-            }
-            onDownloadUint32Done: {
-                if(result !== XcpOpResult.Success)
-                    messageDialog.show("Download failed")
-            }
-        }
     }
 
     XcpSimpleDataLayer {
         id: dataLayer
+        onUploadUint32Done: {
+            if(result === XcpOpResult.Success)
+                mainForm.dataField.text = data.toString()
+            else
+                mainForm.dataField.text = "Error"
+        }
+        onDownloadUint32Done: {
+            if(result !== XcpOpResult.Success) {
+                messageDialog.show("Download failed: " + opResultStr(result))
+            }
+        }
     }
 
     MessageDialog {

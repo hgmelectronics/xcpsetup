@@ -4,6 +4,7 @@
 #include <QtEndian>
 #include <QReadLocker>
 #include <QWriteLocker>
+#include <QMetaType>
 #include <boost/crc.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <numeric>
@@ -76,7 +77,13 @@ Connection::Connection(QObject *parent) :
     mNvWriteTimeoutMsec(0),
     mResetTimeoutMsec(0),
     mConnected(false)
-{}
+{
+    qRegisterMetaType<XcpPtr>("XcpPtr");
+    qRegisterMetaType<OpResult>();
+    qRegisterMetaType<OpResultWrapper::OpResult>();
+    qRegisterMetaType<CksumType>();
+    qRegisterMetaType<std::vector<quint8> >();
+}
 
 QObject *Connection::intfc()
 {

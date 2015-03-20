@@ -101,4 +101,7 @@ class LIBXCONFPROTOSHARED_EXPORT Exception : public QException {};
 }
 }
 
+Q_DECLARE_METATYPE(SetupTools::Xcp::OpResult)
+Q_DECLARE_METATYPE(SetupTools::Xcp::OpResultWrapper::OpResult)
+
 #endif // XCP_EXCEPTION_H

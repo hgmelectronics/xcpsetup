@@ -232,4 +232,9 @@ private:
 }   // namespace Xcp
 }   // namespace SetupTools
 
+Q_DECLARE_METATYPE(SetupTools::Xcp::XcpPtr)
+Q_DECLARE_METATYPE(SetupTools::Xcp::Connection::State)
+Q_DECLARE_METATYPE(SetupTools::Xcp::CksumType)
+Q_DECLARE_METATYPE(std::vector<quint8>)
+
 #endif // XCP_CONNECTION_H

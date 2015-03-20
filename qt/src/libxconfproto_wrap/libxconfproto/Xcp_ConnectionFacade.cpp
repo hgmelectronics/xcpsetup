@@ -285,11 +285,10 @@ void SimpleDataLayer::onConnUploadDone(OpResult result, std::vector<quint8> data
 {
     if(result != OpResult::Success)
         emit uploadUint32Done(result, 0);
-
-    if(dataVec.size() != 4)
+    else if(dataVec.size() != 4)
         emit uploadUint32Done(OpResult::BadReply, 0);
-
-    emit uploadUint32Done(OpResult::Success, mConn->fromSlaveEndian<quint32>(dataVec.data()));
+    else
+        emit uploadUint32Done(OpResult::Success, mConn->fromSlaveEndian<quint32>(dataVec.data()));
 }
 
 void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
