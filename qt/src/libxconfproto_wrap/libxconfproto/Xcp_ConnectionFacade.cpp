@@ -284,11 +284,11 @@ void SimpleDataLayer::uploadUint32(quint32 base)
 void SimpleDataLayer::onConnUploadDone(OpResult result, std::vector<quint8> dataVec)
 {
     if(result != OpResult::Success)
-        emit uploadUint32Done(result, 0);
+        emit uploadUint32Done(static_cast<int>(result), 0);
     else if(dataVec.size() != 4)
-        emit uploadUint32Done(OpResult::BadReply, 0);
+        emit uploadUint32Done(static_cast<int>(OpResult::BadReply), 0);
     else
-        emit uploadUint32Done(OpResult::Success, mConn->fromSlaveEndian<quint32>(dataVec.data()));
+        emit uploadUint32Done(static_cast<int>(OpResult::Success), mConn->fromSlaveEndian<quint32>(dataVec.data()));
 }
 
 void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
@@ -302,7 +302,7 @@ void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
 
 void SimpleDataLayer::onConnDownloadDone(OpResult result)
 {
-    emit downloadUint32Done(result);
+    emit downloadUint32Done(static_cast<int>(result));
 }
 
 } // namespace Xcp

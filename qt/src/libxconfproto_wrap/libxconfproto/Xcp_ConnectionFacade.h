@@ -112,8 +112,8 @@ public:
     QString slaveId();
     void setSlaveId(QString);
 signals:
-    void uploadUint32Done(OpResult result, quint32 data);
-    void downloadUint32Done(OpResult result);
+    void uploadUint32Done(int result, quint32 data);
+    void downloadUint32Done(int result);
 public slots:
     void uploadUint32(quint32 base);
     void downloadUint32(quint32 base, quint32 data);

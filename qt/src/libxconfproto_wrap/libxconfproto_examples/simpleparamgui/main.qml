@@ -72,7 +72,7 @@ ApplicationWindow {
             if(result === XcpOpResult.Success)
                 mainForm.dataField.text = data.toString()
             else
-                mainForm.dataField.text = "Error"
+                mainForm.dataField.text = opResultStr(result)
         }
         onDownloadUint32Done: {
             if(result !== XcpOpResult.Success) {
