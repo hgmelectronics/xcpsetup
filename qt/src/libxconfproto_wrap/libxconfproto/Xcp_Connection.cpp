@@ -185,6 +185,7 @@ OpResult Connection::open(boost::optional<int> timeoutMsec)
     static constexpr char OPMSG[] = "connecting to slave";
 
     mConnected = false;
+    mCalcMta.reset();
     emit stateChanged();
 
     std::vector<quint8> reply;
@@ -215,7 +216,6 @@ OpResult Connection::open(boost::optional<int> timeoutMsec)
     if(reply[6] != char(0x01) || reply[7] != char(0x01))
         EMIT_RETURN(openDone, getReplyResult(reply, OPMSG));
 
-    mCalcMta.reset();
     mPgmStarted = false;
     mPgmMasterBlockMode = false;
     mConnected = true;
@@ -229,6 +229,7 @@ OpResult Connection::close()
     static constexpr char OPMSG[] = "disconnecting from slave";
 
     mConnected = false;
+    mCalcMta.reset();
     emit stateChanged();
     std::vector<quint8> reply;
     EMIT_RETURN_ON_FAIL(closeDone, transact({0xFE}, 1, reply, OPMSG));
@@ -564,6 +565,7 @@ OpResult Connection::programReset()
             return getReplyResult(reply, OPMSG);
 
         mConnected = false;
+        mCalcMta.reset();
         emit stateChanged();
         return OpResult::Success;
     };
