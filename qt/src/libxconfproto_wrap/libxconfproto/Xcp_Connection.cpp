@@ -580,7 +580,6 @@ OpResult Connection::transact(const std::vector<quint8> &cmd, int minReplyBytes,
     std::vector<std::vector<quint8> > replies;
     mIntfc->receive(0, replies);    // flush receive
     RETURN_ON_FAIL(mIntfc->transmit(cmd));
-    QThread::msleep(50);    // FIXME TEMP FOR TEST
 
     RETURN_ON_FAIL(mIntfc->receive(timeoutMsec.get_value_or(mTimeoutMsec), replies));
 

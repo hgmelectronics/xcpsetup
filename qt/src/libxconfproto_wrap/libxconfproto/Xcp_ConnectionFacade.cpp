@@ -245,6 +245,7 @@ SimpleDataLayer::SimpleDataLayer() : mConn(new ConnectionFacade(this))
 {
     connect(mConn, &ConnectionFacade::uploadDone, this, &SimpleDataLayer::onConnUploadDone);
     connect(mConn, &ConnectionFacade::downloadDone, this, &SimpleDataLayer::onConnDownloadDone);
+    mConn->setTimeout(100);
 }
 
 QString SimpleDataLayer::intfcUri(void)
