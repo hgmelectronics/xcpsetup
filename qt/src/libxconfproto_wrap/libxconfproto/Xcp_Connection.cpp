@@ -577,6 +577,8 @@ OpResult Connection::transact(const std::vector<quint8> &cmd, int minReplyBytes,
 {
     QReadLocker lock(&mIntfcLock);
     Q_ASSERT(mIntfc);
+    std::vector<std::vector<quint8> > replies;
+    mIntfc->receive(0, replies);    // flush receive
     RETURN_ON_FAIL(mIntfc->transmit(cmd));
 
     std::vector<std::vector<quint8> > replies;
