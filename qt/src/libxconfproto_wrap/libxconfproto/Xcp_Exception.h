@@ -52,7 +52,7 @@ enum class OpResult {
     SlaveErrorUndefined
 };
 
-class OpResultWrapper : public QObject
+class LIBXCONFPROTOSHARED_EXPORT OpResultWrapper : public QObject
 {
     Q_OBJECT
     Q_ENUMS(OpResult)
