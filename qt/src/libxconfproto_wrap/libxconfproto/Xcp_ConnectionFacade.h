@@ -56,6 +56,7 @@ signals:
     void programVerifyDone(OpResult result);
     void programResetDone(OpResult result);
     void buildChecksumDone(OpResult result, CksumType type, quint32 cksum);
+    void getAvailSlavesStrDone(OpResult result, QList<QString> slaveIds);
     void setStateDone(OpResult result);
 
     void connSetState(Connection::State val);
@@ -68,6 +69,7 @@ signals:
     void connProgramVerify(quint32 crc);
     void connProgramReset();
     void connBuildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
+    void connGetAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
 
 public slots:
     void upload(XcpPtr base, int len);
@@ -79,6 +81,7 @@ public slots:
     void programVerify(quint32 crc);
     void programReset();
     void buildChecksum(XcpPtr base, int len);
+    void getAvailSlavesStr(QString bcastId, QString filter);
 
     void onConnStateChanged();
     void onConnSetStateDone(OpResult);
@@ -91,6 +94,7 @@ public slots:
     void onConnProgramVerifyDone(OpResult result);
     void onConnProgramResetDone(OpResult result);
     void onConnBuildChecksumDone(OpResult result, CksumType type, quint32 cksum);
+    void onConnGetAvailSlavesStrDone(OpResult result, QList<QString> slaveIds);
 
 private:
     Interface::Interface *mIntfc;

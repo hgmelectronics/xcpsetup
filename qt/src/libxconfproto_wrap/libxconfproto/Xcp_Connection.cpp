@@ -882,6 +882,81 @@ OpResult Connection::buildChecksum(XcpPtr base, int len, CksumType *typeOut, qui
     return OpResult::Success;
 }
 
+OpResult Connection::getAvailSlavesStr(QString bcastIdStr, QString filterStr, QList<QString> *out)
+{
+    boost::optional<Xcp::Interface::Can::Id> bcastId = Xcp::Interface::Can::StrToId(bcastIdStr);
+    if(!bcastId)
+    {
+        emit getAvailSlavesStrDone(OpResult::InvalidArgument, QList<QString>());
+        return OpResult::InvalidArgument;
+    }
+    boost::optional<Xcp::Interface::Can::Filter> filter = Xcp::Interface::Can::StrToFilter(filterStr);
+    if(!filter)
+    {
+        emit getAvailSlavesStrDone(OpResult::InvalidArgument, QList<QString>());
+        return OpResult::InvalidArgument;
+    }
+    std::vector<Interface::Can::SlaveId> ids;
+    OpResult getAvailRes = getAvailSlaves(bcastId.get(), filter.get(), &ids);
+    if(getAvailRes != OpResult::Success)
+    {
+        emit getAvailSlavesStrDone(getAvailRes, QList<QString>());
+        return getAvailRes;
+    }
+    QList<QString> idStrs;
+    for(Interface::Can::SlaveId id : ids)
+        idStrs.append(Interface::Can::SlaveIdToStr(id));
+    if(out)
+        *out = idStrs;
+    emit getAvailSlavesStrDone(OpResult::Success, idStrs);
+    return OpResult::Success;
+}
+
+OpResult Connection::getAvailSlaves(Interface::Can::Id bcastId, Interface::Can::Filter filter, std::vector<Interface::Can::SlaveId> *out)
+{
+    SetupTools::Xcp::Interface::Can::Interface *canIntfc = qobject_cast<SetupTools::Xcp::Interface::Can::Interface *>(mIntfc);
+    if(!canIntfc)
+    {
+        emit getAvailSlavesDone(OpResult::InvalidOperation, std::vector<Interface::Can::SlaveId>());
+        return OpResult::InvalidOperation;
+    }
+    static const std::vector<quint8> QUERY = {0xF2, 0xFF, 0x58, 0x43, 0x50, 0x00};
+    static const std::vector<quint8> REPLYHEAD = {0xFF, 0x58, 0x43, 0x50};
+    OpResult setFilterRes = canIntfc->setFilter(filter);
+    if(setFilterRes != OpResult::Success)
+    {
+        emit getAvailSlavesDone(setFilterRes, std::vector<Interface::Can::SlaveId>());
+        return setFilterRes;
+    }
+    OpResult transmitRes = canIntfc->transmitTo(QUERY, bcastId);
+    if(transmitRes != OpResult::Success)
+    {
+        emit getAvailSlavesDone(transmitRes, std::vector<Interface::Can::SlaveId>());
+        return transmitRes;
+    }
+    QThread::msleep(mTimeoutMsec);
+
+    std::vector<Xcp::Interface::Can::Frame> frames;
+    canIntfc->receiveFrames(0, frames);
+    std::vector<Interface::Can::SlaveId> ids;
+    for(auto &frame : frames)
+    {
+        if(frame.data.size() < 8)
+            continue;
+        if(!std::equal(REPLYHEAD.begin(), REPLYHEAD.end(), frame.data.begin()))
+            continue;
+        Interface::Can::Id cmdId;
+        cmdId.addr = qFromBigEndian<quint32>(frame.data.data() + 4);
+        cmdId.type = frame.id.type;
+        cmdId.addr &= (cmdId.type == Interface::Can::Id::Type::Ext) ? 0x1FFFFFFF : 0x7FF;
+        ids.push_back({cmdId, frame.id});
+    }
+    if(out)
+        *out = ids;
+    emit getAvailSlavesDone(OpResult::Success, ids);
+    return OpResult::Success;
+}
+
 bool Connection::isOpen() {
     return mConnected;
 }

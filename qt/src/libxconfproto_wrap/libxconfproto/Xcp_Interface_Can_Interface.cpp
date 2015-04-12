@@ -37,6 +37,41 @@ bool LIBXCONFPROTOSHARED_EXPORT operator!=(const Id &lhs, const Id &rhs)
     return !(lhs == rhs);
 }
 
+boost::optional<Id> LIBXCONFPROTOSHARED_EXPORT StrToId(QString str)
+{
+    bool ok;
+    Id ret;
+
+    ret.addr = str.toUInt(&ok, 16);
+    if(!ok)
+        return boost::optional<Id>();
+    ret.type = (str.size() > 3) ? Id::Type::Ext : Id::Type::Std;
+    return ret;
+}
+
+QString LIBXCONFPROTOSHARED_EXPORT IdToStr(Id id)
+{
+    return QString("%1").arg(id.addr, (id.type == Id::Type::Ext) ? 8 : 3, 16, QChar('0'));
+}
+
+boost::optional<SlaveId> LIBXCONFPROTOSHARED_EXPORT StrToSlaveId(QString str)
+{
+    QStringList parts = str.split(":");
+    if(parts.size() != 2 )
+        return boost::optional<SlaveId>();
+
+    boost::optional<Id> cmdId = StrToId(parts[0]);
+    boost::optional<Id> resId = StrToId(parts[1]);
+    if(!cmdId || !resId)
+        return boost::optional<SlaveId>();
+    return boost::optional<SlaveId>({cmdId.get(), resId.get()});
+}
+
+QString LIBXCONFPROTOSHARED_EXPORT SlaveIdToStr(SlaveId id)
+{
+    return IdToStr(id.cmd) + ":" + IdToStr(id.res);
+}
+
 LIBXCONFPROTOSHARED_EXPORT Filter::Filter() :
     filt(0, Id::Type::Std),
     maskId(0),
@@ -54,6 +89,30 @@ Filter LIBXCONFPROTOSHARED_EXPORT ExactFilter(Id addr) {
         return Filter(addr, 0x1FFFFFFF, true);
     else
         return Filter(addr, 0x7FF, true);
+}
+
+boost::optional<Filter> LIBXCONFPROTOSHARED_EXPORT StrToFilter(QString str)
+{
+    QStringList parts = str.split(":");
+    if(parts.size() > 2 || parts.size() < 1)
+        return boost::optional<Filter>();
+
+    boost::optional<Id> id = StrToId(parts[0]);
+    if(!id)
+        return boost::optional<Filter>();
+    if(parts.size() == 1)
+        return ExactFilter(id.get());
+
+    boost::optional<Id> mask = StrToId(parts[1]);
+    if(!mask)
+        return boost::optional<Filter>();
+    return Filter(id.get(), mask.get().addr, true);
+}
+
+QString LIBXCONFPROTOSHARED_EXPORT FilterToStr(Filter filt)
+{
+    Id mask(filt.maskId, filt.filt.type);
+    return IdToStr(filt.filt) + ":" + IdToStr(mask);
 }
 
 bool Filter::Matches(Id id) const {

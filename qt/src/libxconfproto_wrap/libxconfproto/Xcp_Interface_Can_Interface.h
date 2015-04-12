@@ -31,11 +31,17 @@ public:
 bool operator==(const Id &lhs, const Id &rhs);
 bool operator!=(const Id &lhs, const Id &rhs);
 
+boost::optional<Id> LIBXCONFPROTOSHARED_EXPORT StrToId(QString str);
+QString LIBXCONFPROTOSHARED_EXPORT IdToStr(Id id);
+
 struct LIBXCONFPROTOSHARED_EXPORT SlaveId
 {
 public:
     Id cmd, res;
 };
+
+boost::optional<SlaveId> LIBXCONFPROTOSHARED_EXPORT StrToSlaveId(QString str);
+QString LIBXCONFPROTOSHARED_EXPORT SlaveIdToStr(SlaveId id);
 
 struct LIBXCONFPROTOSHARED_EXPORT Filter
 {
@@ -48,6 +54,9 @@ public:
     quint32 maskId;
     bool maskEff;
 };
+
+boost::optional<Filter> LIBXCONFPROTOSHARED_EXPORT StrToFilter(QString str);
+QString LIBXCONFPROTOSHARED_EXPORT FilterToStr(Filter filt);
 
 struct LIBXCONFPROTOSHARED_EXPORT Frame
 {

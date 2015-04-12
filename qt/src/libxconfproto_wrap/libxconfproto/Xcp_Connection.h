@@ -9,6 +9,7 @@
 
 #include "libxconfproto_global.h"
 #include "Xcp_Interface_Interface.h"
+#include "Xcp_Interface_Can_Interface.h"
 
 namespace SetupTools
 {
@@ -185,6 +186,8 @@ signals:
     void programVerifyDone(OpResult result);
     void programResetDone(OpResult result);
     void buildChecksumDone(OpResult result, CksumType type = CksumType::Invalid, quint32 cksum = 0);
+    void getAvailSlavesDone(OpResult result, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
+    void getAvailSlavesStrDone(OpResult result, QList<QString> slaveIds);
     void stateChanged();
 public slots:
     OpResult setState(State);
@@ -200,6 +203,8 @@ public slots:
     OpResult programVerify(quint32 crc);
     OpResult programReset();
     OpResult buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
+    OpResult getAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
+    OpResult getAvailSlaves(Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> *out);
 private:
     static OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, const char *msg = NULL);
     static OpResult getReplyResult(const std::vector<quint8> &reply, const char *msg = NULL);

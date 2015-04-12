@@ -25,6 +25,7 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(this, &ConnectionFacade::connProgramVerify, mConn, &Connection::programVerify, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connProgramReset, mConn, &Connection::programReset, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connBuildChecksum, mConn, &Connection::buildChecksum, Qt::QueuedConnection);
+    connect(this, &ConnectionFacade::connGetAvailSlavesStr, mConn, &Connection::getAvailSlavesStr, Qt::QueuedConnection);
 
     connect(mConn, &Connection::setStateDone, this, &ConnectionFacade::onConnSetStateDone, Qt::QueuedConnection);
     connect(mConn, &Connection::uploadDone, this, &ConnectionFacade::onConnUploadDone, Qt::QueuedConnection);
@@ -36,6 +37,7 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(mConn, &Connection::programVerifyDone, this, &ConnectionFacade::onConnProgramVerifyDone, Qt::QueuedConnection);
     connect(mConn, &Connection::programResetDone, this, &ConnectionFacade::onConnProgramResetDone, Qt::QueuedConnection);
     connect(mConn, &Connection::buildChecksumDone, this, &ConnectionFacade::onConnBuildChecksumDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::getAvailSlavesStrDone, this, &ConnectionFacade::onConnGetAvailSlavesStrDone, Qt::QueuedConnection);
     connect(mConn, &Connection::stateChanged, this, &ConnectionFacade::onConnStateChanged, Qt::QueuedConnection);
 }
 
@@ -71,9 +73,7 @@ QString ConnectionFacade::slaveId()
     if(!id)
         return QString("");
 
-    return QString("%1:%2").
-            arg(id.get().cmd.addr, (id.get().cmd.type == Interface::Can::Id::Type::Ext) ? 8 : 3, 16, QChar('0')).
-            arg(id.get().res.addr, (id.get().res.type == Interface::Can::Id::Type::Ext) ? 8 : 3, 16, QChar('0'));
+    return Xcp::Interface::Can::SlaveIdToStr(id.get());
 }
 
 void ConnectionFacade::setSlaveId(QString val)
@@ -82,22 +82,9 @@ void ConnectionFacade::setSlaveId(QString val)
     if(!canIntfc)
         return;
 
-    QStringList parts = val.split(":");
-    if(parts.size() != 2)
-        return;
-
-    Interface::Can::SlaveId id;
-    bool ok;
-
-    id.cmd.addr = parts[0].toUInt(&ok, 16);
-    if(!ok) return;
-    id.cmd.type = (parts[0].size() > 3) ? Interface::Can::Id::Type::Ext : Interface::Can::Id::Type::Std;
-
-    id.res.addr = parts[1].toUInt(&ok, 16);
-    if(!ok) return;
-    id.res.type = (parts[1].size() > 3) ? Interface::Can::Id::Type::Ext : Interface::Can::Id::Type::Std;
-
-    canIntfc->connect(id);
+    boost::optional<Interface::Can::SlaveId> slaveId = Interface::Can::StrToSlaveId(val);
+    if(slaveId)
+        canIntfc->connect(slaveId.get());
 }
 
 int ConnectionFacade::timeout()
@@ -185,6 +172,11 @@ void ConnectionFacade::buildChecksum(XcpPtr base, int len)
     emit connBuildChecksum(base, len, NULL, NULL);
 }
 
+void ConnectionFacade::getAvailSlavesStr(QString bcastId, QString filter)
+{
+    emit connGetAvailSlavesStr(bcastId, filter, NULL);
+}
+
 void ConnectionFacade::onConnStateChanged()
 {
     emit stateChanged();
@@ -238,6 +230,11 @@ void ConnectionFacade::onConnProgramResetDone(OpResult result)
 void ConnectionFacade::onConnBuildChecksumDone(OpResult result, CksumType type, quint32 cksum)
 {
     emit buildChecksumDone(result, type, cksum);
+}
+
+void ConnectionFacade::onConnGetAvailSlavesStrDone(OpResult result, QList<QString> slaveIds)
+{
+    emit getAvailSlavesStrDone(result, slaveIds);
 }
 
 
