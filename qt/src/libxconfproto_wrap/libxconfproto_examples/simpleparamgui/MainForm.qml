@@ -91,7 +91,7 @@ ColumnLayout {
                 enabled: !openButton.enabled
                 inputMethodHints: Qt.ImhPreferNumbers
                 placeholderText: qsTr("0")
-                validator: numberRange
+                //validator: numberRange
             }
         }
 
