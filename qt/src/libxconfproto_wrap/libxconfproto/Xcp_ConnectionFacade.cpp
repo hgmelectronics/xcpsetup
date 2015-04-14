@@ -275,6 +275,7 @@ void SimpleDataLayer::setSlaveId(QString val)
 
 void SimpleDataLayer::uploadUint32(quint32 base)
 {
+    mConn->setCalPage(0, 0);
     SetupTools::Xcp::XcpPtr ptr = {base, 0};
     mConn->upload(ptr, 4); // ignoring return values for this test case
 }
@@ -291,6 +292,7 @@ void SimpleDataLayer::onConnUploadDone(OpResult result, std::vector<quint8> data
 
 void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
 {
+    mConn->setCalPage(0, 0);
     SetupTools::Xcp::XcpPtr ptr = {base, 0};
     std::vector<quint8> dataVec;
     dataVec.assign(4, 0);
