@@ -34,6 +34,12 @@ OpResult LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec, std::vec
     return OpResult::Success;
 }
 
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::clearReceived()
+{
+    mMasterReceiveQueue.getAll(0);
+    return OpResult::Success;
+}
+
 void LIBXCONFPROTOSHARED_EXPORT Interface::slaveTransmit(const std::vector<quint8> & data)
 {
     if(mPacketLogEnabled)

@@ -86,6 +86,7 @@ public:
     virtual OpResult transmitTo(const std::vector<quint8> & data, Id id) = 0;    //!< Send one CAN frame to an arbitrary ID
     virtual OpResult receive(int timeoutMsec, std::vector<std::vector<quint8> > &out);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
     virtual OpResult receiveFrames(int timeoutMsec, std::vector<Frame> &out, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
+    virtual OpResult clearReceived() = 0;
     virtual OpResult setBitrate(int bps) = 0;                           //!< Set the bitrate used on the interface
     virtual OpResult setFilter(Filter filt) = 0;                        //!< Set the CAN filter used on the interface
     virtual OpResult setPacketLog(bool enable);

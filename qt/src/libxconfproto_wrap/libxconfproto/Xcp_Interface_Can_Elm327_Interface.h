@@ -130,6 +130,7 @@ public:
     virtual OpResult transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
     virtual OpResult transmitTo(const std::vector<quint8> & data, Id id); //!< Send one CAN frame to an arbitrary ID
     virtual OpResult receiveFrames(int timeoutMsec, std::vector<Frame> &out, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL);
+    virtual OpResult clearReceived();
     virtual OpResult setBitrate(int bps);                           //!< Set the bitrate used on the interface
     virtual OpResult setFilter(Filter filt);                     //!< Set the CAN filter used on the interface
     void setSerialLog(bool on);

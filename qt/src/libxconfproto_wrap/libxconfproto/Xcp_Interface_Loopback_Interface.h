@@ -24,6 +24,7 @@ public:
     virtual ~Interface() {}
     virtual OpResult transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
     virtual OpResult receive(int timeoutMsec, std::vector<std::vector<quint8> > &out);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual OpResult clearReceived();
     void slaveTransmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the master
     std::vector<std::vector<quint8> > slaveReceive(int timeoutMsec);   //!< Fetch all packets from the master currently in the Tx buffer, returning after timeout if no packets
     virtual void setPacketLog(bool enable);

@@ -577,10 +577,10 @@ OpResult Connection::transact(const std::vector<quint8> &cmd, int minReplyBytes,
 {
     QReadLocker lock(&mIntfcLock);
     Q_ASSERT(mIntfc);
-    std::vector<std::vector<quint8> > replies;
-    mIntfc->receive(0, replies);    // flush receive
+    RETURN_ON_FAIL(mIntfc->clearReceived());
     RETURN_ON_FAIL(mIntfc->transmit(cmd));
 
+    std::vector<std::vector<quint8> > replies;
     RETURN_ON_FAIL(mIntfc->receive(timeoutMsec.get_value_or(mTimeoutMsec), replies));
 
     if(replies.size() == 0)
@@ -928,6 +928,12 @@ OpResult Connection::getAvailSlaves(Interface::Can::Id bcastId, Interface::Can::
         emit getAvailSlavesDone(setFilterRes, std::vector<Interface::Can::SlaveId>());
         return setFilterRes;
     }
+    OpResult clearReceivedRes = canIntfc->clearReceived();
+    if(clearReceivedRes != OpResult::Success)
+    {
+        emit getAvailSlavesDone(clearReceivedRes, std::vector<Interface::Can::SlaveId>());
+        return clearReceivedRes;
+    }
     OpResult transmitRes = canIntfc->transmitTo(QUERY, bcastId);
     if(transmitRes != OpResult::Success)
     {
@@ -1017,6 +1023,7 @@ OpResult Connection::synch()
 {
     QReadLocker lock(&mIntfcLock);
     Q_ASSERT(mIntfc);
+    RETURN_ON_FAIL(mIntfc->clearReceived());
     RETURN_ON_FAIL(mIntfc->transmit(std::vector<quint8>({0xFC})));
 
     std::vector<std::vector<quint8> > replies;

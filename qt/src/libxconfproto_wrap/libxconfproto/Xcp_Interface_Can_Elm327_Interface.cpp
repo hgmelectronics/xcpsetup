@@ -463,6 +463,12 @@ OpResult Interface::receiveFrames(int timeoutMsec, std::vector<Frame> &out, cons
     return OpResult::Success;
 }
 
+OpResult Interface::clearReceived()
+{
+    mIo->getRcvdFrames(0);
+    return OpResult::Success;
+}
+
 OpResult Interface::setBitrate(int bps)
 {
     mBitrate = bps;
