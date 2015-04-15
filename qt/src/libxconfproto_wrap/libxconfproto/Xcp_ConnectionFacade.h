@@ -85,15 +85,15 @@ public slots:
 
     void onConnStateChanged();
     void onConnSetStateDone(OpResult);
-    void onConnUploadDone(OpResult result, std::vector<quint8> data);
-    void onConnDownloadDone(OpResult result);
+    void onConnUploadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void onConnDownloadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
     void onConnNvWriteDone(OpResult result);
-    void onConnSetCalPageDone(OpResult result);
-    void onConnProgramClearDone(OpResult result);
-    void onConnProgramRangeDone(OpResult result);
-    void onConnProgramVerifyDone(OpResult result);
+    void onConnSetCalPageDone(OpResult result, quint8 segment, quint8 page);
+    void onConnProgramClearDone(OpResult result, XcpPtr base, int len);
+    void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void onConnProgramVerifyDone(OpResult result, quint32 crc);
     void onConnProgramResetDone(OpResult result);
-    void onConnBuildChecksumDone(OpResult result, CksumType type, quint32 cksum);
+    void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void onConnGetAvailSlavesStrDone(OpResult result, QList<QString> slaveIds);
 
 private:
