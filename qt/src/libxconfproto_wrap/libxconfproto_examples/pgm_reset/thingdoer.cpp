@@ -3,7 +3,8 @@
 ThingDoer::ThingDoer() :
     mConn(new SetupTools::Xcp::ConnectionFacade(this)),
     mQin(stdin, QIODevice::ReadOnly),
-    mQout(stdout, QIODevice::WriteOnly)
+    mQout(stdout, QIODevice::WriteOnly),
+    mGetAvailIter(0)
 {
     connect(mConn, &SetupTools::Xcp::ConnectionFacade::getAvailSlavesStrDone, this, &ThingDoer::onGetAvailSlavesStrDone);
     connect(mConn, &SetupTools::Xcp::ConnectionFacade::setStateDone, this, &ThingDoer::onSetStateDone);
@@ -57,6 +58,13 @@ void ThingDoer::onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QList<
     {
         qDebug() << static_cast<int>(result);
         exit(1);
+    }
+
+    ++mGetAvailIter;
+    if(mGetAvailIter < N_GET_AVAIL_ITER)
+    {
+        mConn->getAvailSlavesStr("0x1F000000", "0x1F000100:0x1FFFFF00");
+        return;
     }
 
     int iSlave = 0;

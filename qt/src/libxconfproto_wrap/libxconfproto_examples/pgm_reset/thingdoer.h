@@ -17,8 +17,10 @@ public slots:
     void onSetStateDone(SetupTools::Xcp::OpResult result);
     void onResetDone(SetupTools::Xcp::OpResult result);
 private:
+    constexpr static const int N_GET_AVAIL_ITER = 20;
     SetupTools::Xcp::ConnectionFacade *mConn;
     QTextStream mQin, mQout;
+    int mGetAvailIter;
 };
 
 #endif // THINGDOER_H
