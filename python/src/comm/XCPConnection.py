@@ -581,13 +581,22 @@ class Connection(object):
         reply, replyData = self._transaction(request, "BxBBBBB")
         if reply[0] != 0xFF or reply[3] < 8:
             RaiseReply(replyData, 'starting program')
-        if reply[2] & 0x01:
-            self._pgmMasterBlockMode = True
+        if reply[1] == 0:
+            if reply[2] & 0x01:
+                self._pgmMasterBlockMode = False
+            else:
+                self._pgmMasterBlockMode = False
+            self._pgmMaxCTO = reply[3]
+            self._pgmMaxBS = reply[4]
+            self._pgmMinST = reply[5]
         else:
-            self._pgmMasterBlockMode = False
-        self._pgmMaxCTO = reply[3]
-        self._pgmMaxBS = reply[4]
-        self._pgmMinST = reply[5]
+            if reply[1] & 0x01:
+                self._pgmMasterBlockMode = False
+            else:
+                self._pgmMasterBlockMode = False
+            self._pgmMaxCTO = reply[2]
+            self._pgmMaxBS = reply[3]
+            self._pgmMinST = reply[4]
         self._pgmMaxDownloadPayload = self.byteToAG(self._pgmMaxCTO - 2) * self._addressGranularity
         self._calcMTA = None
         self._pgmStarted = True
@@ -643,9 +652,9 @@ class Connection(object):
             
             payloadBytes = min(remBytes, self._pgmMaxDownloadPayload)
             if self._addressGranularity == 1 or self._addressGranularity == 2:
-                reqHdr = struct.pack(self._byteorder + "BB", cmdCode, self.byteToAG(payloadBytes))
+                reqHdr = struct.pack(self._byteorder + "BB", cmdCode, self.byteToAG(remBytes))
             else:
-                reqHdr = struct.pack(self._byteorder + "BBxx", cmdCode, self.byteToAG(payloadBytes))
+                reqHdr = struct.pack(self._byteorder + "BBxx", cmdCode, self.byteToAG(remBytes))
             
             startOffset = len(data) - remBytes
             endOffset = startOffset + payloadBytes
