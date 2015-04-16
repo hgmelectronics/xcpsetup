@@ -92,7 +92,7 @@ with CANInterface.MakeInterface(args.deviceURI) as interface:
                 
                 # Write the new buffer to the board
                 conn.download(XCPConnection.Pointer(structBaseaddr, 0), writeDataBuffer)
-                #conn.nvwrite()
+                conn.nvwrite()
                 
                 try:
                     conn.close()
