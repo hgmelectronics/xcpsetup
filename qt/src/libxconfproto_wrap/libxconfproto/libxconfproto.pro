@@ -26,7 +26,7 @@ SOURCES += \
     Xcp_ConnectionFacade.cpp \
     Xcp_Interface_Registry.cpp \
     FlashProg.cpp \
-    ProgFile.cpp
+    MultiselectList.cpp
 
 HEADERS += \
     libxconfproto_global.h \
@@ -41,7 +41,7 @@ HEADERS += \
     Xcp_ConnectionFacade.h \
     Xcp_Interface_Registry.h \
     FlashProg.h \
-    ProgFile.h
+    MultiselectList.h
 
 unix {
     target.path = /usr/lib
