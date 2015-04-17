@@ -13,7 +13,7 @@ public:
     ThingDoer();
 public slots:
     void start();
-    void onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QList<QString> slaveIds);
+    void onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void onSetStateDone(SetupTools::Xcp::OpResult result);
     void onResetDone(SetupTools::Xcp::OpResult result);
 private:

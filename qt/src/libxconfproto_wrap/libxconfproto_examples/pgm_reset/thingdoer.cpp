@@ -52,8 +52,10 @@ void ThingDoer::start()
     mConn->getAvailSlavesStr("0x1F000000", "0x1F000100:0x1FFFFF00");
 }
 
-void ThingDoer::onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QList<QString> slaves)
+void ThingDoer::onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaves)
 {
+    Q_UNUSED(bcastId);
+    Q_UNUSED(filter);
     if(result != SetupTools::Xcp::OpResult::Success)
     {
         qDebug() << static_cast<int>(result);

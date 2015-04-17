@@ -192,14 +192,14 @@ void ConnectionFacade::onConnSetStateDone(OpResult result)
     emit setStateDone(result);
 }
 
-void ConnectionFacade::onConnUploadDone(OpResult result, std::vector<quint8> data)
+void ConnectionFacade::onConnUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data)
 {
-    emit uploadDone(result, data);
+    emit uploadDone(result, base, len, data);
 }
 
-void ConnectionFacade::onConnDownloadDone(OpResult result)
+void ConnectionFacade::onConnDownloadDone(OpResult result, XcpPtr base, std::vector<quint8> data)
 {
-    emit downloadDone(result);
+    emit downloadDone(result, base, data);
 }
 
 void ConnectionFacade::onConnNvWriteDone(OpResult result)
@@ -207,24 +207,24 @@ void ConnectionFacade::onConnNvWriteDone(OpResult result)
     emit nvWriteDone(result);
 }
 
-void ConnectionFacade::onConnSetCalPageDone(OpResult result)
+void ConnectionFacade::onConnSetCalPageDone(OpResult result, quint8 segment, quint8 page)
 {
-    emit setCalPageDone(result);
+    emit setCalPageDone(result, segment, page);
 }
 
-void ConnectionFacade::onConnProgramClearDone(OpResult result)
+void ConnectionFacade::onConnProgramClearDone(OpResult result, XcpPtr base, int len)
 {
-    emit programClearDone(result);
+    emit programClearDone(result, base, len);
 }
 
-void ConnectionFacade::onConnProgramRangeDone(OpResult result)
+void ConnectionFacade::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data)
 {
-    emit programRangeDone(result);
+    emit programRangeDone(result, base, data);
 }
 
-void ConnectionFacade::onConnProgramVerifyDone(OpResult result)
+void ConnectionFacade::onConnProgramVerifyDone(OpResult result, quint32 crc)
 {
-    emit programVerifyDone(result);
+    emit programVerifyDone(result, crc);
 }
 
 void ConnectionFacade::onConnProgramResetDone(OpResult result)
@@ -232,14 +232,14 @@ void ConnectionFacade::onConnProgramResetDone(OpResult result)
     emit programResetDone(result);
 }
 
-void ConnectionFacade::onConnBuildChecksumDone(OpResult result, CksumType type, quint32 cksum)
+void ConnectionFacade::onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum)
 {
-    emit buildChecksumDone(result, type, cksum);
+    emit buildChecksumDone(result, base, len, type, cksum);
 }
 
-void ConnectionFacade::onConnGetAvailSlavesStrDone(OpResult result, QList<QString> slaveIds)
+void ConnectionFacade::onConnGetAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds)
 {
-    emit getAvailSlavesStrDone(result, slaveIds);
+    emit getAvailSlavesStrDone(result, bcastId, filter, slaveIds);
 }
 
 
@@ -285,8 +285,10 @@ void SimpleDataLayer::uploadUint32(quint32 base)
     mConn->upload(ptr, 4); // ignoring return values for this test case
 }
 
-void SimpleDataLayer::onConnUploadDone(OpResult result, std::vector<quint8> dataVec)
+void SimpleDataLayer::onConnUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> dataVec)
 {
+    Q_UNUSED(base);
+    Q_UNUSED(len);
     if(result != OpResult::Success)
         emit uploadUint32Done(static_cast<int>(result), 0);
     else if(dataVec.size() != 4)
@@ -305,8 +307,10 @@ void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
     mConn->download(ptr, dataVec);
 }
 
-void SimpleDataLayer::onConnDownloadDone(OpResult result)
+void SimpleDataLayer::onConnDownloadDone(OpResult result, XcpPtr base, std::vector<quint8> data)
 {
+    Q_UNUSED(base);
+    Q_UNUSED(data);
     emit downloadUint32Done(static_cast<int>(result));
 }
 
