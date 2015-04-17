@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <QList>
 #include <QMouseEvent>
+#include <QVariant>
 #include "ebussetuptools_global.h"
 
 /**
@@ -106,6 +107,14 @@ public:
     virtual ~MultiselectListController();
 public slots:
     void clicked(int modifiers, MultiselectListModel *model, MultiselectListWrapper *wrapper);
+};
+
+class EBUSSETUPTOOLSSHARED_EXPORT QVariantObject : public QObject, public QVariant
+{
+    Q_OBJECT
+public:
+    QVariantObject(QObject *parent = 0);
+    QVariantObject(const QVariant &var, QObject *parent = 0);
 };
 
 #endif // MULTILIST_H

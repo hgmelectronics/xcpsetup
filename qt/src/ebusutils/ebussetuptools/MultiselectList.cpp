@@ -144,3 +144,6 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListController::clicked(int modifier
         }
     }
 }
+
+EBUSSETUPTOOLSSHARED_EXPORT QVariantObject::QVariantObject(QObject *parent) : QObject(parent) {}
+EBUSSETUPTOOLSSHARED_EXPORT QVariantObject::QVariantObject(const QVariant &var, QObject *parent) : QObject(parent), QVariant(var) {}
