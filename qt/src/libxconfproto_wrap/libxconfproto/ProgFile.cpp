@@ -163,6 +163,9 @@ std::pair<Result, Line> ConvertLine(const QString &text)
         ret.base = qFromBigEndian<quint32>(reinterpret_cast<const uchar *>(bytes.data()) + 1);
         dataBegin = reinterpret_cast<const uchar *>(bytes.data() + 5);
         break;
+    default:
+        return {Result::NotApplicable, ret};
+        break;
     }
     ret.data.resize(dataEnd - dataBegin);
     std::copy(dataBegin, dataEnd, ret.data.begin());
@@ -190,7 +193,7 @@ ProgFile::Result ProgFile::readSrec(QFile &file)
 
     std::sort(lines.begin(), lines.end(), SrecDetail::CompareLine);
 
-    quint32 remainingSize;
+    quint32 remainingSize = 0;
     for(const SrecDetail::Line &line : lines)
         remainingSize += line.data.size();
 
