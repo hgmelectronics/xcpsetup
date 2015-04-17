@@ -57,7 +57,8 @@ enum class CksumType {
     XCP_CRC_16,
     XCP_CRC_16_CITT,    // [sic]; it's CCITT but the XCP standard leaves out a C
     XCP_CRC_32,
-    XCP_USER_DEFINED
+    XCP_USER_DEFINED,
+    ST_CRC_32
 };
 
 struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
@@ -74,8 +75,6 @@ inline bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
 {
     return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
 }
-
-quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 
 class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
 {
@@ -168,6 +167,8 @@ public:
         }
         return accum;
     }
+
+    quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
     bool isOpen();
     bool isCalMode();
     bool isPgmMode();
@@ -200,7 +201,7 @@ public slots:
     OpResult programStart();
     OpResult programClear(XcpPtr base, int len);
     OpResult programRange(XcpPtr base, const std::vector<quint8> data);
-    OpResult programVerify(quint32 crc);
+    OpResult programVerify(XcpPtr mta, quint32 crc);
     OpResult programReset();
     OpResult buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
     OpResult getAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
@@ -216,7 +217,6 @@ private:
     OpResult setMta(XcpPtr ptr);
     OpResult tryQuery(std::function<OpResult (void)> &action);
     OpResult synch();
-    quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 
     constexpr static const int MAX_RETRIES = 10;
     constexpr static const int NUM_NV_WRITE_POLLS = 10;

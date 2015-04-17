@@ -4,6 +4,7 @@
 #include <boost/optional.hpp>
 #include <QObject>
 #include <QQmlListProperty>
+#include "libxconfproto_global.h"
 
 namespace SetupTools
 {
@@ -18,7 +19,7 @@ public:
     std::vector<quint8> data;
 };
 
-class FlashProg : public QObject
+class LIBXCONFPROTOSHARED_EXPORT FlashProg : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<FlashBlock> blocks READ blocksQml)
@@ -28,8 +29,7 @@ public:
 
     QList<FlashBlock *> &blocks();
     QQmlListProperty<FlashBlock> blocksQml();
-signals:
-    void blocksChanged();
+    Q_INVOKABLE void infillToSingleBlock(quint8 fillValue = 0xFF);
 private:
     QList<FlashBlock *> mBlocks;
 };

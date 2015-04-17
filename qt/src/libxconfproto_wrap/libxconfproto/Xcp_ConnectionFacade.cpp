@@ -127,6 +127,11 @@ void ConnectionFacade::setState(Connection::State val)
     emit connSetState(val);
 }
 
+quint32 ConnectionFacade::computeCksum(CksumType type, const std::vector<quint8> &data)
+{
+    return mConn->computeCksum(type, data);
+}
+
 void ConnectionFacade::upload(XcpPtr base, int len)
 {
     emit connUpload(base, len, NULL);
@@ -157,9 +162,9 @@ void ConnectionFacade::programRange(XcpPtr base, const std::vector<quint8> data)
     emit connProgramRange(base, data);
 }
 
-void ConnectionFacade::programVerify(quint32 crc)
+void ConnectionFacade::programVerify(XcpPtr mta, quint32 crc)
 {
-    emit connProgramVerify(crc);
+    emit connProgramVerify(mta, crc);
 }
 
 void ConnectionFacade::programReset()

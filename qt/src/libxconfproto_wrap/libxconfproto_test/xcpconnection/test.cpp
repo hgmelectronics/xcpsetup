@@ -333,7 +333,8 @@ void Test::programSequence()
     QCOMPARE(mConn->programRange(base, prog), OpResult::Success);
 
     mSlave->setCksumType(SetupTools::Xcp::CksumType::XCP_CRC_32);
-    QCOMPARE(mConn->programVerify(progCrc), OpResult::Success);
+    Q_ASSERT(quint32(base.addr + prog.size()) == base.addr + prog.size());
+    QCOMPARE(mConn->programVerify({quint32(base.addr + prog.size()), base.ext}, progCrc), OpResult::Success);
 
     std::vector<quint8> uploadedProg;
     QCOMPARE(mConn->upload(base, prog.size(), &uploadedProg), OpResult::Success);

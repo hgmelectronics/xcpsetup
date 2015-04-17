@@ -30,6 +30,7 @@ public:
     void setResetTimeout(int);
     ::SetupTools::Xcp::Connection::State state();
     void setState(::SetupTools::Xcp::Connection::State val);
+    quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
 
     template <typename T>
     T fromSlaveEndian(const uchar *src) { return mConn->fromSlaveEndian<T>(src); }
@@ -66,7 +67,7 @@ signals:
     void connSetCalPage(quint8 segment, quint8 page);
     void connProgramClear(XcpPtr base, int len);
     void connProgramRange(XcpPtr base, const std::vector<quint8> data);
-    void connProgramVerify(quint32 crc);
+    void connProgramVerify(XcpPtr mta, quint32 crc);
     void connProgramReset();
     void connBuildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
     void connGetAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
@@ -78,7 +79,7 @@ public slots:
     void setCalPage(quint8 segment, quint8 page);
     void programClear(XcpPtr base, int len);
     void programRange(XcpPtr base, const std::vector<quint8> data);
-    void programVerify(quint32 crc);
+    void programVerify(XcpPtr mta, quint32 crc);
     void programReset();
     void buildChecksum(XcpPtr base, int len);
     void getAvailSlavesStr(QString bcastId, QString filter);

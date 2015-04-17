@@ -22,51 +22,58 @@ quint32 Connection::computeCksum(CksumType type, const std::vector<quint8> &data
 {
     switch(type)
     {
-        case CksumType::XCP_ADD_11:
-            return additiveChecksum<quint8, quint8>(data);
-            break;
-        case CksumType::XCP_ADD_12:
-            return additiveChecksum<quint16, quint8>(data);
-            break;
-        case CksumType::XCP_ADD_14:
-            return additiveChecksum<quint32, quint8>(data);
-            break;
-        case CksumType::XCP_ADD_22:
-            return additiveChecksum<quint16, quint16>(data);
-            break;
-        case CksumType::XCP_ADD_24:
-            return additiveChecksum<quint32, quint16>(data);
-            break;
-        case CksumType::XCP_ADD_44:
-            return additiveChecksum<quint32, quint32>(data);
-            break;
-        case CksumType::XCP_CRC_16:
-            {
-                boost::crc_16_type computer;
-                computer.process_block(data.data(), data.data() + data.size());
-                return computer.checksum();
-            }
-            break;
-        case CksumType::XCP_CRC_16_CITT:
-            {
-                boost::crc_ccitt_type computer;
-                computer.process_block(data.data(), data.data() + data.size());
-                return computer.checksum();
-            }
-            break;
-        case CksumType::XCP_CRC_32:
-            {
-                boost::crc_32_type computer;
-                computer.process_block(data.data(), data.data() + data.size());
-                return computer.checksum();
-            }
-            break;
-        case CksumType::XCP_USER_DEFINED:
-            Q_ASSERT(type != CksumType::XCP_USER_DEFINED);
-            break;
-        default:
-            Q_ASSERT(0);
-            break;
+    case CksumType::XCP_ADD_11:
+        return additiveChecksum<quint8, quint8>(data);
+        break;
+    case CksumType::XCP_ADD_12:
+        return additiveChecksum<quint16, quint8>(data);
+        break;
+    case CksumType::XCP_ADD_14:
+        return additiveChecksum<quint32, quint8>(data);
+        break;
+    case CksumType::XCP_ADD_22:
+        return additiveChecksum<quint16, quint16>(data);
+        break;
+    case CksumType::XCP_ADD_24:
+        return additiveChecksum<quint32, quint16>(data);
+        break;
+    case CksumType::XCP_ADD_44:
+        return additiveChecksum<quint32, quint32>(data);
+        break;
+    case CksumType::XCP_CRC_16:
+        {
+            boost::crc_16_type computer;
+            computer.process_block(data.data(), data.data() + data.size());
+            return computer.checksum();
+        }
+        break;
+    case CksumType::XCP_CRC_16_CITT:
+        {
+            boost::crc_ccitt_type computer;
+            computer.process_block(data.data(), data.data() + data.size());
+            return computer.checksum();
+        }
+        break;
+    case CksumType::XCP_CRC_32:
+        {
+            boost::crc_32_type computer;
+            computer.process_block(data.data(), data.data() + data.size());
+            return computer.checksum();
+        }
+        break;
+    case CksumType::ST_CRC_32:
+        {
+            boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0x00000000, false, false> computer;
+            computer.process_block(data.data(), data.data() + data.size());
+            return computer.checksum();
+        }
+        break;
+    case CksumType::XCP_USER_DEFINED:
+        Q_ASSERT(type != CksumType::XCP_USER_DEFINED);
+        break;
+    default:
+        Q_ASSERT(0);
+        break;
     }
     return 0;
 }
@@ -522,7 +529,7 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
     return OpResult::Success;
 }
 
-OpResult Connection::programVerify(quint32 crc)
+OpResult Connection::programVerify(XcpPtr mta, quint32 crc)
 {
     if(!mConnected)
         EMIT_RETURN(programClearDone, OpResult::NotConnected);
@@ -533,9 +540,12 @@ OpResult Connection::programVerify(quint32 crc)
     toSlaveEndian<quint16>(0x0002, query.data() + 2);
     toSlaveEndian<quint32>(crc, query.data() + 4);
 
-    std::function<OpResult (void)> action = [this, query]()
+    std::function<OpResult (void)> action = [this, mta, query]()
     {
         static constexpr char OPMSG[] = "verifying program";
+
+        if(!mCalcMta || mCalcMta.get() != mta)
+            RETURN_ON_FAIL(setMta(mta));
 
         std::vector<quint8> reply;
         RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));

@@ -216,7 +216,7 @@ ProgFile::Result ProgFile::readSrec(QFile &file)
             }
 
             // make a new block
-            mProg.blocks().push_back(new FlashBlock(this));
+            mProg.blocks().push_back(new FlashBlock(&mProg));
             appendBlock = mProg.blocks().back();
         }
 
