@@ -129,10 +129,18 @@ LIBXCONFPROTOSHARED_EXPORT void MultiselectListController::clicked(int modifiers
                 (*it)->setSelected((*clickedLastIt)->selected());
         }
     }
-    else
+    else if(modifiers & Qt::ControlModifier)
     {
         for(MultiselectListWrapper *item: model->list())
             item->setClickedLast(item == wrapper);
         wrapper->setSelected(!wrapper->selected());
+    }
+    else
+    {
+        for(MultiselectListWrapper *item: model->list())
+        {
+            item->setClickedLast(item == wrapper);
+            item->setSelected(item == wrapper);
+        }
     }
 }
