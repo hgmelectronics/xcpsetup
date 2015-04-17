@@ -176,18 +176,18 @@ signals:
     void setStateDone(OpResult result);
     void openDone(OpResult result);
     void closeDone(OpResult result);
-    void uploadDone(OpResult result, std::vector<quint8> data = std::vector<quint8>());
-    void downloadDone(OpResult result);
+    void uploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    void downloadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
     void nvWriteDone(OpResult result);
-    void setCalPageDone(OpResult result);
+    void setCalPageDone(OpResult result, quint8 segment, quint8 page);
     void programStartDone(OpResult result);
-    void programClearDone(OpResult result);
-    void programRangeDone(OpResult result);
-    void programVerifyDone(OpResult result);
+    void programClearDone(OpResult result, XcpPtr base, int len);
+    void programRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void programVerifyDone(OpResult result, quint32 crc);
     void programResetDone(OpResult result);
-    void buildChecksumDone(OpResult result, CksumType type = CksumType::Invalid, quint32 cksum = 0);
-    void getAvailSlavesDone(OpResult result, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
-    void getAvailSlavesStrDone(OpResult result, QList<QString> slaveIds);
+    void buildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
+    void getAvailSlavesDone(OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
+    void getAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void stateChanged();
 public slots:
     OpResult setState(State);

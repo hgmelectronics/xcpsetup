@@ -5,11 +5,11 @@
 #include <QObject>
 #include "libxconfproto_global.h"
 
-#define EMIT_RETURN(signal, value) { OpResult EMIT_RETURN__ret = (value); emit (signal)(EMIT_RETURN__ret); return EMIT_RETURN__ret; }
-#define EMIT_RETURN_ON_FAIL(signal, value) { OpResult EMIT_RETURN__ret = (value); if(EMIT_RETURN__ret != OpResult::Success) { emit (signal)(EMIT_RETURN__ret); return EMIT_RETURN__ret; } }
+#define EMIT_RETURN(signal, value, ...) { OpResult EMIT_RETURN__ret = (value); emit (signal)(EMIT_RETURN__ret, ##__VA_ARGS__); return EMIT_RETURN__ret; }
+#define EMIT_RETURN_ON_FAIL(signal, value, ...) { OpResult EMIT_RETURN__ret = (value); if(EMIT_RETURN__ret != OpResult::Success) { emit (signal)(EMIT_RETURN__ret, ##__VA_ARGS__); return EMIT_RETURN__ret; } }
 #define RETURN_ON_FAIL(value) { OpResult EMIT_RETURN__ret = (value); if(EMIT_RETURN__ret != OpResult::Success) { return EMIT_RETURN__ret; } }
-#define EMIT_RETURN_VOID(signal, value) { OpResult EMIT_RETURN__ret = (value); emit (signal)(EMIT_RETURN__ret); return; }
-#define EMIT_RETURN_VOID_ON_FAIL(signal, value) { OpResult EMIT_RETURN__ret = (value); if(EMIT_RETURN__ret != OpResult::Success) { emit (signal)(EMIT_RETURN__ret); return; } }
+#define EMIT_RETURN_VOID(signal, value, ...) { OpResult EMIT_RETURN__ret = (value); emit (signal)(EMIT_RETURN__ret, ##__VA_ARGS__); return; }
+#define EMIT_RETURN_VOID_ON_FAIL(signal, value, ...) { OpResult EMIT_RETURN__ret = (value); if(EMIT_RETURN__ret != OpResult::Success) { emit (signal)(EMIT_RETURN__ret, ##__VA_ARGS__); return; } }
 #define RETURN_VOID_ON_FAIL(value) { OpResult EMIT_RETURN__ret = (value); if(EMIT_RETURN__ret != OpResult::Success) { return; } }
 
 namespace SetupTools

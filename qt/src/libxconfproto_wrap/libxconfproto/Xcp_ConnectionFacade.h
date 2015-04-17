@@ -47,16 +47,16 @@ public:
 signals:
     void stateChanged();
 
-    void uploadDone(OpResult result, std::vector<quint8> data);
-    void downloadDone(OpResult result);
+    void uploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data);
+    void downloadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
     void nvWriteDone(OpResult result);
-    void setCalPageDone(OpResult result);
-    void programClearDone(OpResult result);
-    void programRangeDone(OpResult result);
-    void programVerifyDone(OpResult result);
+    void setCalPageDone(OpResult result, quint8 segment, quint8 page);
+    void programClearDone(OpResult result, XcpPtr base, int len);
+    void programRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void programVerifyDone(OpResult result, quint32 crc);
     void programResetDone(OpResult result);
-    void buildChecksumDone(OpResult result, CksumType type, quint32 cksum);
-    void getAvailSlavesStrDone(OpResult result, QList<QString> slaveIds);
+    void buildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
+    void getAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void setStateDone(OpResult result);
 
     void connSetState(Connection::State val);
@@ -85,7 +85,7 @@ public slots:
 
     void onConnStateChanged();
     void onConnSetStateDone(OpResult);
-    void onConnUploadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void onConnUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data);
     void onConnDownloadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
     void onConnNvWriteDone(OpResult result);
     void onConnSetCalPageDone(OpResult result, quint8 segment, quint8 page);
@@ -94,7 +94,7 @@ public slots:
     void onConnProgramVerifyDone(OpResult result, quint32 crc);
     void onConnProgramResetDone(OpResult result);
     void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
-    void onConnGetAvailSlavesStrDone(OpResult result, QList<QString> slaveIds);
+    void onConnGetAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
 
 private:
     Interface::Interface *mIntfc;
@@ -121,8 +121,8 @@ signals:
 public slots:
     void uploadUint32(quint32 base);
     void downloadUint32(quint32 base, quint32 data);
-    void onConnUploadDone(OpResult, std::vector<quint8>);
-    void onConnDownloadDone(OpResult);
+    void onConnUploadDone(OpResult, XcpPtr, int, std::vector<quint8>);
+    void onConnDownloadDone(OpResult, XcpPtr, std::vector<quint8>);
 private:
     ConnectionFacade *mConn;
 };

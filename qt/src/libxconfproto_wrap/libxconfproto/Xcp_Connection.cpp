@@ -242,9 +242,9 @@ OpResult Connection::close()
 OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
 {
     if(!mConnected)
-        EMIT_RETURN(uploadDone, OpResult::NotConnected);
+        EMIT_RETURN(uploadDone, OpResult::NotConnected, base, len);
     if(len % mAddrGran)
-        EMIT_RETURN(uploadDone, OpResult::AddrGranError);
+        EMIT_RETURN(uploadDone, OpResult::AddrGranError, base, len);
 
     int remBytes = len;
     XcpPtr packetPtr = base;
@@ -254,12 +254,12 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
     {
         int packetBytes = std::min(remBytes, mMaxUpPayload);
         std::vector<quint8> seg;
-        EMIT_RETURN_ON_FAIL(uploadDone, uploadSegment(packetPtr, packetBytes, seg));
+        EMIT_RETURN_ON_FAIL(uploadDone, uploadSegment(packetPtr, packetBytes, seg), base, len);
         data.insert(data.end(), seg.begin(), seg.end());
         remBytes -= packetBytes;
         packetPtr.addr += packetBytes / mAddrGran;
     }
-    emit uploadDone(OpResult::Success, data);
+    emit uploadDone(OpResult::Success, base, len, data);
     if(out)
         *out = data;
     return OpResult::Success;
@@ -268,13 +268,13 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
 OpResult Connection::download(XcpPtr base, const std::vector<quint8> data)
 {
     if(!mConnected)
-        EMIT_RETURN(downloadDone, OpResult::NotConnected);
+        EMIT_RETURN(downloadDone, OpResult::NotConnected, base, data);
     if(mPgmStarted)
-        EMIT_RETURN(programClearDone, OpResult::WrongMode);
+        EMIT_RETURN(downloadDone, OpResult::WrongMode, base, data);
     if(data.size() % mAddrGran)
-        EMIT_RETURN(downloadDone, OpResult::AddrGranError);
+        EMIT_RETURN(downloadDone, OpResult::AddrGranError, base, data);
     if(!mSupportsCalPage)
-        EMIT_RETURN(downloadDone, OpResult::InvalidOperation);
+        EMIT_RETURN(downloadDone, OpResult::InvalidOperation, base, data);
 
     int remBytes = data.size();
     XcpPtr packetPtr = base;
@@ -283,12 +283,15 @@ OpResult Connection::download(XcpPtr base, const std::vector<quint8> data)
     while(remBytes > 0)
     {
         int packetBytes = std::min(remBytes, mMaxDownPayload);
-        EMIT_RETURN_ON_FAIL(downloadDone, downloadSegment(packetPtr, std::vector<quint8>(packetDataPtr, packetDataPtr + packetBytes)));
+        EMIT_RETURN_ON_FAIL(downloadDone,
+                            downloadSegment(packetPtr, std::vector<quint8>(packetDataPtr, packetDataPtr + packetBytes)),
+                            base,
+                            data);
         remBytes -= packetBytes;
         packetDataPtr += packetBytes;
         packetPtr.addr += packetBytes / mAddrGran;
     }
-    EMIT_RETURN(downloadDone, OpResult::Success);
+    EMIT_RETURN(downloadDone, OpResult::Success, base, data);
 }
 
 OpResult Connection::nvWrite()
@@ -298,7 +301,7 @@ OpResult Connection::nvWrite()
     if(!mConnected)
         EMIT_RETURN(nvWriteDone, OpResult::NotConnected);
     if(mPgmStarted)
-        EMIT_RETURN(programClearDone, OpResult::WrongMode);
+        EMIT_RETURN(nvWriteDone, OpResult::WrongMode);
     if(!mSupportsCalPage)
         EMIT_RETURN(nvWriteDone, OpResult::InvalidOperation);
 
@@ -402,11 +405,11 @@ OpResult Connection::nvWrite()
 OpResult Connection::setCalPage(quint8 segment, quint8 page)
 {
     if(!mConnected)
-        EMIT_RETURN(setCalPageDone, OpResult::NotConnected);
+        EMIT_RETURN(setCalPageDone, OpResult::NotConnected, segment, page);
     if(mPgmStarted)
-        EMIT_RETURN(programClearDone, OpResult::WrongMode);
+        EMIT_RETURN(setCalPageDone, OpResult::WrongMode, segment, page);
     if(!mSupportsCalPage)
-        EMIT_RETURN(setCalPageDone, OpResult::InvalidOperation);
+        EMIT_RETURN(setCalPageDone, OpResult::InvalidOperation, segment, page);
 
     std::vector<quint8> query({0xEB, 0x03, segment, page});
 
@@ -424,7 +427,7 @@ OpResult Connection::setCalPage(quint8 segment, quint8 page)
         return OpResult::Success;
     };
 
-    EMIT_RETURN(setCalPageDone, tryQuery(action));
+    EMIT_RETURN(setCalPageDone, tryQuery(action), segment, page);
 }
 
 OpResult Connection::programStart()
@@ -462,11 +465,11 @@ OpResult Connection::programStart()
 OpResult Connection::programClear(XcpPtr base, int len)
 {
     if(!mConnected)
-        EMIT_RETURN(programClearDone, OpResult::NotConnected);
+        EMIT_RETURN(programClearDone, OpResult::NotConnected, base, len);
     if(!mPgmStarted)
-        EMIT_RETURN(programClearDone, OpResult::WrongMode);
+        EMIT_RETURN(programClearDone, OpResult::WrongMode, base, len);
     if(len % mAddrGran)
-        EMIT_RETURN(programClearDone, OpResult::AddrGranError);
+        EMIT_RETURN(programClearDone, OpResult::AddrGranError, base, len);
 
     std::vector<quint8> query({0xD1, 0x00, 0, 0, 0, 0, 0, 0});
     toSlaveEndian<quint32>(len / mAddrGran, query.data() + 4);
@@ -488,17 +491,17 @@ OpResult Connection::programClear(XcpPtr base, int len)
         return OpResult::Success;
     };
 
-    EMIT_RETURN(programClearDone, tryQuery(action));
+    EMIT_RETURN(programClearDone, tryQuery(action), base, len);
 }
 
 OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
 {
     if(!mConnected)
-        EMIT_RETURN(programClearDone, OpResult::NotConnected);
+        EMIT_RETURN(programRangeDone, OpResult::NotConnected, base, data);
     if(!mPgmStarted)
-        EMIT_RETURN(programClearDone, OpResult::WrongMode);
+        EMIT_RETURN(programRangeDone, OpResult::WrongMode, base, data);
     if(data.size() % mAddrGran)
-        EMIT_RETURN(programRangeDone, OpResult::AddrGranError);
+        EMIT_RETURN(programRangeDone, OpResult::AddrGranError, base, data);
 
     std::vector<quint8>::const_iterator dataIt = data.begin();
     while(dataIt != data.end())
@@ -508,26 +511,26 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
         {
             int blockBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxBlocksize * mPgmMaxDownPayload));
             std::vector<quint8> blockData(dataIt, dataIt + blockBytes);
-            EMIT_RETURN_ON_FAIL(programRangeDone, programBlock(startPtr, blockData));
+            EMIT_RETURN_ON_FAIL(programRangeDone, programBlock(startPtr, blockData), base, data);
             dataIt += blockBytes;
         }
         else
         {
             int packetBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxDownPayload));
             std::vector<quint8> packetData(dataIt, dataIt + packetBytes);
-            EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData));
+            EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData), base, data);
             dataIt += packetBytes;
         }
     }
-    return OpResult::Success;
+    EMIT_RETURN(programRangeDone, OpResult::Success, base, data);
 }
 
 OpResult Connection::programVerify(quint32 crc)
 {
     if(!mConnected)
-        EMIT_RETURN(programClearDone, OpResult::NotConnected);
+        EMIT_RETURN(programVerifyDone, OpResult::NotConnected, crc);
     if(!mPgmStarted)
-        EMIT_RETURN(programClearDone, OpResult::WrongMode);
+        EMIT_RETURN(programVerifyDone, OpResult::WrongMode, crc);
 
     std::vector<quint8> query({0xC8, 0x01, 0, 0, 0, 0, 0, 0});
     toSlaveEndian<quint16>(0x0002, query.data() + 2);
@@ -545,15 +548,15 @@ OpResult Connection::programVerify(quint32 crc)
         return OpResult::Success;
     };
 
-    EMIT_RETURN(programVerifyDone, tryQuery(action));
+    EMIT_RETURN(programVerifyDone, tryQuery(action), crc);
 }
 
 OpResult Connection::programReset()
 {
     if(!mConnected)
-        EMIT_RETURN(programClearDone, OpResult::NotConnected);
+        EMIT_RETURN(programResetDone, OpResult::NotConnected);
     if(!mPgmStarted)
-        EMIT_RETURN(programClearDone, OpResult::WrongMode);
+        EMIT_RETURN(programResetDone, OpResult::WrongMode);
 
     std::function<OpResult (void)> action = [this]()
     {
@@ -830,7 +833,10 @@ OpResult Connection::buildChecksum(XcpPtr base, int len, CksumType *typeOut, qui
     if(len % mAddrGran != 0)
         return OpResult::AddrGranError;
 
-    std::function<OpResult (void)> action = [this, base, len, typeOut, cksumOut]()
+    CksumType typeVal = CksumType::Invalid;
+    quint32 cksumVal = 0;
+
+    std::function<OpResult (void)> action = [this, base, len, &typeVal, &cksumVal, typeOut, cksumOut]()
     {
         static constexpr char OPMSG[] = "building checksum";
         static const std::map<quint8, CksumType> CKSUM_TYPE_CODES = {
@@ -870,16 +876,16 @@ OpResult Connection::buildChecksum(XcpPtr base, int len, CksumType *typeOut, qui
         }
 
         mCalcMta = base;
+        typeVal = type->second;
+        cksumVal = fromSlaveEndian<quint32>(reply.data() + 4);
         if(typeOut)
-            *typeOut = type->second;
+            *typeOut = typeVal;
         if(cksumOut)
-            *cksumOut = fromSlaveEndian<quint32>(reply.data() + 4);
-        emit buildChecksumDone(OpResult::Success, type->second, fromSlaveEndian<quint32>(reply.data() + 4));
+            *cksumOut = cksumVal;
         return OpResult::Success;
     };
 
-    EMIT_RETURN_ON_FAIL(buildChecksumDone, tryQuery(action));
-    return OpResult::Success;
+    EMIT_RETURN(buildChecksumDone, tryQuery(action), base, len, typeVal, cksumVal);
 }
 
 OpResult Connection::getAvailSlavesStr(QString bcastIdStr, QString filterStr, QList<QString> *out)
@@ -887,20 +893,20 @@ OpResult Connection::getAvailSlavesStr(QString bcastIdStr, QString filterStr, QL
     boost::optional<Xcp::Interface::Can::Id> bcastId = Xcp::Interface::Can::StrToId(bcastIdStr);
     if(!bcastId)
     {
-        emit getAvailSlavesStrDone(OpResult::InvalidArgument, QList<QString>());
+        emit getAvailSlavesStrDone(OpResult::InvalidArgument, bcastIdStr, filterStr, QList<QString>());
         return OpResult::InvalidArgument;
     }
     boost::optional<Xcp::Interface::Can::Filter> filter = Xcp::Interface::Can::StrToFilter(filterStr);
     if(!filter)
     {
-        emit getAvailSlavesStrDone(OpResult::InvalidArgument, QList<QString>());
+        emit getAvailSlavesStrDone(OpResult::InvalidArgument, bcastIdStr, filterStr, QList<QString>());
         return OpResult::InvalidArgument;
     }
     std::vector<Interface::Can::SlaveId> ids;
     OpResult getAvailRes = getAvailSlaves(bcastId.get(), filter.get(), &ids);
     if(getAvailRes != OpResult::Success)
     {
-        emit getAvailSlavesStrDone(getAvailRes, QList<QString>());
+        emit getAvailSlavesStrDone(getAvailRes, bcastIdStr, filterStr, QList<QString>());
         return getAvailRes;
     }
     QList<QString> idStrs;
@@ -908,7 +914,7 @@ OpResult Connection::getAvailSlavesStr(QString bcastIdStr, QString filterStr, QL
         idStrs.append(Interface::Can::SlaveIdToStr(id));
     if(out)
         *out = idStrs;
-    emit getAvailSlavesStrDone(OpResult::Success, idStrs);
+    emit getAvailSlavesStrDone(OpResult::Success, bcastIdStr, filterStr, idStrs);
     return OpResult::Success;
 }
 
@@ -917,7 +923,7 @@ OpResult Connection::getAvailSlaves(Interface::Can::Id bcastId, Interface::Can::
     SetupTools::Xcp::Interface::Can::Interface *canIntfc = qobject_cast<SetupTools::Xcp::Interface::Can::Interface *>(mIntfc);
     if(!canIntfc)
     {
-        emit getAvailSlavesDone(OpResult::InvalidOperation, std::vector<Interface::Can::SlaveId>());
+        emit getAvailSlavesDone(OpResult::InvalidOperation, bcastId, filter, std::vector<Interface::Can::SlaveId>());
         return OpResult::InvalidOperation;
     }
     static const std::vector<quint8> QUERY = {0xF2, 0xFF, 0x58, 0x43, 0x50, 0x00};
@@ -925,19 +931,19 @@ OpResult Connection::getAvailSlaves(Interface::Can::Id bcastId, Interface::Can::
     OpResult setFilterRes = canIntfc->setFilter(filter);
     if(setFilterRes != OpResult::Success)
     {
-        emit getAvailSlavesDone(setFilterRes, std::vector<Interface::Can::SlaveId>());
+        emit getAvailSlavesDone(setFilterRes, bcastId, filter, std::vector<Interface::Can::SlaveId>());
         return setFilterRes;
     }
     OpResult clearReceivedRes = canIntfc->clearReceived();
     if(clearReceivedRes != OpResult::Success)
     {
-        emit getAvailSlavesDone(clearReceivedRes, std::vector<Interface::Can::SlaveId>());
+        emit getAvailSlavesDone(clearReceivedRes, bcastId, filter, std::vector<Interface::Can::SlaveId>());
         return clearReceivedRes;
     }
     OpResult transmitRes = canIntfc->transmitTo(QUERY, bcastId);
     if(transmitRes != OpResult::Success)
     {
-        emit getAvailSlavesDone(transmitRes, std::vector<Interface::Can::SlaveId>());
+        emit getAvailSlavesDone(transmitRes, bcastId, filter, std::vector<Interface::Can::SlaveId>());
         return transmitRes;
     }
     QThread::msleep(mTimeoutMsec);
@@ -959,7 +965,7 @@ OpResult Connection::getAvailSlaves(Interface::Can::Id bcastId, Interface::Can::
     }
     if(out)
         *out = ids;
-    emit getAvailSlavesDone(OpResult::Success, ids);
+    emit getAvailSlavesDone(OpResult::Success, bcastId, filter, ids);
     return OpResult::Success;
 }
 
