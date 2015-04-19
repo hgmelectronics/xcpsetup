@@ -222,9 +222,9 @@ void ConnectionFacade::onConnProgramRangeDone(OpResult result, XcpPtr base, std:
     emit programRangeDone(result, base, data);
 }
 
-void ConnectionFacade::onConnProgramVerifyDone(OpResult result, quint32 crc)
+void ConnectionFacade::onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc)
 {
-    emit programVerifyDone(result, crc);
+    emit programVerifyDone(result, mta, crc);
 }
 
 void ConnectionFacade::onConnProgramResetDone(OpResult result)
@@ -285,7 +285,7 @@ void SimpleDataLayer::uploadUint32(quint32 base)
     mConn->upload(ptr, 4); // ignoring return values for this test case
 }
 
-void SimpleDataLayer::onConnUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> dataVec)
+void SimpleDataLayer::onConnUploadDone(OpResult result, XcpPtr base, int len, const std::vector<quint8> &dataVec)
 {
     Q_UNUSED(base);
     Q_UNUSED(len);
@@ -307,7 +307,7 @@ void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
     mConn->download(ptr, dataVec);
 }
 
-void SimpleDataLayer::onConnDownloadDone(OpResult result, XcpPtr base, std::vector<quint8> data)
+void SimpleDataLayer::onConnDownloadDone(OpResult result, XcpPtr base, const std::vector<quint8> &data)
 {
     Q_UNUSED(base);
     Q_UNUSED(data);

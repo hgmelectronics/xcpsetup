@@ -51,13 +51,13 @@ void ProgramLayer::program(FlashProg *prog, quint8 addrExt)
 {
     if(mState != State::Idle)
     {
-        emit programDone(OpResult::InvalidOperation);
+        emit programDone(OpResult::InvalidOperation, prog, addrExt);
         return;
     }
 
     if(prog->blocks().size() == 0)
     {
-        emit programDone(OpResult::Success);
+        emit programDone(OpResult::Success, prog, addrExt);
         return;
     }
 
@@ -72,19 +72,19 @@ void ProgramLayer::programVerify(FlashProg *prog, CksumType type, quint8 addrExt
 {
     if(mState != State::Idle)
     {
-        emit programVerifyDone(OpResult::InvalidOperation);
+        emit programVerifyDone(OpResult::InvalidOperation, prog, type, addrExt);
         return;
     }
 
     if(prog->blocks().size() == 0)
     {
-        emit programVerifyDone(OpResult::Success);
+        emit programVerifyDone(OpResult::Success, prog, type, addrExt);
         return;
     }
 
     if(prog->blocks().size() > 1)   // result is undefined for multiple blocks - what is in the intervening space?
     {
-        emit programVerifyDone(OpResult::InvalidArgument);
+        emit programVerifyDone(OpResult::InvalidArgument, prog, type, addrExt);
         return;
     }
 
@@ -100,13 +100,13 @@ void ProgramLayer::buildChecksumVerify(FlashProg *prog, quint8 addrExt)
 {
     if(mState != State::Idle)
     {
-        emit buildChecksumVerifyDone(OpResult::InvalidOperation);
+        emit buildChecksumVerifyDone(OpResult::InvalidOperation, prog, addrExt);
         return;
     }
 
     if(prog->blocks().size() == 0)
     {
-        emit buildChecksumVerifyDone(OpResult::Success);
+        emit buildChecksumVerifyDone(OpResult::Success, prog, addrExt);
         return;
     }
 
@@ -143,7 +143,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         if(result != OpResult::Success)
         {
             mState = State::Idle;
-            emit programDone(result);
+            emit programDone(result, mActiveProg, mActiveAddrExt);
             return;
         }
         mActiveProgBlock = mActiveProg->blocks().begin();
@@ -153,7 +153,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         if(result != OpResult::Success)
         {
             mState = State::Idle;
-            emit programVerifyDone(result);
+            emit programVerifyDone(result, mActiveProg, mActiveCksumType, mActiveAddrExt);
             return;
         }
         {
@@ -169,7 +169,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         if(result != OpResult::Success)
         {
             mState = State::Idle;
-            emit buildChecksumVerifyDone(result);
+            emit buildChecksumVerifyDone(result, mActiveProg, mActiveAddrExt);
             return;
         }
         mActiveProgBlock = mActiveProg->blocks().begin();
@@ -187,25 +187,29 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
     }
 }
 
-void ProgramLayer::onConnProgramClearDone(OpResult result)
+void ProgramLayer::onConnProgramClearDone(OpResult result, XcpPtr base, int len)
 {
+    Q_UNUSED(base);
+    Q_UNUSED(len);
     Q_ASSERT(mState == State::Program);
     if(result != OpResult::Success)
     {
         mState = State::Idle;
-        emit programDone(result);
+        emit programDone(result, mActiveProg, mActiveAddrExt);
         return;
     }
     mConn->programRange({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data);
 }
 
-void ProgramLayer::onConnProgramRangeDone(OpResult result)
+void ProgramLayer::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data)
 {
+    Q_UNUSED(base);
+    Q_UNUSED(data);
     Q_ASSERT(mState == State::Program);
     if(result != OpResult::Success)
     {
         mState = State::Idle;
-        emit programDone(result);
+        emit programDone(result, mActiveProg, mActiveAddrExt);
         return;
     }
 
@@ -218,24 +222,28 @@ void ProgramLayer::onConnProgramRangeDone(OpResult result)
     else
     {
         mState = State::Idle;
-        emit programDone(OpResult::Success);
+        emit programDone(OpResult::Success, mActiveProg, mActiveAddrExt);
     }
 }
 
-void ProgramLayer::onConnProgramVerifyDone(OpResult result)
+void ProgramLayer::onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc)
 {
+    Q_UNUSED(mta);
+    Q_UNUSED(crc);
     Q_ASSERT(mState == State::ProgramVerify);
     mState = State::Idle;
-    emit programVerifyDone(result);
+    emit programVerifyDone(result, mActiveProg, mActiveCksumType, mActiveAddrExt);
 }
 
-void ProgramLayer::onConnBuildChecksumDone(OpResult result, CksumType type, quint32 cksum)
+void ProgramLayer::onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum)
 {
+    Q_UNUSED(base);
+    Q_UNUSED(len);
     Q_ASSERT(mState == State::BuildChecksumVerify);
     if(result != OpResult::Success)
     {
         mState = State::Idle;
-        emit buildChecksumVerifyDone(result, type, cksum);
+        emit buildChecksumVerifyDone(result, mActiveProg, mActiveAddrExt, type, cksum);
         return;
     }
 
@@ -244,7 +252,7 @@ void ProgramLayer::onConnBuildChecksumDone(OpResult result, CksumType type, quin
     if(masterCksum != cksum)
     {
         mState = State::Idle;
-        emit buildChecksumVerifyDone(OpResult::BadCksum, type, cksum);
+        emit buildChecksumVerifyDone(OpResult::BadCksum, mActiveProg, mActiveAddrExt, type, cksum);
         return;
     }
 
@@ -257,7 +265,7 @@ void ProgramLayer::onConnBuildChecksumDone(OpResult result, CksumType type, quin
     else
     {
         mState = State::Idle;
-        emit buildChecksumVerifyDone(OpResult::Success, type, cksum);
+        emit buildChecksumVerifyDone(OpResult::Success, mActiveProg, mActiveAddrExt, type, cksum);
     }
 }
 

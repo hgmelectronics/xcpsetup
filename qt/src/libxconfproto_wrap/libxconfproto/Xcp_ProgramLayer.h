@@ -25,9 +25,9 @@ public:
     void setSlaveId(QString);
     ConnectionFacade *conn();
 signals:
-    void programDone(OpResult result);
-    void programVerifyDone(OpResult result);
-    void buildChecksumVerifyDone(OpResult result, CksumType type = CksumType::Invalid, quint32 cksum = 0);
+    void programDone(OpResult result, FlashProg *prog, quint8 addrExt);
+    void programVerifyDone(OpResult result, FlashProg *prog, CksumType type, quint8 addrExt);
+    void buildChecksumVerifyDone(OpResult result, FlashProg *prog, quint8 addrExt, CksumType type = CksumType::Invalid, quint32 cksum = 0);
     void programResetDone(OpResult result);
 public slots:
     void program(FlashProg *prog, quint8 addrExt = 0);
@@ -36,10 +36,10 @@ public slots:
     void programReset();
 
     void onConnSetStateDone(OpResult result);
-    void onConnProgramClearDone(OpResult result);
-    void onConnProgramRangeDone(OpResult result);
-    void onConnProgramVerifyDone(OpResult result);
-    void onConnBuildChecksumDone(OpResult result, CksumType type, quint32 cksum);
+    void onConnProgramClearDone(OpResult result, XcpPtr base, int len);
+    void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
+    void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void onConnProgramResetDone(OpResult result);
 private:
     enum class State

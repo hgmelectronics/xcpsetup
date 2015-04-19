@@ -184,7 +184,7 @@ signals:
     void programStartDone(OpResult result);
     void programClearDone(OpResult result, XcpPtr base, int len);
     void programRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
-    void programVerifyDone(OpResult result, quint32 crc);
+    void programVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
     void programResetDone(OpResult result);
     void buildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void getAvailSlavesDone(OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);

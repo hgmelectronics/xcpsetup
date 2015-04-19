@@ -48,13 +48,13 @@ public:
 signals:
     void stateChanged();
 
-    void uploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data);
-    void downloadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void uploadDone(OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
+    void downloadDone(OpResult result, XcpPtr base, const std::vector<quint8> &data);
     void nvWriteDone(OpResult result);
     void setCalPageDone(OpResult result, quint8 segment, quint8 page);
     void programClearDone(OpResult result, XcpPtr base, int len);
-    void programRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
-    void programVerifyDone(OpResult result, quint32 crc);
+    void programRangeDone(OpResult result, XcpPtr base, const std::vector<quint8> &data);
+    void programVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
     void programResetDone(OpResult result);
     void buildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void getAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
@@ -92,7 +92,7 @@ public slots:
     void onConnSetCalPageDone(OpResult result, quint8 segment, quint8 page);
     void onConnProgramClearDone(OpResult result, XcpPtr base, int len);
     void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
-    void onConnProgramVerifyDone(OpResult result, quint32 crc);
+    void onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
     void onConnProgramResetDone(OpResult result);
     void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void onConnGetAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
@@ -122,8 +122,8 @@ signals:
 public slots:
     void uploadUint32(quint32 base);
     void downloadUint32(quint32 base, quint32 data);
-    void onConnUploadDone(OpResult, XcpPtr, int, std::vector<quint8>);
-    void onConnDownloadDone(OpResult, XcpPtr, std::vector<quint8>);
+    void onConnUploadDone(OpResult, XcpPtr, int, const std::vector<quint8> &);
+    void onConnDownloadDone(OpResult, XcpPtr, const std::vector<quint8> &);
 private:
     ConnectionFacade *mConn;
 };

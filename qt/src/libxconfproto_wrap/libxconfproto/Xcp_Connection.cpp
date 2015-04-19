@@ -535,9 +535,9 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
 OpResult Connection::programVerify(XcpPtr mta, quint32 crc)
 {
     if(!mConnected)
-        EMIT_RETURN(programVerifyDone, OpResult::NotConnected, crc);
+        EMIT_RETURN(programVerifyDone, OpResult::NotConnected, mta, crc);
     if(!mPgmStarted)
-        EMIT_RETURN(programVerifyDone, OpResult::WrongMode, crc);
+        EMIT_RETURN(programVerifyDone, OpResult::WrongMode, mta, crc);
 
     std::vector<quint8> query({0xC8, 0x01, 0, 0, 0, 0, 0, 0});
     toSlaveEndian<quint16>(0x0002, query.data() + 2);
@@ -558,7 +558,7 @@ OpResult Connection::programVerify(XcpPtr mta, quint32 crc)
         return OpResult::Success;
     };
 
-    EMIT_RETURN(programVerifyDone, tryQuery(action), crc);
+    EMIT_RETURN(programVerifyDone, tryQuery(action), mta, crc);
 }
 
 OpResult Connection::programReset()
