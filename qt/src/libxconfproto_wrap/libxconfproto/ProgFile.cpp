@@ -24,7 +24,7 @@ void ProgFile::setName(QString newName)
     if(mValid)
     {
         mValid = false;
-        emit validChanged();
+        emit progChanged();
     }
 }
 
@@ -39,7 +39,7 @@ void ProgFile::setType(ProgFile::Type newType)
     if(mValid)
     {
         mValid = false;
-        emit validChanged();
+        emit progChanged();
     }
 }
 
@@ -63,6 +63,16 @@ const FlashProg &ProgFile::prog() const
     return mProg;
 }
 
+int ProgFile::size()
+{
+    return mProg.size();
+}
+
+uint ProgFile::base()
+{
+    return mProg.base();
+}
+
 ProgFile::Result ProgFile::read()
 {
     for(auto blockPtr : mProg.blocks())
@@ -74,15 +84,17 @@ ProgFile::Result ProgFile::read()
     if(!file.open(QFile::ReadOnly))
         return Result::FileOpenFail;
 
+    Result ret = Result::InvalidType;
     switch(mType)
     {
     case Srec:
-        return readSrec(file);
-        break;  // cosmetic only
+        ret = readSrec(file);
+        break;
     default:
-        return Result::InvalidType;
         break;
     }
+    emit progChanged();
+    return ret;
 }
 
 namespace SrecDetail

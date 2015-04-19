@@ -14,8 +14,10 @@ class ProgFile : public QObject
     Q_ENUMS(Result)
     Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(Type type READ type WRITE setType)
-    Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
-    Q_PROPERTY(FlashProg *prog READ progPtr)
+    Q_PROPERTY(bool valid READ valid NOTIFY progChanged)
+    Q_PROPERTY(FlashProg *prog READ progPtr NOTIFY progChanged)
+    Q_PROPERTY(int size READ size NOTIFY progChanged)
+    Q_PROPERTY(uint base READ base NOTIFY progChanged)
 public:
     enum Type
     {
@@ -40,10 +42,12 @@ public:
     FlashProg *progPtr();
     FlashProg &prog();
     const FlashProg &prog() const;
+    int size();
+    uint base();
 public slots:
     Result read();
 signals:
-    void validChanged();
+    void progChanged();
 private:
     Result readSrec(QFile &file);
 

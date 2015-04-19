@@ -30,6 +30,8 @@ public:
     QList<FlashBlock *> &blocks();
     QQmlListProperty<FlashBlock> blocksQml();
     Q_INVOKABLE void infillToSingleBlock(quint8 fillValue = 0xFF);
+    int size();
+    uint base();
 private:
     QList<FlashBlock *> mBlocks;
 };

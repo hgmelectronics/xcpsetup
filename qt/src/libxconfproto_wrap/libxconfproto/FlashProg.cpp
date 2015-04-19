@@ -42,6 +42,19 @@ LIBXCONFPROTOSHARED_EXPORT void FlashProg::infillToSingleBlock(quint8 fillValue)
     mBlocks.clear();
     mBlocks.append(combined);
 }
+LIBXCONFPROTOSHARED_EXPORT int FlashProg::size()
+{
+    int size = 0;
+    for(FlashBlock *block : mBlocks)
+        size += block->data.size();
+    return size;
+}
 
+LIBXCONFPROTOSHARED_EXPORT uint FlashProg::base()
+{
+    if(mBlocks.size() == 0)
+        return 0;
+    return mBlocks[0]->base;
+}
 
 }   // namespace SetupTools

@@ -5,6 +5,7 @@
 #include <MultiselectList.h>
 #include <ProgFile.h>
 #include <Xcp_ProgramLayer.h>
+#include "Xcp_Interface_Can_Interface.h"
 
 namespace SetupTools
 {
@@ -25,7 +26,7 @@ namespace SetupTools
 class IbemTool : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(MultiselectListModel slaveListModel READ slaveListModel NOTIFY slaveListModelChanged)
+    Q_PROPERTY(MultiselectListModel *slaveListModel READ slaveListModel NOTIFY slaveListModelChanged)
     Q_PROPERTY(QString programFilePath READ programFilePath WRITE setProgramFilePath NOTIFY programChanged)
     Q_PROPERTY(int programSize READ programSize NOTIFY programChanged)
     Q_PROPERTY(uint programBase READ programBase NOTIFY programChanged)
@@ -53,15 +54,32 @@ signals:
 
     void programmingDone(bool ok);
 public slots:
+    void onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void startProgramming();
-    void onSetSlaveIdDone(Xcp::OpResult result);
-    void onProgramDone(Xcp::OpResult result);
-    void onProgramVerifyDone(Xcp::OpResult result);
+    void onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
+    void onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
     void onProgramResetDone(Xcp::OpResult result);
+    void onProgFileChanged();
 private:
+    enum class State
+    {
+        Idle = 0,
+        Program,
+        ProgramVerify,
+        ProgramReset1,
+        ProgramReset2,
+        N_STATES
+    };
+    static const QString BCAST_ID_STR;
+    static const Xcp::Interface::Can::Filter SLAVE_FILTER;
+    static const QString SLAVE_FILTER_STR;
+
     Xcp::ProgramLayer *mProgLayer;
     ProgFile *mProgFile;
     MultiselectListModel *mSlaveListModel;
+    QList<MultiselectListWrapper *>::iterator mActiveSlave;
+    State mState;
+    int mTotalSlaves, mSlavesDone;
 };
 
 } // namespace SetupTools
