@@ -38,6 +38,24 @@ QString IbemTool::programFilePath()
 void IbemTool::setProgramFilePath(QString path)
 {
     mProgFile->setName(path);
+
+    if(mProgFile->name().size() > 0 &&
+            mProgFile->type() != ProgFile::Type::Invalid)
+        mProgFile->read();
+}
+
+int IbemTool::programFileType()
+{
+    return mProgFile->type();
+}
+
+void IbemTool::setProgramFileType(int type)
+{
+    mProgFile->setType(static_cast<ProgFile::Type>(type));
+
+    if(mProgFile->name().size() > 0 &&
+            mProgFile->type() != ProgFile::Type::Invalid)
+        mProgFile->read();
 }
 
 int IbemTool::programSize()
@@ -55,12 +73,13 @@ bool IbemTool::programOk()
     return mProgFile->valid();
 }
 
-int IbemTool::progress()
+double IbemTool::progress()
 {
     if(mTotalSlaves == 0)
         return 0;
     else
-        return (100 * (mSlavesDone * static_cast<int>(State::N_STATES) + static_cast<int>(mState))) / mTotalSlaves;
+        return double(mSlavesDone * N_STATES + static_cast<int>(mState))
+                / (mTotalSlaves * N_STATES);
 }
 
 QString IbemTool::intfcUri()

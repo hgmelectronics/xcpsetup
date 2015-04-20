@@ -28,10 +28,11 @@ class IbemTool : public QObject
     Q_OBJECT
     Q_PROPERTY(MultiselectListModel *slaveListModel READ slaveListModel NOTIFY slaveListModelChanged)
     Q_PROPERTY(QString programFilePath READ programFilePath WRITE setProgramFilePath NOTIFY programChanged)
+    Q_PROPERTY(int programFileType READ programFileType WRITE setProgramFileType NOTIFY programChanged)
     Q_PROPERTY(int programSize READ programSize NOTIFY programChanged)
     Q_PROPERTY(uint programBase READ programBase NOTIFY programChanged)
     Q_PROPERTY(bool programOk READ programOk NOTIFY programChanged)
-    Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(double progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QString intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcUriChanged)
 public:
     explicit IbemTool(QObject *parent = 0);
@@ -40,10 +41,12 @@ public:
     MultiselectListModel *slaveListModel();
     QString programFilePath();
     void setProgramFilePath(QString path);
+    int programFileType();
+    void setProgramFileType(int type);
     int programSize();
     uint programBase();
     bool programOk();
-    int progress();
+    double progress();
     QString intfcUri();
     void setIntfcUri(QString uri);
 signals:
@@ -68,8 +71,9 @@ private:
         ProgramVerify,
         ProgramReset1,
         ProgramReset2,
-        N_STATES
+        _N_STATES
     };
+    constexpr static const int N_STATES = static_cast<int>(State::_N_STATES);
     static const QString BCAST_ID_STR;
     static const Xcp::Interface::Can::Filter SLAVE_FILTER;
     static const QString SLAVE_FILTER_STR;
