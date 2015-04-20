@@ -233,6 +233,7 @@ ProgFile::Result ProgFile::readSrec(QFile &file)
             // make a new block
             mProg.blocks().push_back(new FlashBlock(&mProg));
             appendBlock = mProg.blocks().back();
+            appendBlock->base = line.base;
         }
 
         // Reserve best guess amount of memory needed (assumes rest of srecords are appendable to this block)
@@ -243,6 +244,7 @@ ProgFile::Result ProgFile::readSrec(QFile &file)
 
         remainingSize -= line.data.size();
     }
+    mValid = true;
     return Result::Ok;
 }
 
