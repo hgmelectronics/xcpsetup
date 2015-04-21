@@ -11,7 +11,8 @@ namespace Loopback
 
 LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Interface(parent),
-    mPacketLogEnabled(false)
+    mPacketLogEnabled(false),
+    mHasReliableTx(true)
 {
     mPacketTimer.start();
 }
@@ -59,6 +60,16 @@ std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::slaveRec
 void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
+}
+
+LIBXCONFPROTOSHARED_EXPORT void Interface::setHasReliableTx(bool val)
+{
+    mHasReliableTx = val;
+}
+
+LIBXCONFPROTOSHARED_EXPORT bool Interface::hasReliableTx()
+{
+    return mHasReliableTx;
 }
 
 }   // namespace Can

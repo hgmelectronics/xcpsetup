@@ -28,9 +28,12 @@ public:
     void slaveTransmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the master
     std::vector<std::vector<quint8> > slaveReceive(int timeoutMsec);   //!< Fetch all packets from the master currently in the Tx buffer, returning after timeout if no packets
     virtual void setPacketLog(bool enable);
+    void setHasReliableTx(bool val);
+    virtual bool hasReliableTx();
 private:
     PythonicQueue<std::vector<quint8> > mMasterReceiveQueue, mSlaveReceiveQueue;
     bool mPacketLogEnabled;
+    bool mHasReliableTx;
     QElapsedTimer mPacketTimer;
 };
 
