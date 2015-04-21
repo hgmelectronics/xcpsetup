@@ -74,7 +74,7 @@ EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListModel::insertRows(int row, int c
 {
     if(parent != QModelIndex()
             || row > rowCount()
-            || count < 0)
+            || count <= 0)
         return false;
     beginInsertRows(QModelIndex(), row, row + count - 1);
     for(int iRow = 0; iRow < count; ++iRow)
@@ -87,7 +87,7 @@ EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListModel::removeRows(int row, int c
 {
     if(parent != QModelIndex()
             || row < 0
-            || count < 0
+            || count <= 0
             || (row + count) > mList.size())
         return false;
     beginRemoveRows(QModelIndex(), row, row + count - 1);
