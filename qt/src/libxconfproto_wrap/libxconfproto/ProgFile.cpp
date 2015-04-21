@@ -65,7 +65,7 @@ LIBXCONFPROTOSHARED_EXPORT const FlashProg &ProgFile::prog() const
     return mProg;
 }
 
-LIBXCONFPROTOSHARED_EXPORTint ProgFile::size()
+LIBXCONFPROTOSHARED_EXPORT int ProgFile::size()
 {
     return mProg.size();
 }
