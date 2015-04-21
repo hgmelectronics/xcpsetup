@@ -7,6 +7,9 @@
 #include <QThread>
 #include <QByteArray>
 #include <deque>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QJSEngine>
+#include <QtQml/QQmlListProperty>
 
 namespace SetupTools
 {
@@ -199,6 +202,17 @@ private:
     QWaitCondition mCond;
     bool mFlag;
 };
+
+class UrlUtil : public QObject
+{
+    Q_OBJECT
+public:
+    explicit UrlUtil(QObject *parent = 0);
+    ~UrlUtil();
+    Q_INVOKABLE QString urlToLocalFile(QString url);
+};
+
+QObject *urlUtilProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
 }   // namespace SetupTools
 #endif // UTIL_H

@@ -45,7 +45,7 @@ ColumnLayout {
             modality: Qt.NonModal
             nameFilters: [ "S-record files (*.srec)", "Foobar (*)" ]
             onAccepted: {
-                filePath = decodeURIComponent(fileUrl.toString().replace(/^(file:\/{2})/, ""))
+                filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
                 if(selectedNameFilter == "S-record files (*.srec)")
                     fileType = ProgFile.Srec;
                 else

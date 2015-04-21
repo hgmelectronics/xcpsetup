@@ -1,4 +1,5 @@
 #include "util.h"
+#include <QUrl>
 
 namespace SetupTools
 {
@@ -127,6 +128,25 @@ bool PythonicEvent::wait(unsigned long timeoutMsec)
     if(mFlag)
         return true;
     return mCond.wait(locker.mutex(), timeoutMsec);
+}
+
+UrlUtil::UrlUtil(QObject *parent) : QObject(parent)
+{}
+
+UrlUtil::~UrlUtil()
+{}
+
+QString UrlUtil::urlToLocalFile(QString urlStr)
+{
+    QUrl url(urlStr);
+    return url.toLocalFile();
+}
+
+QObject *urlUtilProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+    return new UrlUtil();
 }
 
 }   // namespace SetupTools
