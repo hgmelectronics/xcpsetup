@@ -46,6 +46,7 @@ public:
     uint base();
 public slots:
     Result read();
+    void onProgChanged();
 signals:
     void progChanged();
 private:

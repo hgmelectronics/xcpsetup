@@ -47,17 +47,24 @@ ApplicationWindow {
     MainForm {
         id: mainForm
         anchors.fill: parent
-        toolReady: ibemTool.programOk && (1)    // FIXME check if intfc ready
-        progBaseText: ibemTool.programOk ? "0x" + ibemTool.programBase.toString(16).toUpperCase() : ""
+        toolReady: ibemTool.programOk && ibemTool.intfcOk
+        toolBusy: !ibemTool.idle
+        progBaseText: ibemTool.programOk ? "0x00000000".substr(0, 10 - ibemTool.programBase.toString(16).length) + ibemTool.programBase.toString(16).toUpperCase() : ""
         progSizeText: ibemTool.programOk ? ibemTool.programSize.toString(10) : ""
+        progCksumText: ibemTool.programOk ? "0x00000000".substr(0, 10 - ibemTool.programCksum.toString(16).length) + ibemTool.programCksum.toString(16).toUpperCase() : ""
         progressValue: ibemTool.progress
         onUserStart: ibemTool.startProgramming()
+        targetsModel: ibemTool.slaveListModel
+        onUserAbort: ibemTool.abort()
+        onUserPollForSlaves: ibemTool.pollForSlaves()
+        //onIntfcUriChanged: ibemTool.intfcUri = intfcUri
     }
 
     IbemTool {
         id: ibemTool
         programFilePath: mainForm.progFilePath
         programFileType: mainForm.progFileType
+        intfcUri: mainForm.intfcUri
         onProgrammingDone: {
             if(ok)
                 messageDialog.show("Programming complete")
@@ -101,7 +108,7 @@ ApplicationWindow {
 
     Window {
         id: aboutDialog
-        title: "About EjectorConsole"
+        title: "About IBEMTool"
         width: col.implicitWidth + 20
         height: col.implicitHeight + 20
         maximumWidth: col.implicitWidth + 20
@@ -117,10 +124,10 @@ ApplicationWindow {
                 spacing: 5
                 Label {
                     font.pixelSize: 18
-                    text: "EjectorConsole 1.0"
+                    text: "IBEMTool 1.0"
                 }
                 Label {
-                    text: "Copyright \u00A9 2015 Sonijector LLC"
+                    text: "Copyright \u00A9 2015 Ebus Inc."
                 }
                 Label {
                     textFormat: Text.RichText
@@ -182,4 +189,6 @@ ApplicationWindow {
                 }
             }
     }
+
+    //Component.onCompleted: ibemTool.intfcUri = mainForm.intfcUri
 }

@@ -18,28 +18,10 @@ namespace Xcp
 
 #define RESETMTA_RETURN_ON_FAIL(value) { OpResult EMIT_RETURN__ret = value; if(EMIT_RETURN__ret != OpResult::Success) { mCalcMta.reset(); return EMIT_RETURN__ret; } }
 
-quint32 Connection::computeCksum(CksumType type, const std::vector<quint8> &data)
+LIBXCONFPROTOSHARED_EXPORT boost::optional<quint32> computeCksumStatic(CksumType type, const std::vector<quint8> &data)
 {
     switch(type)
     {
-    case CksumType::XCP_ADD_11:
-        return additiveChecksum<quint8, quint8>(data);
-        break;
-    case CksumType::XCP_ADD_12:
-        return additiveChecksum<quint16, quint8>(data);
-        break;
-    case CksumType::XCP_ADD_14:
-        return additiveChecksum<quint32, quint8>(data);
-        break;
-    case CksumType::XCP_ADD_22:
-        return additiveChecksum<quint16, quint16>(data);
-        break;
-    case CksumType::XCP_ADD_24:
-        return additiveChecksum<quint32, quint16>(data);
-        break;
-    case CksumType::XCP_ADD_44:
-        return additiveChecksum<quint32, quint32>(data);
-        break;
     case CksumType::XCP_CRC_16:
         {
             boost::crc_16_type computer;
@@ -63,23 +45,59 @@ quint32 Connection::computeCksum(CksumType type, const std::vector<quint8> &data
         break;
     case CksumType::ST_CRC_32:
         {
+            // template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly, BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor, bool ReflectIn, bool ReflectRem > boost::crc_optimal
+            // typedef crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true, true> crc_32_type;
             boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0x00000000, false, false> computer;
-            computer.process_block(data.data(), data.data() + data.size());
+            int nWords = data.size() / sizeof(quint32);
+            boost::iterator_range<const quint32 *> words(reinterpret_cast<const quint32 *>(data.data()), reinterpret_cast<const quint32 *>(data.data()) + nWords);
+            for(quint32 word : words)
+            {
+                decltype(word) flipWord = qFromBigEndian(word);
+                computer.process_bytes(&flipWord, sizeof(flipWord));
+            }
             return computer.checksum();
         }
         break;
-    case CksumType::XCP_USER_DEFINED:
-        Q_ASSERT(type != CksumType::XCP_USER_DEFINED);
-        break;
     default:
-        Q_ASSERT(0);
+        return boost::optional<quint32>();
         break;
     }
-    return 0;
+}
+
+quint32 Connection::computeCksum(CksumType type, const std::vector<quint8> &data)
+{
+    switch(type)
+    {
+    case CksumType::XCP_ADD_11:
+        return additiveChecksum<quint8, quint8>(data);
+        break;
+    case CksumType::XCP_ADD_12:
+        return additiveChecksum<quint16, quint8>(data);
+        break;
+    case CksumType::XCP_ADD_14:
+        return additiveChecksum<quint32, quint8>(data);
+        break;
+    case CksumType::XCP_ADD_22:
+        return additiveChecksum<quint16, quint16>(data);
+        break;
+    case CksumType::XCP_ADD_24:
+        return additiveChecksum<quint32, quint16>(data);
+        break;
+    case CksumType::XCP_ADD_44:
+        return additiveChecksum<quint32, quint32>(data);
+        break;
+    default:
+    {
+        boost::optional<quint32> cksum = computeCksumStatic(type, data);
+        Q_ASSERT(cksum);
+        return cksum.get();
+    } break;
+    }
 }
 
 Connection::Connection(QObject *parent) :
     QObject(parent),
+    mIntfc(NULL),
     mTimeoutMsec(0),
     mNvWriteTimeoutMsec(0),
     mResetTimeoutMsec(0),
@@ -100,8 +118,11 @@ QObject *Connection::intfc()
 
 void Connection::setIntfc(QObject *intfc)
 {
-    QWriteLocker lock(&mIntfcLock);
-    mIntfc = qobject_cast<Interface::Interface *>(intfc);
+    {
+        QWriteLocker lock(&mIntfcLock);
+        mIntfc = qobject_cast<Interface::Interface *>(intfc);
+    }
+    emit stateChanged();
 }
 
 int Connection::timeout()
@@ -134,6 +155,16 @@ void Connection::setResetTimeout(int msec)
     mResetTimeoutMsec = msec;
 }
 
+int Connection::progClearTimeout()
+{
+    return mProgClearTimeoutMsec;
+}
+
+void Connection::setProgClearTimeout(int msec)
+{
+    mProgClearTimeoutMsec = msec;
+}
+
 Connection::State Connection::state()
 {
     QReadLocker lock(&mIntfcLock);
@@ -158,6 +189,7 @@ OpResult Connection::setState(State val)
     switch(val)
     {
     case State::Closed:
+        emit stateChanged();
         EMIT_RETURN(setStateDone, close());
         break;
     case State::CalMode:
@@ -322,6 +354,8 @@ OpResult Connection::nvWrite()
             bool writeComplete = false;
             QElapsedTimer replyTimer;
             replyTimer.start();
+            if(mTimeoutMsec <= 0)
+                return OpResult::InvalidArgument;
 
             while(1)
             {
@@ -491,7 +525,7 @@ OpResult Connection::programClear(XcpPtr base, int len)
             RETURN_ON_FAIL(setMta(base));
 
         std::vector<quint8> reply;
-        RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
+        RETURN_ON_FAIL(transact(query, 1, reply, OPMSG, mProgClearTimeoutMsec));
         if(reply[0] != 0xFF)
             return getReplyResult(reply, OPMSG);
 
@@ -590,6 +624,8 @@ OpResult Connection::transact(const std::vector<quint8> &cmd, int minReplyBytes,
 {
     QReadLocker lock(&mIntfcLock);
     Q_ASSERT(mIntfc);
+    if(timeoutMsec.get_value_or(mTimeoutMsec) <= 0)
+        return OpResult::InvalidArgument;
     RETURN_ON_FAIL(mIntfc->clearReceived());
     RETURN_ON_FAIL(mIntfc->transmit(cmd));
 
@@ -930,6 +966,11 @@ OpResult Connection::getAvailSlavesStr(QString bcastIdStr, QString filterStr, QL
 
 OpResult Connection::getAvailSlaves(Interface::Can::Id bcastId, Interface::Can::Filter filter, std::vector<Interface::Can::SlaveId> *out)
 {
+    if(!mIntfc)
+    {
+        emit getAvailSlavesDone(OpResult::InvalidOperation, bcastId, filter, std::vector<Interface::Can::SlaveId>());
+        return OpResult::InvalidOperation;
+    }
     SetupTools::Xcp::Interface::Can::Interface *canIntfc = qobject_cast<SetupTools::Xcp::Interface::Can::Interface *>(mIntfc);
     if(!canIntfc)
     {
@@ -956,10 +997,12 @@ OpResult Connection::getAvailSlaves(Interface::Can::Id bcastId, Interface::Can::
         emit getAvailSlavesDone(transmitRes, bcastId, filter, std::vector<Interface::Can::SlaveId>());
         return transmitRes;
     }
-    QThread::msleep(mTimeoutMsec);
 
+    if(mTimeoutMsec <= 0)
+        return OpResult::InvalidArgument;
+    QThread::msleep(mTimeoutMsec);
     std::vector<Xcp::Interface::Can::Frame> frames;
-    canIntfc->receiveFrames(0, frames);
+    canIntfc->receiveFrames(mTimeoutMsec, frames);
     std::vector<Interface::Can::SlaveId> ids;
     for(auto &frame : frames)
     {
@@ -1039,6 +1082,8 @@ OpResult Connection::synch()
 {
     QReadLocker lock(&mIntfcLock);
     Q_ASSERT(mIntfc);
+    if(mTimeoutMsec <= 0)
+        return OpResult::InvalidArgument;
     RETURN_ON_FAIL(mIntfc->clearReceived());
     RETURN_ON_FAIL(mIntfc->transmit(std::vector<quint8>({0xFC})));
 

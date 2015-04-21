@@ -76,6 +76,8 @@ inline bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
     return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
 }
 
+boost::optional<quint32> LIBXCONFPROTOSHARED_EXPORT computeCksumStatic(CksumType type, const std::vector<quint8> &data);
+
 class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
 {
     Q_OBJECT
@@ -99,6 +101,8 @@ private:
     Q_PROPERTY(QObject *intfc READ intfc WRITE setIntfc)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
+    Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
+    Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
 public:
     explicit Connection(QObject *parent = 0);
     QObject *intfc(void);
@@ -109,6 +113,8 @@ public:
     void setNvWriteTimeout(int msec);
     int resetTimeout(void);
     void setResetTimeout(int msec);
+    int progClearTimeout(void);
+    void setProgClearTimeout(int msec);
     State state();
     template <typename T>
     T fromSlaveEndian(const uchar *src)
@@ -223,7 +229,7 @@ private:
 
     Interface::Interface *mIntfc;
     QReadWriteLock mIntfcLock;
-    int mTimeoutMsec, mNvWriteTimeoutMsec, mResetTimeoutMsec;
+    int mTimeoutMsec, mNvWriteTimeoutMsec, mResetTimeoutMsec, mProgClearTimeoutMsec;
 
     bool mConnected;
     bool mIsBigEndian, mSupportsCalPage, mSupportsPgm;

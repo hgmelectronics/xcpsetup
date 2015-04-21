@@ -56,7 +56,8 @@ void ConnectionFacade::setIntfcUri(QString val)
 {
     if(mIntfcUri != val)
     {
-        delete mIntfc;
+        if(mIntfc)
+            delete mIntfc;
         mIntfcUri = val;
         mIntfc = Interface::Registry().make(mIntfcUri);
         mConn->setIntfc(mIntfc);
@@ -115,6 +116,16 @@ int ConnectionFacade::resetTimeout()
 void ConnectionFacade::setResetTimeout(int val)
 {
     mConn->setResetTimeout(val);
+}
+
+int ConnectionFacade::progClearTimeout()
+{
+    return mConn->progClearTimeout();
+}
+
+void ConnectionFacade::setProgClearTimeout(int val)
+{
+    mConn->setProgClearTimeout(val);
 }
 
 Connection::State ConnectionFacade::state()

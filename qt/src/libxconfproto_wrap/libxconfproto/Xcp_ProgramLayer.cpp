@@ -6,11 +6,13 @@ namespace Xcp {
 ProgramLayer::ProgramLayer(QObject *parent) :
     QObject(parent),
     mConn(new ConnectionFacade(this)),
-    mState(State::Idle),
+    mState(State::IntfcNotOk),
     mActiveProg(NULL),
     mActiveAddrExt(0),
     mActiveCksumType(CksumType::Invalid)
 {
+    onConnStateChanged();   // make absolutely sure states are consistent
+    connect(mConn, &ConnectionFacade::stateChanged, this, &ProgramLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::setStateDone, this, &ProgramLayer::onConnSetStateDone);
     connect(mConn, &ConnectionFacade::programClearDone, this, &ProgramLayer::onConnProgramClearDone);
     connect(mConn, &ConnectionFacade::programRangeDone, this, &ProgramLayer::onConnProgramRangeDone);
@@ -42,6 +44,46 @@ void ProgramLayer::setSlaveId(QString id)
     mConn->setSlaveId(id);
 }
 
+bool ProgramLayer::idle()
+{
+    return (mState == State::Idle || mState == State::IntfcNotOk);
+}
+
+bool ProgramLayer::intfcOk()
+{
+    return (mState != State::IntfcNotOk);
+}
+
+int ProgramLayer::slaveTimeout()
+{
+    return mConn->timeout();
+}
+
+void ProgramLayer::setSlaveTimeout(int timeout)
+{
+    mConn->setTimeout(timeout);
+}
+
+int ProgramLayer::slaveResetTimeout()
+{
+    return mConn->resetTimeout();
+}
+
+void ProgramLayer::setSlaveResetTimeout(int timeout)
+{
+    mConn->setResetTimeout(timeout);
+}
+
+int ProgramLayer::slaveProgClearTimeout()
+{
+    return mConn->progClearTimeout();
+}
+
+void ProgramLayer::setSlaveProgClearTimeout(int val)
+{
+    mConn->setProgClearTimeout(val);
+}
+
 ConnectionFacade *ProgramLayer::conn()
 {
     return mConn;
@@ -64,6 +106,7 @@ void ProgramLayer::program(FlashProg *prog, quint8 addrExt)
     mActiveProg = prog;
     mActiveAddrExt = addrExt;
     mState = State::Program;
+    emit stateChanged();
 
     mConn->setState(Connection::State::PgmMode);
 }
@@ -92,6 +135,7 @@ void ProgramLayer::programVerify(FlashProg *prog, CksumType type, quint8 addrExt
     mActiveAddrExt = addrExt;
     mActiveCksumType = type;
     mState = State::ProgramVerify;
+    emit stateChanged();
 
     mConn->setState(Connection::State::PgmMode);
 }
@@ -113,6 +157,7 @@ void ProgramLayer::buildChecksumVerify(FlashProg *prog, quint8 addrExt)
     mActiveProg = prog;
     mActiveAddrExt = addrExt;
     mState = State::BuildChecksumVerify;
+    emit stateChanged();
 
     mConn->setState(Connection::State::PgmMode);
 }
@@ -130,12 +175,25 @@ void ProgramLayer::programReset()
     mConn->setState(Connection::State::PgmMode);
 }
 
+void ProgramLayer::onConnStateChanged()
+{
+    Connection::State newState = mConn->state();
+    if(newState == Connection::State::IntfcInvalid)
+        mState = State::IntfcNotOk;
+    else if(mState == State::IntfcNotOk && newState == Connection::State::Closed)
+        mState = State::Idle;
+    emit stateChanged();
+}
+
 void ProgramLayer::onConnSetStateDone(OpResult result)
 {
     if(result == OpResult::Success)
         Q_ASSERT(mConn->state() == Connection::State::PgmMode);
     switch(mState)
     {
+    case State::IntfcNotOk:
+        Q_ASSERT(mState != State::IntfcNotOk);
+        break;
     case State::Idle:
         Q_ASSERT(mState != State::Idle);
         break;
@@ -143,6 +201,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         if(result != OpResult::Success)
         {
             mState = State::Idle;
+            emit stateChanged();
             emit programDone(result, mActiveProg, mActiveAddrExt);
             return;
         }
@@ -153,6 +212,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         if(result != OpResult::Success)
         {
             mState = State::Idle;
+            emit stateChanged();
             emit programVerifyDone(result, mActiveProg, mActiveCksumType, mActiveAddrExt);
             return;
         }
@@ -169,6 +229,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         if(result != OpResult::Success)
         {
             mState = State::Idle;
+            emit stateChanged();
             emit buildChecksumVerifyDone(result, mActiveProg, mActiveAddrExt);
             return;
         }
@@ -179,6 +240,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         if(result != OpResult::Success)
         {
             mState = State::Idle;
+            emit stateChanged();
             emit programResetDone(result);
             return;
         }
@@ -195,6 +257,7 @@ void ProgramLayer::onConnProgramClearDone(OpResult result, XcpPtr base, int len)
     if(result != OpResult::Success)
     {
         mState = State::Idle;
+        emit stateChanged();
         emit programDone(result, mActiveProg, mActiveAddrExt);
         return;
     }
@@ -209,6 +272,7 @@ void ProgramLayer::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vec
     if(result != OpResult::Success)
     {
         mState = State::Idle;
+        emit stateChanged();
         emit programDone(result, mActiveProg, mActiveAddrExt);
         return;
     }
@@ -222,6 +286,7 @@ void ProgramLayer::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vec
     else
     {
         mState = State::Idle;
+        emit stateChanged();
         emit programDone(OpResult::Success, mActiveProg, mActiveAddrExt);
     }
 }
@@ -232,6 +297,7 @@ void ProgramLayer::onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 
     Q_UNUSED(crc);
     Q_ASSERT(mState == State::ProgramVerify);
     mState = State::Idle;
+    emit stateChanged();
     emit programVerifyDone(result, mActiveProg, mActiveCksumType, mActiveAddrExt);
 }
 
@@ -243,6 +309,7 @@ void ProgramLayer::onConnBuildChecksumDone(OpResult result, XcpPtr base, int len
     if(result != OpResult::Success)
     {
         mState = State::Idle;
+        emit stateChanged();
         emit buildChecksumVerifyDone(result, mActiveProg, mActiveAddrExt, type, cksum);
         return;
     }
@@ -252,6 +319,7 @@ void ProgramLayer::onConnBuildChecksumDone(OpResult result, XcpPtr base, int len
     if(masterCksum != cksum)
     {
         mState = State::Idle;
+        emit stateChanged();
         emit buildChecksumVerifyDone(OpResult::BadCksum, mActiveProg, mActiveAddrExt, type, cksum);
         return;
     }
@@ -265,6 +333,7 @@ void ProgramLayer::onConnBuildChecksumDone(OpResult result, XcpPtr base, int len
     else
     {
         mState = State::Idle;
+        emit stateChanged();
         emit buildChecksumVerifyDone(OpResult::Success, mActiveProg, mActiveAddrExt, type, cksum);
     }
 }
@@ -273,6 +342,7 @@ void ProgramLayer::onConnProgramResetDone(OpResult result)
 {
     Q_ASSERT(mState == State::ProgramReset);
     mState = State::Idle;
+    emit stateChanged();
     emit programResetDone(result);
 }
 

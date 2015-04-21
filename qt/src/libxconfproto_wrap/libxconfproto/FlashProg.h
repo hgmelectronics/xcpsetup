@@ -32,6 +32,8 @@ public:
     Q_INVOKABLE void infillToSingleBlock(quint8 fillValue = 0xFF);
     int size();
     uint base();
+signals:
+    void changed();
 private:
     QList<FlashBlock *> mBlocks;
 };

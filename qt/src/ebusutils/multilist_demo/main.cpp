@@ -40,7 +40,8 @@ int main(int argc, char *argv[])
         wrap->setDisplayText(entry.first);
         wrap->setSelected(false);
         wrap->setObj(NULL);
-        model->list().push_back(wrap);
+        model->insertRow(model->rowCount());
+        model->setData(model->index(model->rowCount() - 1), QVariant::fromValue(wrap), 0);
     }
 
     QQmlApplicationEngine engine;

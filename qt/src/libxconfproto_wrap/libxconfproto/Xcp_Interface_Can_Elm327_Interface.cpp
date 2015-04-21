@@ -28,6 +28,7 @@ IoTask::IoTask(SerialPort *port, QObject *parent) :
 
 void IoTask::init()
 {
+    mPort->setParent(this);
     connect(mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
     connect(mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
 }
@@ -268,7 +269,8 @@ Interface::Interface(const QSerialPortInfo portInfo, QObject *parent) :
     mPort(NULL)
 {}
 
-Interface::~Interface() {}
+Interface::~Interface() {
+}
 
 OpResult Interface::setup(const QSerialPortInfo *portInfo)
 {

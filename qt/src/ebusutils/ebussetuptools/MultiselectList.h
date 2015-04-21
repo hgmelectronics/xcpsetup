@@ -91,9 +91,14 @@ public:
     virtual ~MultiselectListModel();
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QHash<int, QByteArray> roleNames() const;
-    QList<MultiselectListWrapper *> &list();
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     std::unordered_set<MultiselectListWrapper *> checked();
     QVariant data(const QModelIndex &index, int role) const;
+    MultiselectListWrapper *wrapper(int row);
+    void alteredData(int row);
+    void alteredData(int firstRow, int lastRow);
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 private:
     QList<MultiselectListWrapper *> mList;

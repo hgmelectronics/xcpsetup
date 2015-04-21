@@ -11,7 +11,9 @@ ProgFile::ProgFile(QObject *parent) :
     QObject(parent),
     mType(Invalid),
     mValid(false)
-{}
+{
+    connect(&mProg, &FlashProg::changed, this, &ProgFile::onProgChanged);
+}
 
 QString ProgFile::name()
 {
@@ -95,6 +97,11 @@ ProgFile::Result ProgFile::read()
     }
     emit progChanged();
     return ret;
+}
+
+void ProgFile::onProgChanged()
+{
+    emit progChanged();
 }
 
 namespace SrecDetail

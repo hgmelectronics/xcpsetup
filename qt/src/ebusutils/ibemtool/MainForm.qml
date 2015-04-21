@@ -16,12 +16,15 @@ ColumnLayout {
     property alias targetsModel: targetsView.model
     property alias progBaseText: progBaseField.text
     property alias progSizeText: progSizeField.text
-    property alias intfcUri: interfaceComboBox.selectedUri
+    property alias progCksumText: progCksumField.text
+    property string intfcUri: ""
     property alias progressValue: progressBar.value
     property bool toolReady
+    property bool toolBusy
     signal progFileAccepted()
     signal userStart()
     signal userAbort()
+    signal userPollForSlaves()
 
     function selectProg() { progFileDialog.open() }
 
@@ -73,28 +76,41 @@ ColumnLayout {
             anchors.right: parent.right
 
             RowLayout {
-                spacing: 10
+                spacing: 5
 
                 Label {
-                    text: qsTr("Base address")
+                    text: qsTr("Base")
                 }
                 TextField {
                     id: progBaseField
                     readOnly: true
-                    implicitWidth: 100
+                    implicitWidth: 90
                 }
             }
 
             RowLayout {
-                spacing: 10
+                spacing: 5
 
                 Label {
-                    text: qsTr("Bytes")
+                    text: qsTr("Size")
                 }
                 TextField {
                     id: progSizeField
                     readOnly: true
-                    implicitWidth: 100
+                    implicitWidth: 70
+                }
+            }
+
+            RowLayout {
+                spacing: 5
+
+                Label {
+                    text: qsTr("CRC")
+                }
+                TextField {
+                    id: progCksumField
+                    readOnly: true
+                    implicitWidth: 90
                 }
             }
         }
@@ -114,23 +130,44 @@ ColumnLayout {
             text: "Interface"
         }
 
-        RowLayout {
-            id: intfcRow
+        ComboBox {
+            id: intfcComboBox
+            model: registry.avail
+            textRole: "text"
+            visible: true
             anchors.left: parent.left
             anchors.right: parent.right
 
-            spacing: 20
+            property string selectedUri
+            selectedUri: (count > 0 && currentIndex < count) ? model[currentIndex].uri : ""
+        }
 
-            ComboBox {
-                id: interfaceComboBox
-                model: registry.avail
-                textRole: "text"
-                visible: true
-                anchors.left: parent.left
-                anchors.right: parent.right
-
-                property string selectedUri
-                selectedUri: (currentIndex < count) ? model[currentIndex].uri : ""
+        RowLayout {
+            id: intfcActionRow
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Button {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.fillWidth: true
+                id: intfcOpenButton
+                text: qsTr("Open")
+                onClicked: {
+                    if(intfcComboBox.selectedUri !== "") {
+                        root.intfcUri = intfcComboBox.selectedUri
+                        intfcOpenButton.enabled = false
+                    }
+                }
+            }
+            Button {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.fillWidth: true
+                id: intfcCloseButton
+                text: qsTr("Close")
+                onClicked: {
+                    root.intfcUri = ""
+                    intfcOpenButton.enabled = true
+                }
+                enabled: !toolBusy && !intfcOpenButton.enabled
             }
         }
     }
@@ -143,6 +180,12 @@ ColumnLayout {
         Label {
             font.pixelSize: 14
             text: "Targets"
+        }
+
+        Button {
+            id: pollForSlavesButton
+            onClicked: root.userPollForSlaves()
+            text: qsTr("Re-Poll")
         }
 
         MultiselectListView {
@@ -174,7 +217,7 @@ ColumnLayout {
             id: abortButton
             text: qsTr("Abort")
             onClicked: root.userAbort()
-            enabled: toolReady
+            enabled: toolBusy
         }
     }
 

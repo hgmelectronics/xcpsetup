@@ -15,6 +15,7 @@ Rectangle {
 
     ScrollView {
 
+        anchors.fill: parent
         ListView {
             id: listView
             anchors.fill: parent

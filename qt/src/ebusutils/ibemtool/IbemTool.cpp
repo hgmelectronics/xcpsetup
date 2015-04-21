@@ -15,12 +15,19 @@ IbemTool::IbemTool(QObject *parent) :
     mProgLayer(new Xcp::ProgramLayer(this)),
     mProgFile(new ProgFile(this)),
     mSlaveListModel(new MultiselectListModel(this)),
-    mState(State::Idle),
+    mActiveSlave(-1),
+    mState(State::IntfcNotOk),
     mTotalSlaves(0),
     mSlavesDone(0)
 {
     connect(mProgFile, &ProgFile::progChanged, this, &IbemTool::onProgFileChanged);
     connect(mProgLayer->conn(), &Xcp::ConnectionFacade::getAvailSlavesStrDone, this, &IbemTool::onGetAvailSlavesStrDone);
+    connect(mProgLayer, &Xcp::ProgramLayer::stateChanged, this, &IbemTool::onProgLayerStateChanged);
+    connect(mProgLayer, &Xcp::ProgramLayer::programDone, this, &IbemTool::onProgramDone);
+    connect(mProgLayer, &Xcp::ProgramLayer::programVerifyDone, this, &IbemTool::onProgramVerifyDone);
+    connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &IbemTool::onProgramResetDone);
+    mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
+    mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
 }
 
 IbemTool::~IbemTool() {}
@@ -39,9 +46,7 @@ void IbemTool::setProgramFilePath(QString path)
 {
     mProgFile->setName(path);
 
-    if(mProgFile->name().size() > 0 &&
-            mProgFile->type() != ProgFile::Type::Invalid)
-        mProgFile->read();
+    rereadProgFile();
 }
 
 int IbemTool::programFileType()
@@ -53,9 +58,17 @@ void IbemTool::setProgramFileType(int type)
 {
     mProgFile->setType(static_cast<ProgFile::Type>(type));
 
+    rereadProgFile();
+}
+
+void IbemTool::rereadProgFile()
+{
     if(mProgFile->name().size() > 0 &&
             mProgFile->type() != ProgFile::Type::Invalid)
+    {
         mProgFile->read();
+        mProgFile->prog().infillToSingleBlock();
+    }
 }
 
 int IbemTool::programSize()
@@ -63,9 +76,22 @@ int IbemTool::programSize()
     return mProgFile->size();
 }
 
-uint IbemTool::programBase()
+qlonglong IbemTool::programBase()
 {
+    if(mProgFile->prog().blocks().size() != 1)
+        return -1;
+
     return mProgFile->base();
+}
+
+qlonglong IbemTool::programCksum()
+{
+    if(mProgFile->prog().blocks().size() != 1)
+        return -1;
+    boost::optional<quint32> cksum = Xcp::computeCksumStatic(CKSUM_TYPE, mProgFile->prog().blocks().first()->data);
+    if(!cksum)
+        return -1;
+    return cksum.get();
 }
 
 bool IbemTool::programOk()
@@ -75,11 +101,13 @@ bool IbemTool::programOk()
 
 double IbemTool::progress()
 {
-    if(mTotalSlaves == 0)
-        return 0;
-    else
-        return double(mSlavesDone * N_STATES + static_cast<int>(mState))
+    double ret = 0;
+    if(mState == State::PollForSlaves)
+        ret = 1.0 - double(mRemainingPollIter) / N_POLL_ITER;
+    else if(mTotalSlaves > 0)
+        ret = double(mSlavesDone * N_STATES + static_cast<int>(mState))
                 / (mTotalSlaves * N_STATES);
+    return ret;
 }
 
 QString IbemTool::intfcUri()
@@ -89,10 +117,56 @@ QString IbemTool::intfcUri()
 
 void IbemTool::setIntfcUri(QString uri)
 {
+    if(mState != State::IntfcNotOk && mState != State::Idle)
+    {
+        emit intfcUriChanged(); // let the caller know we refused the change
+        return;
+    }
+
     mProgLayer->setIntfcUri(uri);
     emit intfcUriChanged();
-    // Look for IBEMs to stuff slave selection menu
+}
+
+bool IbemTool::intfcOk()
+{
+    return mProgLayer->intfcOk();
+}
+
+bool IbemTool::idle()
+{
+    return mProgLayer->idle() && mRemainingPollIter == 0;
+}
+
+void IbemTool::pollForSlaves()
+{
+    if(mState != State::Idle)
+        return;
+    if(!mProgLayer->intfcOk())
+        return;
+
+    mState = State::PollForSlaves;
+    mRemainingPollIter = N_POLL_ITER;
+    emit stateChanged();
+    emit progressChanged();
     mProgLayer->conn()->getAvailSlavesStr(BCAST_ID_STR, SLAVE_FILTER_STR);
+}
+
+void IbemTool::abort()
+{
+    if(mState == State::PollForSlaves)
+    {
+        mRemainingPollIter = 0;
+        emit progressChanged();
+    }
+    else if(mState != State::IntfcNotOk && mState != State::Idle)
+    {
+        for(int iRow = 0; iRow < mSlaveListModel->rowCount(); ++iRow)
+        {
+            mSlaveListModel->wrapper(iRow)->setSelected(false);
+        }
+        mSlaveListModel->alteredData(0, mSlaveListModel->rowCount() - 1);
+        emit progressChanged();
+    }
 }
 
 void IbemTool::onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds)
@@ -100,9 +174,11 @@ void IbemTool::onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QS
     Q_UNUSED(bcastId);
     Q_UNUSED(filter);
 
-    for(MultiselectListWrapper *wrap : mSlaveListModel->list())
-        delete wrap;
-    mSlaveListModel->list().clear();
+    Q_ASSERT(mState == State::PollForSlaves);
+
+    mState = State::Idle;
+
+    mSlaveListModel->removeRows(0, mSlaveListModel->rowCount());
 
     if(result != Xcp::OpResult::Success)
     {
@@ -110,6 +186,8 @@ void IbemTool::onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QS
         return;
     }
 
+    mSlaveListModel->insertRows(0, slaveIds.size());
+    int iRow = 0;
     for(QString idStr : slaveIds)
     {
         boost::optional<Xcp::Interface::Can::SlaveId> idOpt = Xcp::Interface::Can::StrToSlaveId(idStr);
@@ -123,9 +201,27 @@ void IbemTool::onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QS
         QVariantObject *idVar = new QVariantObject(QVariant(idStr), wrap);
         wrap->setObj(idVar);
         wrap->setDisplayText(QString("ID %1").arg(ibemId));
-        mSlaveListModel->list().push_back(wrap);
+        mSlaveListModel->setData(mSlaveListModel->index(iRow),
+                                 QVariant::fromValue(static_cast<QObject *>(wrap)),
+                                 0);
+        ++iRow;
     }
     emit slaveListModelChanged();
+
+    if(mRemainingPollIter > 0)
+        --mRemainingPollIter;
+    if(mRemainingPollIter)
+    {
+        mState = State::PollForSlaves;
+        emit progressChanged();
+        mProgLayer->conn()->getAvailSlavesStr(BCAST_ID_STR, SLAVE_FILTER_STR);
+        return;
+    }
+    else
+    {
+        emit progressChanged();
+        emit stateChanged();
+    }
     return;
 }
 
@@ -141,9 +237,9 @@ void IbemTool::startProgramming()
     // Set mTotalSlaves and mSlavesDone
     mTotalSlaves = 0;
     mSlavesDone = 0;
-    for(MultiselectListWrapper *wrap : mSlaveListModel->list())
+    for(int iRow = 0; iRow < mSlaveListModel->rowCount(); ++iRow)
     {
-        if(wrap->selected())
+        if(mSlaveListModel->wrapper(iRow)->selected())
             ++mTotalSlaves;
     }
     if(mTotalSlaves == 0)
@@ -155,22 +251,24 @@ void IbemTool::startProgramming()
     emit progressChanged();
 
     // Find a slave selected, point prog layer to it
-    mActiveSlave = mSlaveListModel->list().end();
-    for(QList<MultiselectListWrapper *>::iterator it = mSlaveListModel->list().begin();
-        it != mSlaveListModel->list().end();
-        ++it)
+    mActiveSlave = -1;
+    for(int iRow = 0; iRow < mSlaveListModel->rowCount(); ++iRow)
     {
-        if((*it)->selected())
+        if(mSlaveListModel->wrapper(iRow)->selected())
         {
-            mActiveSlave = it;
+            mActiveSlave = iRow;
             break;
         }
     }
-    Q_ASSERT(mActiveSlave != mSlaveListModel->list().end());
-    QVariant activeSlaveIdVar = *qobject_cast<QVariantObject *>((*mActiveSlave)->obj());
+    Q_ASSERT(mActiveSlave >= 0);
+    QVariant activeSlaveIdVar = *qobject_cast<QVariantObject *>(mSlaveListModel->wrapper(mActiveSlave)->obj());
     Q_ASSERT(activeSlaveIdVar.isValid());
     mProgLayer->setSlaveId(activeSlaveIdVar.toString());
 
+    int firstPage = mProgFile->prog().base() / PAGE_SIZE;
+    int lastPage = (mProgFile->prog().base() + mProgFile->prog().size() - 1) / PAGE_SIZE;
+    int nPages = lastPage - firstPage + 1;
+    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * nPages);
     mProgLayer->program(mProgFile->progPtr());
 }
 void IbemTool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
@@ -188,7 +286,7 @@ void IbemTool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrE
     emit progressChanged();
 
     // start program verify on active slave
-    mProgLayer->programVerify(mProgFile->progPtr(), Xcp::CksumType::ST_CRC_32);
+    mProgLayer->programVerify(mProgFile->progPtr(), CKSUM_TYPE);
 }
 
 void IbemTool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
@@ -211,10 +309,30 @@ void IbemTool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::C
     mProgLayer->programReset();
 }
 
+void IbemTool::onWatchdogExpired()
+{
+    Q_ASSERT(mState == State::ProgramReset1);
+    mState = State::ProgramReset2;
+    emit progressChanged();
+
+    // start second program reset
+    mRemainingReset2Tries = N_RESET2_TRIES - 1;
+    mProgLayer->programReset();
+}
+
 void IbemTool::onProgramResetDone(Xcp::OpResult result)
 {
     Q_ASSERT(mState == State::ProgramReset1 ||
              mState == State::ProgramReset2);
+    if(mState == State::ProgramReset2
+            && result == Xcp::OpResult::Timeout
+            && mRemainingReset2Tries > 0)
+    {
+        // Timeout is OK, means slave is not yet awake - try again
+        --mRemainingReset2Tries;
+        mProgLayer->programReset();
+        return;
+    }
     if(result != Xcp::OpResult::Success)
     {
         mState = State::Idle;
@@ -225,18 +343,15 @@ void IbemTool::onProgramResetDone(Xcp::OpResult result)
 
     if(mState == State::ProgramReset1)
     {
-        mState = State::ProgramReset2;
-        emit progressChanged();
-
-        // start second program reset
-        mProgLayer->programReset();
+        QTimer::singleShot(WATCHDOG_MSEC, Qt::PreciseTimer, this, &IbemTool::onWatchdogExpired);
     }
-    else
+    else // mState == State::ProgramReset2
     {
         // update mSlavesDone
         ++mSlavesDone;
         // deselect the active slave
-        (*mActiveSlave)->setSelected(false);
+        mSlaveListModel->wrapper(mActiveSlave)->setSelected(false);
+        mSlaveListModel->alteredData(mActiveSlave);
         if(mSlavesDone == mTotalSlaves)
         {
             mState = State::Idle;
@@ -245,21 +360,19 @@ void IbemTool::onProgramResetDone(Xcp::OpResult result)
             return;
         }
         // at least one slave remains, find it
-        mActiveSlave = mSlaveListModel->list().end();
-        for(QList<MultiselectListWrapper *>::iterator it = (mActiveSlave + 1);
-            it != mSlaveListModel->list().end();
-            ++it)
+        mActiveSlave = -1;
+        for(int iRow = 0; iRow < mSlaveListModel->rowCount(); ++iRow)
         {
-            if((*it)->selected())
+            if(mSlaveListModel->wrapper(iRow)->selected())
             {
-                mActiveSlave = it;
+                mActiveSlave = iRow;
                 break;
             }
         }
-        Q_ASSERT(mActiveSlave != mSlaveListModel->list().end());
+        Q_ASSERT(mActiveSlave >= 0);
 
         // point prog layer to it
-        QVariant activeSlaveIdVar = *qobject_cast<QVariantObject *>((*mActiveSlave)->obj());
+        QVariant activeSlaveIdVar = *qobject_cast<QVariantObject *>(mSlaveListModel->wrapper(mActiveSlave)->obj());
         Q_ASSERT(activeSlaveIdVar.isValid());
         mProgLayer->setSlaveId(activeSlaveIdVar.toString());
 
@@ -271,6 +384,20 @@ void IbemTool::onProgramResetDone(Xcp::OpResult result)
 void IbemTool::onProgFileChanged()
 {
     emit programChanged();
+}
+
+void IbemTool::onProgLayerStateChanged()
+{
+    if(mState == State::IntfcNotOk && mProgLayer->intfcOk())
+    {
+        mState = State::Idle;
+        pollForSlaves();
+    }
+    if(mState != State::IntfcNotOk && !mProgLayer->intfcOk())
+    {
+        mState = State::IntfcNotOk;
+    }
+    emit stateChanged();
 }
 
 } // namespace SetupTools

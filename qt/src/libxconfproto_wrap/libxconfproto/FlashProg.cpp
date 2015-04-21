@@ -41,6 +41,7 @@ LIBXCONFPROTOSHARED_EXPORT void FlashProg::infillToSingleBlock(quint8 fillValue)
         delete block;
     mBlocks.clear();
     mBlocks.append(combined);
+    emit changed();
 }
 LIBXCONFPROTOSHARED_EXPORT int FlashProg::size()
 {
