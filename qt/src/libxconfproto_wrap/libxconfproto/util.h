@@ -10,6 +10,7 @@
 #include <QtQml/QQmlEngine>
 #include <QtQml/QJSEngine>
 #include <QtQml/QQmlListProperty>
+#include "libxconfproto_global.h"
 
 namespace SetupTools
 {
@@ -203,7 +204,7 @@ private:
     bool mFlag;
 };
 
-class UrlUtil : public QObject
+class LIBXCONFPROTOSHARED_EXPORT UrlUtil : public QObject
 {
     Q_OBJECT
 public:
@@ -212,7 +213,7 @@ public:
     Q_INVOKABLE QString urlToLocalFile(QString url);
 };
 
-QObject *urlUtilProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
+LIBXCONFPROTOSHARED_EXPORT QObject *urlUtilProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
 }   // namespace SetupTools
 #endif // UTIL_H

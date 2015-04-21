@@ -130,19 +130,19 @@ bool PythonicEvent::wait(unsigned long timeoutMsec)
     return mCond.wait(locker.mutex(), timeoutMsec);
 }
 
-UrlUtil::UrlUtil(QObject *parent) : QObject(parent)
+LIBXCONFPROTOSHARED_EXPORT UrlUtil::UrlUtil(QObject *parent) : QObject(parent)
 {}
 
-UrlUtil::~UrlUtil()
+LIBXCONFPROTOSHARED_EXPORT UrlUtil::~UrlUtil()
 {}
 
-QString UrlUtil::urlToLocalFile(QString urlStr)
+LIBXCONFPROTOSHARED_EXPORT QString UrlUtil::urlToLocalFile(QString urlStr)
 {
     QUrl url(urlStr);
     return url.toLocalFile();
 }
 
-QObject *urlUtilProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+LIBXCONFPROTOSHARED_EXPORT QObject *urlUtilProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);
