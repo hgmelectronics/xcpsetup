@@ -548,7 +548,7 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
     while(dataIt != data.end())
     {
         XcpPtr startPtr = {quint32(base.addr + std::distance(data.begin(), dataIt) / mAddrGran), base.ext};
-        if(mPgmMasterBlockMode)
+        if(mPgmMasterBlockMode && mIntfc->hasReliableTx())
         {
             int blockBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxBlocksize * mPgmMaxDownPayload));
             std::vector<quint8> blockData(dataIt, dataIt + blockBytes);

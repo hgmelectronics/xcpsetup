@@ -2,6 +2,14 @@
 #include <algorithm>
 #include <QUrl>
 
+//#define ELM327_DEBUG
+
+#ifdef ELM327_DEBUG
+#include <QDebug>
+#include <QTime>
+#define TIMESTAMP_STR (QTime::currentTime().toString("HH:mm:ss.zzz"))
+#endif
+
 namespace SetupTools
 {
 namespace Xcp
@@ -85,12 +93,22 @@ void IoTask::portReadyRead()
                 if(c == EOL)
                 {
                     mLines.push_back(newLine);
+#ifdef ELM327_DEBUG
+                    QByteArray newLineArr(reinterpret_cast<char *>(newLine.data()), newLine.size());
+                    qDebug() << TIMESTAMP_STR << "RX" << newLineArr.toPercentEncoding();
+#endif
                     newLine.clear();
                 }
             }
         }
         if(newLine.size())
+        {
             mLines.push_back(newLine);
+#ifdef ELM327_DEBUG
+            QByteArray newLineArr(reinterpret_cast<char *>(newLine.data()), newLine.size());
+            qDebug() << TIMESTAMP_STR << "RX" << newLineArr.toPercentEncoding();
+#endif
+        }
     }
 
     // Process lines from mLines, putting any incomplete line that may exist back into mLines
@@ -160,6 +178,10 @@ void IoTask::write(std::vector<quint8> data)
         mPendingTxBytes += data.size();
     }
     mPort->write(data.data(), data.size());
+#ifdef ELM327_DEBUG
+    QByteArray dataArr(reinterpret_cast<char *>(data.data()), data.size());
+    qDebug() << TIMESTAMP_STR << "TX" << dataArr.toPercentEncoding();
+#endif
 }
 
 void IoTask::portBytesWritten(qint64 bytes)
@@ -353,12 +375,14 @@ OpResult Interface::setup(const QSerialPortInfo *portInfo)
     }
     qDebug() << "Established communication at" << mPort->baudRate() << "baud";
 
-    RETURN_FAIL(runCmdWithCheck("ATWS", CheckOk::No))   // Software reset
-    RETURN_FAIL(runCmdWithCheck("ATE0"))                // Turn off echo
-    RETURN_FAIL(runCmdWithCheck("ATL0"))                // Turn off newlines
-    RETURN_FAIL(runCmdWithCheck("ATS0"))                // Turn off spaces
-    RETURN_FAIL(runCmdWithCheck("ATH1"))                // Turn on headers
-    RETURN_FAIL(runCmdWithCheck("ATAL"))               // Allow full length messages
+    RETURN_FAIL(runCmdWithCheck("ATWS", CheckOk::No));  // Software reset
+    RETURN_FAIL(runCmdWithCheck("ATE0"));               // Turn off echo
+    RETURN_FAIL(runCmdWithCheck("ATL0"));               // Turn off newlines
+    RETURN_FAIL(runCmdWithCheck("ATS0"));               // Turn off spaces
+    RETURN_FAIL(runCmdWithCheck("ATS0"));               // Turn off spaces
+    RETURN_FAIL(runCmdWithCheck("ATH1"));               // Turn on headers
+    RETURN_FAIL(runCmdWithCheck("ATCFC0"));             // Turn off 15765-4 flow control messages
+    RETURN_FAIL(runCmdWithCheck("ATAL"));               // Allow full length messages
 
     mIntfcIsStn = (runCmdWithCheck("STFCP") == OpResult::Success); // ELM327s will error out
     return OpResult::Success;
@@ -490,6 +514,14 @@ OpResult LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
     mPacketLogEnabled = enable;
     return OpResult::Success;
 }
+bool Interface::hasReliableTx()
+{
+    if(mIntfcIsStn)
+        return false;
+    else
+        return false;    // FIXME need to see if ELM does not drop packets
+}
+
 double Interface::elapsedSecs()
 {
     return mPort->elapsedSecs();

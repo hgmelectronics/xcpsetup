@@ -136,6 +136,7 @@ public:
     void setSerialLog(bool on);
     double elapsedSecs();
     virtual OpResult setPacketLog(bool enable);
+    virtual bool hasReliableTx();
 private:
     enum class CheckOk { No, Yes };
 
