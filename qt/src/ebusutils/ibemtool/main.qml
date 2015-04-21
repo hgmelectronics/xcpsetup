@@ -73,19 +73,6 @@ ApplicationWindow {
         }
     }
 
-    /*  mainForm:
-
-        property alias progFileUrl: progFileDialog.fileUrl
-        property alias targetsModel: targetsView.model
-        property alias progBaseText: progBaseField.text
-        property alias progSizeText: progSizeField.text
-        property alias intfcUri: interfaceComboBox.selectedUri
-        property bool intfcReady
-        signal progFileAccepted()
-        signal userStart()
-        signal userAbort()
-    */
-
     MessageDialog {
         id: errorDialog
         title: qsTr("Error")
@@ -156,7 +143,7 @@ ApplicationWindow {
 
     Window {
         id: helpDialog
-        title: "EjectorConsole help"
+        title: "IBEMTool help"
             width: helpCol.implicitWidth + 20
             height: helpCol.implicitHeight + 20
             Column {
@@ -167,18 +154,15 @@ ApplicationWindow {
                 Label {
                     width: 500
                     wrapMode: Text.WordWrap
-                    text:   "<h2>Setup Dialog</h2>
-<p><b>Interface: </b>The Interface drop-down menu shows the usable serial ports detected on your system. If a port is already in use by another application, it will not appear in this list. The Start button will only be enabled when a valid interface is selected.</p>
-<p><b>Sensor Type:</b> Select the voltage range produced by your pressure sensor. The most common is 0.5-4.5V ratiometric, but some sensors may produce 1-5 or 0-5 volt outputs.</p>
-<p><b>Sensor Range: </b>Enter the pressure span of your sensor and select your preferred engineering units.</p>
-<p><b>Distance Units: </b>Select your preferred engineering units for distance.</p>
-<h2>Main Window</h2>
-<h3>Process Data area</h3>
-<p>Live data from the ejector controller. Pressures are shown in engineering units as specified on the Setup page. Positions are in half-steps of the stepper motor. The integrator value is in the internal fixed point representation used by the ejector controller.</p>
-<h3>Parameters area</h3>
-<p>Allows the ejector's control parameters to be set. The ejector controller does not have provisions for reading back its parameters, so you must enter appropriate values for all the parameters before writing. The entries shown at application startup are the factory settings for a 50kW class ejector.</p>
-<h3>Status bar</h3>
-<p>When connected, shows \"Data Received\" with a spinning line that rotates every time a new packet arrives. If no data is received for one second, it will change to \"Communication timed out\".
+                    text:   "<h2>Program</h2>
+<p>Use the Open command in the File menu to select an S-record program file to load on the target boards. Once it is successfully loaded, the fields in the Program area will show information about the file.</p>
+<h2>Interface</h2>
+<p>Select an interface from the drop-down menu. If you have built-in serial ports on your system, you will see an entry for each one, even though only one corresponds to the ELM327 compatible interface. You can try each port in turn, or look at your system's Device Manager or equivalent to find which port to use. If you do not see the port you are looking for, try closing and reopening the program.</p>
+<p>Once you have selected an interface, click the Open button. This will automatically scan for targets on the vehicle's network. You only need to use the Close button if you wish to switch to another interface; it is safe to simply quit the program when you are done.</p>
+<h2>Targets</h2>
+<p>Targets detected on the network appear in the list area. If you wish to repeat the process of scanning for targets, use the Re-Poll button.</p>
+<p>To flash only one board, select it by clicking on its ID number. To select multiple boards, hold down the Control key while clicking, or click on the first board you wish to flash and then hold down the Shift key while clicking on the last board you wish to flash to select the entire range.</p>
+<p>Once you have selected the boards you wish to flash, click the Start button. The progress bar at the bottom of the window will show how many of the boards have been completed; in addition, each board will be deselected as it is completed. The Abort button will deselect all boards and stop the reflash process after the board presently being reflashed is complete. A dialog box will appear when the process is done. If you see an error message, please contact Ebus for further instructions.</p>
 "
                 }
                 Button {
@@ -189,6 +173,4 @@ ApplicationWindow {
                 }
             }
     }
-
-    //Component.onCompleted: ibemTool.intfcUri = mainForm.intfcUri
 }
