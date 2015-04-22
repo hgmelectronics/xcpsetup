@@ -5,8 +5,8 @@ namespace SetupTools
 
 const QString IbemTool::BCAST_ID_STR = "0x1F000000";
 const Xcp::Interface::Can::Filter IbemTool::SLAVE_FILTER =
-    {{0x1F000100, Xcp::Interface::Can::Id::Type::Ext},
-     0x1FFFFF00,
+    {{0x1F000000, Xcp::Interface::Can::Id::Type::Ext},
+     0x1FFFF000,
      true};
 const QString IbemTool::SLAVE_FILTER_STR = Xcp::Interface::Can::FilterToStr(IbemTool::SLAVE_FILTER);
 
@@ -197,14 +197,30 @@ void IbemTool::onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QS
         Q_ASSERT((id.cmd.addr & SLAVE_FILTER.maskId) == SLAVE_FILTER.filt.addr);
         int ibemId = (id.cmd.addr - SLAVE_FILTER.filt.addr) / 2;
 
-        MultiselectListWrapper *wrap = new MultiselectListWrapper(mSlaveListModel);
-        QVariantObject *idVar = new QVariantObject(QVariant(idStr), wrap);
-        wrap->setObj(idVar);
-        wrap->setDisplayText(QString("ID %1").arg(ibemId));
-        mSlaveListModel->setData(mSlaveListModel->index(iRow),
-                                 QVariant::fromValue(static_cast<QObject *>(wrap)),
-                                 0);
-        ++iRow;
+        bool idOk = false;
+        QString displayText;
+        if(ibemId == RECOVERY_IBEMID_OFFSET)
+        {
+            displayText = "Recovery";
+            idOk = true;
+        }
+        else if(ibemId >= REGULAR_IBEMID_OFFSET)
+        {
+            displayText = QString("ID %1").arg(ibemId - REGULAR_IBEMID_OFFSET);
+            idOk = true;
+        }
+
+        if(idOk)
+        {
+            MultiselectListWrapper *wrap = new MultiselectListWrapper(mSlaveListModel);
+            QVariantObject *idVar = new QVariantObject(QVariant(idStr), wrap);
+            wrap->setObj(idVar);
+            wrap->setDisplayText(displayText);
+            mSlaveListModel->setData(mSlaveListModel->index(iRow),
+                                     QVariant::fromValue(static_cast<QObject *>(wrap)),
+                                     0);
+            ++iRow;
+        }
     }
     emit slaveListModelChanged();
 

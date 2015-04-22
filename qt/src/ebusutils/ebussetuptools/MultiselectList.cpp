@@ -188,8 +188,8 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListController::clicked(int modifier
     if(modifiers & Qt::ShiftModifier)
     {
         int firstRow = -1;
-        bool newSelectState;
-        int lastRow;
+        bool newSelectState = false;
+        int lastRow = -1;
         for(int iRow = 0; iRow < model->rowCount(); ++iRow)
         {
            if(model->wrapper(iRow) == wrapper)

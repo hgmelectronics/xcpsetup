@@ -90,6 +90,8 @@ private:
     static const QString BCAST_ID_STR;
     static const Xcp::Interface::Can::Filter SLAVE_FILTER;
     static const QString SLAVE_FILTER_STR;
+    constexpr static const int RECOVERY_IBEMID_OFFSET = 0x08;
+    constexpr static const int REGULAR_IBEMID_OFFSET = 0x80;
     constexpr static const int TIMEOUT_MSEC = 100;
     constexpr static const int WATCHDOG_MSEC = 2000;
     constexpr static const int RESET_TIMEOUT_MSEC = 2000;
