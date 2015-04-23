@@ -172,7 +172,10 @@ void ProgramLayer::programReset()
 
     mState = State::ProgramReset;
 
-    mConn->setState(Connection::State::PgmMode);
+    if(mConn->state() == Connection::State::Closed)
+        mConn->setState(Connection::State::CalMode);    // just connect, don't need to start a programming sequence
+    else
+        mConn->programReset();  // proceed directly to reset
 }
 
 void ProgramLayer::onConnStateChanged()
