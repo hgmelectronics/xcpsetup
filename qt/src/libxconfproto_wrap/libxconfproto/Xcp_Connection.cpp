@@ -599,8 +599,6 @@ OpResult Connection::programReset()
 {
     if(!mConnected)
         EMIT_RETURN(programResetDone, OpResult::NotConnected);
-    if(!mPgmStarted)
-        EMIT_RETURN(programResetDone, OpResult::WrongMode);
 
     std::function<OpResult (void)> action = [this]()
     {
