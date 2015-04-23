@@ -222,6 +222,8 @@ void IbemTool::onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QS
             ++iRow;
         }
     }
+    if(mSlaveListModel->rowCount() > iRow)
+        mSlaveListModel->removeRows(iRow, mSlaveListModel->rowCount() - iRow);
     emit slaveListModelChanged();
 
     if(mRemainingPollIter > 0)
