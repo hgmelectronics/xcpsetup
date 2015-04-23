@@ -51,6 +51,7 @@ void Cs2Tool::setProgramFileType(int type)
 void Cs2Tool::rereadProgFile()
 {
     mProgFileOkToFlash = false;
+    emit programChanged();
 
     if(mProgFile->name().size() <= 0 ||  mProgFile->type() == ProgFile::Type::Invalid)
         return;
@@ -70,6 +71,7 @@ void Cs2Tool::rereadProgFile()
     mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * nBlocks);
 
     mProgFileOkToFlash = true;
+    emit programChanged();
 }
 
 int Cs2Tool::programSize()
@@ -97,7 +99,7 @@ qlonglong Cs2Tool::programCksum()
 
 bool Cs2Tool::programOk()
 {
-    return mProgFile->valid();
+    return mProgFile->valid() && mProgFileOkToFlash;
 }
 
 double Cs2Tool::progress()
@@ -135,6 +137,7 @@ bool Cs2Tool::idle()
 void Cs2Tool::startProgramming()
 {
     if(!mProgFile->valid()
+            || !mProgFileOkToFlash
             || mState != State::Idle)
     {
         emit programmingDone(false);
