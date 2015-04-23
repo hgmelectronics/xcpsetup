@@ -178,6 +178,7 @@ public:
     bool isOpen();
     bool isCalMode();
     bool isPgmMode();
+    int addrGran();
 
 signals:
     void setStateDone(OpResult result);

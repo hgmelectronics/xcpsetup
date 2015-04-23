@@ -48,6 +48,8 @@ public:
     template <typename T>
     T toSlaveEndian(T src) { return mConn->toSlaveEndian<T>(src); }
 
+    int addrGran();
+
 signals:
     void stateChanged();
 

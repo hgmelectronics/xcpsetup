@@ -143,6 +143,11 @@ quint32 ConnectionFacade::computeCksum(CksumType type, const std::vector<quint8>
     return mConn->computeCksum(type, data);
 }
 
+int ConnectionFacade::addrGran()
+{
+    return mConn->addrGran();
+}
+
 void ConnectionFacade::upload(XcpPtr base, int len)
 {
     emit connUpload(base, len, NULL);

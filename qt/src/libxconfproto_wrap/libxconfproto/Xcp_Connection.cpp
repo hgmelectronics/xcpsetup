@@ -1032,6 +1032,13 @@ bool Connection::isPgmMode() {
     return mConnected && mPgmStarted;
 }
 
+int Connection::addrGran() {
+    if(mConnected)
+        return mAddrGran;
+    else
+        return 0;
+}
+
 OpResult Connection::setMta(XcpPtr ptr)
 {
     static constexpr char OPMSG[] = "setting slave Memory Transfer Address";
