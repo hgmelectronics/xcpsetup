@@ -9,6 +9,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     QObject(parent),
     mProgLayer(new Xcp::ProgramLayer(this)),
     mProgFile(new ProgFile(this)),
+    mProgFileOkToFlash(false),
     mState(State::IntfcNotOk)
 {
     connect(mProgFile, &ProgFile::progChanged, this, &Cs2Tool::onProgFileChanged);
@@ -49,12 +50,26 @@ void Cs2Tool::setProgramFileType(int type)
 
 void Cs2Tool::rereadProgFile()
 {
-    if(mProgFile->name().size() > 0 &&
-            mProgFile->type() != ProgFile::Type::Invalid)
-    {
-        mProgFile->read();
-        mProgFile->prog().infillToSingleBlock();
-    }
+    mProgFileOkToFlash = false;
+
+    if(mProgFile->name().size() <= 0 ||  mProgFile->type() == ProgFile::Type::Invalid)
+        return;
+
+    if(mProgFile->read() != ProgFile::Result::Ok)
+        return;
+
+    mProgFile->prog().infillToSingleBlock();
+        
+    if(mProgFile->prog().base() < SMALLBLOCK_BASE
+            || (mProgFile->prog().base() + mProgFile->prog().size()) > LARGEBLOCK_TOP)
+        return; // program is outside of LPC2929 flash
+
+    int nBlocks = 0;
+    nBlocks += nBlocksInRange(mProgFile->prog().base(), mProgFile->prog().size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
+    nBlocks += nBlocksInRange(mProgFile->prog().base(), mProgFile->prog().size(), LARGEBLOCK_BASE, LARGEBLOCK_TOP, LARGEBLOCK_SIZE);
+    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * nBlocks);
+
+    mProgFileOkToFlash = true;
 }
 
 int Cs2Tool::programSize()
@@ -126,30 +141,31 @@ void Cs2Tool::startProgramming()
         return;
     }
 
-    mState = State::InitialConnect;
-
+    setState(State::InitialConnect);
+    
+    mProgLayer->setSlaveId(SLAVE_ID_STR);
     mProgLayer->conn()->setState(Xcp::Connection::State::CalMode);
 }
 void Cs2Tool::onSetStateDone(Xcp::OpResult result)
 {
-
     if(mState == State::InitialConnect)
     {
         if(result != Xcp::OpResult::Success)
         {
-            mState = State::Idle;
+            setState(State::Idle);
             emit programmingDone(false);
             return;
         }
         if(mProgLayer->conn()->addrGran() == 1)
         {
             // already in bootloader
-            doProgram();
+            setState(State::Program);
+            mProgLayer->program(mProgFile->progPtr());
         }
         else
         {
             // in application code - program reset needed
-            mState = State::ProgramResetToBootloader;
+            setState(State::ProgramResetToBootloader);
             mProgLayer->programReset();
         }
     }
@@ -157,7 +173,7 @@ void Cs2Tool::onSetStateDone(Xcp::OpResult result)
     {
         if(result == Xcp::OpResult::Success)
         {
-            mState = State::Idle;
+            setState(State::Idle);
             emit programmingDone(true);
             return;
         }
@@ -170,7 +186,7 @@ void Cs2Tool::onSetStateDone(Xcp::OpResult result)
             }
             else
             {
-                mState = State::Idle;
+                setState(State::Idle);
                 emit programmingDone(false);
                 return;
             }
@@ -182,18 +198,19 @@ void Cs2Tool::onSetStateDone(Xcp::OpResult result)
     }
 }
 
-void Cs2Tool::doProgram()
+int Cs2Tool::nBlocksInRange(uint progBase, uint progSize, uint rangeBase, uint rangeTop, uint blockSize)
 {
-    mState = State::Program;
-    emit progressChanged();
+    Q_ASSERT(rangeTop > rangeBase);
+    Q_ASSERT(blockSize > 0);
 
-    mProgLayer->setSlaveId(SLAVE_ID_STR);
-
-    int firstPage = mProgFile->prog().base() / PAGE_SIZE;
-    int lastPage = (mProgFile->prog().base() + mProgFile->prog().size() - 1) / PAGE_SIZE;
-    int nPages = lastPage - firstPage + 1;
-    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * nPages);
-    mProgLayer->program(mProgFile->progPtr());
+    uint progTop = progBase + progSize;
+    uint progBaseInRange = std::max(std::min(progBase, rangeTop), rangeBase);
+    uint progTopInRange = std::max(std::min(progTop, rangeTop), rangeBase);
+    if(progBaseInRange == progTopInRange)
+        return 0;
+    uint firstBlock = (progBase - rangeBase) / blockSize;
+    uint lastBlock = (progTop - rangeBase) / blockSize;
+    return lastBlock - firstBlock + 1;
 }
 
 void Cs2Tool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
@@ -203,12 +220,11 @@ void Cs2Tool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrEx
     Q_ASSERT(mState == State::Program);
     if(result != Xcp::OpResult::Success)
     {
-        mState = State::Idle;
+        setState(State::Idle);
         emit programmingDone(false);
         return;
     }
-    mState = State::ProgramVerify;
-    emit progressChanged();
+    setState(State::ProgramVerify);
 
     mProgLayer->programVerify(mProgFile->progPtr(), CKSUM_TYPE);
 }
@@ -221,13 +237,12 @@ void Cs2Tool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::Ck
     Q_ASSERT(mState == State::ProgramVerify);
     if(result != Xcp::OpResult::Success)
     {
-        mState = State::Idle;
+        setState(State::Idle);
         emit programmingDone(false);
         return;
     }
 
-    mState = State::ProgramResetToApplication;
-    emit progressChanged();
+    setState(State::ProgramResetToApplication);
 
     mProgLayer->programReset();
 }
@@ -235,21 +250,23 @@ void Cs2Tool::onProgramResetDone(Xcp::OpResult result)
 {
     if(result != Xcp::OpResult::Success)
     {
-        mState = State::Idle;
-        emit progressChanged();
+        setState(State::Idle);
         emit programmingDone(false);
         return;
     }
 
     if(mState == State::ProgramResetToBootloader)
     {
-        doProgram();
+        setState(State::Program);
+        mProgLayer->program(mProgFile->progPtr());
     }
-    if(mState == State::ProgramResetToApplication)
+    else if(mState == State::ProgramResetToApplication)
     {
-        mState = State::CalMode;
+        setState(State::CalMode);
         mProgLayer->conn()->setState(Xcp::Connection::State::CalMode);
     }
+    else
+        Q_ASSERT(0);
 }
 
 void Cs2Tool::onProgFileChanged()
@@ -260,13 +277,14 @@ void Cs2Tool::onProgFileChanged()
 void Cs2Tool::onProgLayerStateChanged()
 {
     if(mState == State::IntfcNotOk && mProgLayer->intfcOk())
-    {
-        mState = State::Idle;
-    }
-    if(mState != State::IntfcNotOk && !mProgLayer->intfcOk())
-    {
-        mState = State::IntfcNotOk;
-    }
+        setState(State::Idle);
+    else if(mState != State::IntfcNotOk && !mProgLayer->intfcOk())
+        setState(State::IntfcNotOk);
+}
+
+void Cs2Tool::setState(Cs2Tool::State newState)
+{
+    mState = newState;
     emit stateChanged();
 }
 
