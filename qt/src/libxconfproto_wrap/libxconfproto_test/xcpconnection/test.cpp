@@ -57,6 +57,7 @@ void Test::initTestCase()
     mConn->setTimeout(CONN_TIMEOUT);
     mConn->setNvWriteTimeout(CONN_NVWRITE_TIMEOUT);
     mConn->setResetTimeout(CONN_RESET_TIMEOUT);
+    mConn->setProgClearTimeout(CONN_PROGCLEAR_TIMEOUT);
     mSlave = new TestingSlave(mIntfc, this);
     updateAg(1);
     mSlave->setBigEndian(false);
@@ -321,7 +322,6 @@ void Test::programSequence()
     quint32 progCrc = crcComputer.checksum();
     std::vector<quint8> blankForProg;
     blankForProg.assign(prog.size(), 0xFF);
-    mConn->setTimeout(100);
 
     QCOMPARE(mConn->setState(Connection::State::Closed), OpResult::Success);
     QCOMPARE(mConn->setState(Connection::State::PgmMode), OpResult::Success);
