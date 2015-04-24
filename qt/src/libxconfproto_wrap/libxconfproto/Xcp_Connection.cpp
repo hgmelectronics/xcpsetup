@@ -101,6 +101,7 @@ Connection::Connection(QObject *parent) :
     mTimeoutMsec(0),
     mNvWriteTimeoutMsec(0),
     mResetTimeoutMsec(0),
+    mProgClearTimeoutMsec(0),
     mConnected(false)
 {
     qRegisterMetaType<XcpPtr>("XcpPtr");

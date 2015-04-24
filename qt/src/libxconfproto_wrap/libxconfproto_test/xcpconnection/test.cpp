@@ -321,6 +321,7 @@ void Test::programSequence()
     quint32 progCrc = crcComputer.checksum();
     std::vector<quint8> blankForProg;
     blankForProg.assign(prog.size(), 0xFF);
+    mConn->setTimeout(100);
 
     QCOMPARE(mConn->setState(Connection::State::Closed), OpResult::Success);
     QCOMPARE(mConn->setState(Connection::State::PgmMode), OpResult::Success);
