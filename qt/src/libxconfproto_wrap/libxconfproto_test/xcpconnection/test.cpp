@@ -317,6 +317,7 @@ void Test::programSequence()
                                  "have died in vain—that this nation, under God, shall have a new birth of "
                                  "freedom—and that government of the people, by the people, for the people, "
                                  "shall not perish from the earth."));  // long enough to require multiple block transfers
+    Q_ASSERT(prog.size() % ag == 0);
     boost::crc_32_type crcComputer;
     crcComputer.process_block(&*prog.begin(), &*prog.end());
     quint32 progCrc = crcComputer.checksum();
@@ -334,8 +335,8 @@ void Test::programSequence()
     QCOMPARE(mConn->programRange(base, prog), OpResult::Success);
 
     mSlave->setCksumType(SetupTools::Xcp::CksumType::XCP_CRC_32);
-    Q_ASSERT(quint32(base.addr + prog.size()) == base.addr + prog.size());
-    QCOMPARE(mConn->programVerify({quint32(base.addr + prog.size()), base.ext}, progCrc), OpResult::Success);
+    Q_ASSERT(quint32(prog.size()) == prog.size());
+    QCOMPARE(mConn->programVerify({base.addr + quint32(prog.size()) / ag, base.ext}, progCrc), OpResult::Success);
 
     std::vector<quint8> uploadedProg;
     QCOMPARE(mConn->upload(base, prog.size(), &uploadedProg), OpResult::Success);
