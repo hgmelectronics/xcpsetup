@@ -128,6 +128,16 @@ void ConnectionFacade::setProgClearTimeout(int val)
     mConn->setProgClearTimeout(val);
 }
 
+bool ConnectionFacade::progResetIsAcked()
+{
+    return mConn->progResetIsAcked();
+}
+
+void ConnectionFacade::setProgResetIsAcked(bool val)
+{
+    mConn->setProgResetIsAcked(val);
+}
+
 Connection::State ConnectionFacade::state()
 {
     return mConn->state();

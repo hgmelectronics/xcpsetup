@@ -20,6 +20,7 @@ class LIBXCONFPROTOSHARED_EXPORT ProgramLayer : public QObject
     Q_PROPERTY(int slaveTimeout READ slaveTimeout WRITE setSlaveTimeout)
     Q_PROPERTY(int slaveResetTimeout READ slaveResetTimeout WRITE setSlaveResetTimeout)
     Q_PROPERTY(int slaveProgClearTimeout READ slaveProgClearTimeout WRITE setSlaveProgClearTimeout)
+    Q_PROPERTY(bool slaveProgResetIsAcked READ slaveProgResetIsAcked WRITE setSlaveProgResetIsAcked)
 public:
     explicit ProgramLayer(QObject *parent = 0);
     virtual ~ProgramLayer();
@@ -37,6 +38,8 @@ public:
     void setSlaveResetTimeout(int);
     int slaveProgClearTimeout();
     void setSlaveProgClearTimeout(int);
+    bool slaveProgResetIsAcked();
+    void setSlaveProgResetIsAcked(bool);
 signals:
     void stateChanged();
     void programDone(OpResult result, FlashProg *prog, quint8 addrExt);

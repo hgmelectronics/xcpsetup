@@ -103,6 +103,7 @@ private:
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
     Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
     Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
+    Q_PROPERTY(bool progResetIsAcked READ progResetIsAcked WRITE setProgResetIsAcked)
 public:
     explicit Connection(QObject *parent = 0);
     QObject *intfc(void);
@@ -115,6 +116,8 @@ public:
     void setResetTimeout(int msec);
     int progClearTimeout(void);
     void setProgClearTimeout(int msec);
+    bool progResetIsAcked(void);
+    void setProgResetIsAcked(bool val);
     State state();
     template <typename T>
     T fromSlaveEndian(const uchar *src)
@@ -231,6 +234,7 @@ private:
     Interface::Interface *mIntfc;
     QReadWriteLock mIntfcLock;
     int mTimeoutMsec, mNvWriteTimeoutMsec, mResetTimeoutMsec, mProgClearTimeoutMsec;
+    bool mProgResetIsAcked;
 
     bool mConnected;
     bool mIsBigEndian, mSupportsCalPage, mSupportsPgm;

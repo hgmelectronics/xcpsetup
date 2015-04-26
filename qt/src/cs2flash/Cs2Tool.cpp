@@ -20,6 +20,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &Cs2Tool::onProgramResetDone);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
     mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
+    mProgLayer->setSlaveProgResetIsAcked(false);
 }
 
 Cs2Tool::~Cs2Tool() {}

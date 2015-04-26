@@ -102,6 +102,7 @@ Connection::Connection(QObject *parent) :
     mNvWriteTimeoutMsec(0),
     mResetTimeoutMsec(0),
     mProgClearTimeoutMsec(0),
+    mProgResetIsAcked(true),
     mConnected(false)
 {
     qRegisterMetaType<XcpPtr>("XcpPtr");
@@ -164,6 +165,16 @@ int Connection::progClearTimeout()
 void Connection::setProgClearTimeout(int msec)
 {
     mProgClearTimeoutMsec = msec;
+}
+
+bool Connection::progResetIsAcked()
+{
+    return mProgResetIsAcked;
+}
+
+void Connection::setProgResetIsAcked(bool val)
+{
+    mProgResetIsAcked = val;
 }
 
 Connection::State Connection::state()
@@ -606,9 +617,16 @@ OpResult Connection::programReset()
         static constexpr char OPMSG[] = "resetting slave";
 
         std::vector<quint8> reply;
-        RETURN_ON_FAIL(transact({0xCF}, 1, reply, OPMSG));
-        if(reply[0] != 0xFF)
-            return getReplyResult(reply, OPMSG);
+        if(mProgResetIsAcked)
+        {
+            RETURN_ON_FAIL(transact({0xCF}, 1, reply, OPMSG));
+            if(reply[0] != 0xFF)
+                return getReplyResult(reply, OPMSG);
+        }
+        else
+        {
+            RETURN_ON_FAIL(mIntfc->transmit({0xCF}));
+        }
 
         mConnected = false;
         mCalcMta.reset();

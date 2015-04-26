@@ -84,6 +84,16 @@ void ProgramLayer::setSlaveProgClearTimeout(int val)
     mConn->setProgClearTimeout(val);
 }
 
+bool ProgramLayer::slaveProgResetIsAcked()
+{
+    return mConn->progResetIsAcked();
+}
+
+void ProgramLayer::setSlaveProgResetIsAcked(bool val)
+{
+    mConn->setProgResetIsAcked(val);
+}
+
 ConnectionFacade *ProgramLayer::conn()
 {
     return mConn;
@@ -190,8 +200,6 @@ void ProgramLayer::onConnStateChanged()
 
 void ProgramLayer::onConnSetStateDone(OpResult result)
 {
-    if(result == OpResult::Success)
-        Q_ASSERT(mConn->state() == Connection::State::PgmMode);
     switch(mState)
     {
     case State::IntfcNotOk:
@@ -208,6 +216,12 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
             emit programDone(result, mActiveProg, mActiveAddrExt);
             return;
         }
+        if(mConn->state() != Connection::State::PgmMode)
+        {
+            mState = State::Idle;
+            emit stateChanged();
+            emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+        }
         mActiveProgBlock = mActiveProg->blocks().begin();
         mConn->programClear({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data.size());
         break;
@@ -218,6 +232,12 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
             emit stateChanged();
             emit programVerifyDone(result, mActiveProg, mActiveCksumType, mActiveAddrExt);
             return;
+        }
+        if(mConn->state() != Connection::State::PgmMode)
+        {
+            mState = State::Idle;
+            emit stateChanged();
+            emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         {
             Q_ASSERT(mActiveProg->blocks().size() == 1);
@@ -236,6 +256,12 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
             emit buildChecksumVerifyDone(result, mActiveProg, mActiveAddrExt);
             return;
         }
+        if(mConn->state() != Connection::State::PgmMode)
+        {
+            mState = State::Idle;
+            emit stateChanged();
+            emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+        }
         mActiveProgBlock = mActiveProg->blocks().begin();
         mConn->buildChecksum({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data.size());
         break;
@@ -246,6 +272,13 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
             emit stateChanged();
             emit programResetDone(result);
             return;
+        }
+        if(mConn->state() != Connection::State::PgmMode
+                && mConn->state() != Connection::State::CalMode)
+        {
+            mState = State::Idle;
+            emit stateChanged();
+            emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mConn->programReset();
         break;

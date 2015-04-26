@@ -16,6 +16,7 @@ class LIBXCONFPROTOSHARED_EXPORT ConnectionFacade : public QObject
     Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
     Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
     Q_PROPERTY(Connection::State state READ state WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(bool progResetIsAcked READ progResetIsAcked WRITE setProgResetIsAcked)
 public:
     explicit ConnectionFacade(QObject *parent = 0);
     ~ConnectionFacade();
@@ -31,6 +32,8 @@ public:
     void setResetTimeout(int);
     int progClearTimeout(void);
     void setProgClearTimeout(int msec);
+    bool progResetIsAcked(void);
+    void setProgResetIsAcked(bool val);
     ::SetupTools::Xcp::Connection::State state();
     void setState(::SetupTools::Xcp::Connection::State val);
     quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
