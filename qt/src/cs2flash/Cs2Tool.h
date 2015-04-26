@@ -44,9 +44,11 @@ signals:
     void programChanged();
     void intfcUriChanged();
 
-    void programmingDone(bool ok);
+    void programmingDone(int result);
+    void resetDone(int result);
 public slots:
     void startProgramming();
+    void startReset();
     void onSetStateDone(Xcp::OpResult result);
     void onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
     void onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
@@ -64,6 +66,7 @@ private:
         ProgramVerify,
         ProgramResetToApplication,
         CalMode,
+        ProgramResetOnly,
         _N_STATES
     };
     constexpr static const int N_STATES = static_cast<int>(State::_N_STATES);

@@ -140,7 +140,7 @@ void Cs2Tool::startProgramming()
             || !mProgFileOkToFlash
             || mState != State::Idle)
     {
-        emit programmingDone(false);
+        emit programmingDone(static_cast<int>(Xcp::OpResult::InvalidOperation));
         return;
     }
 
@@ -149,6 +149,21 @@ void Cs2Tool::startProgramming()
     mProgLayer->setSlaveId(SLAVE_ID_STR);
     mProgLayer->conn()->setState(Xcp::Connection::State::CalMode);
 }
+
+void Cs2Tool::startReset()
+{
+    if(mState != State::Idle)
+    {
+        emit resetDone(static_cast<int>(Xcp::OpResult::InvalidOperation));
+        return;
+    }
+
+    setState(State::ProgramResetOnly);
+
+    mProgLayer->setSlaveId(SLAVE_ID_STR);
+    mProgLayer->programReset();
+}
+
 void Cs2Tool::onSetStateDone(Xcp::OpResult result)
 {
     if(mState == State::InitialConnect)
@@ -156,20 +171,22 @@ void Cs2Tool::onSetStateDone(Xcp::OpResult result)
         if(result != Xcp::OpResult::Success)
         {
             setState(State::Idle);
-            emit programmingDone(false);
-            return;
-        }
-        if(mProgLayer->conn()->addrGran() == 1)
-        {
-            // already in bootloader
-            setState(State::Program);
-            mProgLayer->program(mProgFile->progPtr());
+            emit programmingDone(static_cast<int>(result));
         }
         else
         {
-            // in application code - program reset needed
-            setState(State::ProgramResetToBootloader);
-            mProgLayer->programReset();
+            if(mProgLayer->conn()->addrGran() == 1)
+            {
+                // already in bootloader
+                setState(State::Program);
+                mProgLayer->program(mProgFile->progPtr());
+            }
+            else
+            {
+                // in application code - program reset needed
+                setState(State::ProgramResetToBootloader);
+                mProgLayer->programReset();
+            }
         }
     }
     else if(mState == State::CalMode)
@@ -177,8 +194,7 @@ void Cs2Tool::onSetStateDone(Xcp::OpResult result)
         if(result == Xcp::OpResult::Success)
         {
             setState(State::Idle);
-            emit programmingDone(true);
-            return;
+            emit programmingDone(static_cast<int>(Xcp::OpResult::Success));
         }
         else
         {
@@ -190,14 +206,13 @@ void Cs2Tool::onSetStateDone(Xcp::OpResult result)
             else
             {
                 setState(State::Idle);
-                emit programmingDone(false);
-                return;
+                emit programmingDone(static_cast<int>(result));
             }
         }
     }
     else
     {
-        Q_ASSERT(0);
+        // do nothing - several operations of program layer cause this signal and they handle it already
     }
 }
 
@@ -224,7 +239,7 @@ void Cs2Tool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrEx
     if(result != Xcp::OpResult::Success)
     {
         setState(State::Idle);
-        emit programmingDone(false);
+        emit programmingDone(static_cast<int>(result));
         return;
     }
     setState(State::ProgramVerify);
@@ -241,7 +256,7 @@ void Cs2Tool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::Ck
     if(result != Xcp::OpResult::Success)
     {
         setState(State::Idle);
-        emit programmingDone(false);
+        emit programmingDone(static_cast<int>(result));
         return;
     }
 
@@ -251,25 +266,37 @@ void Cs2Tool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::Ck
 }
 void Cs2Tool::onProgramResetDone(Xcp::OpResult result)
 {
-    if(result != Xcp::OpResult::Success)
-    {
-        setState(State::Idle);
-        emit programmingDone(false);
-        return;
-    }
-
     if(mState == State::ProgramResetToBootloader)
     {
+        if(result != Xcp::OpResult::Success)
+        {
+            setState(State::Idle);
+            emit programmingDone(static_cast<int>(result));
+            return;
+        }
         setState(State::Program);
         mProgLayer->program(mProgFile->progPtr());
     }
     else if(mState == State::ProgramResetToApplication)
     {
+        if(result != Xcp::OpResult::Success)
+        {
+            setState(State::Idle);
+            emit programmingDone(static_cast<int>(static_cast<int>(result)));
+            return;
+        }
         setState(State::CalMode);
         mProgLayer->conn()->setState(Xcp::Connection::State::CalMode);
     }
+    else if(mState == State::ProgramResetOnly)
+    {
+        setState(State::Idle);
+        emit resetDone(static_cast<int>(result));
+    }
     else
+    {
         Q_ASSERT(0);
+    }
 }
 
 void Cs2Tool::onProgFileChanged()

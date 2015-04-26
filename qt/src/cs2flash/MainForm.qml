@@ -19,9 +19,11 @@ ColumnLayout {
     property string intfcUri: ""
     property alias progressValue: progressBar.value
     property bool toolReady
+    property bool toolReadyResetOnly
     property bool toolBusy
     signal progFileAccepted()
     signal userStart()
+    signal userReset()
 
     function selectProg() { progFileDialog.open() }
 
@@ -181,6 +183,14 @@ ColumnLayout {
             text: qsTr("Start")
             onClicked: root.userStart()
             enabled: toolReady
+        }
+        Button {
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+            Layout.fillWidth: true
+            id: resetButton
+            text: qsTr("Reset Target")
+            onClicked: root.userReset()
+            enabled: toolReadyResetOnly
         }
     }
 
