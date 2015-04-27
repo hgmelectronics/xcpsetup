@@ -557,9 +557,17 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
         EMIT_RETURN(programRangeDone, OpResult::AddrGranError, base, data);
 
     std::vector<quint8>::const_iterator dataIt = data.begin();
-    while(dataIt != data.end())
+    while(1)
     {
         XcpPtr startPtr = {quint32(base.addr + std::distance(data.begin(), dataIt) / mAddrGran), base.ext};
+        if(dataIt == data.end())
+        {
+            // send a final empty program packet
+            std::vector<quint8> packetData;   // empty vector
+            EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData), base, data);
+            break;
+        }
+
         if(mPgmMasterBlockMode && mIntfc->hasReliableTx())
         {
             int blockBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxBlocksize * mPgmMaxDownPayload));
