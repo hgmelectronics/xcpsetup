@@ -188,6 +188,22 @@ void ProgramLayer::programReset()
         mConn->programReset();  // proceed directly to reset
 }
 
+void ProgramLayer::calMode()
+{
+    if(mState != State::Idle)
+    {
+        emit calModeDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    mState = State::CalMode;
+
+    if(mConn->state() == Connection::State::Closed)
+        mConn->setState(Connection::State::CalMode);    // just connect, don't need to start a programming sequence
+    else
+        mConn->programReset();  // proceed directly to reset
+}
+
 void ProgramLayer::onConnStateChanged()
 {
     Connection::State newState = mConn->state();
@@ -281,6 +297,11 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
             emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mConn->programReset();
+        break;
+    case State::CalMode:
+        mState = State::Idle;
+        emit stateChanged();
+        emit calModeDone(result);
         break;
     }
 }
@@ -376,10 +397,18 @@ void ProgramLayer::onConnBuildChecksumDone(OpResult result, XcpPtr base, int len
 
 void ProgramLayer::onConnProgramResetDone(OpResult result)
 {
-    Q_ASSERT(mState == State::ProgramReset);
-    mState = State::Idle;
-    emit stateChanged();
-    emit programResetDone(result);
+    if(mState == State::ProgramReset)
+    {
+        mState = State::Idle;
+        emit stateChanged();
+        emit programResetDone(result);
+    }
+    else if(mState == State::CalMode)
+    {
+        mConn->setState(Connection::State::CalMode);
+    }
+    else
+        Q_ASSERT(mState != mState);
 }
 
 } // namespace Xcp

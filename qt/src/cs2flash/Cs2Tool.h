@@ -49,7 +49,7 @@ signals:
 public slots:
     void startProgramming();
     void startReset();
-    void onSetStateDone(Xcp::OpResult result);
+    void onCalModeDone(Xcp::OpResult result);
     void onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
     void onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
     void onProgramResetDone(Xcp::OpResult result);
@@ -67,6 +67,7 @@ private:
         ProgramResetToApplication,
         CalMode,
         ProgramResetOnly,
+
         _N_STATES
     };
     constexpr static const int N_STATES = static_cast<int>(State::_N_STATES);
@@ -74,7 +75,7 @@ private:
     constexpr static const int TIMEOUT_MSEC = 100;
     constexpr static const int RESET_TIMEOUT_MSEC = 3000;
     constexpr static const int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
-    constexpr static const int PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC = 105;
+    constexpr static const int PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC = 1050;
     constexpr static const uint SMALLBLOCK_BASE = 0x20000000;
     constexpr static const uint SMALLBLOCK_TOP = 0x20010000;
     constexpr static const uint LARGEBLOCK_BASE = SMALLBLOCK_TOP;

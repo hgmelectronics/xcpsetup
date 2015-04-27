@@ -13,7 +13,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     mState(State::IntfcNotOk)
 {
     connect(mProgFile, &ProgFile::progChanged, this, &Cs2Tool::onProgFileChanged);
-    connect(mProgLayer->conn(), &Xcp::ConnectionFacade::setStateDone, this, &Cs2Tool::onSetStateDone);
+    connect(mProgLayer, &Xcp::ProgramLayer::calModeDone, this, &Cs2Tool::onCalModeDone);
     connect(mProgLayer, &Xcp::ProgramLayer::stateChanged, this, &Cs2Tool::onProgLayerStateChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::programDone, this, &Cs2Tool::onProgramDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programVerifyDone, this, &Cs2Tool::onProgramVerifyDone);
@@ -148,7 +148,7 @@ void Cs2Tool::startProgramming()
     setState(State::InitialConnect);
     
     mProgLayer->setSlaveId(SLAVE_ID_STR);
-    mProgLayer->conn()->setState(Xcp::Connection::State::CalMode);
+    mProgLayer->calMode();
 }
 
 void Cs2Tool::startReset()
@@ -165,7 +165,7 @@ void Cs2Tool::startReset()
     mProgLayer->programReset();
 }
 
-void Cs2Tool::onSetStateDone(Xcp::OpResult result)
+void Cs2Tool::onCalModeDone(Xcp::OpResult result)
 {
     if(mState == State::InitialConnect)
     {
@@ -202,7 +202,7 @@ void Cs2Tool::onSetStateDone(Xcp::OpResult result)
             if(mRemainingCalTries > 0)
             {
                 --mRemainingCalTries;
-                mProgLayer->conn()->setState(Xcp::Connection::State::CalMode);
+                mProgLayer->calMode();
             }
             else
             {
@@ -213,7 +213,7 @@ void Cs2Tool::onSetStateDone(Xcp::OpResult result)
     }
     else
     {
-        // do nothing - several operations of program layer cause this signal and they handle it already
+        Q_ASSERT(0);
     }
 }
 
@@ -287,7 +287,7 @@ void Cs2Tool::onProgramResetDone(Xcp::OpResult result)
             return;
         }
         setState(State::CalMode);
-        mProgLayer->conn()->setState(Xcp::Connection::State::CalMode);
+        mProgLayer->calMode();
     }
     else if(mState == State::ProgramResetOnly)
     {
