@@ -72,6 +72,7 @@ public slots:
     void onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
     void onWatchdogExpired();
     void onProgramResetDone(Xcp::OpResult result);
+    void onProgramModeDone(Xcp::OpResult result);
     void onProgFileChanged();
     void onProgLayerStateChanged();
 private:
@@ -83,6 +84,7 @@ private:
         Program,
         ProgramVerify,
         ProgramReset1,
+        ProgramMode,
         ProgramReset2,
         _N_STATES
     };
@@ -100,7 +102,7 @@ private:
     constexpr static const int PAGE_SIZE = 2048;
     constexpr static const Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::ST_CRC_32;
     constexpr static const int N_POLL_ITER = 20;
-    constexpr static const int N_RESET2_TRIES = 25;
+    constexpr static const int N_PROGRAMMODE_TRIES = 25;
 
     void rereadProgFile();
 
@@ -109,7 +111,7 @@ private:
     MultiselectListModel *mSlaveListModel;
     int mActiveSlave;
     int mRemainingPollIter;
-    int mRemainingReset2Tries;
+    int mRemainingProgramModeTries;
     State mState;
     int mTotalSlaves, mSlavesDone;
 };
