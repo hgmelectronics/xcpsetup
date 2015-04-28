@@ -26,6 +26,7 @@ IbemTool::IbemTool(QObject *parent) :
     connect(mProgLayer, &Xcp::ProgramLayer::programDone, this, &IbemTool::onProgramDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programVerifyDone, this, &IbemTool::onProgramVerifyDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &IbemTool::onProgramResetDone);
+    connect(mProgLayer, &Xcp::ProgramLayer::pgmModeDone, this, &IbemTool::onProgramModeDone);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
     mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
 }
@@ -330,27 +331,19 @@ void IbemTool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::C
 void IbemTool::onWatchdogExpired()
 {
     Q_ASSERT(mState == State::ProgramReset1);
-    mState = State::ProgramReset2;
+    mState = State::ProgramMode;
     emit progressChanged();
 
-    // start second program reset
-    mRemainingReset2Tries = N_RESET2_TRIES - 1;
-    mProgLayer->programReset();
+    // start trying to connect and go into program mode
+    mRemainingProgramModeTries = N_PROGRAMMODE_TRIES - 1;
+    mProgLayer->pgmMode();
 }
 
 void IbemTool::onProgramResetDone(Xcp::OpResult result)
 {
     Q_ASSERT(mState == State::ProgramReset1 ||
              mState == State::ProgramReset2);
-    if(mState == State::ProgramReset2
-            && result == Xcp::OpResult::Timeout
-            && mRemainingReset2Tries > 0)
-    {
-        // Timeout is OK, means slave is not yet awake - try again
-        --mRemainingReset2Tries;
-        mProgLayer->programReset();
-        return;
-    }
+
     if(result != Xcp::OpResult::Success)
     {
         mState = State::Idle;
@@ -397,6 +390,30 @@ void IbemTool::onProgramResetDone(Xcp::OpResult result)
         // tell prog layer to start programming it
         mProgLayer->program(mProgFile->progPtr());
     }
+}
+
+void IbemTool::onProgramModeDone(Xcp::OpResult result)
+{
+    Q_ASSERT(mState == State::ProgramMode);
+    if(result == Xcp::OpResult::Timeout
+            && mRemainingProgramModeTries > 0)
+    {
+        // Timeout is OK, means slave is not yet awake - try again
+        --mRemainingProgramModeTries;
+        mProgLayer->pgmMode();
+        return;
+    }
+    if(result != Xcp::OpResult::Success)
+    {
+        mState = State::Idle;
+        emit progressChanged();
+        emit programmingDone(false);
+        return;
+    }
+
+    mState = State::ProgramReset2;
+    emit progressChanged();
+    mProgLayer->programReset();
 }
 
 void IbemTool::onProgFileChanged()

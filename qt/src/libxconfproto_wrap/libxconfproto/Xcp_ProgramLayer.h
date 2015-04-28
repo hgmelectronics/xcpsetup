@@ -47,12 +47,14 @@ signals:
     void buildChecksumVerifyDone(OpResult result, FlashProg *prog, quint8 addrExt, CksumType type = CksumType::Invalid, quint32 cksum = 0);
     void programResetDone(OpResult result);
     void calModeDone(OpResult result);
+    void pgmModeDone(OpResult result);
 public slots:
     void program(FlashProg *prog, quint8 addrExt = 0, bool finalEmptyPacket = true);
     void programVerify(FlashProg *prog, CksumType type, quint8 addrExt = 0);    // For bootloaders that need PROGRAM_VERIFY to finish their flash write
     void buildChecksumVerify(FlashProg *prog, quint8 addrExt = 0);
     void programReset();
     void calMode();
+    void pgmMode();
 
     void onConnStateChanged();
     void onConnSetStateDone(OpResult result);
@@ -70,7 +72,8 @@ private:
         ProgramVerify,
         BuildChecksumVerify,
         ProgramReset,
-        CalMode
+        CalMode,
+        PgmMode
     };
 
     ConnectionFacade *mConn;
