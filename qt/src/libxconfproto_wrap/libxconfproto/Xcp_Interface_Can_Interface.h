@@ -82,8 +82,8 @@ public:
     virtual ~Interface() {}
     virtual OpResult connect(SlaveId addr) = 0;                         //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
     virtual OpResult disconnect() = 0;                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
-    virtual OpResult transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
-    virtual OpResult transmitTo(const std::vector<quint8> & data, Id id) = 0;    //!< Send one CAN frame to an arbitrary ID
+    virtual OpResult transmit(const std::vector<quint8> & data, bool replyExpected = true);             //!< Send one XCP packet to the slave
+    virtual OpResult transmitTo(const std::vector<quint8> & data, Id id, bool replyExpected = true) = 0;    //!< Send one CAN frame to an arbitrary ID
     virtual OpResult receive(int timeoutMsec, std::vector<std::vector<quint8> > &out);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
     virtual OpResult receiveFrames(int timeoutMsec, std::vector<Frame> &out, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL) = 0;
     virtual OpResult clearReceived() = 0;

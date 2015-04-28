@@ -871,8 +871,8 @@ OpResult Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
             std::vector<quint8>::const_iterator dataStartIt = data.end() - remBytes;
             std::vector<quint8>::const_iterator dataEndIt = dataStartIt + payloadBytes;
             query.insert(query.end(), dataStartIt, dataEndIt);
-            RESETMTA_RETURN_ON_FAIL(mIntfc->transmit(query));
             remBytes -= payloadBytes;
+            RESETMTA_RETURN_ON_FAIL(mIntfc->transmit(query, (remBytes == 0)));
             mCalcMta.get().addr += payloadBytes;
 
             isFirstPacket = false;

@@ -127,8 +127,8 @@ public:
     virtual OpResult teardown();
     virtual OpResult connect(SlaveId addr);                      //!< Connect to a slave - allows reception of packets only from its result ID, stores its command ID for use when sending packets with Transmit()
     virtual OpResult disconnect();                                  //!< Disconnect from the slave - allows reception of packets from any ID, disallows use of Transmit() since there is no ID set for it to use
-    virtual OpResult transmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the slave
-    virtual OpResult transmitTo(const std::vector<quint8> & data, Id id); //!< Send one CAN frame to an arbitrary ID
+    virtual OpResult transmit(const std::vector<quint8> & data, bool replyExpected = true);             //!< Send one XCP packet to the slave
+    virtual OpResult transmitTo(const std::vector<quint8> & data, Id id, bool replyExpected = true); //!< Send one CAN frame to an arbitrary ID
     virtual OpResult receiveFrames(int timeoutMsec, std::vector<Frame> &out, const Filter filter = Filter(), bool (*validator)(const Frame &) = NULL);
     virtual OpResult clearReceived();
     virtual OpResult setBitrate(int bps);                           //!< Set the bitrate used on the interface
