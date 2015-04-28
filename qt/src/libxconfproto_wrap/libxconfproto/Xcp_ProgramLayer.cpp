@@ -206,6 +206,25 @@ void ProgramLayer::calMode()
         mConn->programReset();  // proceed directly to reset
 }
 
+void ProgramLayer::pgmMode()
+{
+    if(mState != State::Idle)
+    {
+        emit pgmModeDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    if(mConn->state() == Connection::State::PgmMode)
+    {
+        emit pgmModeDone(OpResult::Success);
+        return;
+    }
+
+    mState = State::PgmMode;
+
+    mConn->setState(Connection::State::PgmMode);
+}
+
 void ProgramLayer::onConnStateChanged()
 {
     Connection::State newState = mConn->state();
@@ -304,6 +323,11 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         mState = State::Idle;
         emit stateChanged();
         emit calModeDone(result);
+        break;
+    case State::PgmMode:
+        mState = State::Idle;
+        emit stateChanged();
+        emit pgmModeDone(result);
         break;
     }
 }
