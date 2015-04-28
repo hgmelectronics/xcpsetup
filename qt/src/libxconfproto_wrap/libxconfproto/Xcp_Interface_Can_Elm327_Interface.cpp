@@ -463,7 +463,9 @@ OpResult Interface::transmitTo(const std::vector<quint8> & data, Id id, bool rep
     }
 
     mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + (replyExpected ? "\r" : "0\r"));
-    QThread::usleep(5000);
+
+    if(!replyExpected)
+        mIo->waitPromptReady(TIMEOUT_MSEC);
     return OpResult::Success;
 }
 
