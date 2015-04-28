@@ -193,7 +193,7 @@ signals:
     void setCalPageDone(OpResult result, quint8 segment, quint8 page);
     void programStartDone(OpResult result);
     void programClearDone(OpResult result, XcpPtr base, int len);
-    void programRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void programRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
     void programVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
     void programResetDone(OpResult result);
     void buildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
@@ -210,7 +210,7 @@ public slots:
     OpResult setCalPage(quint8 segment, quint8 page);
     OpResult programStart();
     OpResult programClear(XcpPtr base, int len);
-    OpResult programRange(XcpPtr base, const std::vector<quint8> data);
+    OpResult programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket = true);
     OpResult programVerify(XcpPtr mta, quint32 crc);
     OpResult programReset();
     OpResult buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);

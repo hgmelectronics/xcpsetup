@@ -287,7 +287,7 @@ void IbemTool::startProgramming()
     int lastPage = (mProgFile->prog().base() + mProgFile->prog().size() - 1) / PAGE_SIZE;
     int nPages = lastPage - firstPage + 1;
     mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * nPages);
-    mProgLayer->program(mProgFile->progPtr());
+    mProgLayer->program(mProgFile->progPtr(), 0, false);
 }
 void IbemTool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
 {

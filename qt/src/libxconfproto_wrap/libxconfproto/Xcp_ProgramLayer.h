@@ -48,7 +48,7 @@ signals:
     void programResetDone(OpResult result);
     void calModeDone(OpResult result);
 public slots:
-    void program(FlashProg *prog, quint8 addrExt = 0);
+    void program(FlashProg *prog, quint8 addrExt = 0, bool finalEmptyPacket = true);
     void programVerify(FlashProg *prog, CksumType type, quint8 addrExt = 0);    // For bootloaders that need PROGRAM_VERIFY to finish their flash write
     void buildChecksumVerify(FlashProg *prog, quint8 addrExt = 0);
     void programReset();
@@ -57,7 +57,7 @@ public slots:
     void onConnStateChanged();
     void onConnSetStateDone(OpResult result);
     void onConnProgramClearDone(OpResult result, XcpPtr base, int len);
-    void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
     void onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
     void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void onConnProgramResetDone(OpResult result);
@@ -78,6 +78,7 @@ private:
     FlashProg *mActiveProg;
     quint8 mActiveAddrExt;
     CksumType mActiveCksumType;
+    bool mActiveFinalEmptyPacket;
     QList<FlashBlock *>::const_iterator mActiveProgBlock;
 };
 

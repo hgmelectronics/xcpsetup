@@ -332,7 +332,7 @@ void Test::programSequence()
     QCOMPARE(mConn->upload(base, prog.size(), &uploadedBlank), OpResult::Success);
     QCOMPARE(blankForProg, uploadedBlank);
 
-    QCOMPARE(mConn->programRange(base, prog), OpResult::Success);
+    QCOMPARE(mConn->programRange(base, prog, false), OpResult::Success);
 
     mSlave->setCksumType(SetupTools::Xcp::CksumType::XCP_CRC_32);
     Q_ASSERT(quint32(prog.size()) == prog.size());

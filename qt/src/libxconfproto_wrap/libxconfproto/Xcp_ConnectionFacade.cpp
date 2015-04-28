@@ -183,9 +183,9 @@ void ConnectionFacade::programClear(XcpPtr base, int len)
     emit connProgramClear(base, len);
 }
 
-void ConnectionFacade::programRange(XcpPtr base, const std::vector<quint8> data)
+void ConnectionFacade::programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket)
 {
-    emit connProgramRange(base, data);
+    emit connProgramRange(base, data, finalEmptyPacket);
 }
 
 void ConnectionFacade::programVerify(XcpPtr mta, quint32 crc)
@@ -243,9 +243,9 @@ void ConnectionFacade::onConnProgramClearDone(OpResult result, XcpPtr base, int 
     emit programClearDone(result, base, len);
 }
 
-void ConnectionFacade::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data)
+void ConnectionFacade::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket)
 {
-    emit programRangeDone(result, base, data);
+    emit programRangeDone(result, base, data, finalEmptyPacket);
 }
 
 void ConnectionFacade::onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc)

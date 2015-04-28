@@ -61,7 +61,7 @@ signals:
     void nvWriteDone(OpResult result);
     void setCalPageDone(OpResult result, quint8 segment, quint8 page);
     void programClearDone(OpResult result, XcpPtr base, int len);
-    void programRangeDone(OpResult result, XcpPtr base, const std::vector<quint8> &data);
+    void programRangeDone(OpResult result, XcpPtr base, const std::vector<quint8> &data, bool finalEmptyPacket);
     void programVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
     void programResetDone(OpResult result);
     void buildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
@@ -74,7 +74,7 @@ signals:
     void connNvWrite();
     void connSetCalPage(quint8 segment, quint8 page);
     void connProgramClear(XcpPtr base, int len);
-    void connProgramRange(XcpPtr base, const std::vector<quint8> data);
+    void connProgramRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket);
     void connProgramVerify(XcpPtr mta, quint32 crc);
     void connProgramReset();
     void connBuildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
@@ -86,7 +86,7 @@ public slots:
     void nvWrite();
     void setCalPage(quint8 segment, quint8 page);
     void programClear(XcpPtr base, int len);
-    void programRange(XcpPtr base, const std::vector<quint8> data);
+    void programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket = true);
     void programVerify(XcpPtr mta, quint32 crc);
     void programReset();
     void buildChecksum(XcpPtr base, int len);
@@ -99,7 +99,7 @@ public slots:
     void onConnNvWriteDone(OpResult result);
     void onConnSetCalPageDone(OpResult result, quint8 segment, quint8 page);
     void onConnProgramClearDone(OpResult result, XcpPtr base, int len);
-    void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data);
+    void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
     void onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
     void onConnProgramResetDone(OpResult result);
     void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);

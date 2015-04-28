@@ -463,6 +463,7 @@ OpResult Interface::transmitTo(const std::vector<quint8> & data, Id id)
     }
 
     mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + "\r");
+    QThread::usleep(5000);
     return OpResult::Success;
 }
 
@@ -517,7 +518,7 @@ OpResult LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
 bool Interface::hasReliableTx()
 {
     if(mIntfcIsStn)
-        return false;
+        return true;
     else
         return false;    // FIXME need to see if ELM does not drop packets
 }

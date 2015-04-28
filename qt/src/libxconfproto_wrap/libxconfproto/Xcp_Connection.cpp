@@ -547,14 +547,14 @@ OpResult Connection::programClear(XcpPtr base, int len)
     EMIT_RETURN(programClearDone, tryQuery(action), base, len);
 }
 
-OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
+OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket)
 {
     if(!mConnected)
-        EMIT_RETURN(programRangeDone, OpResult::NotConnected, base, data);
+        EMIT_RETURN(programRangeDone, OpResult::NotConnected, base, data, finalEmptyPacket);
     if(!mPgmStarted)
-        EMIT_RETURN(programRangeDone, OpResult::WrongMode, base, data);
+        EMIT_RETURN(programRangeDone, OpResult::WrongMode, base, data, finalEmptyPacket);
     if(data.size() % mAddrGran)
-        EMIT_RETURN(programRangeDone, OpResult::AddrGranError, base, data);
+        EMIT_RETURN(programRangeDone, OpResult::AddrGranError, base, data, finalEmptyPacket);
 
     std::vector<quint8>::const_iterator dataIt = data.begin();
     while(1)
@@ -562,9 +562,11 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
         XcpPtr startPtr = {quint32(base.addr + std::distance(data.begin(), dataIt) / mAddrGran), base.ext};
         if(dataIt == data.end())
         {
-            // send a final empty program packet
-            std::vector<quint8> packetData;   // empty vector
-            EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData), base, data);
+            if(finalEmptyPacket)
+            {
+                std::vector<quint8> packetData;   // empty vector
+                EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData), base, data, finalEmptyPacket);
+            }
             break;
         }
 
@@ -572,18 +574,18 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data)
         {
             int blockBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxBlocksize * mPgmMaxDownPayload));
             std::vector<quint8> blockData(dataIt, dataIt + blockBytes);
-            EMIT_RETURN_ON_FAIL(programRangeDone, programBlock(startPtr, blockData), base, data);
+            EMIT_RETURN_ON_FAIL(programRangeDone, programBlock(startPtr, blockData), base, data, finalEmptyPacket);
             dataIt += blockBytes;
         }
         else
         {
             int packetBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxDownPayload));
             std::vector<quint8> packetData(dataIt, dataIt + packetBytes);
-            EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData), base, data);
+            EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData), base, data, finalEmptyPacket);
             dataIt += packetBytes;
         }
     }
-    EMIT_RETURN(programRangeDone, OpResult::Success, base, data);
+    EMIT_RETURN(programRangeDone, OpResult::Success, base, data, finalEmptyPacket);
 }
 
 OpResult Connection::programVerify(XcpPtr mta, quint32 crc)

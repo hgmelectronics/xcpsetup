@@ -9,7 +9,8 @@ ProgramLayer::ProgramLayer(QObject *parent) :
     mState(State::IntfcNotOk),
     mActiveProg(NULL),
     mActiveAddrExt(0),
-    mActiveCksumType(CksumType::Invalid)
+    mActiveCksumType(CksumType::Invalid),
+    mActiveFinalEmptyPacket(false)
 {
     onConnStateChanged();   // make absolutely sure states are consistent
     connect(mConn, &ConnectionFacade::stateChanged, this, &ProgramLayer::onConnStateChanged);
@@ -99,7 +100,7 @@ ConnectionFacade *ProgramLayer::conn()
     return mConn;
 }
 
-void ProgramLayer::program(FlashProg *prog, quint8 addrExt)
+void ProgramLayer::program(FlashProg *prog, quint8 addrExt, bool finalEmptyPacket)
 {
     if(mState != State::Idle)
     {
@@ -115,6 +116,7 @@ void ProgramLayer::program(FlashProg *prog, quint8 addrExt)
 
     mActiveProg = prog;
     mActiveAddrExt = addrExt;
+    mActiveFinalEmptyPacket = finalEmptyPacket;
     mState = State::Program;
     emit stateChanged();
 
@@ -318,13 +320,14 @@ void ProgramLayer::onConnProgramClearDone(OpResult result, XcpPtr base, int len)
         emit programDone(result, mActiveProg, mActiveAddrExt);
         return;
     }
-    mConn->programRange({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data);
+    mConn->programRange({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data, mActiveFinalEmptyPacket);
 }
 
-void ProgramLayer::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data)
+void ProgramLayer::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket)
 {
     Q_UNUSED(base);
     Q_UNUSED(data);
+    Q_UNUSED(finalEmptyPacket);
     Q_ASSERT(mState == State::Program);
     if(result != OpResult::Success)
     {
