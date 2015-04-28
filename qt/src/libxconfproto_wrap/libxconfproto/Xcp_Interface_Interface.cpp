@@ -11,8 +11,9 @@ Interface::Interface(QObject *parent) :
     QObject(parent)
 {}
 
-OpResult Interface::transmit(const std::vector<quint8> & data) {
+OpResult Interface::transmit(const std::vector<quint8> & data, bool replyExpected) {
     Q_UNUSED(data);
+    Q_UNUSED(replyExpected);
     Q_ASSERT(0);
     return OpResult::InvalidOperation;
 }

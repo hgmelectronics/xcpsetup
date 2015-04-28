@@ -17,8 +17,9 @@ LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
     mPacketTimer.start();
 }
 
-OpResult LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data, bool replyExpected)
 {
+    Q_UNUSED(replyExpected);
     if(mPacketLogEnabled)
     {
         QByteArray arr;
