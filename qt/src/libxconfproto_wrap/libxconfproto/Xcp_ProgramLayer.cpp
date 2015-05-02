@@ -13,13 +13,14 @@ ProgramLayer::ProgramLayer(QObject *parent) :
     mActiveFinalEmptyPacket(false)
 {
     onConnStateChanged();   // make absolutely sure states are consistent
-    connect(mConn, &ConnectionFacade::stateChanged, this, &ProgramLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::setStateDone, this, &ProgramLayer::onConnSetStateDone);
     connect(mConn, &ConnectionFacade::programClearDone, this, &ProgramLayer::onConnProgramClearDone);
     connect(mConn, &ConnectionFacade::programRangeDone, this, &ProgramLayer::onConnProgramRangeDone);
     connect(mConn, &ConnectionFacade::programVerifyDone, this, &ProgramLayer::onConnProgramVerifyDone);
     connect(mConn, &ConnectionFacade::buildChecksumDone, this, &ProgramLayer::onConnBuildChecksumDone);
     connect(mConn, &ConnectionFacade::programResetDone, this, &ProgramLayer::onConnProgramResetDone);
+    connect(mConn, &ConnectionFacade::stateChanged, this, &ProgramLayer::onConnStateChanged);
+    connect(mConn, &ConnectionFacade::opProgressChanged, this, &ProgramLayer::onConnOpProgressChanged);
 }
 
 ProgramLayer::~ProgramLayer()
@@ -93,6 +94,21 @@ bool ProgramLayer::slaveProgResetIsAcked()
 void ProgramLayer::setSlaveProgResetIsAcked(bool val)
 {
     mConn->setProgResetIsAcked(val);
+}
+
+double ProgramLayer::opProgressNotifyFrac()
+{
+    return mConn->opProgressNotifyFrac();
+}
+
+void ProgramLayer::setOpProgressNotifyFrac(double val)
+{
+    mConn->setOpProgressNotifyFrac(val);
+}
+
+double ProgramLayer::opProgress()
+{
+    return mConn->opProgress();
 }
 
 ConnectionFacade *ProgramLayer::conn()
@@ -223,16 +239,6 @@ void ProgramLayer::pgmMode()
     mState = State::PgmMode;
 
     mConn->setState(Connection::State::PgmMode);
-}
-
-void ProgramLayer::onConnStateChanged()
-{
-    Connection::State newState = mConn->state();
-    if(newState == Connection::State::IntfcInvalid)
-        mState = State::IntfcNotOk;
-    else if(mState == State::IntfcNotOk && newState == Connection::State::Closed)
-        mState = State::Idle;
-    emit stateChanged();
 }
 
 void ProgramLayer::onConnSetStateDone(OpResult result)
@@ -436,6 +442,21 @@ void ProgramLayer::onConnProgramResetDone(OpResult result)
     }
     else
         Q_ASSERT(mState != mState);
+}
+
+void ProgramLayer::onConnStateChanged()
+{
+    Connection::State newState = mConn->state();
+    if(newState == Connection::State::IntfcInvalid)
+        mState = State::IntfcNotOk;
+    else if(mState == State::IntfcNotOk && newState == Connection::State::Closed)
+        mState = State::Idle;
+    emit stateChanged();
+}
+
+void ProgramLayer::onConnOpProgressChanged()
+{
+    emit opProgressChanged();
 }
 
 } // namespace Xcp

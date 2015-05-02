@@ -15,8 +15,15 @@ class LIBXCONFPROTOSHARED_EXPORT ConnectionFacade : public QObject
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
     Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
     Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
+    Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
     Q_PROPERTY(Connection::State state READ state WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(bool progResetIsAcked READ progResetIsAcked WRITE setProgResetIsAcked)
+
+    /**
+     * Progress through a long operation with interim state notification (upload and download
+     * of more than one packet, program range). Resets to zero immediately after completion signals are emitted.
+     */
+    Q_PROPERTY(double opProgress READ opProgress NOTIFY opProgressChanged)
 public:
     explicit ConnectionFacade(QObject *parent = 0);
     ~ConnectionFacade();
@@ -30,10 +37,13 @@ public:
     void setNvWriteTimeout(int);
     int resetTimeout();
     void setResetTimeout(int);
+    double opProgressNotifyFrac();
+    void setOpProgressNotifyFrac(double);
     int progClearTimeout(void);
     void setProgClearTimeout(int msec);
     bool progResetIsAcked(void);
     void setProgResetIsAcked(bool val);
+    double opProgress();
     ::SetupTools::Xcp::Connection::State state();
     void setState(::SetupTools::Xcp::Connection::State val);
     quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
@@ -54,8 +64,6 @@ public:
     int addrGran();
 
 signals:
-    void stateChanged();
-
     void uploadDone(OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
     void downloadDone(OpResult result, XcpPtr base, const std::vector<quint8> &data);
     void nvWriteDone(OpResult result);
@@ -67,6 +75,8 @@ signals:
     void buildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void getAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void setStateDone(OpResult result);
+    void stateChanged();
+    void opProgressChanged();
 
     void connSetState(Connection::State val);
     void connUpload(XcpPtr base, int len, std::vector<quint8> *out);
@@ -92,7 +102,6 @@ public slots:
     void buildChecksum(XcpPtr base, int len);
     void getAvailSlavesStr(QString bcastId, QString filter);
 
-    void onConnStateChanged();
     void onConnSetStateDone(OpResult);
     void onConnUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data);
     void onConnDownloadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
@@ -104,7 +113,8 @@ public slots:
     void onConnProgramResetDone(OpResult result);
     void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void onConnGetAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-
+    void onConnStateChanged();
+    void onConnOpProgressChanged();
 private:
     Interface::Interface *mIntfc;
     QString mIntfcUri;

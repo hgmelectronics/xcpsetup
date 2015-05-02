@@ -55,18 +55,19 @@ public slots:
     void onProgramResetDone(Xcp::OpResult result);
     void onProgFileChanged();
     void onProgLayerStateChanged();
+    void onProgLayerProgressChanged();
 private:
     enum class State
     {
         IntfcNotOk = 0,
         Idle,
-        InitialConnect,
-        ProgramResetToBootloader,
-        Program,
-        ProgramVerify,
-        ProgramResetToApplication,
-        CalMode,
-        ProgramResetOnly,
+        Program_InitialConnect,
+        Program_ResetToBootloader,
+        Program_Program,
+        Program_Verify,
+        Program_ResetToApplication,
+        Program_CalMode,
+        Reset_Reset,
 
         _N_STATES
     };
@@ -84,6 +85,9 @@ private:
     constexpr static const int LARGEBLOCK_SIZE = 65536;
     constexpr static const Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::XCP_CRC_32;
     constexpr static const int N_CAL_TRIES = 25;
+    constexpr static const int N_PROGRAM_STATES = static_cast<int>(State::Program_CalMode) - static_cast<int>(State::Program_InitialConnect) + 1;
+    constexpr static const double PROGRAM_STATE_PROGRESS_CREDIT = 0.0625;
+    constexpr static const double PROGRAM_PROGRESS_MULT = 1 - PROGRAM_STATE_PROGRESS_CREDIT * (N_PROGRAM_STATES - 1);
 
     void rereadProgFile();
     static int nBlocksInRange(uint progBase, uint progSize, uint rangeBase, uint rangeTop, uint blockSize);

@@ -21,6 +21,8 @@ class LIBXCONFPROTOSHARED_EXPORT ProgramLayer : public QObject
     Q_PROPERTY(int slaveResetTimeout READ slaveResetTimeout WRITE setSlaveResetTimeout)
     Q_PROPERTY(int slaveProgClearTimeout READ slaveProgClearTimeout WRITE setSlaveProgClearTimeout)
     Q_PROPERTY(bool slaveProgResetIsAcked READ slaveProgResetIsAcked WRITE setSlaveProgResetIsAcked)
+    Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
+    Q_PROPERTY(double opProgress READ opProgress NOTIFY opProgressChanged)
 public:
     explicit ProgramLayer(QObject *parent = 0);
     virtual ~ProgramLayer();
@@ -40,14 +42,18 @@ public:
     void setSlaveProgClearTimeout(int);
     bool slaveProgResetIsAcked();
     void setSlaveProgResetIsAcked(bool);
+    double opProgressNotifyFrac();
+    void setOpProgressNotifyFrac(double);
+    double opProgress();
 signals:
-    void stateChanged();
     void programDone(OpResult result, FlashProg *prog, quint8 addrExt);
     void programVerifyDone(OpResult result, FlashProg *prog, CksumType type, quint8 addrExt);
     void buildChecksumVerifyDone(OpResult result, FlashProg *prog, quint8 addrExt, CksumType type = CksumType::Invalid, quint32 cksum = 0);
     void programResetDone(OpResult result);
     void calModeDone(OpResult result);
     void pgmModeDone(OpResult result);
+    void stateChanged();
+    void opProgressChanged();
 public slots:
     void program(FlashProg *prog, quint8 addrExt = 0, bool finalEmptyPacket = true);
     void programVerify(FlashProg *prog, CksumType type, quint8 addrExt = 0);    // For bootloaders that need PROGRAM_VERIFY to finish their flash write
@@ -56,13 +62,14 @@ public slots:
     void calMode();
     void pgmMode();
 
-    void onConnStateChanged();
     void onConnSetStateDone(OpResult result);
     void onConnProgramClearDone(OpResult result, XcpPtr base, int len);
     void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
     void onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
     void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void onConnProgramResetDone(OpResult result);
+    void onConnStateChanged();
+    void onConnOpProgressChanged();
 private:
     enum class State
     {
