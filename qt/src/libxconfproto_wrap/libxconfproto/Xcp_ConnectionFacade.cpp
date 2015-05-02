@@ -39,6 +39,7 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(mConn, &Connection::buildChecksumDone, this, &ConnectionFacade::onConnBuildChecksumDone, Qt::QueuedConnection);
     connect(mConn, &Connection::getAvailSlavesStrDone, this, &ConnectionFacade::onConnGetAvailSlavesStrDone, Qt::QueuedConnection);
     connect(mConn, &Connection::stateChanged, this, &ConnectionFacade::onConnStateChanged, Qt::QueuedConnection);
+    connect(mConn, &Connection::opProgressChanged, this, &ConnectionFacade::onConnOpProgressChanged, Qt::QueuedConnection);
 }
 
 ConnectionFacade::~ConnectionFacade()
@@ -118,6 +119,16 @@ void ConnectionFacade::setResetTimeout(int val)
     mConn->setResetTimeout(val);
 }
 
+double ConnectionFacade::opProgressNotifyFrac()
+{
+    return mConn->opProgressNotifyFrac();
+}
+
+void ConnectionFacade::setOpProgressNotifyFrac(double val)
+{
+    mConn->setOpProgressNotifyFrac(val);
+}
+
 int ConnectionFacade::progClearTimeout()
 {
     return mConn->progClearTimeout();
@@ -146,6 +157,11 @@ Connection::State ConnectionFacade::state()
 void ConnectionFacade::setState(Connection::State val)
 {
     emit connSetState(val);
+}
+
+double ConnectionFacade::opProgress()
+{
+    return mConn->opProgress();
 }
 
 quint32 ConnectionFacade::computeCksum(CksumType type, const std::vector<quint8> &data)
@@ -211,6 +227,11 @@ void ConnectionFacade::getAvailSlavesStr(QString bcastId, QString filter)
 void ConnectionFacade::onConnStateChanged()
 {
     emit stateChanged();
+}
+
+void ConnectionFacade::onConnOpProgressChanged()
+{
+    emit opProgressChanged();
 }
 
 void ConnectionFacade::onConnSetStateDone(OpResult result)

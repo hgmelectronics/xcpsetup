@@ -103,7 +103,14 @@ private:
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
     Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
     Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
+    Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
     Q_PROPERTY(bool progResetIsAcked READ progResetIsAcked WRITE setProgResetIsAcked)
+
+    /**
+     * Progress through a long operation with interim state notification (upload and download
+     * of more than one packet, program range). Resets to zero immediately after completion signals are emitted.
+     */
+    Q_PROPERTY(double opProgress READ opProgress NOTIFY opProgressChanged)
 public:
     explicit Connection(QObject *parent = 0);
     QObject *intfc(void);
@@ -114,10 +121,13 @@ public:
     void setNvWriteTimeout(int msec);
     int resetTimeout(void);
     void setResetTimeout(int msec);
+    double opProgressNotifyFrac();
+    void setOpProgressNotifyFrac(double);
     int progClearTimeout(void);
     void setProgClearTimeout(int msec);
     bool progResetIsAcked(void);
     void setProgResetIsAcked(bool val);
+    double opProgress();
     State state();
     template <typename T>
     T fromSlaveEndian(const uchar *src)
@@ -200,6 +210,7 @@ signals:
     void getAvailSlavesDone(OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
     void getAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void stateChanged();
+    void opProgressChanged();
 public slots:
     OpResult setState(State);
     OpResult open(boost::optional<int> timeoutMsec = boost::optional<int>());
@@ -227,6 +238,7 @@ private:
     OpResult setMta(XcpPtr ptr);
     OpResult tryQuery(std::function<OpResult (void)> &action);
     OpResult synch();
+    void updateEmitOpProgress(double newVal);
 
     constexpr static const int MAX_RETRIES = 10;
     constexpr static const int NUM_NV_WRITE_POLLS = 10;
@@ -239,6 +251,9 @@ private:
     bool mConnected;
     bool mIsBigEndian, mSupportsCalPage, mSupportsPgm;
     int mAddrGran, mMaxCto, mMaxDownPayload, mMaxUpPayload;
+    double mOpProgress, mOpProgressNotifyFrac;
+    int mOpProgressFracs;
+    QReadWriteLock mOpProgressLock;
 
     bool mPgmStarted, mPgmMasterBlockMode;
     int mPgmMaxCto, mPgmMaxBlocksize, mPgmMaxDownPayload;

@@ -18,6 +18,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     connect(mProgLayer, &Xcp::ProgramLayer::programDone, this, &Cs2Tool::onProgramDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programVerifyDone, this, &Cs2Tool::onProgramVerifyDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &Cs2Tool::onProgramResetDone);
+    connect(mProgLayer, &Xcp::ProgramLayer::opProgressChanged, this, &Cs2Tool::onProgLayerProgressChanged);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
     mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
     mProgLayer->setSlaveProgResetIsAcked(false);
@@ -105,7 +106,34 @@ bool Cs2Tool::programOk()
 
 double Cs2Tool::progress()
 {
-    return double(static_cast<int>(mState)) / N_STATES;
+    if(mState == State::Idle
+            || mState == State::IntfcNotOk)
+    {
+        return 0;
+    }
+    else if(mState >= State::Program_InitialConnect
+            && mState <= State::Program_CalMode)
+    {
+        // calculate progress for a program sequence
+        // stateProgress = 1/5 for first state, 5/5 for last state (so user gets to see progress reach 100%)
+        double stateProgress = double(static_cast<int>(mState) - static_cast<int>(State::Program_InitialConnect))
+                / (N_PROGRAM_STATES - 1);
+        double programProgress = 0;
+        if(mState == State::Program_Program)
+            programProgress = mProgLayer->opProgress();
+        else if(mState > State::Program_Program)
+            programProgress = 1;
+
+        return stateProgress * PROGRAM_STATE_PROGRESS_CREDIT + programProgress * PROGRAM_PROGRESS_MULT;
+    }
+    else if(mState == State::Reset_Reset)
+    {
+        return 1;
+    }
+    else    // catch unhandled states
+    {
+        return 0;
+    }
 }
 
 QString Cs2Tool::intfcUri()
@@ -145,7 +173,7 @@ void Cs2Tool::startProgramming()
         return;
     }
 
-    setState(State::InitialConnect);
+    setState(State::Program_InitialConnect);
     
     mProgLayer->setSlaveId(SLAVE_ID_STR);
     mProgLayer->calMode();
@@ -159,7 +187,7 @@ void Cs2Tool::startReset()
         return;
     }
 
-    setState(State::ProgramResetOnly);
+    setState(State::Reset_Reset);
 
     mProgLayer->setSlaveId(SLAVE_ID_STR);
     mProgLayer->programReset();
@@ -167,7 +195,7 @@ void Cs2Tool::startReset()
 
 void Cs2Tool::onCalModeDone(Xcp::OpResult result)
 {
-    if(mState == State::InitialConnect)
+    if(mState == State::Program_InitialConnect)
     {
         if(result != Xcp::OpResult::Success)
         {
@@ -179,18 +207,18 @@ void Cs2Tool::onCalModeDone(Xcp::OpResult result)
             if(mProgLayer->conn()->addrGran() == 1)
             {
                 // already in bootloader
-                setState(State::Program);
+                setState(State::Program_Program);
                 mProgLayer->program(mProgFile->progPtr());
             }
             else
             {
                 // in application code - program reset needed
-                setState(State::ProgramResetToBootloader);
+                setState(State::Program_ResetToBootloader);
                 mProgLayer->programReset();
             }
         }
     }
-    else if(mState == State::CalMode)
+    else if(mState == State::Program_CalMode)
     {
         if(result == Xcp::OpResult::Success)
         {
@@ -236,14 +264,14 @@ void Cs2Tool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrEx
 {
     Q_UNUSED(prog);
     Q_UNUSED(addrExt);
-    Q_ASSERT(mState == State::Program);
+    Q_ASSERT(mState == State::Program_Program);
     if(result != Xcp::OpResult::Success)
     {
         setState(State::Idle);
         emit programmingDone(static_cast<int>(result));
         return;
     }
-    setState(State::ProgramVerify);
+    setState(State::Program_Verify);
 
     mProgLayer->programVerify(mProgFile->progPtr(), CKSUM_TYPE);
 }
@@ -253,7 +281,7 @@ void Cs2Tool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::Ck
     Q_UNUSED(prog);
     Q_UNUSED(type);
     Q_UNUSED(addrExt);
-    Q_ASSERT(mState == State::ProgramVerify);
+    Q_ASSERT(mState == State::Program_Verify);
     if(result != Xcp::OpResult::Success)
     {
         setState(State::Idle);
@@ -261,13 +289,13 @@ void Cs2Tool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::Ck
         return;
     }
 
-    setState(State::ProgramResetToApplication);
+    setState(State::Program_ResetToApplication);
 
     mProgLayer->programReset();
 }
 void Cs2Tool::onProgramResetDone(Xcp::OpResult result)
 {
-    if(mState == State::ProgramResetToBootloader)
+    if(mState == State::Program_ResetToBootloader)
     {
         if(result != Xcp::OpResult::Success)
         {
@@ -275,10 +303,10 @@ void Cs2Tool::onProgramResetDone(Xcp::OpResult result)
             emit programmingDone(static_cast<int>(result));
             return;
         }
-        setState(State::Program);
+        setState(State::Program_Program);
         mProgLayer->program(mProgFile->progPtr());
     }
-    else if(mState == State::ProgramResetToApplication)
+    else if(mState == State::Program_ResetToApplication)
     {
         if(result != Xcp::OpResult::Success)
         {
@@ -286,10 +314,10 @@ void Cs2Tool::onProgramResetDone(Xcp::OpResult result)
             emit programmingDone(static_cast<int>(static_cast<int>(result)));
             return;
         }
-        setState(State::CalMode);
+        setState(State::Program_CalMode);
         mProgLayer->calMode();
     }
-    else if(mState == State::ProgramResetOnly)
+    else if(mState == State::Reset_Reset)
     {
         setState(State::Idle);
         emit resetDone(static_cast<int>(result));
@@ -311,6 +339,11 @@ void Cs2Tool::onProgLayerStateChanged()
         setState(State::Idle);
     else if(mState != State::IntfcNotOk && !mProgLayer->intfcOk())
         setState(State::IntfcNotOk);
+}
+
+void Cs2Tool::onProgLayerProgressChanged()
+{
+    emit stateChanged();
 }
 
 void Cs2Tool::setState(Cs2Tool::State newState)

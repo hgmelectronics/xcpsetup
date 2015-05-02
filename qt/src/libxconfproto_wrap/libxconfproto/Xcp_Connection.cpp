@@ -103,7 +103,10 @@ Connection::Connection(QObject *parent) :
     mResetTimeoutMsec(0),
     mProgClearTimeoutMsec(0),
     mProgResetIsAcked(true),
-    mConnected(false)
+    mConnected(false),
+    mOpProgress(0),
+    mOpProgressNotifyFrac(0.015625),
+    mOpProgressFracs(0)
 {
     qRegisterMetaType<XcpPtr>("XcpPtr");
     qRegisterMetaType<OpResult>();
@@ -157,6 +160,18 @@ void Connection::setResetTimeout(int msec)
     mResetTimeoutMsec = msec;
 }
 
+double Connection::opProgressNotifyFrac()
+{
+    QReadLocker lock(&mOpProgressLock);
+    return mOpProgressNotifyFrac;
+}
+
+void Connection::setOpProgressNotifyFrac(double val)
+{
+    QWriteLocker lock(&mOpProgressLock);
+    mOpProgressNotifyFrac = val;
+}
+
 int Connection::progClearTimeout()
 {
     return mProgClearTimeoutMsec;
@@ -175,6 +190,12 @@ bool Connection::progResetIsAcked()
 void Connection::setProgResetIsAcked(bool val)
 {
     mProgResetIsAcked = val;
+}
+
+double Connection::opProgress()
+{
+    QReadLocker lock(&mOpProgressLock);
+    return mOpProgress;
 }
 
 Connection::State Connection::state()
@@ -305,12 +326,20 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
     {
         int packetBytes = std::min(remBytes, mMaxUpPayload);
         std::vector<quint8> seg;
-        EMIT_RETURN_ON_FAIL(uploadDone, uploadSegment(packetPtr, packetBytes, seg), base, len);
+        OpResult segResult = uploadSegment(packetPtr, packetBytes, seg);
+        if(segResult != OpResult::Success)
+        {
+            updateEmitOpProgress(0);
+            emit uploadDone(segResult, base, len);
+            return segResult;
+        }
         data.insert(data.end(), seg.begin(), seg.end());
         remBytes -= packetBytes;
         packetPtr.addr += packetBytes / mAddrGran;
+        updateEmitOpProgress(double(len - remBytes) / len);
     }
     emit uploadDone(OpResult::Success, base, len, data);
+    updateEmitOpProgress(0);
     if(out)
         *out = data;
     return OpResult::Success;
@@ -334,15 +363,22 @@ OpResult Connection::download(XcpPtr base, const std::vector<quint8> data)
     while(remBytes > 0)
     {
         int packetBytes = std::min(remBytes, mMaxDownPayload);
-        EMIT_RETURN_ON_FAIL(downloadDone,
-                            downloadSegment(packetPtr, std::vector<quint8>(packetDataPtr, packetDataPtr + packetBytes)),
-                            base,
-                            data);
+        OpResult segResult = downloadSegment(packetPtr, std::vector<quint8>(packetDataPtr, packetDataPtr + packetBytes));
+        if(segResult != OpResult::Success)
+        {
+            updateEmitOpProgress(0);
+            emit downloadDone(segResult, base, data);
+            return segResult;
+        }
         remBytes -= packetBytes;
         packetDataPtr += packetBytes;
         packetPtr.addr += packetBytes / mAddrGran;
+        updateEmitOpProgress(double(packetDataPtr - data.data()) / data.size());
     }
-    EMIT_RETURN(downloadDone, OpResult::Success, base, data);
+
+    emit downloadDone(OpResult::Success, base, data);
+    updateEmitOpProgress(0);
+    return OpResult::Success;
 }
 
 OpResult Connection::nvWrite()
@@ -565,7 +601,13 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data, b
             if(finalEmptyPacket)
             {
                 std::vector<quint8> packetData;   // empty vector
-                EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData), base, data, finalEmptyPacket);
+                OpResult segResult = programPacket(startPtr, packetData);
+                if(segResult != OpResult::Success)
+                {
+                    updateEmitOpProgress(0);
+                    emit programRangeDone(segResult, base, data, finalEmptyPacket);
+                    return segResult;
+                }
             }
             break;
         }
@@ -574,6 +616,13 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data, b
         {
             int blockBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxBlocksize * mPgmMaxDownPayload));
             std::vector<quint8> blockData(dataIt, dataIt + blockBytes);
+            OpResult segResult = programBlock(startPtr, blockData);
+            if(segResult != OpResult::Success)
+            {
+                updateEmitOpProgress(0);
+                emit programRangeDone(segResult, base, data, finalEmptyPacket);
+                return segResult;
+            }
             EMIT_RETURN_ON_FAIL(programRangeDone, programBlock(startPtr, blockData), base, data, finalEmptyPacket);
             dataIt += blockBytes;
         }
@@ -581,11 +630,21 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data, b
         {
             int packetBytes = std::min(std::distance(dataIt, data.end()), ssize_t(mPgmMaxDownPayload));
             std::vector<quint8> packetData(dataIt, dataIt + packetBytes);
-            EMIT_RETURN_ON_FAIL(programRangeDone, programPacket(startPtr, packetData), base, data, finalEmptyPacket);
+            OpResult segResult = programPacket(startPtr, packetData);
+            if(segResult != OpResult::Success)
+            {
+                updateEmitOpProgress(0);
+                emit programRangeDone(segResult, base, data, finalEmptyPacket);
+                return segResult;
+            }
             dataIt += packetBytes;
         }
+        updateEmitOpProgress(double(dataIt - data.begin()) / data.size());
     }
-    EMIT_RETURN(programRangeDone, OpResult::Success, base, data, finalEmptyPacket);
+
+    emit programRangeDone(OpResult::Success, base, data, finalEmptyPacket);
+    updateEmitOpProgress(0);
+    return OpResult::Success;
 }
 
 OpResult Connection::programVerify(XcpPtr mta, quint32 crc)
@@ -1131,6 +1190,19 @@ OpResult Connection::synch()
         return getRepliesResult(replies, "resynchronizing");
 
     return OpResult::Success;
+}
+
+void Connection::updateEmitOpProgress(double newVal)
+{
+    QWriteLocker lock(&mOpProgressLock);
+    mOpProgress = newVal;
+    int newFracs = int(newVal / mOpProgressNotifyFrac);
+    if(newFracs != mOpProgressFracs)
+    {
+        mOpProgressFracs = newFracs;
+        lock.unlock();
+        emit opProgressChanged();
+    }
 }
 
 }   // namespace Xcp
