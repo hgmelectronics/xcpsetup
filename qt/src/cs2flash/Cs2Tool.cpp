@@ -3,14 +3,14 @@
 namespace SetupTools
 {
 
-const QString Cs2Tool::SLAVE_ID_STR = "0x18FCD403:0x18FCD4F9";
-
 Cs2Tool::Cs2Tool(QObject *parent) :
     QObject(parent),
     mProgLayer(new Xcp::ProgramLayer(this)),
     mProgFile(new ProgFile(this)),
     mProgFileOkToFlash(false),
-    mState(State::IntfcNotOk)
+    mState(State::IntfcNotOk),
+    mSlaveCmdId("18FCD403"),
+    mSlaveResId("18FCD4F9")
 {
     connect(mProgFile, &ProgFile::progChanged, this, &Cs2Tool::onProgFileChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::calModeDone, this, &Cs2Tool::onCalModeDone);
@@ -153,6 +153,28 @@ void Cs2Tool::setIntfcUri(QString uri)
     emit intfcUriChanged();
 }
 
+QString Cs2Tool::slaveCmdId()
+{
+    return mSlaveCmdId;
+}
+
+void Cs2Tool::setSlaveCmdId(QString id)
+{
+    mSlaveCmdId = id;
+    emit slaveIdChanged();
+}
+
+QString Cs2Tool::slaveResId()
+{
+    return mSlaveResId;
+}
+
+void Cs2Tool::setSlaveResId(QString id)
+{
+    mSlaveResId = id;
+    emit slaveIdChanged();
+}
+
 bool Cs2Tool::intfcOk()
 {
     return mProgLayer->intfcOk();
@@ -175,7 +197,7 @@ void Cs2Tool::startProgramming()
 
     setState(State::Program_InitialConnect);
     
-    mProgLayer->setSlaveId(SLAVE_ID_STR);
+    mProgLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
     mProgLayer->calMode();
 }
 
@@ -189,7 +211,7 @@ void Cs2Tool::startReset()
 
     setState(State::Reset_Reset);
 
-    mProgLayer->setSlaveId(SLAVE_ID_STR);
+    mProgLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
     mProgLayer->programReset();
 }
 
