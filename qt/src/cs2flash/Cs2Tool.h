@@ -22,6 +22,8 @@ class Cs2Tool : public QObject
     Q_PROPERTY(QString intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcUriChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
+    Q_PROPERTY(QString slaveCmdId READ slaveCmdId WRITE setSlaveCmdId NOTIFY slaveIdChanged)
+    Q_PROPERTY(QString slaveResId READ slaveResId WRITE setSlaveResId NOTIFY slaveIdChanged)
 public:
     explicit Cs2Tool(QObject *parent = 0);
     ~Cs2Tool();
@@ -37,12 +39,17 @@ public:
     double progress();
     QString intfcUri();
     void setIntfcUri(QString uri);
+    QString slaveCmdId();
+    void setSlaveCmdId(QString uri);
+    QString slaveResId();
+    void setSlaveResId(QString uri);
     bool intfcOk();
     bool idle();
 signals:
     void stateChanged();
     void programChanged();
     void intfcUriChanged();
+    void slaveIdChanged();
 
     void programmingDone(int result);
     void resetDone(int result);
@@ -72,7 +79,6 @@ private:
         _N_STATES
     };
     constexpr static const int N_STATES = static_cast<int>(State::_N_STATES);
-    static const QString SLAVE_ID_STR;
     constexpr static const int TIMEOUT_MSEC = 100;
     constexpr static const int RESET_TIMEOUT_MSEC = 3000;
     constexpr static const int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
@@ -98,6 +104,7 @@ private:
     bool mProgFileOkToFlash;
     int mRemainingCalTries;
     State mState;
+    QString mSlaveCmdId, mSlaveResId;
 };
 
 } // namespace SetupTools

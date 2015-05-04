@@ -96,6 +96,8 @@ ApplicationWindow {
         progressValue: cs2Tool.progress
         onUserStart: cs2Tool.startProgramming()
         onUserReset: cs2Tool.startReset()
+        targetCmdId: cs2Tool.slaveCmdId
+        targetResId: cs2Tool.slaveResId
     }
 
     Cs2Tool {
