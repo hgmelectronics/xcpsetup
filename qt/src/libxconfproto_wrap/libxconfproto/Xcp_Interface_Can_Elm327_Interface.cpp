@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <QUrl>
 
-#define ELM327_DEBUG
-
 #ifdef ELM327_DEBUG
 #include <QDebug>
 #include <QTime>
