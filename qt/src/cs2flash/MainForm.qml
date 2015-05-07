@@ -144,7 +144,7 @@ ColumnLayout {
                 Layout.fillWidth: true
 
                 property string selectedUri
-                selectedUri: (count > 0 && currentIndex < count) ? model[currentIndex].uri.replace(/bitrate=[0-9]*/, "") : ""
+                selectedUri: (count > 0 && currentIndex < count) ? model[currentIndex].uri : ""
             }
 
             ComboBox {

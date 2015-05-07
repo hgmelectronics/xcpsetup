@@ -53,3 +53,5 @@ unix {
 win32 {
     DEFINES += SPINWAIT
 }
+
+CONFIG(debug) DEFINES += ELM327_DEBUG
