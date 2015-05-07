@@ -623,7 +623,6 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data, b
                 emit programRangeDone(segResult, base, data, finalEmptyPacket);
                 return segResult;
             }
-            EMIT_RETURN_ON_FAIL(programRangeDone, programBlock(startPtr, blockData), base, data, finalEmptyPacket);
             dataIt += blockBytes;
         }
         else
