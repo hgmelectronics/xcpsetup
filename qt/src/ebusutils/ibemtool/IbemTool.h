@@ -75,6 +75,7 @@ public slots:
     void onProgramModeDone(Xcp::OpResult result);
     void onProgFileChanged();
     void onProgLayerStateChanged();
+    void onProgLayerProgressChanged();
 private:
     enum class State
     {
@@ -103,6 +104,9 @@ private:
     constexpr static const Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::ST_CRC_32;
     constexpr static const int N_POLL_ITER = 20;
     constexpr static const int N_PROGRAMMODE_TRIES = 25;
+    constexpr static const int N_PROGRAM_STATES = static_cast<int>(State::ProgramReset2) - static_cast<int>(State::Program) + 1;
+    constexpr static const double PROGRAM_STATE_PROGRESS_CREDIT = 0.0625;
+    constexpr static const double PROGRAM_PROGRESS_MULT = 1 - PROGRAM_STATE_PROGRESS_CREDIT * (N_PROGRAM_STATES - 1);
 
     void rereadProgFile();
 

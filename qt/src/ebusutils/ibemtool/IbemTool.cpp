@@ -102,13 +102,28 @@ bool IbemTool::programOk()
 
 double IbemTool::progress()
 {
-    double ret = 0;
     if(mState == State::PollForSlaves)
-        ret = 1.0 - double(mRemainingPollIter) / N_POLL_ITER;
+    {
+        return 1.0 - double(mRemainingPollIter) / N_POLL_ITER;
+    }
     else if(mTotalSlaves > 0)
-        ret = double(mSlavesDone * N_STATES + static_cast<int>(mState))
-                / (mTotalSlaves * N_STATES);
-    return ret;
+    {
+        double stateProgress = double(static_cast<int>(mState) - static_cast<int>(State::Program))
+                / (N_PROGRAM_STATES - 1);
+        double programProgress = 0;
+        if(mState == State::Program)
+            programProgress = mProgLayer->opProgress();
+        else if(mState > State::Program)
+            programProgress = 1;
+
+        double slaveProgress = stateProgress * PROGRAM_STATE_PROGRESS_CREDIT + programProgress * PROGRAM_PROGRESS_MULT;
+
+        return (mSlavesDone + slaveProgress) / mTotalSlaves;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 QString IbemTool::intfcUri()
@@ -433,6 +448,11 @@ void IbemTool::onProgLayerStateChanged()
         mState = State::IntfcNotOk;
     }
     emit stateChanged();
+}
+
+void IbemTool::onProgLayerProgressChanged()
+{
+    emit progressChanged();
 }
 
 } // namespace SetupTools
