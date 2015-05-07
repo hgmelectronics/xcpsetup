@@ -111,7 +111,7 @@ ApplicationWindow {
                 spacing: 5
                 Label {
                     font.pixelSize: 18
-                    text: "IBEMTool 1.0"
+                    text: "IBEMTool 1.2"
                 }
                 Label {
                     text: "Copyright \u00A9 2015 Ebus Inc."
