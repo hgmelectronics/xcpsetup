@@ -12,7 +12,7 @@ namespace Xcp {
 class LIBXCONFPROTOSHARED_EXPORT ProgramLayer : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString intfcUri READ intfcUri WRITE setIntfcUri)
+    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
     Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
     Q_PROPERTY(ConnectionFacade *conn READ conn)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
@@ -27,8 +27,8 @@ public:
     explicit ProgramLayer(QObject *parent = 0);
     virtual ~ProgramLayer();
 
-    QString intfcUri(void);
-    void setIntfcUri(QString);
+    QUrl intfcUri();
+    void setIntfcUri(QUrl);
     QString slaveId();
     void setSlaveId(QString);
     ConnectionFacade *conn();

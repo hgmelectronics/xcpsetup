@@ -7,8 +7,8 @@ namespace Xcp {
 
 ConnectionFacade::ConnectionFacade(QObject *parent) :
     QObject(parent),
-    mIntfc(NULL),
-    mConn(new Connection(NULL)),
+    mIntfc(),
+    mConn(new Connection(nullptr)),
     mConnThread(new QThread(this))
 {
     mConn->moveToThread(mConnThread);
@@ -48,12 +48,12 @@ ConnectionFacade::~ConnectionFacade()
     mConnThread->wait();
 }
 
-QString ConnectionFacade::intfcUri()
+QUrl ConnectionFacade::intfcUri()
 {
     return mIntfcUri;
 }
 
-void ConnectionFacade::setIntfcUri(QString val)
+void ConnectionFacade::setIntfcUri(QUrl val)
 {
     if(mIntfcUri != val)
     {
@@ -297,17 +297,17 @@ SimpleDataLayer::SimpleDataLayer() : mConn(new ConnectionFacade(this))
     mConn->setTimeout(100);
 }
 
-QString SimpleDataLayer::intfcUri(void)
+QUrl SimpleDataLayer::intfcUri()
 {
     return mConn->intfcUri();
 }
 
-void SimpleDataLayer::setIntfcUri(QString val)
+void SimpleDataLayer::setIntfcUri(QUrl val)
 {
     mConn->setIntfcUri(val);
 }
 
-QString SimpleDataLayer::slaveId(void)
+QString SimpleDataLayer::slaveId()
 {
     return mConn->slaveId();
 }

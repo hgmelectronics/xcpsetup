@@ -23,7 +23,7 @@ class Test : public QObject
 {
     Q_OBJECT
 public:
-    Test(const QString &devName, QObject *parent = 0);
+    Test(const QUrl devName, QObject *parent = 0);
     virtual ~Test() {}
 
 private slots:
@@ -36,7 +36,7 @@ private slots:
 private:
     constexpr static const int TIMEOUT_MSEC = 1000;
 
-    QString mDevUri;
+    QUrl mDevUri;
     Interface *mIntfc;
 };
 }

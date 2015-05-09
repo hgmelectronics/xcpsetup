@@ -73,14 +73,14 @@ QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
     return new LegacyRegistry();
 }
 
-QList<QString> Registry::avail()
+QList<QUrl> Registry::avail()
 {
-    QList<QString> ret;
+    QList<QUrl> ret;
     ret.append(Elm327::Registry::avail());
     return ret;
 }
 
-Interface *Registry::make(QString uri)
+Interface *Registry::make(QUrl uri)
 {
     Interface *ret;
     ret = Elm327::Registry::make(uri);
@@ -89,7 +89,7 @@ Interface *Registry::make(QString uri)
     return ret;
 }
 
-QString Registry::desc(QString uri)
+QString Registry::desc(QUrl uri)
 {
     QString ret;
     ret = Elm327::Registry::desc(uri);

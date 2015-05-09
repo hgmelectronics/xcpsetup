@@ -279,14 +279,14 @@ constexpr int Interface::POSSIBLE_BAUDRATES[];
 
 Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mPortInfo(NULL),
-    mPort(NULL)
+    mPortInfo(),
+    mPort()
 {}
 
 Interface::Interface(const QSerialPortInfo portInfo, QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
     mPortInfo(new QSerialPortInfo(portInfo)),
-    mPort(NULL)
+    mPort()
 {}
 
 Interface::~Interface() {
@@ -723,24 +723,23 @@ QList<Factory *> getInterfacesAvail(QObject *parent)
     return ret;
 }
 
-QList<QString> Registry::avail()
+QList<QUrl> Registry::avail()
 {
-    QList<QString> ret;
+    QList<QUrl> ret;
     for(QSerialPortInfo portInfo : getPortsAvail())
         ret.append(QString("elm327:%1?bitrate=250000&filter=00000000:00000000").arg(portInfo.portName()));
     return ret;
 }
 
-Interface *Registry::make(QString uriStr)
+Interface *Registry::make(QUrl uri)
 {
-    QUrl uri(uriStr);
     if(QString::compare(uri.scheme(), "elm327", Qt::CaseInsensitive) != 0)
-        return NULL;
+        return nullptr;
     QUrlQuery uriQuery(uri.query());
 
     QSerialPortInfo portInfo(uri.path());
     if(portInfo.isBusy() || portInfo.isNull())
-        return NULL;
+        return nullptr;
 
     Interface *intfc = new Interface();
     if(intfc->setup(&portInfo) != OpResult::Success)
@@ -764,9 +763,8 @@ Interface *Registry::make(QString uriStr)
     return intfc;
 }
 
-QString Registry::desc(QString uriStr)
+QString Registry::desc(QUrl uri)
 {
-    QUrl uri(uriStr);
     if(QString::compare(uri.scheme(), "elm327", Qt::CaseInsensitive) != 0)
         return QString("");
 

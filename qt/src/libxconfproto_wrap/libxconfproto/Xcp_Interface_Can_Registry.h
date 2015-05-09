@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QUrl>
 #include <QSharedPointer>
 #include <QtQml/QQmlEngine>
 #include <QtQml/QJSEngine>
@@ -70,9 +71,9 @@ LIBXCONFPROTOSHARED_EXPORT QObject *registryProvider(QQmlEngine *engine, QJSEngi
 class LIBXCONFPROTOSHARED_EXPORT Registry
 {
 public:
-    static QList<QString> avail();
-    static Interface *make(QString uri);
-    static QString desc(QString uri);
+    static QList<QUrl> avail();
+    static Interface *make(QUrl uri);
+    static QString desc(QUrl uri);
 };
 
 }

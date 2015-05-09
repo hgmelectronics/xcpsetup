@@ -7,13 +7,13 @@ namespace Interface {
 
 Info::Info() {}
 
-Info::Info(QString uri, QString text, QObject *parent) :
+Info::Info(QUrl uri, QString text, QObject *parent) :
     QObject(parent),
     mUri(uri),
     mText(text)
 {}
 
-QString Info::uri()
+QUrl Info::uri()
 {
     return mUri;
 }
@@ -23,14 +23,14 @@ QString Info::text()
     return mText;
 }
 
-QList<QString> Registry::avail()
+QList<QUrl> Registry::avail()
 {
-    QList<QString> ret;
+    QList<QUrl> ret;
     ret.append(Can::Registry::avail());
     return ret;
 }
 
-Interface *Registry::make(QString uri)
+Interface *Registry::make(QUrl uri)
 {
     Interface *ret;
     ret = Can::Registry::make(uri);
@@ -39,7 +39,7 @@ Interface *Registry::make(QString uri)
     return ret;
 }
 
-QString Registry::desc(QString uri)
+QString Registry::desc(QUrl uri)
 {
     QString ret;
     ret = Can::Registry::desc(uri);
@@ -50,7 +50,7 @@ QString Registry::desc(QString uri)
 
 QmlRegistry::QmlRegistry(QObject *parent) : QObject(parent)
 {
-    for(QString uri : Registry::avail())
+    for(QUrl uri : Registry::avail())
         mAvail.append(new Info(uri, Registry::desc(uri)));
 }
 

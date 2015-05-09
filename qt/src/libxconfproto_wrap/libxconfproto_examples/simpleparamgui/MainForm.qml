@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
-import com.setuptools 1.0
+import com.setuptools.xcp 1.0
 
 ColumnLayout {
     spacing: 10
@@ -73,7 +73,7 @@ ColumnLayout {
             TextField {
                 id: slaveIdField
                 enabled: openButton.enabled
-                placeholderText: qsTr("00000000:00000000")
+                text: qsTr("18FCD403:18FCD4F9")
                 implicitWidth: 200
             }
         }
@@ -113,7 +113,7 @@ ColumnLayout {
         }
     }
 
-    XcpInterfaceRegistry {
+    InterfaceRegistry {
         id: registry
     }
 
