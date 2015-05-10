@@ -20,25 +20,6 @@ ApplicationWindow {
         }
     }
 
-    function opResultStr(opr) {
-        switch(opr) {
-        case OpResult.Success:                   return "Success";
-        case OpResult.NoIntfc:                   return "No interface";
-        case OpResult.NotConnected:              return "Not connected";
-        case OpResult.WrongMode:                 return "Wrong mode set";
-        case OpResult.IntfcConfigError:          return "Interface configuration error";
-        case OpResult.IntfcUnexpectedResponse:   return "Unexpected response from interface";
-        case OpResult.IntfcNoResponse:           return "No response from interface";
-        case OpResult.Timeout:                   return "Timeout";
-        case OpResult.InvalidOperation:          return "Invalid operation attempted";
-        case OpResult.BadReply:                  return "Bad XCP reply";
-        case OpResult.PacketLost:                return "XCP packet lost";
-        case OpResult.AddrGranError:             return "Address granularity violation";
-        case OpResult.MultipleReplies:           return "Unexpected multiple replies";
-        default:                                    return "Untranslated error"
-        }
-    }
-
     MainForm {
         id: mainForm
         anchors.fill: parent
@@ -77,7 +58,7 @@ ApplicationWindow {
         }
         onDownloadUint32Done: {
             if(result !== OpResult.Success) {
-                messageDialog.show("Download failed: " + opResultStr(result))
+                messageDialog.show("Download failed: " + OpResult.asString(result))
             }
         }
     }

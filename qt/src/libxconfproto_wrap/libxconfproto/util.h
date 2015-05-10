@@ -208,12 +208,14 @@ class LIBXCONFPROTOSHARED_EXPORT UrlUtil : public QObject
 {
     Q_OBJECT
 public:
-    explicit UrlUtil(QObject *parent = 0);
     ~UrlUtil();
     Q_INVOKABLE QString urlToLocalFile(QString url);
-};
 
-LIBXCONFPROTOSHARED_EXPORT QObject *urlUtilProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
+    static QObject *create(QQmlEngine *engine, QJSEngine *scriptEngine);
+
+private:
+    UrlUtil();
+};
 
 }   // namespace SetupTools
 #endif // UTIL_H

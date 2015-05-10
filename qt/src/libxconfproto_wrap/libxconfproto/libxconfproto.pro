@@ -27,7 +27,8 @@ SOURCES += \
     Xcp_Interface_Registry.cpp \
     FlashProg.cpp \
     ProgFile.cpp \
-    Xcp_ProgramLayer.cpp
+    Xcp_ProgramLayer.cpp \
+    xcp_exception.cpp
 
 HEADERS += \
     libxconfproto_global.h \

@@ -9,15 +9,15 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    qmlRegisterType<SetupTools::Xcp::Interface::QmlRegistry>("com.setuptools", 1, 0, "XcpInterfaceRegistry");
-    qmlRegisterType<SetupTools::Xcp::Interface::Info>("com.setuptools", 1, 0, "XcpInterfaceInfo");
-    qmlRegisterType<SetupTools::Xcp::Connection>("com.setuptools", 1, 0, "XcpConnectionState");  // for State enum
-    qmlRegisterType<SetupTools::ProgFile>("com.setuptools", 1, 0, "ProgFile");  // for Type enum
-    qmlRegisterType<SetupTools::Xcp::OpResultWrapper>("com.setuptools", 1, 0, "XcpOpResult");
+    qmlRegisterType<SetupTools::Xcp::Interface::QmlRegistry>("com.setuptools.xcp", 1, 0, "InterfaceRegistry");
+    qmlRegisterType<SetupTools::Xcp::Interface::Info>("com.setuptools.xcp", 1, 0, "InterfaceInfo");
+    qmlRegisterType<SetupTools::Xcp::Connection>("com.setuptools.xcp", 1, 0, "ConnectionState");  // for State enum
+    qmlRegisterType<SetupTools::ProgFile>("com.setuptools.xcp", 1, 0, "ProgFile");  // for Type enum
+    qmlRegisterSingletonType<SetupTools::Xcp::OpResultWrapper>("com.setuptools.xcp", 1, 0, "OpResult", &SetupTools::Xcp::OpResultWrapper::create);
 
     qmlRegisterType<SetupTools::Cs2Tool>("com.hgmelectronics.utils.cs2tool", 1, 0, "Cs2Tool");
 
-    qmlRegisterSingletonType<SetupTools::UrlUtil>("com.setuptools", 1, 0, "UrlUtil", &SetupTools::urlUtilProvider);
+    qmlRegisterSingletonType<SetupTools::UrlUtil>("com.setuptools.xcp", 1, 0, "UrlUtil", &SetupTools::UrlUtil::create);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
