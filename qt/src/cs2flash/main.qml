@@ -7,7 +7,7 @@ import com.hgmelectronics.utils.cs2tool 1.0
 import com.setuptools 1.0
 
 ApplicationWindow {
-    title: qsTr("CS2 Flash Tool")
+    title: qsTr("HGM Flash Tool")
     width: 400
     height: 300
     visible: true
@@ -141,7 +141,7 @@ ApplicationWindow {
 
     Window {
         id: aboutDialog
-        title: "About CS2Flash"
+        title: "About HGMFlash"
         width: col.implicitWidth + 20
         height: col.implicitHeight + 20
         maximumWidth: col.implicitWidth + 20
@@ -157,7 +157,7 @@ ApplicationWindow {
                 spacing: 5
                 Label {
                     font.pixelSize: 18
-                    text: "CS2Flash 1.0"
+                    text: "HGMFlash 1.0"
                 }
                 Label {
                     text: "Copyright \u00A9 2015 HGM Automotive Electronics Inc."
@@ -189,7 +189,7 @@ ApplicationWindow {
 
     Window {
         id: helpDialog
-        title: "CS2Flash help"
+        title: "HGMFlash help"
             width: helpCol.implicitWidth + 20
             height: helpCol.implicitHeight + 20
             Column {
@@ -201,7 +201,7 @@ ApplicationWindow {
                     width: 500
                     wrapMode: Text.WordWrap
                     text:   "<h2>Program</h2>
-<p>Use the Open command in the File menu to select an S-record program file to load on the target CS2. Once it is successfully loaded, the fields in the Program area will show information about the file.</p>
+<p>Use the Open command in the File menu to select an S-record program file to load on the target controller. Once it is successfully loaded, the fields in the Program area will show information about the file.</p>
 <h2>Interface</h2>
 <p>Select an interface from the drop-down menu. If you have built-in serial ports on your system, you will see an entry for each one, even though only one corresponds to the ELM327 compatible interface. You can try each port in turn, or look at your system's Device Manager or equivalent to find which port to use. If you do not see the port you are looking for, try closing and reopening the program.</p>
 <p>Note: the FTDI USB to serial adapter chips in many ELM327 compatible interfaces have a timing delay that can greatly slow programming on Windows machines. There is a setting that can be changed to fix this problem; this only has to be done once for each unique ELM327 adapter you use with your computer. To do so, follow these steps:</p>

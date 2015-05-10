@@ -157,10 +157,10 @@ LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
     mPacketLogEnabled(false)
 {}
 
-OpResult LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data)
+OpResult LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data, bool replyExpected)
 {
     Q_ASSERT(mSlaveAddr);
-    return transmitTo(data, mSlaveAddr.get().cmd);
+    return transmitTo(data, mSlaveAddr.get().cmd, replyExpected);
 }
 
 OpResult LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec, std::vector<std::vector<quint8> > &out)

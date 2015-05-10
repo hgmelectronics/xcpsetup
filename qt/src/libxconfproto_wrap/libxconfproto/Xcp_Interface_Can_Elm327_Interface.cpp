@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <QUrl>
 
-#define ELM327_DEBUG
-
 #ifdef ELM327_DEBUG
 #include <QDebug>
 #include <QTime>
@@ -423,14 +421,14 @@ OpResult Interface::disconnect()
     return doSetFilter(mFilter);
 }
 
-OpResult Interface::transmit(const std::vector<quint8> & data)
+OpResult Interface::transmit(const std::vector<quint8> & data, bool replyExpected)
 {
     Q_ASSERT(mPort);
     Q_ASSERT(mSlaveAddr);
-    return transmitTo(data, mSlaveAddr.get().cmd);
+    return transmitTo(data, mSlaveAddr.get().cmd, replyExpected);
 }
 
-OpResult Interface::transmitTo(const std::vector<quint8> & data, Id id)
+OpResult Interface::transmitTo(const std::vector<quint8> & data, Id id, bool replyExpected)
 {
     Q_ASSERT(mPort);
     Q_ASSERT(mCfgdBitrate && mCfgdFilter);
@@ -462,7 +460,10 @@ OpResult Interface::transmitTo(const std::vector<quint8> & data, Id id)
         qDebug() << QString(frame);
     }
 
-    mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + "\r");
+    mIo->write(QByteArray(reinterpret_cast<const char *>(data.data()), data.size()).toHex() + (replyExpected ? "\r" : "0\r"));
+
+    if(!replyExpected)
+        mIo->waitPromptReady(TIMEOUT_MSEC);
     return OpResult::Success;
 }
 
@@ -517,7 +518,7 @@ OpResult LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
 bool Interface::hasReliableTx()
 {
     if(mIntfcIsStn)
-        return false;
+        return true;
     else
         return false;    // FIXME need to see if ELM does not drop packets
 }
