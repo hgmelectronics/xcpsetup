@@ -116,7 +116,7 @@ double Cs2Tool::progress()
     {
         // calculate progress for a program sequence
         // stateProgress = 1/5 for first state, 5/5 for last state (so user gets to see progress reach 100%)
-        double stateProgress = double(static_cast<int>(mState) - static_cast<int>(State::Program_InitialConnect))
+        double stateProgress = double(static_cast<int>(mState) - static_cast<int>(State::Program_InitialConnect) + 1)
                 / (N_PROGRAM_STATES - 1);
         double programProgress = 0;
         if(mState == State::Program_Program)
