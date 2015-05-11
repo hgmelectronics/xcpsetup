@@ -25,3 +25,5 @@ DEPENDPATH += $$PWD/../libxconfproto_wrap/libxconfproto
 
 HEADERS += \
     Cs2Tool.h
+
+win32:RC_ICONS += hgmflash.ico
