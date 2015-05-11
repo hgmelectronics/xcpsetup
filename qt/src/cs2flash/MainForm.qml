@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
-import com.setuptools 1.0
+import com.setuptools.xcp 1.0
 
 ColumnLayout {
     id: root
@@ -122,7 +122,7 @@ ColumnLayout {
         anchors.right: parent.right
         spacing: 5
 
-        XcpInterfaceRegistry {
+        InterfaceRegistry {
             id: registry
         }
 

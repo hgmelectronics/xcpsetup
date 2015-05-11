@@ -4,53 +4,13 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import com.hgmelectronics.utils.cs2tool 1.0
-import com.setuptools 1.0
+import com.setuptools.xcp 1.0
 
 ApplicationWindow {
     title: qsTr("HGM Flash Tool")
     width: 400
     height: 300
     visible: true
-
-    function opResultStr(opr) {
-        switch(opr) {
-        case XcpOpResult.Success:                   return "Success";
-        case XcpOpResult.NoIntfc:                   return "No interface";
-        case XcpOpResult.NotConnected:              return "Not connected";
-        case XcpOpResult.WrongMode:                 return "Wrong mode set";
-        case XcpOpResult.IntfcConfigError:          return "Interface configuration error";
-        case XcpOpResult.IntfcIoError:              return "Interface I/O error";
-        case XcpOpResult.IntfcUnexpectedResponse:   return "Unexpected response from interface";
-        case XcpOpResult.IntfcNoResponse:           return "No response from interface";
-        case XcpOpResult.Timeout:                   return "Timeout";
-        case XcpOpResult.InvalidOperation:          return "Invalid operation attempted";
-        case XcpOpResult.InvalidArgument:           return "Invalid argument passed";
-        case XcpOpResult.BadReply:                  return "Bad XCP reply";
-        case XcpOpResult.BadCksum:                  return "Bad checksum";
-        case XcpOpResult.PacketLost:                return "XCP packet lost";
-        case XcpOpResult.AddrGranError:             return "Address granularity violation";
-        case XcpOpResult.MultipleReplies:           return "Unexpected multiple replies";
-        case XcpOpResult.SlaveErrorBusy:            return "Slave error: busy";
-        case XcpOpResult.SlaveErrorDaqActive:       return "Slave error: DAQ mode active";
-        case XcpOpResult.SlaveErrorPgmActive:       return "Slave error: program sequence active";
-        case XcpOpResult.SlaveErrorCmdUnknown:      return "Slave error: command unknown";
-        case XcpOpResult.SlaveErrorCmdSyntax:       return "Slave error: command syntax invalid";
-        case XcpOpResult.SlaveErrorOutOfRange:      return "Slave error: parameter out of range";
-        case XcpOpResult.SlaveErrorWriteProtected:  return "Slave error: write protected";
-        case XcpOpResult.SlaveErrorAccessDenied:    return "Slave error: access denied";
-        case XcpOpResult.SlaveErrorAccessLocked:    return "Slave error: access locked";
-        case XcpOpResult.SlaveErrorPageNotValid:    return "Slave error: page not valid";
-        case XcpOpResult.SlaveErrorModeNotValid:    return "Slave error: page mode not valid";
-        case XcpOpResult.SlaveErrorSegmentNotValid: return "Slave error: page segment not valid";
-        case XcpOpResult.SlaveErrorSequence:        return "Slave error: sequence violation";
-        case XcpOpResult.SlaveErrorDAQConfig:       return "Slave error: DAQ configuration invalid";
-        case XcpOpResult.SlaveErrorMemoryOverflow:  return "Slave error: memory overflow";
-        case XcpOpResult.SlaveErrorGeneric:         return "Slave error: generic";
-        case XcpOpResult.SlaveErrorVerify:          return "Slave error: verification failed";
-        case XcpOpResult.SlaveErrorUndefined:       return "Slave error: undefined error";
-        default:                                    return "Untranslated error"
-        }
-    }
 
     menuBar: MenuBar {
         property alias fileMenu: fileMenu
@@ -106,16 +66,16 @@ ApplicationWindow {
         programFileType: mainForm.progFileType
         intfcUri: mainForm.intfcUri
         onProgrammingDone: {
-            if(result === XcpOpResult.Success)
+            if(result === OpResult.Success)
                 messageDialog.show("Programming complete")
             else
-                errorDialog.show("Programming failed: " + opResultStr(result))
+                errorDialog.show("Programming failed: " + OpResult.asString(result))
         }
         onResetDone: {
-            if(result === XcpOpResult.Success)
+            if(result === OpResult.Success)
                 messageDialog.show("Reset complete")
             else
-                errorDialog.show("Reset failed: " + opResultStr(result))
+                errorDialog.show("Reset failed: " + OpResult.asString(result))
         }
     }
 

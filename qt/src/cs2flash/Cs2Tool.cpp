@@ -136,12 +136,12 @@ double Cs2Tool::progress()
     }
 }
 
-QString Cs2Tool::intfcUri()
+QUrl Cs2Tool::intfcUri()
 {
     return mProgLayer->intfcUri();
 }
 
-void Cs2Tool::setIntfcUri(QString uri)
+void Cs2Tool::setIntfcUri(QUrl uri)
 {
     if(mState != State::IntfcNotOk && mState != State::Idle)
     {

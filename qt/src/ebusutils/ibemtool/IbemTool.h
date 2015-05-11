@@ -34,7 +34,7 @@ class IbemTool : public QObject
     Q_PROPERTY(qlonglong programCksum READ programCksum NOTIFY programChanged)
     Q_PROPERTY(bool programOk READ programOk NOTIFY programChanged)
     Q_PROPERTY(double progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcUriChanged)
+    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcUriChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
 public:
@@ -51,8 +51,8 @@ public:
     qlonglong programCksum();
     bool programOk();
     double progress();
-    QString intfcUri();
-    void setIntfcUri(QString uri);
+    QUrl intfcUri();
+    void setIntfcUri(QUrl uri);
     bool intfcOk();
     bool idle();
 signals:

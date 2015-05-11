@@ -19,7 +19,7 @@ class Cs2Tool : public QObject
     Q_PROPERTY(qlonglong programCksum READ programCksum NOTIFY programChanged)
     Q_PROPERTY(bool programOk READ programOk NOTIFY programChanged)
     Q_PROPERTY(double progress READ progress NOTIFY stateChanged)
-    Q_PROPERTY(QString intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcUriChanged)
+    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcUriChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(QString slaveCmdId READ slaveCmdId WRITE setSlaveCmdId NOTIFY slaveIdChanged)
@@ -37,12 +37,12 @@ public:
     qlonglong programCksum();
     bool programOk();
     double progress();
-    QString intfcUri();
-    void setIntfcUri(QString uri);
+    QUrl intfcUri();
+    void setIntfcUri(QUrl uri);
     QString slaveCmdId();
-    void setSlaveCmdId(QString uri);
+    void setSlaveCmdId(QString id);
     QString slaveResId();
-    void setSlaveResId(QString uri);
+    void setSlaveResId(QString id);
     bool intfcOk();
     bool idle();
 signals:
@@ -79,7 +79,7 @@ private:
         _N_STATES
     };
     constexpr static const int N_STATES = static_cast<int>(State::_N_STATES);
-    constexpr static const int TIMEOUT_MSEC = 100;
+    constexpr static const int TIMEOUT_MSEC = 250;
     constexpr static const int RESET_TIMEOUT_MSEC = 3000;
     constexpr static const int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
     constexpr static const int PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC = 1050;

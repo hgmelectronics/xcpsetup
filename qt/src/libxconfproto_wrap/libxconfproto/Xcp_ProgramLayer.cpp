@@ -26,12 +26,12 @@ ProgramLayer::ProgramLayer(QObject *parent) :
 ProgramLayer::~ProgramLayer()
 {}
 
-QString ProgramLayer::intfcUri(void)
+QUrl ProgramLayer::intfcUri()
 {
     return mConn->intfcUri();
 }
 
-void ProgramLayer::setIntfcUri(QString uri)
+void ProgramLayer::setIntfcUri(QUrl uri)
 {
     mConn->setIntfcUri(uri);
 }

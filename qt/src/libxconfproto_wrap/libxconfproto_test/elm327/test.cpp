@@ -11,7 +11,7 @@ namespace Can
 namespace Elm327
 {
 
-Test::Test(const QString &intfcUri, QObject *parent) :
+Test::Test(const QUrl intfcUri, QObject *parent) :
     QObject(parent),
     mDevUri(intfcUri)
 {}

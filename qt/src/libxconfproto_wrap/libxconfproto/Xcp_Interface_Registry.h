@@ -6,6 +6,7 @@
 #include <QtQml/QQmlEngine>
 #include <QtQml/QJSEngine>
 #include <QtQml/QQmlListProperty>
+#include <QUrl>
 
 namespace SetupTools {
 namespace Xcp {
@@ -15,23 +16,24 @@ class LIBXCONFPROTOSHARED_EXPORT Registry : public QObject
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE static QList<QString> avail();
-    Q_INVOKABLE static Interface *make(QString uri);
-    Q_INVOKABLE static QString desc(QString uri);
+    Q_INVOKABLE static QList<QUrl> avail();
+    Q_INVOKABLE static Interface *make(QUrl uri);
+    Q_INVOKABLE static QString desc(QUrl uri);
 };
 
 class LIBXCONFPROTOSHARED_EXPORT Info : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString uri READ uri CONSTANT)
-    Q_PROPERTY(QString text READ text CONSTANT)
+    Q_PROPERTY(QUrl uri READ uri CONSTANT)
+    Q_PROPERTY(QUrl text READ text CONSTANT)
 public:
     Info();
-    Info(QString uri, QString text, QObject *parent = 0);
-    QString uri();
+    Info(QUrl uri, QString text, QObject *parent = 0);
+    QUrl uri();
     QString text();
 private:
-    QString mUri, mText;
+    QUrl mUri;
+    QString mText;
 };
 
 class LIBXCONFPROTOSHARED_EXPORT QmlRegistry : public QObject

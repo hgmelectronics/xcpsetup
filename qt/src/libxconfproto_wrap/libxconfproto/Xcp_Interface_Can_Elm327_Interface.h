@@ -215,9 +215,9 @@ QList<Factory *> LIBXCONFPROTOSHARED_EXPORT getInterfacesAvail(QObject *parent =
 class LIBXCONFPROTOSHARED_EXPORT Registry
 {
 public:
-    static QList<QString> avail();
-    static Interface *make(QString uri);
-    static QString desc(QString uri);
+    static QList<QUrl> avail();
+    static Interface *make(QUrl uri);
+    static QString desc(QUrl uri);
 };
 
 }   // namespace Elm327

@@ -7,7 +7,7 @@ SOURCES += main.cpp \
 
 RESOURCES += qml.qrc
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

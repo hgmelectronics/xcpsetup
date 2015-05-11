@@ -126,12 +126,12 @@ double IbemTool::progress()
     }
 }
 
-QString IbemTool::intfcUri()
+QUrl IbemTool::intfcUri()
 {
     return mProgLayer->intfcUri();
 }
 
-void IbemTool::setIntfcUri(QString uri)
+void IbemTool::setIntfcUri(QUrl uri)
 {
     if(mState != State::IntfcNotOk && mState != State::Idle)
     {

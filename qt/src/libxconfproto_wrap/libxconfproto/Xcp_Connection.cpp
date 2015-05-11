@@ -97,7 +97,7 @@ quint32 Connection::computeCksum(CksumType type, const std::vector<quint8> &data
 
 Connection::Connection(QObject *parent) :
     QObject(parent),
-    mIntfc(NULL),
+    mIntfc(nullptr),
     mTimeoutMsec(0),
     mNvWriteTimeoutMsec(0),
     mResetTimeoutMsec(0),
@@ -201,7 +201,7 @@ double Connection::opProgress()
 Connection::State Connection::state()
 {
     QReadLocker lock(&mIntfcLock);
-    if(mIntfc == NULL)
+    if(mIntfc == nullptr)
         return State::IntfcInvalid;
     else if(!mConnected)
         return State::Closed;
@@ -623,7 +623,6 @@ OpResult Connection::programRange(XcpPtr base, const std::vector<quint8> data, b
                 emit programRangeDone(segResult, base, data, finalEmptyPacket);
                 return segResult;
             }
-            EMIT_RETURN_ON_FAIL(programRangeDone, programBlock(startPtr, blockData), base, data, finalEmptyPacket);
             dataIt += blockBytes;
         }
         else

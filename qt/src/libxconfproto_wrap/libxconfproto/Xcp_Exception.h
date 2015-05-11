@@ -4,6 +4,7 @@
 #include <QException>
 #include <QObject>
 #include "libxconfproto_global.h"
+#include <QQmlEngine>
 
 #define EMIT_RETURN(signal, value, ...) { OpResult EMIT_RETURN__ret = (value); emit (signal)(EMIT_RETURN__ret, ##__VA_ARGS__); return EMIT_RETURN__ret; }
 #define EMIT_RETURN_ON_FAIL(signal, value, ...) { OpResult EMIT_RETURN__ret = (value); if(EMIT_RETURN__ret != OpResult::Success) { emit (signal)(EMIT_RETURN__ret, ##__VA_ARGS__); return EMIT_RETURN__ret; } }
@@ -96,6 +97,12 @@ public:
         SlaveErrorVerify =          static_cast<int>(Xcp::OpResult::SlaveErrorVerify),
         SlaveErrorUndefined =       static_cast<int>(Xcp::OpResult::SlaveErrorUndefined)
     };
+
+    Q_INVOKABLE QString asString(int result);
+
+    static QObject *create(QQmlEngine *engine, QJSEngine *scriptEngine);
+private:
+    OpResultWrapper();
 };
 
 #define RETURN_FAIL(a) { OpResult res; if((res = (a)) != OpResult::Success) return res; }

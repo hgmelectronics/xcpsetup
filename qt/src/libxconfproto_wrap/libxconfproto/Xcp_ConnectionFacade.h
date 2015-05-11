@@ -10,7 +10,7 @@ namespace Xcp {
 class LIBXCONFPROTOSHARED_EXPORT ConnectionFacade : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString intfcUri READ intfcUri WRITE setIntfcUri)
+    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
     Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
@@ -27,8 +27,8 @@ class LIBXCONFPROTOSHARED_EXPORT ConnectionFacade : public QObject
 public:
     explicit ConnectionFacade(QObject *parent = 0);
     ~ConnectionFacade();
-    QString intfcUri();
-    void setIntfcUri(QString);
+    QUrl intfcUri();
+    void setIntfcUri(QUrl);
     QString slaveId();
     void setSlaveId(QString);
     int timeout();
@@ -116,8 +116,8 @@ public slots:
     void onConnStateChanged();
     void onConnOpProgressChanged();
 private:
-    Interface::Interface *mIntfc;
-    QString mIntfcUri;
+    Interface::Interface* mIntfc;
+    QUrl mIntfcUri;
     Connection *mConn;
     QThread *mConnThread;
 };
@@ -125,13 +125,13 @@ private:
 class LIBXCONFPROTOSHARED_EXPORT SimpleDataLayer : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString intfcUri READ intfcUri WRITE setIntfcUri)
+    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
     Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
 public:
     SimpleDataLayer();
 
-    QString intfcUri(void);
-    void setIntfcUri(QString);
+    QUrl intfcUri(void);
+    void setIntfcUri(QUrl);
     QString slaveId();
     void setSlaveId(QString);
 signals:

@@ -16,14 +16,14 @@ int main(int argc, char **argv)
 
     int iUri = 0;
     qDebug() << "Available interfaces:";
-    QList<QString> uris = SetupTools::Xcp::Interface::Can::Elm327::Registry::avail();
+    QList<QUrl> uris = SetupTools::Xcp::Interface::Can::Elm327::Registry::avail();
     for(const auto &uri : uris)
     {
         qDebug() << iUri << SetupTools::Xcp::Interface::Can::Elm327::Registry::desc(uri);
         ++iUri;
     }
 
-    QString uri;
+    QUrl uri;
     if(uris.size() == 0)
     {
         qDebug() << "No interfaces detected";
