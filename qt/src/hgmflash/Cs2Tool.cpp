@@ -118,13 +118,8 @@ double Cs2Tool::progress()
         // stateProgress = 1/5 for first state, 5/5 for last state (so user gets to see progress reach 100%)
         double stateProgress = double(static_cast<int>(mState) - static_cast<int>(State::Program_InitialConnect) + 1)
                 / (N_PROGRAM_STATES - 1);
-        double programProgress = 0;
-        if(mState == State::Program_Program)
-            programProgress = mProgLayer->opProgress();
-        else if(mState > State::Program_Program)
-            programProgress = 1;
 
-        return stateProgress * PROGRAM_STATE_PROGRESS_CREDIT + programProgress * PROGRAM_PROGRESS_MULT;
+        return stateProgress * PROGRAM_STATE_PROGRESS_CREDIT + programProgress() * PROGRAM_PROGRESS_MULT;
     }
     else if(mState == State::Reset_Reset)
     {
@@ -134,6 +129,18 @@ double Cs2Tool::progress()
     {
         return 0;
     }
+}
+
+double Cs2Tool::programProgress()
+{
+    if(mState < State::Program_Program)
+        return 0;
+    else if(mState == State::Program_Program)
+        return mProgLayer->opProgress();
+    else if(mState <= State::Program_CalMode)
+        return 1;
+    else
+        return 0;
 }
 
 QString Cs2Tool::intfcUri()
