@@ -19,6 +19,7 @@ class Cs2Tool : public QObject
     Q_PROPERTY(qlonglong programCksum READ programCksum NOTIFY programChanged)
     Q_PROPERTY(bool programOk READ programOk NOTIFY programChanged)
     Q_PROPERTY(double progress READ progress NOTIFY stateChanged)
+    Q_PROPERTY(double programProgress READ programProgress NOTIFY stateChanged)
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcUriChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
@@ -37,6 +38,7 @@ public:
     qlonglong programCksum();
     bool programOk();
     double progress();
+    double programProgress();
     QUrl intfcUri();
     void setIntfcUri(QUrl uri);
     QString slaveCmdId();
