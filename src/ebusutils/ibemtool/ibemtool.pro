@@ -15,13 +15,13 @@ QML_IMPORT_PATH =
 # Default rules for deployment.
 include(deployment.pri)
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../libxconfproto_wrap/Desktop-Release/libxconfproto/release/ -lxconfproto
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../libxconfproto_wrap/Desktop-Debug/libxconfproto/debug/ -lxconfproto
-else:unix:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../libxconfproto_wrap/Desktop-Release/libxconfproto/ -lxconfproto
-else:unix:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../libxconfproto_wrap/Desktop-Debug/libxconfproto/ -lxconfproto
 
-INCLUDEPATH += $$PWD/../../libxconfproto_wrap/libxconfproto
-DEPENDPATH += $$PWD/../../libxconfproto_wrap/libxconfproto
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/release/ -lxconfproto
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/debug/ -lxconfproto
+else:unix: LIBS += -L$$OUT_PWD/../../libxconfproto/ -lxconfproto
+
+INCLUDEPATH += $$PWD/../../libxconfproto
+DEPENDPATH += $$PWD/../../libxconfproto
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../ebussetuptools/release/ -lebussetuptools
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../ebussetuptools/debug/ -lebussetuptools
