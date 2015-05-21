@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Program</DisplayName>
+    <Description>IBEMTool program</Description>
+    <Version>1.2</Version>
+    <ReleaseDate>2015-05-06</ReleaseDate>
+    <Name>com.ebus.utils.ibemtool</Name>
+    <Licenses>
+        <License name="GNU GPL v3" file="license.txt" />
+    </Licenses>
+    <Default>script</Default>
+    <Script>installscript.qs</Script>
+    <ForcedInstallation>false</ForcedInstallation>
+</Package>
