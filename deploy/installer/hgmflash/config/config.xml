@@ -8,4 +8,5 @@
     <TargetDir>@ApplicationsDir@/HGM/HGMFlash</TargetDir>
     <Logo>hgmlogo.png</Logo>
     <AllowSpaceInPath>true</AllowSpaceInPath>
+	<WizardStyle>Modern</WizardStyle>
 </Installer>
