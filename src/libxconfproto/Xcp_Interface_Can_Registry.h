@@ -22,7 +22,7 @@ namespace Interface
 namespace Can
 {
 
-class LIBXCONFPROTOSHARED_EXPORT Factory : public QObject
+class  Factory : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text CONSTANT)
@@ -33,7 +33,7 @@ public:
     virtual QString text() = 0;
 };
 
-class LIBXCONFPROTOSHARED_EXPORT Info : public QObject
+class  Info : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text CONSTANT)
@@ -46,9 +46,9 @@ private:
     Factory *mFactory;
 };
 
-QList<Factory *> LIBXCONFPROTOSHARED_EXPORT getInterfacesAvail(QObject *parent = 0);
+QList<Factory *>  getInterfacesAvail(QObject *parent = 0);
 
-class LIBXCONFPROTOSHARED_EXPORT LegacyRegistry : public QObject
+class  LegacyRegistry : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> avail READ avail CONSTANT)
@@ -66,9 +66,9 @@ private:
     QList<Info *> mInfosAvail;
 };
 
-LIBXCONFPROTOSHARED_EXPORT QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
+ QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
-class LIBXCONFPROTOSHARED_EXPORT Registry
+class  Registry
 {
 public:
     static QList<QUrl> avail();

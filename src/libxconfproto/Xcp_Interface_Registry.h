@@ -12,7 +12,7 @@ namespace SetupTools {
 namespace Xcp {
 namespace Interface {
 
-class LIBXCONFPROTOSHARED_EXPORT Registry : public QObject
+class  Registry : public QObject
 {
     Q_OBJECT
 public:
@@ -21,7 +21,7 @@ public:
     Q_INVOKABLE static QString desc(QUrl uri);
 };
 
-class LIBXCONFPROTOSHARED_EXPORT Info : public QObject
+class  Info : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl uri READ uri CONSTANT)
@@ -36,7 +36,7 @@ private:
     QString mText;
 };
 
-class LIBXCONFPROTOSHARED_EXPORT QmlRegistry : public QObject
+class  QmlRegistry : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<SetupTools::Xcp::Interface::Info> avail READ avail CONSTANT)

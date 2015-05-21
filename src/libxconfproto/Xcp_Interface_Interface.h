@@ -14,7 +14,7 @@ namespace Xcp
 namespace Interface
 {
 
-class LIBXCONFPROTOSHARED_EXPORT Exception : public ::SetupTools::Xcp::Exception {};
+class  Exception : public ::SetupTools::Xcp::Exception {};
 
 /*!
  * \brief Base class for interfaces (not abstract so dummies can be created by QML, but will fail assertion if dummy used.)
@@ -22,7 +22,7 @@ class LIBXCONFPROTOSHARED_EXPORT Exception : public ::SetupTools::Xcp::Exception
  * or CAN (many devices on the bus, all addressable by the host).
  */
 
-class LIBXCONFPROTOSHARED_EXPORT Interface : public QObject
+class  Interface : public QObject
 {
     Q_OBJECT
 public:

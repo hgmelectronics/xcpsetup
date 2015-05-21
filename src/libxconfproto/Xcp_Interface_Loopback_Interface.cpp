@@ -9,7 +9,7 @@ namespace Interface
 namespace Loopback
 {
 
-LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
+ Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Interface(parent),
     mPacketLogEnabled(false),
     mHasReliableTx(true)
@@ -17,7 +17,7 @@ LIBXCONFPROTOSHARED_EXPORT Interface::Interface(QObject *parent) :
     mPacketTimer.start();
 }
 
-OpResult LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8> & data, bool replyExpected)
+OpResult  Interface::transmit(const std::vector<quint8> & data, bool replyExpected)
 {
     Q_UNUSED(replyExpected);
     if(mPacketLogEnabled)
@@ -30,19 +30,19 @@ OpResult LIBXCONFPROTOSHARED_EXPORT Interface::transmit(const std::vector<quint8
     return OpResult::Success;
 }
 
-OpResult LIBXCONFPROTOSHARED_EXPORT Interface::receive(int timeoutMsec, std::vector<std::vector<quint8> > &out)
+OpResult  Interface::receive(int timeoutMsec, std::vector<std::vector<quint8> > &out)
 {
     out = mMasterReceiveQueue.getAll(timeoutMsec);
     return OpResult::Success;
 }
 
-OpResult LIBXCONFPROTOSHARED_EXPORT Interface::clearReceived()
+OpResult  Interface::clearReceived()
 {
     mMasterReceiveQueue.getAll(0);
     return OpResult::Success;
 }
 
-void LIBXCONFPROTOSHARED_EXPORT Interface::slaveTransmit(const std::vector<quint8> & data)
+void  Interface::slaveTransmit(const std::vector<quint8> & data)
 {
     if(mPacketLogEnabled)
     {
@@ -53,22 +53,22 @@ void LIBXCONFPROTOSHARED_EXPORT Interface::slaveTransmit(const std::vector<quint
     mMasterReceiveQueue.put(data);
 }
 
-std::vector<std::vector<quint8> > LIBXCONFPROTOSHARED_EXPORT Interface::slaveReceive(int timeoutMsec)
+std::vector<std::vector<quint8> >  Interface::slaveReceive(int timeoutMsec)
 {
     return mSlaveReceiveQueue.getAll(timeoutMsec);
 }
 
-void LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
+void  Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
 }
 
-LIBXCONFPROTOSHARED_EXPORT void Interface::setHasReliableTx(bool val)
+ void Interface::setHasReliableTx(bool val)
 {
     mHasReliableTx = val;
 }
 
-LIBXCONFPROTOSHARED_EXPORT bool Interface::hasReliableTx()
+ bool Interface::hasReliableTx()
 {
     return mHasReliableTx;
 }

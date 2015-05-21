@@ -16,7 +16,7 @@ namespace Interface
 namespace Can
 {
 
-struct LIBXCONFPROTOSHARED_EXPORT Id
+struct  Id
 {
 public:
     enum class Type { Std, Ext };
@@ -31,19 +31,19 @@ public:
 bool operator==(const Id &lhs, const Id &rhs);
 bool operator!=(const Id &lhs, const Id &rhs);
 
-boost::optional<Id> LIBXCONFPROTOSHARED_EXPORT StrToId(QString str);
-QString LIBXCONFPROTOSHARED_EXPORT IdToStr(Id id);
+boost::optional<Id>  StrToId(QString str);
+QString  IdToStr(Id id);
 
-struct LIBXCONFPROTOSHARED_EXPORT SlaveId
+struct  SlaveId
 {
 public:
     Id cmd, res;
 };
 
-boost::optional<SlaveId> LIBXCONFPROTOSHARED_EXPORT StrToSlaveId(QString str);
-QString LIBXCONFPROTOSHARED_EXPORT SlaveIdToStr(SlaveId id);
+boost::optional<SlaveId>  StrToSlaveId(QString str);
+QString  SlaveIdToStr(SlaveId id);
 
-struct LIBXCONFPROTOSHARED_EXPORT Filter
+struct  Filter
 {
 public:
     Filter();
@@ -55,10 +55,10 @@ public:
     bool maskEff;
 };
 
-boost::optional<Filter> LIBXCONFPROTOSHARED_EXPORT StrToFilter(QString str);
-QString LIBXCONFPROTOSHARED_EXPORT FilterToStr(Filter filt);
+boost::optional<Filter>  StrToFilter(QString str);
+QString  FilterToStr(Filter filt);
 
-struct LIBXCONFPROTOSHARED_EXPORT Frame
+struct  Frame
 {
 public:
     Frame();
@@ -70,11 +70,11 @@ public:
     std::vector<quint8> data;
 };
 
-Filter LIBXCONFPROTOSHARED_EXPORT ExactFilter(Id addr);
+Filter  ExactFilter(Id addr);
 
 //bool validateXcp(const Frame &frame);
 
-class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface::Interface
+class  Interface : public ::SetupTools::Xcp::Interface::Interface
 {
     Q_OBJECT
 public:

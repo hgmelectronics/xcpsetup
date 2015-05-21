@@ -7,7 +7,7 @@
 namespace SetupTools
 {
 
-LIBXCONFPROTOSHARED_EXPORT ProgFile::ProgFile(QObject *parent) :
+ ProgFile::ProgFile(QObject *parent) :
     QObject(parent),
     mType(Invalid),
     mValid(false)
@@ -15,12 +15,12 @@ LIBXCONFPROTOSHARED_EXPORT ProgFile::ProgFile(QObject *parent) :
     connect(&mProg, &FlashProg::changed, this, &ProgFile::onProgChanged);
 }
 
-LIBXCONFPROTOSHARED_EXPORT QString ProgFile::name()
+ QString ProgFile::name()
 {
     return mName;
 }
 
-LIBXCONFPROTOSHARED_EXPORT void ProgFile::setName(QString newName)
+ void ProgFile::setName(QString newName)
 {
     mName = newName;
     if(mValid)
@@ -30,12 +30,12 @@ LIBXCONFPROTOSHARED_EXPORT void ProgFile::setName(QString newName)
     }
 }
 
-LIBXCONFPROTOSHARED_EXPORT ProgFile::Type ProgFile::type()
+ ProgFile::Type ProgFile::type()
 {
     return mType;
 }
 
-LIBXCONFPROTOSHARED_EXPORT void ProgFile::setType(ProgFile::Type newType)
+ void ProgFile::setType(ProgFile::Type newType)
 {
     mType = newType;
     if(mValid)
@@ -45,37 +45,37 @@ LIBXCONFPROTOSHARED_EXPORT void ProgFile::setType(ProgFile::Type newType)
     }
 }
 
-LIBXCONFPROTOSHARED_EXPORT bool ProgFile::valid()
+ bool ProgFile::valid()
 {
     return mValid;
 }
 
-LIBXCONFPROTOSHARED_EXPORT FlashProg *ProgFile::progPtr()
+ FlashProg *ProgFile::progPtr()
 {
     return &mProg;
 }
 
-LIBXCONFPROTOSHARED_EXPORT FlashProg &ProgFile::prog()
+ FlashProg &ProgFile::prog()
 {
     return mProg;
 }
 
-LIBXCONFPROTOSHARED_EXPORT const FlashProg &ProgFile::prog() const
+ const FlashProg &ProgFile::prog() const
 {
     return mProg;
 }
 
-LIBXCONFPROTOSHARED_EXPORT int ProgFile::size()
+ int ProgFile::size()
 {
     return mProg.size();
 }
 
-LIBXCONFPROTOSHARED_EXPORT uint ProgFile::base()
+ uint ProgFile::base()
 {
     return mProg.base();
 }
 
-LIBXCONFPROTOSHARED_EXPORT ProgFile::Result ProgFile::read()
+ ProgFile::Result ProgFile::read()
 {
     for(auto blockPtr : mProg.blocks())
         delete blockPtr;
@@ -99,7 +99,7 @@ LIBXCONFPROTOSHARED_EXPORT ProgFile::Result ProgFile::read()
     return ret;
 }
 
-LIBXCONFPROTOSHARED_EXPORT void ProgFile::onProgChanged()
+ void ProgFile::onProgChanged()
 {
     emit progChanged();
 }
@@ -120,12 +120,12 @@ enum class Result
     BadRecord
 };
 
-LIBXCONFPROTOSHARED_EXPORT bool CompareLine(const Line &a, const Line &b)
+ bool CompareLine(const Line &a, const Line &b)
 {
     return a.base < b.base;
 }
 
-LIBXCONFPROTOSHARED_EXPORT QList<FlashBlock *>::iterator FindAppendBlock(QList<FlashBlock *> &blocks, quint32 newBase)
+ QList<FlashBlock *>::iterator FindAppendBlock(QList<FlashBlock *> &blocks, quint32 newBase)
 {
     for(QList<FlashBlock *>::iterator blockIt = blocks.begin(); blockIt != blocks.end(); ++blockIt)
     {
@@ -136,7 +136,7 @@ LIBXCONFPROTOSHARED_EXPORT QList<FlashBlock *>::iterator FindAppendBlock(QList<F
     return blocks.end();
 }
 
-LIBXCONFPROTOSHARED_EXPORT std::pair<Result, Line> ConvertLine(const QString &text)
+ std::pair<Result, Line> ConvertLine(const QString &text)
 {
     Line ret;
 
@@ -194,7 +194,7 @@ LIBXCONFPROTOSHARED_EXPORT std::pair<Result, Line> ConvertLine(const QString &te
 
 }   // namespace SrecDetail
 
-LIBXCONFPROTOSHARED_EXPORT ProgFile::Result ProgFile::readSrec(QFile &file)
+ ProgFile::Result ProgFile::readSrec(QFile &file)
 {
     QTextStream stream(&file);
     std::vector<SrecDetail::Line> lines;

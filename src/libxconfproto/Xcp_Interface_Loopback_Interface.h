@@ -16,7 +16,7 @@ namespace Interface
 namespace Loopback
 {
 
-class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface::Interface
+class  Interface : public ::SetupTools::Xcp::Interface::Interface
 {
     Q_OBJECT
 public:

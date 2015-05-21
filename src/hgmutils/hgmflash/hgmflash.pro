@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets
+QT += qml quick widgets serialport
 
 SOURCES += main.cpp \
     Cs2Tool.cpp
@@ -8,6 +8,7 @@ SOURCES += main.cpp \
 RESOURCES += qml.qrc
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs
+QMAKE_LFLAGS += -static-libstdc++ -static-libgcc -static -lwinpthread
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

@@ -7,7 +7,7 @@
 namespace SetupTools
 {
 
-class LIBXCONFPROTOSHARED_EXPORT ProgFile : public QObject
+class  ProgFile : public QObject
 {
     Q_OBJECT
     Q_ENUMS(Type)

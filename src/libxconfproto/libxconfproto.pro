@@ -12,8 +12,7 @@ QMAKE_CXXFLAGS += -std=c++11
 
 TARGET = xconfproto
 TEMPLATE = lib
-
-DEFINES += LIBXCONFPROTO_LIBRARY
+CONFIG += staticlib
 
 SOURCES += \
     util.cpp \

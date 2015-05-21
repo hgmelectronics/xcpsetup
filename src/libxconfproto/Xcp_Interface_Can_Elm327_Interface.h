@@ -25,15 +25,15 @@ namespace Can
 namespace Elm327
 {
 
-class LIBXCONFPROTOSHARED_EXPORT Exception : public ::SetupTools::Xcp::Interface::Exception {};
+class  Exception : public ::SetupTools::Xcp::Interface::Exception {};
 
-class LIBXCONFPROTOSHARED_EXPORT UnexpectedResponse : public Exception {};
+class  UnexpectedResponse : public Exception {};
 
-class LIBXCONFPROTOSHARED_EXPORT NoResponse : public UnexpectedResponse {};
+class  NoResponse : public UnexpectedResponse {};
 
-class LIBXCONFPROTOSHARED_EXPORT SerialError : public Exception {};
+class  SerialError : public Exception {};
 
-class LIBXCONFPROTOSHARED_EXPORT ConfigError : public Exception {};
+class  ConfigError : public Exception {};
 
 class IoTask : public QObject
 {
@@ -69,7 +69,7 @@ private:
     PythonicEvent mPromptReady, mWriteComplete;
 };
 
-class LIBXCONFPROTOSHARED_EXPORT Io : public QObject
+class  Io : public QObject
 {
     Q_OBJECT
 public:
@@ -116,7 +116,7 @@ private:
 /*!
  * \brief Implementation of CanInterface for the ELM327/STN1110
  */
-class LIBXCONFPROTOSHARED_EXPORT Interface : public ::SetupTools::Xcp::Interface::Can::Interface
+class  Interface : public ::SetupTools::Xcp::Interface::Can::Interface
 {
     Q_OBJECT
 public:
@@ -195,7 +195,7 @@ private:
     boost::optional<Filter> mCfgdFilter;
 };
 
-class LIBXCONFPROTOSHARED_EXPORT Factory : public ::SetupTools::Xcp::Interface::Can::Factory
+class  Factory : public ::SetupTools::Xcp::Interface::Can::Factory
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text CONSTANT)
@@ -208,11 +208,11 @@ private:
     QSerialPortInfo mPortInfo;
 };
 
-QList<QSerialPortInfo> LIBXCONFPROTOSHARED_EXPORT getPortsAvail();
+QList<QSerialPortInfo>  getPortsAvail();
 
-QList<Factory *> LIBXCONFPROTOSHARED_EXPORT getInterfacesAvail(QObject *parent = 0);
+QList<Factory *>  getInterfacesAvail(QObject *parent = 0);
 
-class LIBXCONFPROTOSHARED_EXPORT Registry
+class  Registry
 {
 public:
     static QList<QUrl> avail();

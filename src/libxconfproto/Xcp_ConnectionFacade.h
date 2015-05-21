@@ -7,7 +7,7 @@
 namespace SetupTools {
 namespace Xcp {
 
-class LIBXCONFPROTOSHARED_EXPORT ConnectionFacade : public QObject
+class  ConnectionFacade : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
@@ -122,7 +122,7 @@ private:
     QThread *mConnThread;
 };
 
-class LIBXCONFPROTOSHARED_EXPORT SimpleDataLayer : public QObject
+class  SimpleDataLayer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)

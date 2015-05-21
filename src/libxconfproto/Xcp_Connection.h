@@ -61,7 +61,7 @@ enum class CksumType {
     ST_CRC_32
 };
 
-struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
+struct  XcpPtr
 {
     quint32 addr;
     quint8 ext;
@@ -76,9 +76,9 @@ inline bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
     return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
 }
 
-boost::optional<quint32> LIBXCONFPROTOSHARED_EXPORT computeCksumStatic(CksumType type, const std::vector<quint8> &data);
+boost::optional<quint32>  computeCksumStatic(CksumType type, const std::vector<quint8> &data);
 
-class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
+class  Connection : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)
