@@ -8,7 +8,7 @@ QT       += network serialport quick
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections
 
 TARGET = xconfproto
 TEMPLATE = lib

@@ -9,6 +9,8 @@ RESOURCES += qml.qrc
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs
 QMAKE_LFLAGS += -static-libstdc++ -static-libgcc -static -lwinpthread
+QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
+QMAKE_LFLAGS += -Wl,--gc-sections
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
