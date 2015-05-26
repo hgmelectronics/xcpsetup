@@ -8,7 +8,13 @@ QT       += core serialport testlib quick
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs
+
+static {
+    QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections
+    QMAKE_LFLAGS += -static-libstdc++ -static-libgcc -Wl,--gc-sections
+    win32: QMAKE_LFLAGS += -static -lwinpthread
+}
 
 TARGET = elm327
 CONFIG   += console
