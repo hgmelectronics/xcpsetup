@@ -28,7 +28,7 @@ SOURCES += \
     FlashProg.cpp \
     ProgFile.cpp \
     Xcp_ProgramLayer.cpp \
-    xcp_exception.cpp
+    Xcp_Exception.cpp
 
 HEADERS += \
     libxconfproto_global.h \
@@ -44,7 +44,7 @@ HEADERS += \
     Xcp_Interface_Registry.h \
     FlashProg.h \
     ProgFile.h \
-    Xcp_ProgramLayer.h
+    Xcp_ProgramLayer.h \
 
 unix {
     target.path = /usr/lib
@@ -56,3 +56,6 @@ win32 {
 }
 
 CONFIG(debug) DEFINES += ELM327_DEBUG
+
+DISTFILES += \
+    datatablenotes.txt

@@ -215,7 +215,7 @@ public slots:
     OpResult setState(State);
     OpResult open(boost::optional<int> timeoutMsec = boost::optional<int>());
     OpResult close();
-    OpResult upload(XcpPtr base, int len, std::vector<quint8> *out);
+    OpResult upload(XcpPtr base, int len, std::vector<quint8> *out=nullptr);
     OpResult download(XcpPtr base, const std::vector<quint8> data);
     OpResult nvWrite();
     OpResult setCalPage(quint8 segment, quint8 page);
