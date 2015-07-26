@@ -16,7 +16,7 @@ class MemoryRange: public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariant value READ getValue WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(uint32_t addr READ addr)
     Q_PROPERTY(uint32_t addrExt READ addrExt)
     Q_PROPERTY(uint32_t size READ size)
@@ -34,11 +34,12 @@ public:
     MemoryRange(QMetaType::Type type, Xcp::XcpPtr base, quint32 count, bool writable, MemoryRangeList *parent);
     bool valid() const;
     bool writable() const;
-    uint32_t address() const;
-    uint32_t size() const;
+    XcpPtr base() const;
+    quint32 length() const;
 
-    ValueType getValue() const;
-    void setValue(ValueType value);
+    QVariant value() const;
+    void setValue(QVariant value);
+    Xcp::Connection* getConnection() const;
 
 signals:
     void valueChanged();
@@ -53,7 +54,6 @@ public slots:
     void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
 
 private:
-    Xcp::Connection* getConnection();
 
     Xcp::XcpPtr mBase;
     uint32_t mSize;

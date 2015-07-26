@@ -21,13 +21,14 @@ class MemoryRangeList : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(XcpPtr base READ base)
-    Q_PROPERTY(uint32_t length READ length) //!< Length in bytes, NOT in AG
+    Q_PROPERTY(XcpPtr base READ getBase)
+    Q_PROPERTY(uint32_t length READ getLength) //!< Length in bytes, NOT in AG
 public:
     MemoryRangeList(MemoryRangeTable *parent);
 
-    XcpPtr base();
-    uint32_t length(); //!< Length in bytes, NOT in AG
+    XcpPtr getBase() const;
+    uint32_t getLength() const; //!< Length in bytes, NOT in AG
+    Xcp::Connection* getConnection() const;
 
     /**
      * @brief adds a memrange to list, or returns a pointer to an existing one that is identical
