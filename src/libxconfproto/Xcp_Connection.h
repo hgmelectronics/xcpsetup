@@ -63,6 +63,14 @@ enum class CksumType {
 
 struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
 {
+    Q_GADGET
+
+    Q_PROPERTY(quint32 addr MEMBER addr)
+    Q_PROPERTY(quint8 ext MEMBER ext)
+
+    XcpPtr(quint32 addr_in) : addr(addr_in), ext(0) {}
+    XcpPtr(quint32 addr_in, quint8 ext_in) : addr(addr_in), ext(ext_in) {}
+
     quint32 addr;
     quint8 ext;
 };
