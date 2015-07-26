@@ -1,4 +1,4 @@
-#include "MemoryRangeTable.h"
+#include "Xcp_MemoryRangeTable.h"
 
 namespace SetupTools
 {

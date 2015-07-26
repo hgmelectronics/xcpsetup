@@ -14,15 +14,15 @@ CONFIG += staticlib
 QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES +=  \
-    MemoryRange.cpp \
-    MemoryRangeBase.cpp \
-    MemoryRangeTable.cpp
+    Xcp_MemoryRangeTable.cpp \
+    Xcp_MemoryRangeList.cpp \
+    Xcp_MemoryRange.cpp
 
 
 HEADERS += \
-    MemoryRange.h \
-    MemoryRangeBase.h \
-    MemoryRangeTable.h
+    Xcp_MemoryRangeTable.h \
+    Xcp_MemoryRange.h \
+    Xcp_MemoryRangeList.h
 
 INCLUDEPATH += $$PWD/../libxconfproto
 
