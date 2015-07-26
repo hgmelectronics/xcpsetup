@@ -6,7 +6,7 @@ TEMPLATE = app
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp
 
-QT += qml quick widgets
+QT += qml quick widgets serialport
 
 RESOURCES += qml.qrc
 
