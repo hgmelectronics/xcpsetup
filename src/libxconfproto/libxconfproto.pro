@@ -29,6 +29,7 @@ SOURCES += \
     ProgFile.cpp \
     Xcp_ProgramLayer.cpp \
     Xcp_Exception.cpp
+    SetupTools.cpp
 
 HEADERS += \
     libxconfproto_global.h \
@@ -45,6 +46,7 @@ HEADERS += \
     FlashProg.h \
     ProgFile.h \
     Xcp_ProgramLayer.h \
+    SetupTools.h
 
 unix {
     target.path = /usr/lib
