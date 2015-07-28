@@ -19,18 +19,6 @@ class MemoryRangeTable: public QObject
 
     Q_PROPERTY(Xcp::Connection *connection READ getConnection WRITE setConnection)
 public:
-    enum MemoryRangeType
-    {
-        U8,
-        S8,
-        U16,
-        S16,
-        U32,
-        S32,
-        F32,
-        F64
-    };
-
     MemoryRangeTable(QObject *parent = nullptr);
     Xcp::Connection *getConnection() const;
     void setConnection(Xcp::Connection *);

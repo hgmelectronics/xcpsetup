@@ -2,6 +2,7 @@
 #define SETUPTOOLS_XCP_MEMORYRANGE_H
 
 #include <QObject>
+#include <QQmlListProperty>
 
 #include "Xcp_Connection.h"
 
@@ -15,53 +16,62 @@ class MemoryRangeList;  // forward declare
 class MemoryRange: public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(uint32_t addr READ addr)
-    Q_PROPERTY(uint32_t addrExt READ addrExt)
-    Q_PROPERTY(uint32_t size READ size)
-    Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
-    Q_PROPERTY(bool writable READ writable NOTIFY writableChanged)
+    Q_ENUMS(MemoryRangeType)
 
 public:
+    enum MemoryRangeType
+    {
+        U8,
+        S8,
+        U16,
+        S16,
+        U32,
+        S32,
+        F32,
+        U64,
+        S64,
+        F64
+    };
+
     /**
      * @brief MemoryRange
      * @param type Qt metatype code
      * @param base Base address
-     * @param count Number of members of type in this range - if > 1 results in a table
+     * @param writable
      * @param parent
      */
-    MemoryRange(QMetaType::Type type, Xcp::XcpPtr base, quint32 count, bool writable, MemoryRangeList *parent);
-    bool valid() const;
+    MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, MemoryRangeList *parent);
+
     bool writable() const;
+    void setWritable(bool);
+
     XcpPtr base() const;
-    quint32 length() const;
 
-    QVariant value() const;
-    void setValue(QVariant value);
-    Xcp::Connection* getConnection() const;
-
-signals:
-    void valueChanged();
-    void validChanged();
-    void writableChanged();
+    quint32 size() const; //!< size in bytes
 
 public slots:
     void refresh();
     void onOpenDone(Xcp::OpResult result);
     void onCloseDone(Xcp::OpResult result);
-    void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    virtual void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ()) = 0;
     void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
 
+protected:
+    Xcp::Connection *getConnection() const;
+
 private:
+    const Xcp::XcpPtr mBase;
+    const quint32 mSize;
 
-    Xcp::XcpPtr mBase;
-    uint32_t mSize;
-    bool mValid;    //!< discovered by trying to read in onOpenDone
     bool mWritable;
-
-    QVariant mValue;
 };
+
+void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *conn, QVariant value, quint8 *buf);
+QVariant convertFromSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *conn, const quint8 *buf);
+quint32 memoryRangeTypeSize(MemoryRange::MemoryRangeType type);
+QMetaType::Type memoryRangeTypeQtCode(MemoryRange::MemoryRangeType type);
+
+
 
 }   // namespace Xcp
 }   // namespace SetupTools

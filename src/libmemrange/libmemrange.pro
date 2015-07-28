@@ -16,13 +16,15 @@ QMAKE_CXXFLAGS += -std=c++11
 SOURCES +=  \
     Xcp_MemoryRangeTable.cpp \
     Xcp_MemoryRangeList.cpp \
-    Xcp_MemoryRange.cpp
+    Xcp_MemoryRange.cpp \
+    Xcp_ScalarMemoryRange.cpp
 
 
 HEADERS += \
     Xcp_MemoryRangeTable.h \
     Xcp_MemoryRange.h \
-    Xcp_MemoryRangeList.h
+    Xcp_MemoryRangeList.h \
+    Xcp_ScalarMemoryRange.h
 
 INCLUDEPATH += $$PWD/../libxconfproto
 
