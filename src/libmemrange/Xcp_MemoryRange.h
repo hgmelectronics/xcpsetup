@@ -16,6 +16,7 @@ class MemoryRangeList;  // forward declare
 class MemoryRange: public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool writable READ writable WRITE setWritable NOTIFY writableChanged)
     Q_ENUMS(MemoryRangeType)
 
 public:
@@ -40,15 +41,21 @@ public:
      * @param writable
      * @param parent
      */
-    MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, MemoryRangeList *parent);
+    MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, quint8 addrGran, MemoryRangeList *parent);
 
     bool writable() const;
     void setWritable(bool);
 
     XcpPtr base() const;
+    XcpPtr end() const;
 
     quint32 size() const; //!< size in bytes
 
+    virtual bool operator==(MemoryRange &other) = 0;
+    inline bool operator!=(MemoryRange &other) { return !(*this == other); }
+
+signals:
+    void writableChanged();
 public slots:
     void refresh();
     void onOpenDone(Xcp::OpResult result);
@@ -57,11 +64,10 @@ public slots:
     void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
 
 protected:
-    Xcp::Connection *getConnection() const;
-
-private:
+    Xcp::Connection *connection() const;
     const Xcp::XcpPtr mBase;
     const quint32 mSize;
+    const quint8 mAddrGran;
 
     bool mWritable;
 };

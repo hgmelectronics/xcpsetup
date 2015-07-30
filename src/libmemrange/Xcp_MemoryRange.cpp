@@ -1,3 +1,5 @@
+#include "Xcp_MemoryRangeTable.h"
+#include "Xcp_MemoryRangeList.h"
 #include "Xcp_MemoryRange.h"
 
 namespace SetupTools
@@ -5,10 +7,11 @@ namespace SetupTools
 namespace Xcp
 {
 
-MemoryRange::MemoryRange(MemoryRangeType type, Xcp::XcpPtr base, bool writable, MemoryRangeList *parent) :
+MemoryRange::MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, quint8 addrGran, MemoryRangeList *parent) :
     QObject(parent),
     mBase(base),
-    mSize(MemoryRangeTypeSize(type)),
+    mSize(size),
+    mAddrGran(addrGran),
     mWritable(writable)
 {}
 
@@ -28,6 +31,11 @@ XcpPtr MemoryRange::base() const
     return mBase;
 }
 
+XcpPtr MemoryRange::end() const
+{
+    return mBase + (mSize / mAddrGran);
+}
+
 quint32 MemoryRange::size() const
 {
     return mSize;
@@ -35,7 +43,7 @@ quint32 MemoryRange::size() const
 
 void MemoryRange::refresh()
 {
-    getConnection()->upload(mBase, mSize);
+    connection()->upload(mBase, mSize);
 }
 
 void MemoryRange::onOpenDone(OpResult result)
@@ -56,48 +64,62 @@ void MemoryRange::onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const s
     Q_UNUSED(base);
     Q_UNUSED(data);
 
-    getConnection()->upload(mBase, mSize);
+    connection()->upload(mBase, mSize);
 }
 
-Xcp::Connection *MemoryRange::getConnection() const
+Xcp::Connection *MemoryRange::connection() const
 {
-    return qobject_cast<MemoryRangeList *>(parent())->getConnection();
+    return qobject_cast<MemoryRangeList *>(parent())->connection();
 }
 
 void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *conn, QVariant value, quint8 *buf)
 {
     switch(type)
     {
-    case MemoryRangeType::U8:
+    case MemoryRange::MemoryRangeType::U8:
         conn->toSlaveEndian<quint8>(value.toUInt(), buf);
         break;
-    case MemoryRangeType::S8:
+    case MemoryRange::MemoryRangeType::S8:
         conn->toSlaveEndian<qint8>(value.toInt(), buf);
         break;
-    case MemoryRangeType::U16:
+    case MemoryRange::MemoryRangeType::U16:
         conn->toSlaveEndian<quint16>(value.toUInt(), buf);
         break;
-    case MemoryRangeType::S16:
+    case MemoryRange::MemoryRangeType::S16:
         conn->toSlaveEndian<qint16>(value.toInt(), buf);
         break;
-    case MemoryRangeType::U32:
+    case MemoryRange::MemoryRangeType::U32:
         conn->toSlaveEndian<quint32>(value.toUInt(), buf);
         break;
-    case MemoryRangeType::S32:
-        conn->toSlaveEndian<qint32>(value.toInt(), buf);1
+    case MemoryRange::MemoryRangeType::S32:
+        conn->toSlaveEndian<qint32>(value.toInt(), buf);
         break;
-    case MemoryRangeType::F32:
-        conn->toSlaveEndian<float>(value.toFloat(), buf);
+    case MemoryRange::MemoryRangeType::F32:
+    {
+        union {
+            quint32 i;
+            float f;
+        } u;
+        u.f = value.toFloat();
+        conn->toSlaveEndian<quint32>(u.i, buf);
         break;
-    case MemoryRangeType::U64:
+    }
+    case MemoryRange::MemoryRangeType::U64:
         conn->toSlaveEndian<quint64>(value.toULongLong(), buf);
         break;
-    case MemoryRangeType::S64:
+    case MemoryRange::MemoryRangeType::S64:
         conn->toSlaveEndian<qint64>(value.toLongLong(), buf);
         break;
-    case MemoryRangeType::F64:
-        conn->toSlaveEndian<double>(value.toDouble(), buf);
+    case MemoryRange::MemoryRangeType::F64:
+    {
+        union {
+            quint64 i;
+            double f;
+        } u;
+        u.f = value.toDouble();
+        conn->toSlaveEndian<quint64>(u.i, buf);
         break;
+    }
     default:
         break;
     }
@@ -107,37 +129,52 @@ QVariant convertFromSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *co
 {
     switch(type)
     {
-    case MemoryRangeType::U8:
+    case MemoryRange::MemoryRangeType::U8:
         return conn->fromSlaveEndian<quint8>(buf);
         break;
-    case MemoryRangeType::S8:
+    case MemoryRange::MemoryRangeType::S8:
         return conn->fromSlaveEndian<qint8>(buf);
         break;
-    case MemoryRangeType::U16:
+    case MemoryRange::MemoryRangeType::U16:
         return conn->fromSlaveEndian<quint16>(buf);
         break;
-    case MemoryRangeType::S16:
+    case MemoryRange::MemoryRangeType::S16:
         return conn->fromSlaveEndian<qint16>(buf);
         break;
-    case MemoryRangeType::U32:
+    case MemoryRange::MemoryRangeType::U32:
         return conn->fromSlaveEndian<quint32>(buf);
         break;
-    case MemoryRangeType::S32:
+    case MemoryRange::MemoryRangeType::S32:
         return conn->fromSlaveEndian<qint32>(buf);
         break;
-    case MemoryRangeType::F32:
-       return  conn->fromSlaveEndian<float>(buf);
+    case MemoryRange::MemoryRangeType::F32:
+    {
+        union {
+            quint32 i;
+            float f;
+        } u;
+        u.i = conn->fromSlaveEndian<quint32>(buf);
+        return u.f;
         break;
-    case MemoryRangeType::U64:
+    }
+    case MemoryRange::MemoryRangeType::U64:
         return conn->fromSlaveEndian<quint64>(buf);
         break;
-    case MemoryRangeType::S64:
+    case MemoryRange::MemoryRangeType::S64:
         return conn->fromSlaveEndian<qint64>(buf);
         break;
-    case MemoryRangeType::F64:
-        return conn->fromSlaveEndian<double>(buf);
+    case MemoryRange::MemoryRangeType::F64:
+    {
+        union {
+            quint64 i;
+            double f;
+        } u;
+        u.i = conn->fromSlaveEndian<quint64>(buf);
+        return u.f;
         break;
+    }
     default:
+        return QVariant();
         break;
     }
 }

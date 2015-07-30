@@ -1,42 +1,129 @@
 #include "Xcp_MemoryRangeTable.h"
+#include "Xcp_ScalarMemoryRange.h"
 
 namespace SetupTools
 {
 namespace Xcp
 {
 
-MemoryRangeTable::MemoryRangeTable(Xcp::Connection *connection, QObject *parent = nullptr):
-    QObject(parent),
-    mConnection(connection)
+MemoryRangeTable::MemoryRangeTable(quint32 addrGran, QObject *parent):
+  QObject(parent),
+  mAddrGran(addrGran),
+  mConnection(nullptr)
+{}
 
+Connection *MemoryRangeTable::connection() const
 {
-    connect(connection, &XCPConnection::openDone, this, &MemoryRangeTable::onOpenDone);
-    connect(connection, &XCPConnection::closeDone, this, &MemoryRangeTable::onCloseDone);
+    return mConnection;
+}
 
-    connect(connection, &XCPConnection::uploadDone, this, &MemoryRangeTable::onUploadDone);
-    connect(connection, &XCPConnection::downloadDone, this, &MemoryRangeTable::onDownloadDone);
+void MemoryRangeTable::setConnection(Connection *newConn)
+{
+    if(updateDelta<Connection *>(mConnection, newConn))
+        emit connectionChanged();
+}
 
+bool MemoryRangeTable::connectionOk() const
+{
+    if(mConnection == nullptr)
+        return false;
+    else if(!mConnection->isOpen())
+        return false;
+    else if(mConnection->addrGran() != int(mAddrGran))
+        return false;
+    else
+        return true;
+}
+
+MemoryRange *MemoryRangeTable::addRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable)
+{
+    if(memoryRangeTypeSize(type) % mAddrGran)   // reject unaligned types
+        return nullptr;
+
+    MemoryRange *newRange = nullptr;
+    if(count == 1)
+    {
+        newRange = new ScalarMemoryRange(type, base, writable, mAddrGran, nullptr);
+    }
+    else if(count > 1)
+    {
+        // FIXME add table support here
+    }
+
+    if(newRange == nullptr)
+        return nullptr;
+
+    ListRange overlap = findOverlap(base, newRange->size());
+
+    MemoryRangeList *newList = new MemoryRangeList(mAddrGran, this);
+    newList->addRange(newRange);
+    for(MemoryRangeList *list : overlap)
+        newList->merge(*list);
+    QList<MemoryRangeList *>::iterator insertIt = mEntries.erase(overlap.begin(), overlap.end());
+    mEntries.insert(insertIt, newList);
+    return newRange;
 }
 
 void MemoryRangeTable::onOpenDone(OpResult result)
 {
+    Q_UNUSED(result);
+    emit connectionChanged();
     // walk through all of the memory ranges and call the read or open
     // enabling the range if it is valid
 }
 
 void MemoryRangeTable::onCloseDone(OpResult result)
 {
+    Q_UNUSED(result);
+    emit connectionChanged();
     //
 }
 
 void MemoryRangeTable::onUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data)
 {
-    // find the appropriate ranges and call methods to norify objects bound to the signals
+    // find the appropriate ranges and call methods to notify objects bound to the signals
+    ListRange overlap = findOverlap(base, len);
+    for(MemoryRangeList *list : overlap)
+        list->onUploadDone(result, base, len, data);
 }
 
 void MemoryRangeTable::onDownloadDone(OpResult result, XcpPtr base, std::vector<quint8> data)
 {
-    // find the appropriate ranges and call methods to norify objects bound to the signals
+    // find the appropriate ranges and call methods to notify objects bound to the signals
+    ListRange overlap = findOverlap(base, data.size());
+    for(MemoryRangeList *list : overlap)
+        list->onDownloadDone(result, base, data);
+}
+
+bool MemoryRangeTable::listBeginLessThan(const MemoryRangeList *list, const XcpPtr &addr)
+{
+    return (list->base() < addr);
+}
+
+bool MemoryRangeTable::listEndLessThan(const MemoryRangeList *list, const XcpPtr &addr)
+{
+    return (list->end() < addr);
+}
+
+MemoryRangeTable::ListIterator MemoryRangeTable::findOverlapBegin(XcpPtr addr)
+{
+    // find first entry in the table that is not entirely before addr
+    // use lower_bound so the comparison function is simpler - compensate by adding 1 to addr
+    return std::lower_bound(mEntries.begin(), mEntries.end(), addr + 1, listEndLessThan);
+}
+
+MemoryRangeTable::ListIterator MemoryRangeTable::findOverlapEnd(XcpPtr addr)
+{
+    // find first entry in the table that is entirely past addr
+    return std::lower_bound(mEntries.begin(), mEntries.end(), addr, listBeginLessThan);
+}
+
+MemoryRangeTable::ListRange MemoryRangeTable::findOverlap(XcpPtr addr, int len)
+{
+    QList<MemoryRangeList *>::iterator begin = findOverlapBegin(addr);
+    QList<MemoryRangeList *>::iterator end = findOverlapEnd(addr + (len / mAddrGran));
+    Q_ASSERT(std::distance(begin, end) >= 0);
+    return boost::iterator_range<QList<MemoryRangeList *>::iterator>(begin, end);
 }
 
 }   // namespace Xcp

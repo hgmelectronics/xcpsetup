@@ -3,11 +3,13 @@
 namespace SetupTools {
 namespace Xcp {
 
-ScalarMemoryRange::ScalarMemoryRange(MemoryRangeType type, Xcp::XcpPtr base, bool writable, MemoryRangeList *parent) :
-    MemoryRange(base, memoryRangeTypeSize(type), writable, parent),
+ScalarMemoryRange::ScalarMemoryRange(MemoryRangeType type, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent) :
+    MemoryRange(base, memoryRangeTypeSize(type), writable, addrGran, parent),
     mType(type),
     mValid(false),
-    mValue(memoryRangeTypeQtCode(type))    // make a null QVariant of requested type
+    mCache(size()),
+    mCacheLoaded(size()),
+    mValue(QVariant::Type(memoryRangeTypeQtCode(type)))    // make a null QVariant of requested type
 {}
 
 bool ScalarMemoryRange::valid() const
@@ -31,11 +33,11 @@ void ScalarMemoryRange::setValue(QVariant value)
     if(convertedValue == mValue)
         return;
 
-    if(mConnection->isOpen())
+    if(connection()->isOpen())
     {
-        std::vector<quint8> buffer(mSize);
-        convertToSlave(mType, getConnection(), convertedValue, buffer.data());
-        getConnection()->download(mBase, buffer);
+        std::vector<quint8> buffer(size());
+        convertToSlave(mType, connection(), convertedValue, buffer.data());
+        connection()->download(base(), buffer);
     }
     else
     {
@@ -44,15 +46,57 @@ void ScalarMemoryRange::setValue(QVariant value)
     }
 }
 
-void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ())
+bool ScalarMemoryRange::operator==(MemoryRange &other)
+{
+    ScalarMemoryRange *castOther = qobject_cast<ScalarMemoryRange *>(&other);
+
+    if(castOther == nullptr)
+        return false;
+
+    if(castOther->base() == base() && castOther->mType == mType)
+        return true;
+
+    return false;
+}
+
+void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
 {
     Q_UNUSED(base);
     Q_UNUSED(len);
 
-    if(result == Xcp::OpResult::Success && data.size() >= mSize)
+    if(result == Xcp::OpResult::Success && data.size() >= size())
     {
-        QVariant newValue = convertFromSlave(mType, getConnection(), data.data());
-        if(newValue != mValue)
+        if(base.ext != mBase.ext)
+            return;
+
+        QVariant newValue = mValue;
+        quint32 dataEnd = base.addr + data.size() / mAddrGran;
+        quint32 copyBegin = std::max(base.addr, mBase.addr);
+        quint32 copyEnd = std::min(dataEnd, mBase.addr + mSize / mAddrGran);
+        quint32 copyBeginOffset = (copyBegin - base.addr) * mAddrGran;
+        if(copyBegin == mBase.addr && copyEnd == (mBase.addr + mSize / mAddrGran))
+        {
+            // no caching needed, entire value loaded at once
+            newValue = convertFromSlave(mType, connection(), data.data() + copyBeginOffset);
+            mCacheLoaded.reset();
+        }
+        else if(end() > base || mBase < dataEnd)
+        {
+            quint32 copyEndOffset = (copyEnd - base.addr) * mAddrGran;
+            quint32 copyBeginCacheOffset = (copyBegin - mBase.addr) * mAddrGran;
+            quint32 copyEndCacheOffset = (copyEnd - mBase.addr) * mAddrGran;
+            std::copy(data.begin() + copyBeginOffset, data.begin() + copyEndOffset, mCache.begin() + copyBeginCacheOffset);
+            for(quint32 iCacheByte = copyBeginCacheOffset; iCacheByte < copyEndCacheOffset; ++iCacheByte)
+                mCacheLoaded[iCacheByte] = true;
+            if(mCacheLoaded.all())
+            {
+                newValue = convertFromSlave(mType, connection(), mCache.data());
+                mCacheLoaded.reset();
+            }
+        }
+        QVariant oldValue = mValue;
+        mValue = newValue;
+        if(newValue != oldValue)
             emit valueChanged();
         setValid(true);
     }
