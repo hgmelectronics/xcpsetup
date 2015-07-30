@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QReadWriteLock>
+#include <QtEndian>
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <vector>
@@ -63,13 +64,21 @@ enum class CksumType {
 
 struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
 {
-    Q_GADGET
-
-    Q_PROPERTY(quint32 addr MEMBER addr)
-    Q_PROPERTY(quint8 ext MEMBER ext)
-
+    XcpPtr() : addr(0), ext(0) {}
     XcpPtr(quint32 addr_in) : addr(addr_in), ext(0) {}
     XcpPtr(quint32 addr_in, quint8 ext_in) : addr(addr_in), ext(ext_in) {}
+
+    inline XcpPtr &operator+=(quint32 offset)
+    {
+        addr += offset;
+        return *this;
+    }
+
+    inline XcpPtr &operator-=(quint32 offset)
+    {
+        addr -= offset;
+        return *this;
+    }
 
     quint32 addr;
     quint8 ext;
@@ -82,6 +91,55 @@ inline bool operator==(const XcpPtr &lhs, const XcpPtr &rhs)
 inline bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
 {
     return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
+}
+
+inline XcpPtr operator+(const XcpPtr &ptr, quint32 offset)
+{
+    return XcpPtr(ptr.addr + offset, ptr.ext);
+}
+inline XcpPtr operator+(quint32 offset, const XcpPtr &ptr)
+{
+    return XcpPtr(ptr.addr + offset, ptr.ext);
+}
+inline XcpPtr operator-(const XcpPtr &ptr, quint32 offset)
+{
+    return XcpPtr(ptr.addr - offset, ptr.ext);
+}
+inline bool operator<(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    if(lhs.ext < rhs.ext)
+        return true;
+    else if(lhs.ext == rhs.ext)
+        return (lhs.addr < rhs.addr);
+    else    // if lhs.ext > rhs.ext
+        return false;
+}
+inline bool operator>(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    if(lhs.ext < rhs.ext)
+        return false;
+    else if(lhs.ext == rhs.ext)
+        return (lhs.addr > rhs.addr);
+    else    // if lhs.ext > rhs.ext
+        return true;
+}
+inline bool operator<=(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    if(lhs.ext < rhs.ext)
+        return true;
+    else if(lhs.ext == rhs.ext)
+        return (lhs.addr <= rhs.addr);
+    else    // if lhs.ext > rhs.ext
+        return false;
+}
+inline bool operator>=(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    if(lhs.ext < rhs.ext)
+        return false;
+    else if(lhs.ext == rhs.ext)
+        return (lhs.addr >= rhs.addr);
+    else    // if lhs.ext > rhs.ext
+        return true;
 }
 
 boost::optional<quint32> LIBXCONFPROTOSHARED_EXPORT computeCksumStatic(CksumType type, const std::vector<quint8> &data);
