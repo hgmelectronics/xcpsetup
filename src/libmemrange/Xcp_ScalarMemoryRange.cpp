@@ -80,7 +80,8 @@ void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int
             newValue = convertFromSlave(mType, connection(), data.data() + copyBeginOffset);
             mCacheLoaded.reset();
         }
-        else if(end() > base || mBase < dataEnd)
+        else if((end() > base && end() <= dataEnd)
+                || (mBase < dataEnd && mBase >= base))  // check if ranges overlap at all
         {
             quint32 copyEndOffset = (copyEnd - base.addr) * mAddrGran;
             quint32 copyBeginCacheOffset = (copyBegin - mBase.addr) * mAddrGran;

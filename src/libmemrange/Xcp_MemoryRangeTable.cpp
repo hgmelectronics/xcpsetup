@@ -24,8 +24,16 @@ Connection *MemoryRangeTable::connection() const
 
 void MemoryRangeTable::setConnection(Connection *newConn)
 {
-    if(updateDelta<Connection *>(mConnection, newConn))
+    if(newConn != mConnection) {
+        if(mConnection)
+            disconnect(mConnection, nullptr, nullptr, nullptr);
+        mConnection = newConn;
+        connect(newConn, &Connection::openDone, this, &MemoryRangeTable::onOpenDone);
+        connect(newConn, &Connection::closeDone, this, &MemoryRangeTable::onCloseDone);
+        connect(newConn, &Connection::uploadDone, this, &MemoryRangeTable::onUploadDone);
+        connect(newConn, &Connection::downloadDone, this, &MemoryRangeTable::onDownloadDone);
         emit connectionChanged();
+    }
 }
 
 bool MemoryRangeTable::connectionOk() const
@@ -82,13 +90,16 @@ void MemoryRangeTable::onOpenDone(OpResult result)
     emit connectionChanged();
     // walk through all of the memory ranges and call the read or open
     // enabling the range if it is valid
+    for(MemoryRangeList *list : mEntries)
+        list->onOpenDone(result);
 }
 
 void MemoryRangeTable::onCloseDone(OpResult result)
 {
     Q_UNUSED(result);
     emit connectionChanged();
-    //
+    for(MemoryRangeList *list : mEntries)
+        list->onCloseDone(result);
 }
 
 void MemoryRangeTable::onUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data)
