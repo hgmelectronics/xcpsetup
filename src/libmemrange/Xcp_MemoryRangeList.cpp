@@ -9,6 +9,8 @@ namespace Xcp
 
 MemoryRangeList::MemoryRangeList(quint8 addrGran, MemoryRangeTable *parent) :
     QObject(parent),
+    mBase(0),
+    mSize(0),
     mAddrGran(addrGran)
 {}
 
@@ -44,9 +46,17 @@ MemoryRange *MemoryRangeList::addRange(MemoryRange *newRange)
     }
     mRanges.append(newRange);
     newRange->setParent(this);
-    mBase = std::min(newRange->base(), mBase);
-    XcpPtr newEnd = std::max(newRange->end(), end());
-    mSize = newEnd.addr - mBase.addr;
+    if(mRanges.size() == 1)
+    {
+        mBase = newRange->base();
+        mSize = newRange->size();
+    }
+    else
+    {
+        mBase = std::min(newRange->base(), mBase);
+        XcpPtr newEnd = std::max(newRange->end(), end());
+        mSize = newEnd.addr - mBase.addr;
+    }
     return newRange;
 }
 
