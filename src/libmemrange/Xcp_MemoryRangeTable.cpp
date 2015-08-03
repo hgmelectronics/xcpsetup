@@ -12,6 +12,11 @@ MemoryRangeTable::MemoryRangeTable(quint32 addrGran, QObject *parent):
   mConnection(nullptr)
 {}
 
+quint32 MemoryRangeTable::addrGran() const
+{
+    return mAddrGran;
+}
+
 Connection *MemoryRangeTable::connection() const
 {
     return mConnection;

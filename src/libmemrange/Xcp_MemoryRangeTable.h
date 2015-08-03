@@ -23,7 +23,6 @@ class MemoryRangeTable: public QObject
 public:
     MemoryRangeTable(quint32 addrGran, QObject *parent = nullptr);
     quint32 addrGran() const;
-    bool isBigEndian() const;
     Xcp::Connection *connection() const;
     void setConnection(Xcp::Connection *);
     bool connectionOk() const;
