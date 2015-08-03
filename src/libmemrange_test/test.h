@@ -32,6 +32,10 @@ private slots:
     void uploadNoOverlap();
     void downloadNoOverlap_data();
     void downloadNoOverlap();
+    void setupOverlap_data();
+    void setupOverlap();
+    void uploadOverlap_data();
+    void uploadOverlap();
 private:
     void updateAg(int ag);
     static const int CONN_TIMEOUT = 50;

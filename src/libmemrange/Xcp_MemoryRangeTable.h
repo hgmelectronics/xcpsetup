@@ -37,6 +37,12 @@ public:
      */
     Q_INVOKABLE void clear();
 
+    /**
+     * @brief getLists
+     * @return Const reference to the internal list of memory range lists, useful for testing
+     */
+    QList<MemoryRangeList *> const &getLists() const;
+
 signals:
     void connectionChanged();
 

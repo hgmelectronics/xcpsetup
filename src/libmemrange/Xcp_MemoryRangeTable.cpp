@@ -84,6 +84,11 @@ void MemoryRangeTable::clear()
     mEntries.clear();
 }
 
+QList<MemoryRangeList *> const &MemoryRangeTable::getLists() const
+{
+    return mEntries;
+}
+
 void MemoryRangeTable::onOpenDone(OpResult result)
 {
     Q_UNUSED(result);
