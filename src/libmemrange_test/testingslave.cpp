@@ -189,7 +189,7 @@ int TestingSlave::addMemRange(MemType type, SetupTools::Xcp::XcpPtr base, std::v
     ++mNextMemRangeIdx;
     return idx;
 }
-const std::vector<quint8> &TestingSlave::getMemRange(int idx)
+std::vector<quint8> &TestingSlave::getMemRange(int idx)
 {
     QMutexLocker locker(&mConfigMutex);
     return mMemRanges[idx].data;         // will throw if idx doesn't exist

@@ -65,11 +65,10 @@ void Test::initTestCase()
     mSlave->setPgmMasterBlockSupport(true);
     mSlave->setSendsEvStoreCal(true);
 
-    mSlave->addMemRange(TestingSlave::MemType::Calib, {0x400, 0}, {0xEF, 0xBE, 0xAD, 0xDE, 0x7F, 0x00, 0x00, 0x00,
-                                                                   0x67, 0x45, 0x23, 0x01, 0xEF, 0xCD, 0xAB, 0x89});
+    mSlave->addMemRange(TestingSlave::MemType::Calib, {0x400, 0}, 16);
 }
 
-void Test::uploadFixed_data()
+void Test::uploadNoOverlap_data()
 {
     QTest::addColumn<quint32>("ag");
     QTest::addColumn<quint32>("base");
@@ -92,7 +91,7 @@ void Test::uploadFixed_data()
 /**
  * @brief Upload data from a few addresses
  */
-void Test::uploadFixed()
+void Test::uploadNoOverlap()
 {
     QFETCH(quint32, ag);
     QFETCH(quint32, base);
@@ -102,6 +101,10 @@ void Test::uploadFixed()
     updateAg(ag);
     MemoryRangeTable *table = new MemoryRangeTable(ag, this);
     table->setConnection(mConn);
+    std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
+    quint32 slaveMemRangeOffset = (base * ag) - 0x400;
+    quint32 *slaveMemRangeValue = reinterpret_cast<quint32 *>(slaveMemRange.data() + slaveMemRangeOffset);
+    *slaveMemRangeValue = value;
 
     if(!constructBeforeOpen)   // call refresh after open
         QCOMPARE(mConn->open(), OpResult::Success);
@@ -114,6 +117,49 @@ void Test::uploadFixed()
     QCOMPARE(range->valid(), true);
     QCOMPARE(range->writable(), false);
     QCOMPARE(range->value().toUInt(), value);
+    delete table;
+    mConn->close();
+}
+
+void Test::downloadNoOverlap_data()
+{
+    QTest::addColumn<quint32>("ag");
+    QTest::addColumn<quint32>("base");
+    QTest::addColumn<quint32>("value");
+    QTest::newRow("AG==1 0") << quint32(0x1) << quint32(0x400) << quint32(0xDEADBEEF);
+    QTest::newRow("AG==1 1") << quint32(0x1) << quint32(0x404) << quint32(0x0000007F);
+    QTest::newRow("AG==2 0") << quint32(0x2) << quint32(0x200) << quint32(0xDEADBEEF);
+    QTest::newRow("AG==2 1") << quint32(0x2) << quint32(0x202) << quint32(0x0000007F);
+    QTest::newRow("AG==4 0") << quint32(0x4) << quint32(0x100) << quint32(0xDEADBEEF);
+    QTest::newRow("AG==4 1") << quint32(0x4) << quint32(0x101) << quint32(0x0000007F);
+}
+
+/**
+ * @brief Download data to a few addresses
+ */
+void Test::downloadNoOverlap()
+{
+    QFETCH(quint32, ag);
+    QFETCH(quint32, base);
+    QFETCH(quint32, value);
+
+    updateAg(ag);
+    MemoryRangeTable *table = new MemoryRangeTable(ag, this);
+    table->setConnection(mConn);
+    std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
+    quint32 slaveMemRangeOffset = (base * ag) - 0x400;
+    quint32 *slaveMemRangeValue = reinterpret_cast<quint32 *>(slaveMemRange.data() + slaveMemRangeOffset);
+    *slaveMemRangeValue = 0;
+
+    ScalarMemoryRange *range = qobject_cast<ScalarMemoryRange *>(table->addRange(MemoryRange::U32, {base, 0}, 1, true));
+    QVERIFY(range != nullptr);
+    QCOMPARE(mConn->open(), OpResult::Success);
+    QCOMPARE(range->valid(), true);
+    QCOMPARE(range->writable(), true);
+    QCOMPARE(range->value().toUInt(), quint32(0));
+    range->setValue(value);
+    QCOMPARE(range->value().toUInt(), value);
+    QCOMPARE(*slaveMemRangeValue, value);
     delete table;
     mConn->close();
 }

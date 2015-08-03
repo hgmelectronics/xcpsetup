@@ -28,8 +28,10 @@ public:
 
 private slots:
     void initTestCase();
-    void uploadFixed_data();
-    void uploadFixed();
+    void uploadNoOverlap_data();
+    void uploadNoOverlap();
+    void downloadNoOverlap_data();
+    void downloadNoOverlap();
 private:
     void updateAg(int ag);
     static const int CONN_TIMEOUT = 50;

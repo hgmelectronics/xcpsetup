@@ -155,7 +155,7 @@ public:
     void setCrcCalc(std::function<quint32(boost::iterator_range<std::vector<quint8>::const_iterator>)> func); // sets user-defined checksum type
     int addMemRange(MemType type, SetupTools::Xcp::XcpPtr base, size_t len, quint8 segment = 0, std::vector<quint8> validPages = {0});
     int addMemRange(MemType type, SetupTools::Xcp::XcpPtr base, std::vector<quint8> data, quint8 segment = 0, std::vector<quint8> validPages = {0});
-    const std::vector<quint8> &getMemRange(int idx);
+    std::vector<quint8> &getMemRange(int idx);
     void setMemRange(int idx, const std::vector<quint8> &data);
     void removeMemRange(int idx);
     void setResponseDelay(OpType op, int delayMsec, int lifetimeIter);	// delayMsec < 0 means never respond, lifetimeIter < 0 means lasts forever
