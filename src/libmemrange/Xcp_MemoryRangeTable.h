@@ -32,6 +32,11 @@ public:
      */
     Q_INVOKABLE MemoryRange *addRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable);
 
+    /**
+     * @brief Clear all ranges from table - mostly useful for testing
+     */
+    Q_INVOKABLE void clear();
+
 signals:
     void connectionChanged();
 

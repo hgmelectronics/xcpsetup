@@ -69,6 +69,13 @@ MemoryRange *MemoryRangeTable::addRange(MemoryRange::MemoryRangeType type, XcpPt
     return newRange;
 }
 
+void MemoryRangeTable::clear()
+{
+    for(MemoryRangeList *list : mEntries)
+        delete list;
+    mEntries.clear();
+}
+
 void MemoryRangeTable::onOpenDone(OpResult result)
 {
     Q_UNUSED(result);
