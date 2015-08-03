@@ -55,7 +55,7 @@ MemoryRange *MemoryRangeList::addRange(MemoryRange *newRange)
     {
         mBase = std::min(newRange->base(), mBase);
         XcpPtr newEnd = std::max(newRange->end(), end());
-        mSize = newEnd.addr - mBase.addr;
+        mSize = (newEnd.addr - mBase.addr) * mAddrGran;
     }
     return newRange;
 }
@@ -86,10 +86,26 @@ void MemoryRangeList::onDownloadDone(OpResult result, XcpPtr base, const std::ve
 
 void MemoryRangeList::merge(MemoryRangeList &other)
 {
+    Q_ASSERT(mAddrGran == other.mAddrGran);
+    Q_ASSERT((mBase < other.end()) || (end() > other.mBase));   // confirm they really do overlap
+
+    bool prevEmpty = (mRanges.size() == 0);
     for(MemoryRange *range : other.mRanges)
     {
         mRanges.append(range);
         range->setParent(this);
+    }
+    if(prevEmpty)
+    {
+        mBase = other.mBase;
+        mSize = other.mSize;
+    }
+    else
+    {
+        XcpPtr oldEnd = end();
+        mBase = std::min(mBase, other.mBase);
+        XcpPtr newEnd = std::max(other.end(), oldEnd);
+        mSize = (newEnd.addr - mBase.addr) * mAddrGran;
     }
 }
 
