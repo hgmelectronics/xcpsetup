@@ -28,7 +28,7 @@ SOURCES += \
     FlashProg.cpp \
     ProgFile.cpp \
     Xcp_ProgramLayer.cpp \
-    Xcp_Exception.cpp
+    Xcp_Exception.cpp \
     SetupTools.cpp
 
 HEADERS += \

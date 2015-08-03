@@ -107,10 +107,10 @@ Connection::Connection(QObject *parent) :
     mOpProgressNotifyFrac(0.015625),
     mOpProgressFracs(0)
 {
-    qRegisterMetaType<XcpPtr>("XcpPtr");
-    qRegisterMetaType<OpResult>();
-    qRegisterMetaType<OpResultWrapper::OpResult>();
-    qRegisterMetaType<CksumType>();
+    qRegisterMetaType<SetupTools::Xcp::XcpPtr>("XcpPtr");
+    qRegisterMetaType<SetupTools::Xcp::OpResult>();
+    qRegisterMetaType<SetupTools::Xcp::OpResultWrapper::OpResult>();
+    qRegisterMetaType<SetupTools::Xcp::CksumType>();
     qRegisterMetaType<std::vector<quint8> >();
 }
 
