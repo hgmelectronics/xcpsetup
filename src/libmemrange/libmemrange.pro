@@ -8,7 +8,7 @@ QT       += qml
 
 QT       -= gui
 
-TARGET = libmemrange
+TARGET = memrange
 TEMPLATE = lib
 CONFIG += staticlib
 QMAKE_CXXFLAGS += -std=c++11
@@ -33,7 +33,3 @@ DEPENDPATH += $$PWD/../libxconfproto
 # Default rules for deployment.
 #include(deployment.pri)
 
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libxconfproto/release/ -lxconfproto
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libxconfproto/debug/ -lxconfproto
-else:unix: LIBS += -L$$OUT_PWD/../libxconfproto/ -lxconfproto
