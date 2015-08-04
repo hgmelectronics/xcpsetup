@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "Xcp_Connection.h"
+#include "Xcp_ConnectionFacade.h"
 #include "Xcp_MemoryRange.h"
 
 namespace SetupTools
@@ -27,7 +27,7 @@ public:
     XcpPtr base() const;
     XcpPtr end() const;
     quint32 size() const; //!< Length in bytes, NOT in AG
-    Xcp::Connection *connection() const;
+    Xcp::ConnectionFacade *connectionFacade() const;
 
     /**
      * @brief adds a memrange to list, or returns a pointer to an existing one that is identical
@@ -43,13 +43,7 @@ public:
      * @brief Passes callback down to all ranges within this list
      * @param result
      */
-    void onOpenDone(Xcp::OpResult result);
-
-    /**
-     * @brief Passes callback down to all ranges within this list
-     * @param result
-     */
-    void onCloseDone(Xcp::OpResult result);
+    void onConnStateChanged(Xcp::Connection::State newState);
 
     /**
      * @brief Passes callback down to all ranges within this list
@@ -74,10 +68,10 @@ public:
      * @param other
      */
     void merge(MemoryRangeList &other);
+
+    MemoryRangeTable *table();
 signals:
-
 public slots:
-
 private:
     QList<MemoryRange *> mRanges;
     XcpPtr mBase;

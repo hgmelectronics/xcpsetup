@@ -33,11 +33,11 @@ void ScalarMemoryRange::setValue(QVariant value)
     if(convertedValue == mValue)
         return;
 
-    if(connection()->isOpen())
+    if(connectionFacade()->state() == Connection::State::CalMode)
     {
         std::vector<quint8> buffer(size());
-        convertToSlave(mType, connection(), convertedValue, buffer.data());
-        connection()->download(base(), buffer);
+        convertToSlave(mType, connectionFacade(), convertedValue, buffer.data());
+        connectionFacade()->download(base(), buffer);
     }
     else
     {
@@ -77,7 +77,7 @@ void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int
         if(copyBegin == mBase.addr && copyEnd == (mBase.addr + mSize / mAddrGran))
         {
             // no caching needed, entire value loaded at once
-            newValue = convertFromSlave(mType, connection(), data.data() + copyBeginOffset);
+            newValue = convertFromSlave(mType, connectionFacade(), data.data() + copyBeginOffset);
             mCacheLoaded.reset();
         }
         else if((end() > base && end() <= dataEnd)
@@ -91,7 +91,7 @@ void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int
                 mCacheLoaded[iCacheByte] = true;
             if(mCacheLoaded.all())
             {
-                newValue = convertFromSlave(mType, connection(), mCache.data());
+                newValue = convertFromSlave(mType, connectionFacade(), mCache.data());
                 mCacheLoaded.reset();
             }
         }

@@ -29,9 +29,9 @@ quint32 MemoryRangeList::size() const
     return mSize;
 }
 
-Xcp::Connection *MemoryRangeList::connection() const
+Xcp::ConnectionFacade *MemoryRangeList::connectionFacade() const
 {
-    return qobject_cast<MemoryRangeTable *>(parent())->connection();
+    return qobject_cast<MemoryRangeTable *>(parent())->connectionFacade();
 }
 
 MemoryRange *MemoryRangeList::addRange(MemoryRange *newRange)
@@ -46,6 +46,7 @@ MemoryRange *MemoryRangeList::addRange(MemoryRange *newRange)
     }
     mRanges.append(newRange);
     newRange->setParent(this);
+    connect(table(), &MemoryRangeTable::connectionChanged, newRange, &MemoryRange::onConnectionChanged);
     if(mRanges.size() == 1)
     {
         mBase = newRange->base();
@@ -58,18 +59,6 @@ MemoryRange *MemoryRangeList::addRange(MemoryRange *newRange)
         mSize = (newEnd.addr - mBase.addr) * mAddrGran;
     }
     return newRange;
-}
-
-void MemoryRangeList::onOpenDone(OpResult result)
-{
-    for(MemoryRange *range : mRanges)
-        range->onOpenDone(result);
-}
-
-void MemoryRangeList::onCloseDone(OpResult result)
-{
-    for(MemoryRange *range : mRanges)
-        range->onCloseDone(result);
 }
 
 void MemoryRangeList::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
@@ -94,6 +83,11 @@ void MemoryRangeList::merge(MemoryRangeList &other)
     {
         mRanges.append(range);
         range->setParent(this);
+        if(other.parent() != parent())  // this won't happen in any current use case but to be safe...
+        {
+            disconnect(other.table(), &MemoryRangeTable::connectionChanged, range, &MemoryRange::onConnectionChanged);
+            connect(table(), &MemoryRangeTable::connectionChanged, range, &MemoryRange::onConnectionChanged);
+        }
     }
     if(prevEmpty)
     {
@@ -107,6 +101,11 @@ void MemoryRangeList::merge(MemoryRangeList &other)
         XcpPtr newEnd = std::max(other.end(), oldEnd);
         mSize = (newEnd.addr - mBase.addr) * mAddrGran;
     }
+}
+
+MemoryRangeTable *MemoryRangeList::table()
+{
+    return qobject_cast<MemoryRangeTable *>(const_cast<QObject *>(parent()));
 }
 
 }   // namespace Xcp

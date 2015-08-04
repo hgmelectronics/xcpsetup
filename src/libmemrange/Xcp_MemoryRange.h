@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QQmlListProperty>
 
-#include "Xcp_Connection.h"
+#include "Xcp_ConnectionFacade.h"
 
 namespace SetupTools
 {
@@ -58,13 +58,12 @@ signals:
     void writableChanged();
 public slots:
     void refresh();
-    void onOpenDone(Xcp::OpResult result);
-    void onCloseDone(Xcp::OpResult result);
+    void onConnectionChanged(bool ok);
     virtual void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ()) = 0;
     void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
 
 protected:
-    Xcp::Connection *connection() const;
+    Xcp::ConnectionFacade *connectionFacade() const;
     const Xcp::XcpPtr mBase;
     const quint32 mSize;
     const quint8 mAddrGran;
@@ -72,8 +71,8 @@ protected:
     bool mWritable;
 };
 
-void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *conn, QVariant value, quint8 *buf);
-QVariant convertFromSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *conn, const quint8 *buf);
+void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, QVariant value, quint8 *buf);
+QVariant convertFromSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, const quint8 *buf);
 quint32 memoryRangeTypeSize(MemoryRange::MemoryRangeType type);
 QMetaType::Type memoryRangeTypeQtCode(MemoryRange::MemoryRangeType type);
 

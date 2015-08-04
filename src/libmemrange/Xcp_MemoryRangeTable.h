@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QList>
 
-#include "Xcp_Connection.h"
+#include "Xcp_ConnectionFacade.h"
 #include "Xcp_MemoryRangeList.h"
 
 namespace SetupTools
@@ -18,13 +18,13 @@ class MemoryRangeTable: public QObject
     Q_ENUMS(MemoryRangeType)
 
     Q_PROPERTY(quint32 addrGran READ addrGran)
-    Q_PROPERTY(Xcp::Connection *connection READ connection WRITE setConnection NOTIFY connectionChanged)
+    Q_PROPERTY(Xcp::ConnectionFacade *connectionFacade READ connectionFacade WRITE setConnectionFacade NOTIFY connectionChanged)
     Q_PROPERTY(bool connectionOk READ connectionOk NOTIFY connectionChanged)
 public:
     MemoryRangeTable(quint32 addrGran, QObject *parent = nullptr);
     quint32 addrGran() const;
-    Xcp::Connection *connection() const;
-    void setConnection(Xcp::Connection *);
+    Xcp::ConnectionFacade *connectionFacade() const;
+    void setConnectionFacade(Xcp::ConnectionFacade *);
     bool connectionOk() const;
 
     /**
@@ -44,11 +44,10 @@ public:
     QList<MemoryRangeList *> const &getLists() const;
 
 signals:
-    void connectionChanged();
+    void connectionChanged(bool ok);
 
 public slots:
-    void onOpenDone(Xcp::OpResult result);
-    void onCloseDone(Xcp::OpResult result);
+    void onConnStateChanged();
     void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
     void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, std::vector<quint8> data);
 
@@ -62,7 +61,8 @@ private:
     ListRange findOverlap(XcpPtr base, int len);
 
     const quint32 mAddrGran;
-    Xcp::Connection *mConnection;
+    Xcp::ConnectionFacade *mConnectionFacade;
+    bool mConnectionOk;
     QList<MemoryRangeList *> mEntries;
 };
 

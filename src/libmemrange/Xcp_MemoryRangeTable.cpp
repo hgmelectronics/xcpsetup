@@ -9,7 +9,7 @@ namespace Xcp
 MemoryRangeTable::MemoryRangeTable(quint32 addrGran, QObject *parent):
   QObject(parent),
   mAddrGran(addrGran),
-  mConnection(nullptr)
+  mConnectionFacade(nullptr)
 {}
 
 quint32 MemoryRangeTable::addrGran() const
@@ -17,35 +17,28 @@ quint32 MemoryRangeTable::addrGran() const
     return mAddrGran;
 }
 
-Connection *MemoryRangeTable::connection() const
+ConnectionFacade *MemoryRangeTable::connectionFacade() const
 {
-    return mConnection;
+    return mConnectionFacade;
 }
 
-void MemoryRangeTable::setConnection(Connection *newConn)
+void MemoryRangeTable::setConnectionFacade(ConnectionFacade *newConn)
 {
-    if(newConn != mConnection) {
-        if(mConnection)
-            disconnect(mConnection, nullptr, nullptr, nullptr);
-        mConnection = newConn;
-        connect(newConn, &Connection::openDone, this, &MemoryRangeTable::onOpenDone);
-        connect(newConn, &Connection::closeDone, this, &MemoryRangeTable::onCloseDone);
-        connect(newConn, &Connection::uploadDone, this, &MemoryRangeTable::onUploadDone);
-        connect(newConn, &Connection::downloadDone, this, &MemoryRangeTable::onDownloadDone);
-        emit connectionChanged();
+    if(newConn != mConnectionFacade) {
+        if(mConnectionFacade)
+            disconnect(mConnectionFacade, nullptr, nullptr, nullptr);
+        mConnectionFacade = newConn;
+        connect(newConn, &ConnectionFacade::stateChanged, this, &MemoryRangeTable::onConnStateChanged);
+        connect(newConn, &ConnectionFacade::uploadDone, this, &MemoryRangeTable::onUploadDone);
+        connect(newConn, &ConnectionFacade::downloadDone, this, &MemoryRangeTable::onDownloadDone);
+        onConnStateChanged();
+        emit connectionChanged(mConnectionOk);
     }
 }
 
 bool MemoryRangeTable::connectionOk() const
 {
-    if(mConnection == nullptr)
-        return false;
-    else if(!mConnection->isOpen())
-        return false;
-    else if(mConnection->addrGran() != int(mAddrGran))
-        return false;
-    else
-        return true;
+    return mConnectionOk;
 }
 
 MemoryRange *MemoryRangeTable::addRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable)
@@ -89,22 +82,16 @@ QList<MemoryRangeList *> const &MemoryRangeTable::getLists() const
     return mEntries;
 }
 
-void MemoryRangeTable::onOpenDone(OpResult result)
+void MemoryRangeTable::onConnStateChanged()
 {
-    Q_UNUSED(result);
-    emit connectionChanged();
-    // walk through all of the memory ranges and call the read or open
-    // enabling the range if it is valid
-    for(MemoryRangeList *list : mEntries)
-        list->onOpenDone(result);
-}
-
-void MemoryRangeTable::onCloseDone(OpResult result)
-{
-    Q_UNUSED(result);
-    emit connectionChanged();
-    for(MemoryRangeList *list : mEntries)
-        list->onCloseDone(result);
+    if(mConnectionFacade == nullptr)
+        mConnectionOk = false;
+    else if(mConnectionFacade->state() != Connection::State::CalMode)
+        mConnectionOk = false;
+    else if(mConnectionFacade->addrGran() != int(mAddrGran))
+        mConnectionOk = false;
+    else
+        mConnectionOk = true;
 }
 
 void MemoryRangeTable::onUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data)

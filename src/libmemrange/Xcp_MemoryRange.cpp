@@ -43,19 +43,13 @@ quint32 MemoryRange::size() const
 
 void MemoryRange::refresh()
 {
-    connection()->upload(mBase, mSize);
+    connectionFacade()->upload(mBase, mSize);
 }
 
-void MemoryRange::onOpenDone(OpResult result)
+void MemoryRange::onConnectionChanged(bool ok)
 {
-    if(result == OpResult::Success)
+    if(ok)
         refresh();
-}
-
-void MemoryRange::onCloseDone(OpResult result)
-{
-    Q_UNUSED(result);
-    // do nothing
 }
 
 void MemoryRange::onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data)
@@ -64,15 +58,15 @@ void MemoryRange::onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const s
     Q_UNUSED(base);
     Q_UNUSED(data);
 
-    connection()->upload(mBase, mSize);
+    connectionFacade()->upload(mBase, mSize);
 }
 
-Xcp::Connection *MemoryRange::connection() const
+Xcp::ConnectionFacade *MemoryRange::connectionFacade() const
 {
-    return qobject_cast<MemoryRangeList *>(parent())->connection();
+    return qobject_cast<MemoryRangeList *>(parent())->connectionFacade();
 }
 
-void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *conn, QVariant value, quint8 *buf)
+void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, QVariant value, quint8 *buf)
 {
     switch(type)
     {
@@ -125,7 +119,7 @@ void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *conn, QV
     }
 }
 
-QVariant convertFromSlave(MemoryRange::MemoryRangeType type, Xcp::Connection *conn, const quint8 *buf)
+QVariant convertFromSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, const quint8 *buf)
 {
     switch(type)
     {
