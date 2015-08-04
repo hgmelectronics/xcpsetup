@@ -32,6 +32,8 @@ void MemoryRangeTable::setConnectionFacade(ConnectionFacade *newConn)
         connect(newConn, &ConnectionFacade::uploadDone, this, &MemoryRangeTable::onUploadDone);
         connect(newConn, &ConnectionFacade::downloadDone, this, &MemoryRangeTable::onDownloadDone);
         onConnStateChanged();
+        for(MemoryRangeList *list : mEntries)
+            list->onConnectionChanged(mConnectionOk);
         emit connectionChanged(mConnectionOk);
     }
 }
@@ -84,14 +86,17 @@ QList<MemoryRangeList *> const &MemoryRangeTable::getLists() const
 
 void MemoryRangeTable::onConnStateChanged()
 {
-    if(mConnectionFacade == nullptr)
-        mConnectionOk = false;
-    else if(mConnectionFacade->state() != Connection::State::CalMode)
-        mConnectionOk = false;
-    else if(mConnectionFacade->addrGran() != int(mAddrGran))
-        mConnectionOk = false;
-    else
-        mConnectionOk = true;
+    bool newConnectionOk;
+    newConnectionOk =
+            (mConnectionFacade != nullptr &&
+             mConnectionFacade->state() == Connection::State::CalMode &&
+             mConnectionFacade->addrGran() == int(mAddrGran));
+    if(updateDelta<bool>(mConnectionOk, newConnectionOk))
+    {
+        for(MemoryRangeList *list : mEntries)
+            list->onConnectionChanged(mConnectionOk);
+        emit connectionChanged(mConnectionOk);
+    }
 }
 
 void MemoryRangeTable::onUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data)

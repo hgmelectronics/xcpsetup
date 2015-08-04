@@ -40,10 +40,17 @@ public:
     MemoryRange *addRange(MemoryRange *newRange);
 
     /**
-     * @brief Passes callback down to all ranges within this list
-     * @param result
+     * @brief Append and take ownership of the contents of another memory range list
+     * @param other
      */
-    void onConnStateChanged(Xcp::Connection::State newState);
+    void merge(MemoryRangeList &other);
+signals:
+public slots:
+    /**
+     * @brief Passes callback down to all ranges within this list
+     * @param ok
+     */
+    void onConnectionChanged(bool ok);
 
     /**
      * @brief Passes callback down to all ranges within this list
@@ -62,16 +69,6 @@ public:
      * @param data
      */
     void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
-
-    /**
-     * @brief Append and take ownership of the contents of another memory range list
-     * @param other
-     */
-    void merge(MemoryRangeList &other);
-
-    MemoryRangeTable *table();
-signals:
-public slots:
 private:
     QList<MemoryRange *> mRanges;
     XcpPtr mBase;
