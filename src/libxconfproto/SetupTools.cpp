@@ -9,7 +9,7 @@
 namespace SetupTools
 {
 
-void LIBXCONFPROTOSHARED_EXPORT registerTypes()
+void registerTypes()
 {
 
     qmlRegisterType<SetupTools::Xcp::Interface::QmlRegistry>("com.setuptools.xcp", 1, 0, "InterfaceRegistry");
