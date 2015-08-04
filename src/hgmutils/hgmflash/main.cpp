@@ -9,7 +9,9 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+#ifdef STATICQT
     engine.addImportPath(QStringLiteral("qrc:/"));
+#endif
 
     qmlRegisterType<SetupTools::Xcp::Interface::QmlRegistry>("com.setuptools.xcp", 1, 0, "InterfaceRegistry");
     qmlRegisterType<SetupTools::Xcp::Interface::Info>("com.setuptools.xcp", 1, 0, "InterfaceInfo");

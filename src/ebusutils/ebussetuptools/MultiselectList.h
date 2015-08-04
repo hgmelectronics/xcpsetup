@@ -9,7 +9,6 @@
 #include <QList>
 #include <QMouseEvent>
 #include <QVariant>
-#include "ebussetuptools_global.h"
 
 /**
  * Model and element-wrapper classes for a list view that allows multiple objects to be selected.

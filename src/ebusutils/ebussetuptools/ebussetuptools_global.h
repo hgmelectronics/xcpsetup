@@ -1,6 +1,0 @@
-#ifndef EBUSSETUPTOOLS_GLOBAL_H
-#define EBUSSETUPTOOLS_GLOBAL_H
-
-#include <QtCore/qglobal.h>
-
-#endif // EBUSSETUPTOOLS_GLOBAL_H

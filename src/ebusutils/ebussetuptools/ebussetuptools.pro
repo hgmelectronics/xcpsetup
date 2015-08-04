@@ -15,8 +15,7 @@ CONFIG += staticlib
 
 SOURCES += MultiselectList.cpp
 
-HEADERS += MultiselectList.h\
-        ebussetuptools_global.h
+HEADERS += MultiselectList.h
 
 unix {
     target.path = /usr/lib
