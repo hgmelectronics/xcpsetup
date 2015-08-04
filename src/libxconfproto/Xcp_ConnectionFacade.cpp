@@ -65,6 +65,18 @@ void ConnectionFacade::setIntfcUri(QUrl val)
     }
 }
 
+void ConnectionFacade::setIntfc(Interface::Interface *intfc)
+{
+    if(mIntfc != intfc)
+    {
+        if(mIntfc)
+            delete mIntfc;
+        mIntfcUri = "testing";
+        mIntfc = intfc;
+        mConn->setIntfc(intfc);
+    }
+}
+
 QString ConnectionFacade::slaveId()
 {
     SetupTools::Xcp::Interface::Can::Interface *canIntfc = qobject_cast<SetupTools::Xcp::Interface::Can::Interface *>(mIntfc);
