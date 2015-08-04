@@ -1,17 +1,17 @@
 #include "MultiselectList.h"
 
-EBUSSETUPTOOLSSHARED_EXPORT MultiselectListWrapper::MultiselectListWrapper(QObject *parent) :
+MultiselectListWrapper::MultiselectListWrapper(QObject *parent) :
     QObject(parent),
     mSelected(false),
     mClickedLast(false),
     mObj(NULL)
 {}
 
-EBUSSETUPTOOLSSHARED_EXPORT MultiselectListWrapper::~MultiselectListWrapper() {}
+MultiselectListWrapper::~MultiselectListWrapper() {}
 
-EBUSSETUPTOOLSSHARED_EXPORT QString MultiselectListWrapper::displayText() const { return mDisplayText; }
+QString MultiselectListWrapper::displayText() const { return mDisplayText; }
 
-EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListWrapper::setDisplayText(QString text)
+void MultiselectListWrapper::setDisplayText(QString text)
 {
     if(mDisplayText != text)
     {
@@ -20,9 +20,9 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListWrapper::setDisplayText(QString 
     }
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListWrapper::selected() const { return mSelected; }
+bool MultiselectListWrapper::selected() const { return mSelected; }
 
-EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListWrapper::setSelected(bool selected)
+void MultiselectListWrapper::setSelected(bool selected)
 {
     if(mSelected != selected)
     {
@@ -31,9 +31,9 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListWrapper::setSelected(bool select
     }
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListWrapper::clickedLast() const { return mClickedLast; }
+bool MultiselectListWrapper::clickedLast() const { return mClickedLast; }
 
-EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListWrapper::setClickedLast(bool clickedLast)
+void MultiselectListWrapper::setClickedLast(bool clickedLast)
 {
     if(mClickedLast != clickedLast)
     {
@@ -42,9 +42,9 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListWrapper::setClickedLast(bool cli
     }
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT QObject *MultiselectListWrapper::obj() const { return mObj; }
+QObject *MultiselectListWrapper::obj() const { return mObj; }
 
-EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListWrapper::setObj(QObject *obj)
+void MultiselectListWrapper::setObj(QObject *obj)
 {
     if(mObj != obj)
     {
@@ -54,23 +54,23 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListWrapper::setObj(QObject *obj)
     }
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT MultiselectListModel::MultiselectListModel(QObject *parent) :
+MultiselectListModel::MultiselectListModel(QObject *parent) :
     QAbstractListModel(parent)
 {}
-EBUSSETUPTOOLSSHARED_EXPORT MultiselectListModel::~MultiselectListModel() {}
-EBUSSETUPTOOLSSHARED_EXPORT int MultiselectListModel::rowCount(const QModelIndex & parent) const
+MultiselectListModel::~MultiselectListModel() {}
+int MultiselectListModel::rowCount(const QModelIndex & parent) const
 {
     Q_UNUSED(parent);
     return mList.size();
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT QHash<int, QByteArray> MultiselectListModel::roleNames() const
+QHash<int, QByteArray> MultiselectListModel::roleNames() const
 {
     static const QHash<int, QByteArray> NAMES({{0, "wrapper"}});
     return NAMES;
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListModel::insertRows(int row, int count, const QModelIndex &parent)
+bool MultiselectListModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     if(parent != QModelIndex()
             || row > rowCount()
@@ -83,7 +83,7 @@ EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListModel::insertRows(int row, int c
     return true;
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListModel::removeRows(int row, int count, const QModelIndex &parent)
+bool MultiselectListModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     if(parent != QModelIndex()
             || row < 0
@@ -101,7 +101,7 @@ EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListModel::removeRows(int row, int c
     return true;
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT std::unordered_set<MultiselectListWrapper *> MultiselectListModel::checked()
+std::unordered_set<MultiselectListWrapper *> MultiselectListModel::checked()
 {
     std::unordered_set<MultiselectListWrapper *> checkedItems;
     for(MultiselectListWrapper *item : mList)
@@ -109,7 +109,7 @@ EBUSSETUPTOOLSSHARED_EXPORT std::unordered_set<MultiselectListWrapper *> Multise
             checkedItems.insert(item);
     return checkedItems;
 }
-EBUSSETUPTOOLSSHARED_EXPORT QVariant MultiselectListModel::data(const QModelIndex &index, int role) const
+QVariant MultiselectListModel::data(const QModelIndex &index, int role) const
 {
     if(index.column() > 0)
         return QVariant();
@@ -122,14 +122,14 @@ EBUSSETUPTOOLSSHARED_EXPORT QVariant MultiselectListModel::data(const QModelInde
     return QVariant();
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT MultiselectListWrapper *MultiselectListModel::wrapper(int row)
+MultiselectListWrapper *MultiselectListModel::wrapper(int row)
 {
     if(row >= mList.size())
         return NULL;
     return mList[row];
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListModel::alteredData(int row)
+void MultiselectListModel::alteredData(int row)
 {
     if(row >= mList.size())
         return;
@@ -137,7 +137,7 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListModel::alteredData(int row)
     emit dataChanged(index(row), index(row), {0});
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListModel::alteredData(int firstRow, int lastRow)
+void MultiselectListModel::alteredData(int firstRow, int lastRow)
 {
     if(firstRow >= mList.size()
             || lastRow >= mList.size()
@@ -147,7 +147,7 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListModel::alteredData(int firstRow,
     emit dataChanged(index(firstRow), index(lastRow), {0});
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListModel::setData(const QModelIndex &dataIndex, const QVariant &value, int role)
+bool MultiselectListModel::setData(const QModelIndex &dataIndex, const QVariant &value, int role)
 {
     if(role != 0
             || dataIndex.column() != 0
@@ -164,7 +164,7 @@ EBUSSETUPTOOLSSHARED_EXPORT bool MultiselectListModel::setData(const QModelIndex
     return true;
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT QVariant MultiselectListModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant MultiselectListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     Q_UNUSED(section);
     Q_UNUSED(orientation);
@@ -173,17 +173,17 @@ EBUSSETUPTOOLSSHARED_EXPORT QVariant MultiselectListModel::headerData(int sectio
     return QVariant();
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT bool IsClickedLast(MultiselectListWrapper *a)
+bool IsClickedLast(MultiselectListWrapper *a)
 {
     return a->clickedLast();
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT MultiselectListController::MultiselectListController(QObject *parent) :
+MultiselectListController::MultiselectListController(QObject *parent) :
     QObject(parent)
 {}
-EBUSSETUPTOOLSSHARED_EXPORT MultiselectListController::~MultiselectListController() {}
+MultiselectListController::~MultiselectListController() {}
 
-EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListController::clicked(int modifiers, MultiselectListModel *model, MultiselectListWrapper *wrapper)
+void MultiselectListController::clicked(int modifiers, MultiselectListModel *model, MultiselectListWrapper *wrapper)
 {
     if(modifiers & Qt::ShiftModifier)
     {
@@ -262,5 +262,5 @@ EBUSSETUPTOOLSSHARED_EXPORT void MultiselectListController::clicked(int modifier
     }
 }
 
-EBUSSETUPTOOLSSHARED_EXPORT QVariantObject::QVariantObject(QObject *parent) : QObject(parent) {}
-EBUSSETUPTOOLSSHARED_EXPORT QVariantObject::QVariantObject(const QVariant &var, QObject *parent) : QObject(parent), QVariant(var) {}
+QVariantObject::QVariantObject(QObject *parent) : QObject(parent) {}
+QVariantObject::QVariantObject(const QVariant &var, QObject *parent) : QObject(parent), QVariant(var) {}

@@ -55,7 +55,7 @@ enum class OpResult {
     SlaveErrorUndefined
 };
 
-class LIBXCONFPROTOSHARED_EXPORT OpResultWrapper : public QObject
+class  OpResultWrapper : public QObject
 {
     Q_OBJECT
     Q_ENUMS(OpResult)
@@ -107,7 +107,7 @@ private:
 
 #define RETURN_FAIL(a) { OpResult res; if((res = (a)) != OpResult::Success) return res; }
 
-class LIBXCONFPROTOSHARED_EXPORT Exception : public QException {};
+class  Exception : public QException {};
 
 }
 }

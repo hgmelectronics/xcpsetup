@@ -7,17 +7,15 @@
 QT       -= gui
 QT       += quick
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections
 
 TARGET = ebussetuptools
 TEMPLATE = lib
-
-DEFINES += EBUSSETUPTOOLS_LIBRARY
+CONFIG += staticlib
 
 SOURCES += MultiselectList.cpp
 
-HEADERS += MultiselectList.h\
-        ebussetuptools_global.h
+HEADERS += MultiselectList.h
 
 unix {
     target.path = /usr/lib

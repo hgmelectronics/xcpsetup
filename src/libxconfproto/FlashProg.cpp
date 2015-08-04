@@ -3,19 +3,19 @@
 namespace SetupTools
 {
 
-LIBXCONFPROTOSHARED_EXPORT FlashBlock::FlashBlock(QObject *parent) : QObject(parent) {}
+ FlashBlock::FlashBlock(QObject *parent) : QObject(parent) {}
 
-LIBXCONFPROTOSHARED_EXPORT FlashProg::FlashProg(QObject *parent) : QObject(parent) {}
-LIBXCONFPROTOSHARED_EXPORT FlashProg::~FlashProg() {}
-LIBXCONFPROTOSHARED_EXPORT QList<FlashBlock *> &FlashProg::blocks()
+ FlashProg::FlashProg(QObject *parent) : QObject(parent) {}
+ FlashProg::~FlashProg() {}
+ QList<FlashBlock *> &FlashProg::blocks()
 {
     return mBlocks;
 }
-LIBXCONFPROTOSHARED_EXPORT QQmlListProperty<FlashBlock> FlashProg::blocksQml()
+ QQmlListProperty<FlashBlock> FlashProg::blocksQml()
 {
     return QQmlListProperty<FlashBlock>(this, mBlocks);
 }
-LIBXCONFPROTOSHARED_EXPORT void FlashProg::infillToSingleBlock(quint8 fillValue)
+ void FlashProg::infillToSingleBlock(quint8 fillValue)
 {
     if(mBlocks.size() < 2)
         return;
@@ -43,7 +43,7 @@ LIBXCONFPROTOSHARED_EXPORT void FlashProg::infillToSingleBlock(quint8 fillValue)
     mBlocks.append(combined);
     emit changed();
 }
-LIBXCONFPROTOSHARED_EXPORT int FlashProg::size()
+ int FlashProg::size()
 {
     int size = 0;
     for(FlashBlock *block : mBlocks)
@@ -51,7 +51,7 @@ LIBXCONFPROTOSHARED_EXPORT int FlashProg::size()
     return size;
 }
 
-LIBXCONFPROTOSHARED_EXPORT uint FlashProg::base()
+ uint FlashProg::base()
 {
     if(mBlocks.size() == 0)
         return 0;

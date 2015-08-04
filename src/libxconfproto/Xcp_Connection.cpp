@@ -17,7 +17,7 @@ namespace Xcp
 
 #define RESETMTA_RETURN_ON_FAIL(value) { OpResult EMIT_RETURN__ret = value; if(EMIT_RETURN__ret != OpResult::Success) { mCalcMta.reset(); return EMIT_RETURN__ret; } }
 
-LIBXCONFPROTOSHARED_EXPORT boost::optional<quint32> computeCksumStatic(CksumType type, const std::vector<quint8> &data)
+boost::optional<quint32> computeCksumStatic(CksumType type, const std::vector<quint8> &data)
 {
     switch(type)
     {

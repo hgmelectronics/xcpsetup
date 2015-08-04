@@ -3,10 +3,4 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(LIBXCONFPROTO_LIBRARY)
-#  define LIBXCONFPROTOSHARED_EXPORT Q_DECL_EXPORT
-#else
-#  define LIBXCONFPROTOSHARED_EXPORT Q_DECL_IMPORT
-#endif
-
 #endif // LIBXCONFPROTO_GLOBAL_H

@@ -19,7 +19,7 @@ public:
     std::vector<quint8> data;
 };
 
-class LIBXCONFPROTOSHARED_EXPORT FlashProg : public QObject
+class FlashProg : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<FlashBlock> blocks READ blocksQml)

@@ -6,11 +6,17 @@ TEMPLATE = app
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp
 
-QT += qml quick widgets
+QT += qml quick widgets serialport
 
 RESOURCES += qml.qrc
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs
+
+static {
+    QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections
+    QMAKE_LFLAGS += -static-libstdc++ -static-libgcc -Wl,--gc-sections
+    win32: QMAKE_LFLAGS += -static -lwinpthread
+}
 
 # Installation path
 # target.path =

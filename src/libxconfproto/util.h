@@ -204,7 +204,7 @@ private:
     bool mFlag;
 };
 
-class LIBXCONFPROTOSHARED_EXPORT UrlUtil : public QObject
+class UrlUtil : public QObject
 {
     Q_OBJECT
 public:

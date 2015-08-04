@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QReadWriteLock>
-#include <QtEndian>
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <vector>
@@ -62,7 +61,7 @@ enum class CksumType {
     ST_CRC_32
 };
 
-struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
+struct XcpPtr
 {
     XcpPtr() : addr(0), ext(0) {}
     XcpPtr(quint32 addr_in) : addr(addr_in), ext(0) {}
@@ -142,9 +141,9 @@ inline bool operator>=(const XcpPtr &lhs, const XcpPtr &rhs)
         return true;
 }
 
-boost::optional<quint32> LIBXCONFPROTOSHARED_EXPORT computeCksumStatic(CksumType type, const std::vector<quint8> &data);
+boost::optional<quint32> computeCksumStatic(CksumType type, const std::vector<quint8> &data);
 
-class LIBXCONFPROTOSHARED_EXPORT Connection : public QObject
+class Connection : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)

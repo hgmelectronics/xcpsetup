@@ -506,11 +506,11 @@ OpResult Interface::setFilter(Filter filt)
     mFilter = filt;
     return doSetFilter(filt);
 }
-void LIBXCONFPROTOSHARED_EXPORT Interface::setSerialLog(bool on)
+void  Interface::setSerialLog(bool on)
 {
     mIo->setSerialLog(on);
 }
-OpResult LIBXCONFPROTOSHARED_EXPORT Interface::setPacketLog(bool enable)
+OpResult  Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
     return OpResult::Success;

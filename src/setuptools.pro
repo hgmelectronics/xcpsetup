@@ -4,8 +4,8 @@ SUBDIRS += ebusutils \
         libxconfproto \
         libxconfproto_examples \
         libxconfproto_test \
-    libmemrange \
-    libmemrange_test
+        libmemrange \
+        libmemrange_test
 
 libxconfproto.subdir = libxconfproto
 libxconfproto_examples.depends = libxconfproto

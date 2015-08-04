@@ -9,7 +9,7 @@
 namespace SetupTools {
 namespace Xcp {
 
-class LIBXCONFPROTOSHARED_EXPORT ProgramLayer : public QObject
+class  ProgramLayer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)

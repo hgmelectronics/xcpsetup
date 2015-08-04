@@ -10,6 +10,10 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+#ifdef STATICQT
+    engine.addImportPath(QStringLiteral("qrc:/"));
+#endif
+
     SetupTools::registerTypes();
 
     qmlRegisterType<SetupTools::Cs2Tool>("com.hgmelectronics.utils.cs2tool", 1, 0, "Cs2Tool");

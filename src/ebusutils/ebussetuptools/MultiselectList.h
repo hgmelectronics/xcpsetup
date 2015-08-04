@@ -9,7 +9,6 @@
 #include <QList>
 #include <QMouseEvent>
 #include <QVariant>
-#include "ebussetuptools_global.h"
 
 /**
  * Model and element-wrapper classes for a list view that allows multiple objects to be selected.
@@ -52,7 +51,7 @@
     }
 */
 
-class EBUSSETUPTOOLSSHARED_EXPORT MultiselectListWrapper : public QObject
+class MultiselectListWrapper : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString displayText READ displayText WRITE setDisplayText NOTIFY displayTextChanged)
@@ -83,7 +82,7 @@ private:
 
 Q_DECLARE_METATYPE(MultiselectListWrapper *)
 
-class EBUSSETUPTOOLSSHARED_EXPORT MultiselectListModel : public QAbstractListModel
+class MultiselectListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
@@ -104,7 +103,7 @@ private:
     QList<MultiselectListWrapper *> mList;
 };
 
-class EBUSSETUPTOOLSSHARED_EXPORT MultiselectListController : public QObject
+class MultiselectListController : public QObject
 {
     Q_OBJECT
 public:
@@ -114,7 +113,7 @@ public slots:
     void clicked(int modifiers, MultiselectListModel *model, MultiselectListWrapper *wrapper);
 };
 
-class EBUSSETUPTOOLSSHARED_EXPORT QVariantObject : public QObject, public QVariant
+class QVariantObject : public QObject, public QVariant
 {
     Q_OBJECT
 public:
