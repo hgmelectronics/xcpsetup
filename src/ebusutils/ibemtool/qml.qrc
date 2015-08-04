@@ -3,5 +3,12 @@
         <file>main.qml</file>
         <file>MainForm.qml</file>
         <file>MultiselectListView.qml</file>
+        <file>QtQuick/Controls/qmldir</file>
+        <file>QtQuick.2/qmldir</file>
+        <file>QtQuick/Dialogs/qmldir</file>
+        <file>QtQuick/Layouts/qmldir</file>
+        <file>QtQuick/PrivateWidgets/qmldir</file>
+        <file>QtQuick/Window.2/qmldir</file>
+        <file>QtQuick/Dialogs/Private/qmldir</file>
     </qresource>
 </RCC>

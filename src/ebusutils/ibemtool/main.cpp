@@ -11,6 +11,10 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+#ifdef STATICQT
+    engine.addImportPath(QStringLiteral("qrc:/"));
+#endif
+
     SetupTools::registerTypes();
 
     qmlRegisterType<SetupTools::IbemTool>("com.ebus.utils.ibemtool", 1, 0, "IbemTool");
