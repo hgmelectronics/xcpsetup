@@ -1,7 +1,6 @@
 #include "Xcp_Connection.h"
 
 #include <string.h>
-#include <QtEndian>
 #include <QReadLocker>
 #include <QWriteLocker>
 #include <QMetaType>
@@ -108,10 +107,10 @@ Connection::Connection(QObject *parent) :
     mOpProgressNotifyFrac(0.015625),
     mOpProgressFracs(0)
 {
-    qRegisterMetaType<XcpPtr>("XcpPtr");
-    qRegisterMetaType<OpResult>();
-    qRegisterMetaType<OpResultWrapper::OpResult>();
-    qRegisterMetaType<CksumType>();
+    qRegisterMetaType<SetupTools::Xcp::XcpPtr>("XcpPtr");
+    qRegisterMetaType<SetupTools::Xcp::OpResult>();
+    qRegisterMetaType<SetupTools::Xcp::OpResultWrapper::OpResult>();
+    qRegisterMetaType<SetupTools::Xcp::CksumType>();
     qRegisterMetaType<std::vector<quint8> >();
 }
 
@@ -819,7 +818,7 @@ OpResult Connection::uploadSegment(XcpPtr base, int len, std::vector<quint8> &ou
             return getReplyResult(reply, OPMSG);
         }
 
-        mCalcMta = {base.addr + len / mAddrGran, base.ext};
+        mCalcMta = base + (len / mAddrGran);
 
         out = std::move(std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len));
         return OpResult::Success;
@@ -850,7 +849,7 @@ OpResult Connection::downloadSegment(XcpPtr base, const std::vector<quint8> &dat
             return getReplyResult(reply, OPMSG);
         }
 
-        mCalcMta = {base.addr + query[1], base.ext};
+        mCalcMta = base + query[1];
         return OpResult::Success;
     };
 
@@ -883,7 +882,7 @@ OpResult Connection::programPacket(XcpPtr base, const std::vector<quint8> &data)
             return getReplyResult(reply, OPMSG);
         }
 
-        mCalcMta = {base.addr + query[1], base.ext};
+        mCalcMta = base + query[1];
         return OpResult::Success;
     };
 

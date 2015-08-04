@@ -217,5 +217,13 @@ private:
     UrlUtil();
 };
 
+template <typename T>
+bool updateDelta(T &val, T newVal)
+{
+    T oldVal = val;
+    val = newVal;
+    return (oldVal != newVal);
+}
+
 }   // namespace SetupTools
 #endif // UTIL_H

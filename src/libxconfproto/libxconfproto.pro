@@ -28,7 +28,7 @@ SOURCES += \
     FlashProg.cpp \
     ProgFile.cpp \
     Xcp_ProgramLayer.cpp \
-    Xcp_exception.cpp \
+    Xcp_Exception.cpp \
     SetupTools.cpp
 
 HEADERS += \
@@ -58,3 +58,6 @@ win32 {
 }
 
 CONFIG(debug) DEFINES += ELM327_DEBUG
+
+DISTFILES += \
+    datatablenotes.txt

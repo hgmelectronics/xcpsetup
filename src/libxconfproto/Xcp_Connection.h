@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QReadWriteLock>
+#include <QtEndian>
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <vector>
@@ -63,6 +64,22 @@ enum class CksumType {
 
 struct LIBXCONFPROTOSHARED_EXPORT XcpPtr
 {
+    XcpPtr() : addr(0), ext(0) {}
+    XcpPtr(quint32 addr_in) : addr(addr_in), ext(0) {}
+    XcpPtr(quint32 addr_in, quint8 ext_in) : addr(addr_in), ext(ext_in) {}
+
+    inline XcpPtr &operator+=(quint32 offset)
+    {
+        addr += offset;
+        return *this;
+    }
+
+    inline XcpPtr &operator-=(quint32 offset)
+    {
+        addr -= offset;
+        return *this;
+    }
+
     quint32 addr;
     quint8 ext;
 };
@@ -74,6 +91,55 @@ inline bool operator==(const XcpPtr &lhs, const XcpPtr &rhs)
 inline bool operator!=(const XcpPtr &lhs, const XcpPtr &rhs)
 {
     return (lhs.addr != rhs.addr || lhs.ext != rhs.ext);
+}
+
+inline XcpPtr operator+(const XcpPtr &ptr, quint32 offset)
+{
+    return XcpPtr(ptr.addr + offset, ptr.ext);
+}
+inline XcpPtr operator+(quint32 offset, const XcpPtr &ptr)
+{
+    return XcpPtr(ptr.addr + offset, ptr.ext);
+}
+inline XcpPtr operator-(const XcpPtr &ptr, quint32 offset)
+{
+    return XcpPtr(ptr.addr - offset, ptr.ext);
+}
+inline bool operator<(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    if(lhs.ext < rhs.ext)
+        return true;
+    else if(lhs.ext == rhs.ext)
+        return (lhs.addr < rhs.addr);
+    else    // if lhs.ext > rhs.ext
+        return false;
+}
+inline bool operator>(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    if(lhs.ext < rhs.ext)
+        return false;
+    else if(lhs.ext == rhs.ext)
+        return (lhs.addr > rhs.addr);
+    else    // if lhs.ext > rhs.ext
+        return true;
+}
+inline bool operator<=(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    if(lhs.ext < rhs.ext)
+        return true;
+    else if(lhs.ext == rhs.ext)
+        return (lhs.addr <= rhs.addr);
+    else    // if lhs.ext > rhs.ext
+        return false;
+}
+inline bool operator>=(const XcpPtr &lhs, const XcpPtr &rhs)
+{
+    if(lhs.ext < rhs.ext)
+        return false;
+    else if(lhs.ext == rhs.ext)
+        return (lhs.addr >= rhs.addr);
+    else    // if lhs.ext > rhs.ext
+        return true;
 }
 
 boost::optional<quint32> LIBXCONFPROTOSHARED_EXPORT computeCksumStatic(CksumType type, const std::vector<quint8> &data);
@@ -194,50 +260,50 @@ public:
     int addrGran();
 
 signals:
-    void setStateDone(OpResult result);
-    void openDone(OpResult result);
-    void closeDone(OpResult result);
-    void uploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
-    void downloadDone(OpResult result, XcpPtr base, std::vector<quint8> data);
-    void nvWriteDone(OpResult result);
-    void setCalPageDone(OpResult result, quint8 segment, quint8 page);
-    void programStartDone(OpResult result);
-    void programClearDone(OpResult result, XcpPtr base, int len);
-    void programRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
-    void programVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
-    void programResetDone(OpResult result);
-    void buildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
-    void getAvailSlavesDone(OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
-    void getAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void setStateDone(SetupTools::Xcp::OpResult result);
+    void openDone(SetupTools::Xcp::OpResult result);
+    void closeDone(SetupTools::Xcp::OpResult result);
+    void uploadDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    void downloadDone(SetupTools::Xcp::OpResult result, XcpPtr base, std::vector<quint8> data);
+    void nvWriteDone(SetupTools::Xcp::OpResult result);
+    void setCalPageDone(SetupTools::Xcp::OpResult result, quint8 segment, quint8 page);
+    void programStartDone(SetupTools::Xcp::OpResult result);
+    void programClearDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len);
+    void programRangeDone(SetupTools::Xcp::OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
+    void programVerifyDone(SetupTools::Xcp::OpResult result, XcpPtr mta, quint32 crc);
+    void programResetDone(SetupTools::Xcp::OpResult result);
+    void buildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
+    void getAvailSlavesDone(SetupTools::Xcp::OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
+    void getAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void stateChanged();
     void opProgressChanged();
 public slots:
-    OpResult setState(State);
-    OpResult open(boost::optional<int> timeoutMsec = boost::optional<int>());
-    OpResult close();
-    OpResult upload(XcpPtr base, int len, std::vector<quint8> *out);
-    OpResult download(XcpPtr base, const std::vector<quint8> data);
-    OpResult nvWrite();
-    OpResult setCalPage(quint8 segment, quint8 page);
-    OpResult programStart();
-    OpResult programClear(XcpPtr base, int len);
-    OpResult programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket = true);
-    OpResult programVerify(XcpPtr mta, quint32 crc);
-    OpResult programReset();
-    OpResult buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
-    OpResult getAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
-    OpResult getAvailSlaves(Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> *out);
+    SetupTools::Xcp::OpResult setState(State);
+    SetupTools::Xcp::OpResult open(boost::optional<int> timeoutMsec = boost::optional<int>());
+    SetupTools::Xcp::OpResult close();
+    SetupTools::Xcp::OpResult upload(XcpPtr base, int len, std::vector<quint8> *out=nullptr);
+    SetupTools::Xcp::OpResult download(XcpPtr base, const std::vector<quint8> data);
+    SetupTools::Xcp::OpResult nvWrite();
+    SetupTools::Xcp::OpResult setCalPage(quint8 segment, quint8 page);
+    SetupTools::Xcp::OpResult programStart();
+    SetupTools::Xcp::OpResult programClear(XcpPtr base, int len);
+    SetupTools::Xcp::OpResult programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket = true);
+    SetupTools::Xcp::OpResult programVerify(XcpPtr mta, quint32 crc);
+    SetupTools::Xcp::OpResult programReset();
+    SetupTools::Xcp::OpResult buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
+    SetupTools::Xcp::OpResult getAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
+    SetupTools::Xcp::OpResult getAvailSlaves(Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> *out);
 private:
-    static OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, const char *msg = NULL);
-    static OpResult getReplyResult(const std::vector<quint8> &reply, const char *msg = NULL);
-    OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, const char *msg = NULL, boost::optional<int> timeoutMsec = boost::optional<int>());
-    OpResult uploadSegment(XcpPtr base, int len, std::vector<quint8> &out);
-    OpResult downloadSegment(XcpPtr base, const std::vector<quint8> &data);
-    OpResult programPacket(XcpPtr base, const std::vector<quint8> &data);
-    OpResult programBlock(XcpPtr base, const std::vector<quint8> &data);
-    OpResult setMta(XcpPtr ptr);
-    OpResult tryQuery(std::function<OpResult (void)> &action);
-    OpResult synch();
+    static SetupTools::Xcp::OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, const char *msg = NULL);
+    static SetupTools::Xcp::OpResult getReplyResult(const std::vector<quint8> &reply, const char *msg = NULL);
+    SetupTools::Xcp::OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, const char *msg = NULL, boost::optional<int> timeoutMsec = boost::optional<int>());
+    SetupTools::Xcp::OpResult uploadSegment(XcpPtr base, int len, std::vector<quint8> &out);
+    SetupTools::Xcp::OpResult downloadSegment(XcpPtr base, const std::vector<quint8> &data);
+    SetupTools::Xcp::OpResult programPacket(XcpPtr base, const std::vector<quint8> &data);
+    SetupTools::Xcp::OpResult programBlock(XcpPtr base, const std::vector<quint8> &data);
+    SetupTools::Xcp::OpResult setMta(XcpPtr ptr);
+    SetupTools::Xcp::OpResult tryQuery(std::function<SetupTools::Xcp::OpResult (void)> &action);
+    SetupTools::Xcp::OpResult synch();
     void updateEmitOpProgress(double newVal);
 
     constexpr static const int MAX_RETRIES = 10;
