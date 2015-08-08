@@ -1,0 +1,93 @@
+Only in dialogs: ColorSlider.qml
+diff -ru dialogs.orig/DefaultColorDialog.qml dialogs/DefaultColorDialog.qml
+--- dialogs.orig/DefaultColorDialog.qml	2015-06-29 13:03:02.000000000 -0700
++++ dialogs/DefaultColorDialog.qml	2015-08-08 15:15:01.500725700 -0700
+@@ -39,7 +39,6 @@
+ import QtQuick.Controls.Private 1.0
+ import QtQuick.Dialogs 1.0
+ import QtQuick.Window 2.1
+-import "qml"
+ 
+ AbstractColorDialog {
+     id: root
+diff -ru dialogs.orig/DefaultDialogWrapper.qml dialogs/DefaultDialogWrapper.qml
+--- dialogs.orig/DefaultDialogWrapper.qml	2015-06-29 13:03:02.000000000 -0700
++++ dialogs/DefaultDialogWrapper.qml	2015-08-08 15:14:25.938673000 -0700
+@@ -39,7 +39,6 @@
+ import QtQuick.Dialogs 1.2
+ import QtQuick.Layouts 1.1
+ import QtQuick.Window 2.1
+-import "qml"
+ 
+ AbstractDialog {
+     id: root
+diff -ru dialogs.orig/DefaultFileDialog.qml dialogs/DefaultFileDialog.qml
+--- dialogs.orig/DefaultFileDialog.qml	2015-06-29 13:03:02.000000000 -0700
++++ dialogs/DefaultFileDialog.qml	2015-08-08 14:44:36.792453000 -0700
+@@ -43,7 +43,6 @@
+ import QtQuick.Window 2.1
+ import Qt.labs.folderlistmodel 2.1
+ import Qt.labs.settings 1.0
+-import "qml"
+ 
+ AbstractFileDialog {
+     id: root
+diff -ru dialogs.orig/DefaultFontDialog.qml dialogs/DefaultFontDialog.qml
+--- dialogs.orig/DefaultFontDialog.qml	2015-06-29 13:03:02.000000000 -0700
++++ dialogs/DefaultFontDialog.qml	2015-08-08 13:01:11.343733200 -0700
+@@ -42,7 +42,6 @@
+ import QtQuick.Dialogs.Private 1.1
+ import QtQuick.Layouts 1.1
+ import QtQuick.Window 2.1
+-import "qml"
+ 
+ AbstractFontDialog {
+     id: root
+diff -ru dialogs.orig/DefaultMessageDialog.qml dialogs/DefaultMessageDialog.qml
+--- dialogs.orig/DefaultMessageDialog.qml	2015-06-29 13:03:02.000000000 -0700
++++ dialogs/DefaultMessageDialog.qml	2015-08-08 13:01:40.517776500 -0700
+@@ -39,7 +39,6 @@
+ import QtQuick.Controls.Private 1.0
+ import QtQuick.Dialogs 1.1
+ import QtQuick.Window 2.1
+-import "qml"
+ 
+ AbstractMessageDialog {
+     id: root
+Only in dialogs: DefaultWindowDecoration.qml
+diff -ru dialogs.orig/dialogs.pro dialogs/dialogs.pro
+--- dialogs.orig/dialogs.pro	2015-06-29 13:03:02.000000000 -0700
++++ dialogs/dialogs.pro	2015-08-08 14:51:54.287153000 -0700
+@@ -53,12 +53,12 @@
+     DefaultColorDialog.qml \
+     DefaultFontDialog.qml \
+     DefaultDialogWrapper.qml \
+-    qml/ColorSlider.qml \
+-    qml/DefaultWindowDecoration.qml \
+-    qml/IconButtonStyle.qml \
+-    qml/IconGlyph.qml \
+-    qml/qmldir \
+-    qml/icons.ttf \
++    ColorSlider.qml \
++    DefaultWindowDecoration.qml \
++    IconButtonStyle.qml \
++    IconGlyph.qml \
++    qmldir \
++    icons.ttf \
+     images/critical.png \
+     images/information.png \
+     images/question.png \
+Only in dialogs: IconButtonStyle.qml
+Only in dialogs: IconGlyph.qml
+Only in dialogs: icons.ttf
+diff -ru dialogs.orig/qmldir dialogs/qmldir
+--- dialogs.orig/qmldir	2015-06-29 13:03:02.000000000 -0700
++++ dialogs/qmldir	2015-08-08 13:00:00.150621100 -0700
+@@ -6,3 +6,7 @@
+ depends Qt.labs.settings 1.0
+ depends QtQuick.Dialogs.Private 1.0
+ depends QtQuick.Controls 1.3
++
++ColorSlider 1.1 ColorSlider.qml
++IconButtonStyle 1.1 IconButtonStyle.qml
++IconGlyph 1.1 IconGlyph.qml

@@ -1,0 +1,19 @@
+Qt 5.5 has an error that prevents running static QML applications that use FileDialog,
+and probably also ColorDialog, FontDialog, and MessageDialog. The QML source files for
+these classes have a statement 'import "qml"', which works when the files are in the
+regular filesystem (as with a dynamic build deployed with windeployqt.exe) but not when
+they are compiled into a library for single-executable static build.
+
+To fix this, before compiling Qt, copy dialogs.diff to
+$QT_SOURCE_BASE/qtquickcontrols/src/dialogs and patch:
+
+patch -p1 < dialogs.diff
+
+Also, copy the contents of the directory 'qml' up to its parent, 'dialogs'. This should be:
+
+ColorSlider.qml
+DefaultWindowDecoration.qml
+IconButtonStyle.qml
+IconGlyph.qml
+qmldir
+icons.ttf
