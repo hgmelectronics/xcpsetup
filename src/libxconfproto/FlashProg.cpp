@@ -3,19 +3,19 @@
 namespace SetupTools
 {
 
- FlashBlock::FlashBlock(QObject *parent) : QObject(parent) {}
+FlashBlock::FlashBlock(QObject *parent) : QObject(parent) {}
 
- FlashProg::FlashProg(QObject *parent) : QObject(parent) {}
- FlashProg::~FlashProg() {}
- QList<FlashBlock *> &FlashProg::blocks()
+FlashProg::FlashProg(QObject *parent) : QObject(parent) {}
+FlashProg::~FlashProg() {}
+QList<FlashBlock *> &FlashProg::blocks()
 {
     return mBlocks;
 }
- QQmlListProperty<FlashBlock> FlashProg::blocksQml()
+QQmlListProperty<FlashBlock> FlashProg::blocksQml()
 {
     return QQmlListProperty<FlashBlock>(this, mBlocks);
 }
- void FlashProg::infillToSingleBlock(quint8 fillValue)
+void FlashProg::infillToSingleBlock(quint8 fillValue)
 {
     if(mBlocks.size() < 2)
         return;
@@ -43,7 +43,7 @@ namespace SetupTools
     mBlocks.append(combined);
     emit changed();
 }
- int FlashProg::size()
+int FlashProg::size()
 {
     int size = 0;
     for(FlashBlock *block : mBlocks)
@@ -51,7 +51,7 @@ namespace SetupTools
     return size;
 }
 
- uint FlashProg::base()
+uint FlashProg::base()
 {
     if(mBlocks.size() == 0)
         return 0;

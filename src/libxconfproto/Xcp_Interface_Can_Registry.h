@@ -22,7 +22,7 @@ namespace Interface
 namespace Can
 {
 
-class  Factory : public QObject
+class Factory : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text CONSTANT)
@@ -33,7 +33,7 @@ public:
     virtual QString text() = 0;
 };
 
-class  Info : public QObject
+class Info : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text CONSTANT)
@@ -48,7 +48,7 @@ private:
 
 QList<Factory *>  getInterfacesAvail(QObject *parent = 0);
 
-class  LegacyRegistry : public QObject
+class LegacyRegistry : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<SetupTools::Xcp::Interface::Can::Info> avail READ avail CONSTANT)
@@ -68,7 +68,7 @@ private:
 
  QObject *registryProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
-class  Registry
+class Registry
 {
 public:
     static QList<QUrl> avail();

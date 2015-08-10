@@ -25,15 +25,15 @@ namespace Can
 namespace Elm327
 {
 
-class  Exception : public ::SetupTools::Xcp::Interface::Exception {};
+class Exception : public ::SetupTools::Xcp::Interface::Exception {};
 
-class  UnexpectedResponse : public Exception {};
+class UnexpectedResponse : public Exception {};
 
-class  NoResponse : public UnexpectedResponse {};
+class NoResponse : public UnexpectedResponse {};
 
-class  SerialError : public Exception {};
+class SerialError : public Exception {};
 
-class  ConfigError : public Exception {};
+class ConfigError : public Exception {};
 
 class IoTask : public QObject
 {
@@ -69,7 +69,7 @@ private:
     PythonicEvent mPromptReady, mWriteComplete;
 };
 
-class  Io : public QObject
+class Io : public QObject
 {
     Q_OBJECT
 public:
@@ -116,7 +116,7 @@ private:
 /*!
  * \brief Implementation of CanInterface for the ELM327/STN1110
  */
-class  Interface : public ::SetupTools::Xcp::Interface::Can::Interface
+class Interface : public ::SetupTools::Xcp::Interface::Can::Interface
 {
     Q_OBJECT
 public:
@@ -195,7 +195,7 @@ private:
     boost::optional<Filter> mCfgdFilter;
 };
 
-class  Factory : public ::SetupTools::Xcp::Interface::Can::Factory
+class Factory : public ::SetupTools::Xcp::Interface::Can::Factory
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text CONSTANT)
@@ -212,7 +212,7 @@ QList<QSerialPortInfo>  getPortsAvail();
 
 QList<Factory *>  getInterfacesAvail(QObject *parent = 0);
 
-class  Registry
+class Registry
 {
 public:
     static QList<QUrl> avail();

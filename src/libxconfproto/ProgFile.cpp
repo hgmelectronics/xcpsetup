@@ -7,7 +7,7 @@
 namespace SetupTools
 {
 
- ProgFile::ProgFile(QObject *parent) :
+ProgFile::ProgFile(QObject *parent) :
     QObject(parent),
     mType(Invalid),
     mValid(false)
@@ -15,12 +15,12 @@ namespace SetupTools
     connect(&mProg, &FlashProg::changed, this, &ProgFile::onProgChanged);
 }
 
- QString ProgFile::name()
+QString ProgFile::name()
 {
     return mName;
 }
 
- void ProgFile::setName(QString newName)
+void ProgFile::setName(QString newName)
 {
     mName = newName;
     if(mValid)
@@ -30,12 +30,12 @@ namespace SetupTools
     }
 }
 
- ProgFile::Type ProgFile::type()
+ProgFile::Type ProgFile::type()
 {
     return mType;
 }
 
- void ProgFile::setType(ProgFile::Type newType)
+void ProgFile::setType(ProgFile::Type newType)
 {
     mType = newType;
     if(mValid)
@@ -45,37 +45,37 @@ namespace SetupTools
     }
 }
 
- bool ProgFile::valid()
+bool ProgFile::valid()
 {
     return mValid;
 }
 
- FlashProg *ProgFile::progPtr()
+FlashProg *ProgFile::progPtr()
 {
     return &mProg;
 }
 
- FlashProg &ProgFile::prog()
+FlashProg &ProgFile::prog()
 {
     return mProg;
 }
 
- const FlashProg &ProgFile::prog() const
+const FlashProg &ProgFile::prog() const
 {
     return mProg;
 }
 
- int ProgFile::size()
+int ProgFile::size()
 {
     return mProg.size();
 }
 
- uint ProgFile::base()
+uint ProgFile::base()
 {
     return mProg.base();
 }
 
- ProgFile::Result ProgFile::read()
+ProgFile::Result ProgFile::read()
 {
     for(auto blockPtr : mProg.blocks())
         delete blockPtr;
@@ -99,7 +99,7 @@ namespace SetupTools
     return ret;
 }
 
- void ProgFile::onProgChanged()
+void ProgFile::onProgChanged()
 {
     emit progChanged();
 }
@@ -120,12 +120,12 @@ enum class Result
     BadRecord
 };
 
- bool CompareLine(const Line &a, const Line &b)
+bool CompareLine(const Line &a, const Line &b)
 {
     return a.base < b.base;
 }
 
- QList<FlashBlock *>::iterator FindAppendBlock(QList<FlashBlock *> &blocks, quint32 newBase)
+QList<FlashBlock *>::iterator FindAppendBlock(QList<FlashBlock *> &blocks, quint32 newBase)
 {
     for(QList<FlashBlock *>::iterator blockIt = blocks.begin(); blockIt != blocks.end(); ++blockIt)
     {
@@ -136,7 +136,7 @@ enum class Result
     return blocks.end();
 }
 
- std::pair<Result, Line> ConvertLine(const QString &text)
+std::pair<Result, Line> ConvertLine(const QString &text)
 {
     Line ret;
 
@@ -194,7 +194,7 @@ enum class Result
 
 }   // namespace SrecDetail
 
- ProgFile::Result ProgFile::readSrec(QFile &file)
+ProgFile::Result ProgFile::readSrec(QFile &file)
 {
     QTextStream stream(&file);
     std::vector<SrecDetail::Line> lines;

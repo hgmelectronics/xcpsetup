@@ -74,7 +74,7 @@ Filter  ExactFilter(Id addr);
 
 //bool validateXcp(const Frame &frame);
 
-class  Interface : public ::SetupTools::Xcp::Interface::Interface
+class Interface : public ::SetupTools::Xcp::Interface::Interface
 {
     Q_OBJECT
 public:

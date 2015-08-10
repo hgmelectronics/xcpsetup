@@ -7,7 +7,7 @@
 namespace SetupTools {
 namespace Xcp {
 
-class  ConnectionFacade : public QObject
+class ConnectionFacade : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
@@ -123,7 +123,7 @@ private:
     QThread *mConnThread;
 };
 
-class  SimpleDataLayer : public QObject
+class SimpleDataLayer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)

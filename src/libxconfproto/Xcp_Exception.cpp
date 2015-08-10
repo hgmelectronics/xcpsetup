@@ -5,19 +5,19 @@ namespace SetupTools
     namespace Xcp
     {
 
-         OpResultWrapper::OpResultWrapper()
+        OpResultWrapper::OpResultWrapper()
         {
 
         }
 
-         QObject *OpResultWrapper::create(QQmlEngine *engine, QJSEngine *scriptEngine)
+        QObject *OpResultWrapper::create(QQmlEngine *engine, QJSEngine *scriptEngine)
         {
             Q_UNUSED(engine);
             Q_UNUSED(scriptEngine);
             return new OpResultWrapper();
         }
 
-         QString OpResultWrapper::asString(int result)
+        QString OpResultWrapper::asString(int result)
         {
             switch(result) {
             case Success:                   return "Success";
@@ -57,6 +57,5 @@ namespace SetupTools
             default:                                    return "Untranslated error";
             }
         }
-
     }
 }
