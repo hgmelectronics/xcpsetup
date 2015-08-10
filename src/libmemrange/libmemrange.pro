@@ -19,7 +19,9 @@ SOURCES +=  \
     Xcp_MemoryRange.cpp \
     Xcp_ScalarMemoryRange.cpp \
     Xcp_TableMemoryRange.cpp \
-    LinearTableAxis.cpp
+    LinearTableAxis.cpp \
+    Slot.cpp \
+    LinearSlot.cpp
 
 
 HEADERS += \
@@ -28,7 +30,9 @@ HEADERS += \
     Xcp_MemoryRangeList.h \
     Xcp_ScalarMemoryRange.h \
     Xcp_TableMemoryRange.h \
-    LinearTableAxis.h
+    LinearTableAxis.h \
+    Slot.h \
+    LinearSlot.h
 
 INCLUDEPATH += $$PWD/../libxconfproto
 

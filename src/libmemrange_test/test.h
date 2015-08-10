@@ -44,6 +44,9 @@ private slots:
     void uploadTableSub();
     void uploadTableOverlap_data();
     void uploadTableOverlap();
+
+    void linearSlotToFloat_data();
+    void linearSlotToFloat();
 private:
     void updateAg(int ag);
     void setWaitConnState(MemoryRangeTable *table, Connection::State state);

@@ -145,4 +145,24 @@ QObject *UrlUtil::create(QQmlEngine *engine, QJSEngine *scriptEngine)
     return new UrlUtil();
 }
 
+bool inRange(double val, double a, double b)
+{
+    if(a < b)
+        return (val >= a) && (val <= b);
+    else if(b < a)
+        return (val >= b) && (val <= a);
+    else
+        return false;
+}
+
+bool inRange(QVariant val, QVariant a, QVariant b)
+{
+    if(a < b)
+        return (val >= a) && (val <= b);
+    else if(b < a)
+        return (val >= b) && (val <= a);
+    else
+        return false;
+}
+
 }   // namespace SetupTools

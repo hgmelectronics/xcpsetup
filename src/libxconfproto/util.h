@@ -242,5 +242,8 @@ QString ToHexString(Ii begin, Ii end)
     return hex;
 }
 
+bool inRange(double val, double a, double b); //!< Determines if val is between a and b inclusive; a and b can be in either order.
+bool inRange(QVariant val, QVariant a, QVariant b); //!< Determines if val is between a and b inclusive; a and b can be in either order.
+
 }   // namespace SetupTools
 #endif // UTIL_H

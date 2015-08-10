@@ -4,6 +4,7 @@
 #include <boost/crc.hpp>
 #include "Xcp_ScalarMemoryRange.h"
 #include "Xcp_TableMemoryRange.h"
+#include "LinearSlot.h"
 
 #include <QPair>
 #include <QTime>
@@ -604,6 +605,66 @@ void Test::uploadTableOverlap()
     QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
+void Test::linearSlotToFloat_data()
+{
+    QTest::addColumn<int>("base");
+    QTest::addColumn<int>("precision");
+    QTest::addColumn<int>("storageType");
+    QTest::addColumn<double>("engrA");
+    QTest::addColumn<double>("engrB");
+    QTest::addColumn<double>("oorEngr");
+    QTest::addColumn<double>("rawA");
+    QTest::addColumn<double>("rawB");
+    QTest::addColumn<double>("oorRaw");
+    QTest::addColumn<QVariant>("rawIn");
+    QTest::addColumn<double>("engrOut");
+
+
+    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(70000) << NAN;
+    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << 40000.0;
+    QTest::newRow("03") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << 0.0;
+    QTest::newRow("04") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << 64255.0;
+    QTest::newRow("05") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << 40.0;
+    QTest::newRow("06") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << 0.0;
+    QTest::newRow("07") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << 64.255;
+    QTest::newRow("08") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(402) << 0.402;
+    QTest::newRow("09") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(100) << 0.0;
+    QTest::newRow("10") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(0) << 1.0;
+    QTest::newRow("11") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(25) << 0.75;
+    QTest::newRow("12") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(101) << NAN;
+}
+
+void Test::linearSlotToFloat()
+{
+    QFETCH(int, base);
+    QFETCH(int, precision);
+    QFETCH(int, storageType);
+    QFETCH(double, engrA);
+    QFETCH(double, engrB);
+    QFETCH(double, oorEngr);
+    QFETCH(double, rawA);
+    QFETCH(double, rawB);
+    QFETCH(double, oorRaw);
+    QFETCH(QVariant, rawIn);
+    QFETCH(double, engrOut);
+
+    LinearSlot slot;
+
+    slot.base = base;
+    slot.precision = precision;
+    slot.storageType = storageType;
+    slot.engrA = engrA;
+    slot.engrB = engrB;
+    slot.oorEngr = oorEngr;
+    slot.rawA = rawA;
+    slot.rawB = rawB;
+    slot.oorRaw = oorRaw;
+
+    if(std::isnan(engrOut))
+        QVERIFY(std::isnan(slot.toFloat(rawIn)));
+    else
+        QCOMPARE(slot.toFloat(rawIn), engrOut);
+}
 
 }
 }
