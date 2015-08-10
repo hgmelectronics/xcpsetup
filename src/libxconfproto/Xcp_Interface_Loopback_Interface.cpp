@@ -22,9 +22,7 @@ OpResult  Interface::transmit(const std::vector<quint8> & data, bool replyExpect
     Q_UNUSED(replyExpected);
     if(mPacketLogEnabled)
     {
-        QByteArray arr;
-        arr.setRawData(reinterpret_cast<const char *>(data.data()), data.size());
-        qDebug() << mPacketTimer.nsecsElapsed() / 1000000000.0 << "Master TX" << arr.toPercentEncoding();
+        qDebug() << mPacketTimer.nsecsElapsed() / 1000000000.0 << "Master TX" << ToHexString(data.begin(), data.end());
     }
     mSlaveReceiveQueue.put(data);
     return OpResult::Success;
@@ -46,9 +44,7 @@ void  Interface::slaveTransmit(const std::vector<quint8> & data)
 {
     if(mPacketLogEnabled)
     {
-        QByteArray arr;
-        arr.setRawData(reinterpret_cast<const char *>(data.data()), data.size());
-        qDebug() << mPacketTimer.nsecsElapsed() / 1000000000.0 << "Slave TX" << arr.toPercentEncoding();
+        qDebug() << mPacketTimer.nsecsElapsed() / 1000000000.0 << "Slave TX" << ToHexString(data.begin(), data.end());
     }
     mMasterReceiveQueue.put(data);
 }

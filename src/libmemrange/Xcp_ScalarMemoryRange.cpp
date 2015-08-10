@@ -6,16 +6,10 @@ namespace Xcp {
 ScalarMemoryRange::ScalarMemoryRange(MemoryRangeType type, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent) :
     MemoryRange(base, memoryRangeTypeSize(type), writable, addrGran, parent),
     mType(type),
-    mValid(false),
     mCache(size()),
     mCacheLoaded(size()),
     mValue(QVariant::Type(memoryRangeTypeQtCode(type)))    // make a null QVariant of requested type
 {}
-
-bool ScalarMemoryRange::valid() const
-{
-    return mValid;
-}
 
 QVariant ScalarMemoryRange::value() const
 {
@@ -35,9 +29,7 @@ void ScalarMemoryRange::setValue(QVariant value)
 
     if(connectionFacade()->state() == Connection::State::CalMode)
     {
-        std::vector<quint8> buffer(size());
-        convertToSlave(mType, connectionFacade(), convertedValue, buffer.data());
-        connectionFacade()->download(base(), buffer);
+        download(convertedValue);
     }
     else
     {
@@ -59,12 +51,23 @@ bool ScalarMemoryRange::operator==(MemoryRange &other)
     return false;
 }
 
+void ScalarMemoryRange::download()
+{
+    download(mValue);
+}
+
+void ScalarMemoryRange::download(QVariant value)
+{
+    std::vector<quint8> buffer(size());
+    convertToSlave(mType, connectionFacade(), value, buffer.data());
+    connectionFacade()->download(base(), buffer);
+}
+
 void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
 {
-    Q_UNUSED(base);
     Q_UNUSED(len);
 
-    if(result == Xcp::OpResult::Success && data.size() >= size())
+    if(result == Xcp::OpResult::Success)
     {
         if(base.ext != mBase.ext)
             return;
@@ -80,8 +83,7 @@ void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int
             newValue = convertFromSlave(mType, connectionFacade(), data.data() + copyBeginOffset);
             mCacheLoaded.reset();
         }
-        else if((end() > base && end() <= dataEnd)
-                || (mBase < dataEnd && mBase >= base))  // check if ranges overlap at all
+        else if(end() > base && mBase < dataEnd)  // check if ranges overlap at all
         {
             quint32 copyEndOffset = (copyEnd - base.addr) * mAddrGran;
             quint32 copyBeginCacheOffset = (copyBegin - mBase.addr) * mAddrGran;
@@ -95,22 +97,17 @@ void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int
                 mCacheLoaded.reset();
             }
         }
-        QVariant oldValue = mValue;
-        mValue = newValue;
-        if(newValue != oldValue)
+        if(newValue != mValue)
+        {
+            mValue = newValue;
             emit valueChanged();
+        }
         setValid(true);
     }
-    else
+    else if(result == Xcp::OpResult::SlaveErrorOutOfRange)
     {
         setValid(false);
     }
-}
-
-void ScalarMemoryRange::setValid(bool newValid)
-{
-    if(updateDelta<bool>(mValid, newValid))
-        emit validChanged();
 }
 
 } // namespace Xcp

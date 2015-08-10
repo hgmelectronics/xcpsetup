@@ -92,8 +92,7 @@ void IoTask::portReadyRead()
                 {
                     mLines.push_back(newLine);
 #ifdef ELM327_DEBUG
-                    QByteArray newLineArr(reinterpret_cast<char *>(newLine.data()), newLine.size());
-                    qDebug() << TIMESTAMP_STR << "RX" << newLineArr.toPercentEncoding();
+                    qDebug() << TIMESTAMP_STR << "RX" << ToHexString(newLine.begin(), newLine.end());
 #endif
                     newLine.clear();
                 }
@@ -103,8 +102,7 @@ void IoTask::portReadyRead()
         {
             mLines.push_back(newLine);
 #ifdef ELM327_DEBUG
-            QByteArray newLineArr(reinterpret_cast<char *>(newLine.data()), newLine.size());
-            qDebug() << TIMESTAMP_STR << "RX" << newLineArr.toPercentEncoding();
+            qDebug() << TIMESTAMP_STR << "RX" << ToHexString(newLine.begin(), newLine.end());
 #endif
         }
     }
@@ -113,7 +111,7 @@ void IoTask::portReadyRead()
     std::vector<std::vector<quint8> > incompleteLines;
     for(std::vector<quint8> & line : mLines)
     {
-        //qDebug() << mPort->elapsedSecs() << "ELM327 IO line" << line.toPercentEncoding();
+        //qDebug() << mPort->elapsedSecs() << "ELM327 IO line" << ToHexString(line.begin(), line.end());
         if(*(line.end() - 1) == EOL)
         {
             line.pop_back();
@@ -177,8 +175,7 @@ void IoTask::write(std::vector<quint8> data)
     }
     mPort->write(data.data(), data.size());
 #ifdef ELM327_DEBUG
-    QByteArray dataArr(reinterpret_cast<char *>(data.data()), data.size());
-    qDebug() << TIMESTAMP_STR << "TX" << dataArr.toPercentEncoding();
+    qDebug() << TIMESTAMP_STR << "TX" << ToHexString(data.begin(), data.end());
 #endif
 }
 

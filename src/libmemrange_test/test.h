@@ -36,6 +36,14 @@ private slots:
     void setupOverlap();
     void uploadOverlap_data();
     void uploadOverlap();
+    void uploadTableNoOverlap_data();
+    void uploadTableNoOverlap();
+    void downloadTableNoOverlap_data();
+    void downloadTableNoOverlap();
+    void uploadTableSub_data();
+    void uploadTableSub();
+    void uploadTableOverlap_data();
+    void uploadTableOverlap();
 private:
     void updateAg(int ag);
     void setWaitConnState(MemoryRangeTable *table, Connection::State state);

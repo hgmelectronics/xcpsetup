@@ -192,12 +192,18 @@ int TestingSlave::addMemRange(MemType type, SetupTools::Xcp::XcpPtr base, std::v
 std::vector<quint8> &TestingSlave::getMemRange(int idx)
 {
     QMutexLocker locker(&mConfigMutex);
-    return mMemRanges[idx].data;         // will throw if idx doesn't exist
+    return mMemRanges.at(idx).data;         // will throw if idx doesn't exist
 }
+SetupTools::Xcp::XcpPtr TestingSlave::getMemRangeBase(int idx)
+{
+    QMutexLocker locker(&mConfigMutex);
+    return mMemRanges.at(idx).base;
+}
+
 void TestingSlave::setMemRange(int idx, const std::vector<quint8> &data)
 {
     QMutexLocker locker(&mConfigMutex);
-    mMemRanges[idx].data = data;    // will throw if idx doesn't exist
+    mMemRanges.at(idx).data = data;    // will throw if idx doesn't exist
 }
 void TestingSlave::removeMemRange(int idx)
 {

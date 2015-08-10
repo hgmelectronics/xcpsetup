@@ -225,5 +225,22 @@ bool updateDelta(T &val, T newVal)
     return (oldVal != newVal);
 }
 
+template <typename Ii>
+QString ToHexString(Ii begin, Ii end)
+{
+    QString hex;
+    Ii it = begin;
+    while(1)
+    {
+        hex += QString("%1").arg(*it, 2, 16, QChar('0')).toUpper();
+        ++it;
+        if(it == end)
+            break;
+        else
+            hex += QString(" ");
+    }
+    return hex;
+}
+
 }   // namespace SetupTools
 #endif // UTIL_H

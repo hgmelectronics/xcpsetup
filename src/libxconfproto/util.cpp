@@ -83,9 +83,7 @@ qint64 SerialPort::readData(char *data, qint64 maxSize)
     qint64 res = QSerialPort::readData(data, maxSize);
     if(mLogData && res > 0)
     {
-        QByteArray arr;
-        arr.setRawData(data, res);
-        qDebug() << mLogTimer.nsecsElapsed() / double(1000000000) << "Serial RX" << arr.toPercentEncoding();
+        qDebug() << mLogTimer.nsecsElapsed() / double(1000000000) << "Serial RX" << ToHexString(data, data + res);
     }
     return res;
 }
@@ -94,9 +92,7 @@ qint64 SerialPort::writeData(const char *data, qint64 maxSize)
     qint64 res = QSerialPort::writeData(data, maxSize);
     if(mLogData && res > 0)
     {
-        QByteArray arr;
-        arr.setRawData(data, res);
-        qDebug() << mLogTimer.nsecsElapsed() / double(1000000000) << "Serial TX" << arr.toPercentEncoding();
+        qDebug() << mLogTimer.nsecsElapsed() / double(1000000000) << "Serial TX" << ToHexString(data, data + res);
     }
     return res;
 }

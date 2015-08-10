@@ -1,5 +1,6 @@
 #include "Xcp_MemoryRangeTable.h"
 #include "Xcp_ScalarMemoryRange.h"
+#include "Xcp_TableMemoryRange.h"
 
 namespace SetupTools
 {
@@ -55,7 +56,7 @@ MemoryRange *MemoryRangeTable::addRange(MemoryRange::MemoryRangeType type, XcpPt
     }
     else if(count > 1)
     {
-        // FIXME add table support here
+        newRange = new TableMemoryRange(type, count, base, writable, mAddrGran, nullptr);
     }
 
     if(newRange == nullptr)

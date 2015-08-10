@@ -17,14 +17,18 @@ SOURCES +=  \
     Xcp_MemoryRangeTable.cpp \
     Xcp_MemoryRangeList.cpp \
     Xcp_MemoryRange.cpp \
-    Xcp_ScalarMemoryRange.cpp
+    Xcp_ScalarMemoryRange.cpp \
+    Xcp_TableMemoryRange.cpp \
+    LinearTableAxis.cpp
 
 
 HEADERS += \
     Xcp_MemoryRangeTable.h \
     Xcp_MemoryRange.h \
     Xcp_MemoryRangeList.h \
-    Xcp_ScalarMemoryRange.h
+    Xcp_ScalarMemoryRange.h \
+    Xcp_TableMemoryRange.h \
+    LinearTableAxis.h
 
 INCLUDEPATH += $$PWD/../libxconfproto
 

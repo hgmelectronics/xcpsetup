@@ -17,6 +17,8 @@ class MemoryRange: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool writable READ writable WRITE setWritable NOTIFY writableChanged)
+    Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
+    Q_PROPERTY(bool fullReload READ fullReload WRITE setFullReload NOTIFY fullReloadChanged)
     Q_ENUMS(MemoryRangeType)
 
 public:
@@ -46,6 +48,11 @@ public:
     bool writable() const;
     void setWritable(bool);
 
+    bool valid() const;
+
+    bool fullReload() const;
+    void setFullReload(bool);
+
     XcpPtr base() const;
     XcpPtr end() const;
 
@@ -56,19 +63,26 @@ public:
 
 signals:
     void writableChanged();
+    void validChanged();
+    void fullReloadChanged();
 public slots:
     void refresh();
+    virtual void download() = 0;
     void onConnectionChanged(bool ok);
     virtual void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ()) = 0;
     void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
 
 protected:
     Xcp::ConnectionFacade *connectionFacade() const;
+    void setValid(bool newValid);
+
     const Xcp::XcpPtr mBase;
     const quint32 mSize;
     const quint8 mAddrGran;
 
     bool mWritable;
+    bool mValid;
+    bool mFullReload;
 };
 
 void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, QVariant value, quint8 *buf);

@@ -12,7 +12,9 @@ MemoryRange::MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, quint8 a
     mBase(base),
     mSize(size),
     mAddrGran(addrGran),
-    mWritable(writable)
+    mWritable(writable),
+    mValid(false),
+    mFullReload(true)
 {}
 
 bool MemoryRange::writable() const
@@ -24,6 +26,22 @@ void MemoryRange::setWritable(bool newWritable)
 {
     if(updateDelta<bool>(mWritable, newWritable))
         emit writableChanged();
+}
+
+bool MemoryRange::valid() const
+{
+    return mValid;
+}
+
+bool MemoryRange::fullReload() const
+{
+    return mFullReload;
+}
+
+void MemoryRange::setFullReload(bool newFullReload)
+{
+    if(updateDelta<bool>(mFullReload, newFullReload))
+        emit fullReloadChanged();
 }
 
 XcpPtr MemoryRange::base() const
@@ -48,22 +66,31 @@ void MemoryRange::refresh()
 
 void MemoryRange::onConnectionChanged(bool ok)
 {
+    setValid(false);
     if(ok)
         refresh();
 }
 
 void MemoryRange::onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data)
 {
-    Q_UNUSED(result);
-    Q_UNUSED(base);
-    Q_UNUSED(data);
+    if(result != OpResult::Success)
+        return;
 
-    connectionFacade()->upload(mBase, mSize);
+    if(mFullReload)
+        connectionFacade()->upload(mBase, mSize);
+    else
+        connectionFacade()->upload(base, data.size() / mAddrGran);
 }
 
 Xcp::ConnectionFacade *MemoryRange::connectionFacade() const
 {
     return qobject_cast<MemoryRangeList *>(parent())->connectionFacade();
+}
+
+void MemoryRange::setValid(bool newValid)
+{
+    if(updateDelta<bool>(mValid, newValid))
+        emit validChanged();
 }
 
 void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, QVariant value, quint8 *buf)

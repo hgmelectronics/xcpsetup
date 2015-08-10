@@ -26,7 +26,6 @@
         <file>QtQuick/Controls/Styles/Flat/qmldir</file>
         <file>QtQuick/Controls/Styles/qmldir</file>
         <file>QtQuick/Dialogs/Private/qmldir</file>
-        <file>QtQuick/Dialogs/qml/qmldir</file>
         <file>QtQuick/Dialogs/qmldir</file>
         <file>QtQuick/Extras/qmldir</file>
         <file>QtQuick/Layouts/qmldir</file>
