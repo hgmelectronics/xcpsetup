@@ -27,6 +27,7 @@ public:
     Xcp::ConnectionFacade *connectionFacade() const;
     void setConnectionFacade(Xcp::ConnectionFacade *);
     bool connectionOk() const;
+    const MemoryRangeTable *table() const;
 
     Q_INVOKABLE Param *addParam(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable, bool saveable, const Slot *slot, QString key);
     Q_INVOKABLE Param *getParam(QString key);

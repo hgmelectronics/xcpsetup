@@ -47,9 +47,16 @@ private slots:
 
     void linearSlotToFloat_data();
     void linearSlotToFloat();
+    void linearSlotToString_data();
+    void linearSlotToString();
+    void linearSlotToRaw_data();
+    void linearSlotToRaw();
+
+    void paramDownloadUpload_data();
+    void paramDownloadUpload();
 private:
     void updateAg(int ag);
-    void setWaitConnState(MemoryRangeTable *table, Connection::State state);
+    void setWaitConnState(const MemoryRangeTable *table, Connection::State state);
     static const int CONN_TIMEOUT = 50;
     static const int CONN_NVWRITE_TIMEOUT = 100;
     static const int CONN_RESET_TIMEOUT = 100;

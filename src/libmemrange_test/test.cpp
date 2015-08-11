@@ -5,6 +5,8 @@
 #include "Xcp_ScalarMemoryRange.h"
 #include "Xcp_TableMemoryRange.h"
 #include "LinearSlot.h"
+#include "Xcp_ScalarParam.h"
+#include "Xcp_ParamRegistry.h"
 
 #include <QPair>
 #include <QTime>
@@ -62,7 +64,7 @@ void Test::updateAg(int ag)
     mSlave->setPgmMaxBs(255/ag);
 }
 
-void Test::setWaitConnState(MemoryRangeTable *table, Connection::State state)
+void Test::setWaitConnState(const MemoryRangeTable *table, Connection::State state)
 {
     if(mConnFacade->state() == state)
         return;
@@ -664,6 +666,214 @@ void Test::linearSlotToFloat()
         QVERIFY(std::isnan(slot.toFloat(rawIn)));
     else
         QCOMPARE(slot.toFloat(rawIn), engrOut);
+}
+
+
+void Test::linearSlotToString_data()
+{
+    QTest::addColumn<int>("base");
+    QTest::addColumn<int>("precision");
+    QTest::addColumn<int>("storageType");
+    QTest::addColumn<double>("engrA");
+    QTest::addColumn<double>("engrB");
+    QTest::addColumn<double>("oorEngr");
+    QTest::addColumn<double>("rawA");
+    QTest::addColumn<double>("rawB");
+    QTest::addColumn<double>("oorRaw");
+    QTest::addColumn<QVariant>("rawIn");
+    QTest::addColumn<QString>("engrOut");
+
+
+    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(70000) << QString("nan");
+    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << QString("40000");
+    QTest::newRow("03") << 10 << 1 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QString("0.0");
+    QTest::newRow("04") << 10 << 1 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << QString("64255.0");
+    QTest::newRow("05") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << QString("40.00");
+    QTest::newRow("06") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QString("0.00");
+    QTest::newRow("07") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << QString("64.25");
+    QTest::newRow("08") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(402) << QString("0.40");
+    QTest::newRow("09") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(100) << QString("0.000");
+    QTest::newRow("10") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(0) << QString("1.000");
+    QTest::newRow("11") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(25) << QString("0.750");
+    QTest::newRow("12") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(101) << QString("nan");
+}
+
+void Test::linearSlotToString()
+{
+    QFETCH(int, base);
+    QFETCH(int, precision);
+    QFETCH(int, storageType);
+    QFETCH(double, engrA);
+    QFETCH(double, engrB);
+    QFETCH(double, oorEngr);
+    QFETCH(double, rawA);
+    QFETCH(double, rawB);
+    QFETCH(double, oorRaw);
+    QFETCH(QVariant, rawIn);
+    QFETCH(QString, engrOut);
+
+    LinearSlot slot;
+
+    slot.base = base;
+    slot.precision = precision;
+    slot.storageType = storageType;
+    slot.engrA = engrA;
+    slot.engrB = engrB;
+    slot.oorEngr = oorEngr;
+    slot.rawA = rawA;
+    slot.rawB = rawB;
+    slot.oorRaw = oorRaw;
+
+    QCOMPARE(slot.toString(rawIn), engrOut);
+}
+
+void Test::linearSlotToRaw_data()
+{
+    QTest::addColumn<int>("base");
+    QTest::addColumn<int>("precision");
+    QTest::addColumn<int>("storageType");
+    QTest::addColumn<double>("engrA");
+    QTest::addColumn<double>("engrB");
+    QTest::addColumn<double>("oorEngr");
+    QTest::addColumn<double>("rawA");
+    QTest::addColumn<double>("rawB");
+    QTest::addColumn<double>("oorRaw");
+    QTest::addColumn<QVariant>("engrIn");
+    QTest::addColumn<QVariant>("rawOut");
+
+
+    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant("70000") << QVariant(quint32(65535));
+    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant("40000.0") << QVariant(quint32(40000));
+    QTest::newRow("03") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0.0) << QVariant(quint32(0));
+    QTest::newRow("04") << 16 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant("FAFF") << QVariant(quint32(0xFAFF));
+    QTest::newRow("05") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40.0) << QVariant(quint32(40000));
+    QTest::newRow("06") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QVariant(quint32(0));
+    QTest::newRow("07") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant("64.255") << QVariant(quint32(64255));
+    QTest::newRow("08") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0.402) << QVariant(quint32(402));
+    QTest::newRow("09") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(0.0) << QVariant(quint32(100));
+    QTest::newRow("10") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant("1") << QVariant(quint32(0));
+    QTest::newRow("11") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(0.75) << QVariant(quint32(25));
+    QTest::newRow("12") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant("1.2") << QVariant(quint32(65535));
+}
+
+void Test::linearSlotToRaw()
+{
+    QFETCH(int, base);
+    QFETCH(int, precision);
+    QFETCH(int, storageType);
+    QFETCH(double, engrA);
+    QFETCH(double, engrB);
+    QFETCH(double, oorEngr);
+    QFETCH(double, rawA);
+    QFETCH(double, rawB);
+    QFETCH(double, oorRaw);
+    QFETCH(QVariant, engrIn);
+    QFETCH(QVariant, rawOut);
+
+    LinearSlot slot;
+
+    slot.base = base;
+    slot.precision = precision;
+    slot.storageType = storageType;
+    slot.engrA = engrA;
+    slot.engrB = engrB;
+    slot.oorEngr = oorEngr;
+    slot.rawA = rawA;
+    slot.rawB = rawB;
+    slot.oorRaw = oorRaw;
+
+    QCOMPARE(slot.toRaw(engrIn), rawOut);
+}
+
+void Test::paramDownloadUpload_data()
+{
+    QTest::addColumn<int>("ag");
+    QTest::addColumn<double>("floatEngr");
+    QTest::addColumn<QString>("stringEngr");
+    QTest::addColumn<quint32>("raw");
+
+    QTest::newRow("64.255 ag==1") << 1 << 64.255 << "64.255" << quint32(64255);
+    QTest::newRow("64.000 ag==1") << 1 << 64.0 << "64.000" << quint32(64000);
+    QTest::newRow("00.001 ag==1") << 1 << 0.001 << "0.001" << quint32(1);
+    QTest::newRow("00.000 ag==1") << 1 << 0.0 << "0.000" << quint32(0);
+    QTest::newRow("64.255 ag==2") << 2 << 64.255 << "64.255" << quint32(64255);
+    QTest::newRow("64.000 ag==2") << 2 << 64.0 << "64.000" << quint32(64000);
+    QTest::newRow("00.001 ag==2") << 2 << 0.001 << "0.001" << quint32(1);
+    QTest::newRow("00.000 ag==2") << 2 << 0.0 << "0.000" << quint32(0);
+    QTest::newRow("64.255 ag==4") << 4 << 64.255 << "64.255" << quint32(64255);
+    QTest::newRow("64.000 ag==4") << 4 << 64.0 << "64.000" << quint32(64000);
+    QTest::newRow("00.001 ag==4") << 4 << 0.001 << "0.001" << quint32(1);
+    QTest::newRow("00.000 ag==4") << 4 << 0.0 << "0.000" << quint32(0);
+}
+
+void Test::paramDownloadUpload()
+{
+    QFETCH(int, ag);
+    QFETCH(double, floatEngr);
+    QFETCH(QString, stringEngr);
+    QFETCH(quint32, raw);
+
+    quint32 base = 0x400 / ag;
+
+    static const QString KEY("fnord");
+
+    LinearSlot slot;
+    slot.base = 10;
+    slot.precision = 3;
+    slot.storageType = int(QMetaType::UInt);
+    slot.engrA = 0.0;
+    slot.engrB = 64.255;
+    slot.oorEngr = NAN;
+    slot.rawA = 0;
+    slot.rawB = 64255;
+    slot.oorRaw = 65535;
+
+    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+
+    updateAg(ag);
+    std::shared_ptr<ParamRegistry> registry(new ParamRegistry(ag));
+    registry->setConnectionFacade(mConnFacade);
+    std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
+    Q_ASSERT(base * ag == mSlave->getMemRangeBase(0).addr);
+    quint32 *slaveMemRangeValue = reinterpret_cast<quint32 *>(slaveMemRange.data());
+    *slaveMemRangeValue = 0xFFFFFFFF;  // trick to make valueChanged get emitted later on initial load
+
+    ScalarParam *param = qobject_cast<ScalarParam *>(registry->addParam(MemoryRange::MemoryRangeType::U32, {base, 0}, 1, true, false, &slot, KEY));
+    QCOMPARE(param, qobject_cast<ScalarParam *>(registry->getParam(KEY)));
+    QSignalSpy paramSpy(param, &ScalarParam::valChanged);
+
+    {
+        setWaitConnState(registry->table(), Xcp::Connection::State::CalMode);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
+    }
+
+    paramSpy.wait(100);
+    paramSpy.clear();
+    QVERIFY(std::isnan(param->floatVal()));
+    QCOMPARE(param->stringVal(), QString("nan"));
+
+    param->setFloatVal(floatEngr);
+    paramSpy.wait(100);
+    paramSpy.clear();
+    QCOMPARE(param->floatVal(), floatEngr);
+    QCOMPARE(param->stringVal(), stringEngr);
+    QCOMPARE(*slaveMemRangeValue, raw);
+
+    param->setStringVal("nan");
+    paramSpy.wait(100);
+    paramSpy.clear();
+    QVERIFY(std::isnan(param->floatVal()));
+    QCOMPARE(param->stringVal(), QString("nan"));
+
+    param->setStringVal(stringEngr);
+    paramSpy.wait(100);
+    paramSpy.clear();
+    QCOMPARE(param->floatVal(), floatEngr);
+    QCOMPARE(param->stringVal(), stringEngr);
+    QCOMPARE(*slaveMemRangeValue, raw);
+
+    setWaitConnState(registry->table(), Xcp::Connection::State::Closed);
+    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
 }

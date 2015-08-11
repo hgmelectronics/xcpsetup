@@ -32,6 +32,11 @@ bool ParamRegistry::connectionOk() const
     return mTable.connectionOk();
 }
 
+const MemoryRangeTable *ParamRegistry::table() const
+{
+    return &mTable;
+}
+
 Param *ParamRegistry::addParam(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable, bool saveable, const Slot *slot, QString key)
 {
     std::string stdKey(key.toStdString());
