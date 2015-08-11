@@ -21,7 +21,10 @@ SOURCES +=  \
     Xcp_TableMemoryRange.cpp \
     LinearTableAxis.cpp \
     Slot.cpp \
-    LinearSlot.cpp
+    LinearSlot.cpp \
+    Xcp_ParamRegistry.cpp \
+    Xcp_ScalarParam.cpp \
+    Xcp_Param.cpp
 
 
 HEADERS += \
@@ -32,7 +35,10 @@ HEADERS += \
     Xcp_TableMemoryRange.h \
     LinearTableAxis.h \
     Slot.h \
-    LinearSlot.h
+    LinearSlot.h \
+    Xcp_ParamRegistry.h \
+    Xcp_ScalarParam.h \
+    Xcp_Param.h
 
 INCLUDEPATH += $$PWD/../libxconfproto
 

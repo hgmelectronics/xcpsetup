@@ -1,0 +1,38 @@
+#ifndef SETUPTOOLS_XCP_SCALARPARAM_H
+#define SETUPTOOLS_XCP_SCALARPARAM_H
+
+#include <QObject>
+#include "Xcp_Param.h"
+#include "Xcp_ScalarMemoryRange.h"
+#include "Slot.h"
+
+namespace SetupTools {
+
+namespace Xcp {
+
+class ScalarParam : public Param
+{
+    Q_OBJECT
+
+    Q_PROPERTY(double floatVal READ floatVal WRITE setFloatVal NOTIFY valChanged)
+    Q_PROPERTY(QString stringVal READ stringVal WRITE setStringVal NOTIFY valChanged)
+public:
+    ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *parent = nullptr);
+    double floatVal() const;
+    QString stringVal() const;
+    void setFloatVal(double);
+    void setStringVal(QString);
+signals:
+    void valChanged();
+public slots:
+    void onRangeValChanged();
+private:
+    ScalarMemoryRange * const mRange;   // owned by the ParamRegistry
+    const Slot * const mSlot;           // owned by QML
+};
+
+} // namespace Xcp
+
+} // namespace SetupTools
+
+#endif // SETUPTOOLS_XCP_SCALARPARAM_H

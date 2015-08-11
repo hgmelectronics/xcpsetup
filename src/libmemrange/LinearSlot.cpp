@@ -12,7 +12,7 @@ LinearSlot::LinearSlot() :
     oorRaw(quint32(0xFFFFFFFF))
 {}
 
-double LinearSlot::toFloat(QVariant raw)
+double LinearSlot::toFloat(QVariant raw) const
 {
     bool convertedOk = false;
     double rawConv = raw.toDouble(&convertedOk);
@@ -21,7 +21,7 @@ double LinearSlot::toFloat(QVariant raw)
     return (rawConv - rawA) / (rawB - rawA) * (engrB - engrA) + engrA;
 }
 
-QString LinearSlot::toString(QVariant raw)
+QString LinearSlot::toString(QVariant raw) const
 {
     double engr = toFloat(raw);
     if(base == 10)
@@ -30,7 +30,7 @@ QString LinearSlot::toString(QVariant raw)
         return QString::number(qint64(engr), base);
 }
 
-QVariant LinearSlot::toRaw(QVariant engr)
+QVariant LinearSlot::toRaw(QVariant engr) const
 {
     bool convertedOk = false;
     double engrConv;

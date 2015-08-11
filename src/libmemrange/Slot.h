@@ -17,9 +17,9 @@ class Slot
 public:
     Slot();
 
-    Q_INVOKABLE virtual double toFloat(QVariant raw) = 0;
-    Q_INVOKABLE virtual QString toString(QVariant raw) = 0;
-    Q_INVOKABLE virtual QVariant toRaw(QVariant engr) = 0;
+    Q_INVOKABLE virtual double toFloat(QVariant raw) const = 0;
+    Q_INVOKABLE virtual QString toString(QVariant raw) const = 0;
+    Q_INVOKABLE virtual QVariant toRaw(QVariant engr) const = 0;
 
     QString unit;
     int base;
