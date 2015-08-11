@@ -77,7 +77,8 @@ void Test::setWaitConnState(const MemoryRangeTable *table, Connection::State sta
 void Test::initTestCase()
 {
     mIntfc = new Interface::Loopback::Interface();
-    //mIntfc->setPacketLog(true);
+    if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+        mIntfc->setPacketLog(true);
     mConnFacade = new SetupTools::Xcp::ConnectionFacade(this);
     mConnFacade->setIntfc(mIntfc);
     mConnFacade->setTimeout(CONN_TIMEOUT);
