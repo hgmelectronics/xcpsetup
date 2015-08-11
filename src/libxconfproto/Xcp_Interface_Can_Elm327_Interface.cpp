@@ -682,20 +682,6 @@ OpResult Interface::updateBitrateTxType()
     return OpResult::Success;
 }
 
-Factory::Factory(QSerialPortInfo info, QObject *parent) :
-    SetupTools::Xcp::Interface::Can::Factory(parent),
-    mPortInfo(info)
-{}
-
-SetupTools::Xcp::Interface::Can::Interface *Factory::make(QObject *parent)
-{
-    return new Interface(mPortInfo, parent);
-}
-QString Factory::text()
-{
-    return "ELM327 on " + mPortInfo.portName() + " (" + mPortInfo.description() + ")";
-}
-
 QList<QSerialPortInfo> getPortsAvail()
 {
     QList<QSerialPortInfo> ret;
@@ -709,14 +695,6 @@ QList<QSerialPortInfo> getPortsAvail()
             }
         }
     }
-    return ret;
-}
-
-QList<Factory *> getInterfacesAvail(QObject *parent)
-{
-    QList<Factory *> ret;
-    for(QSerialPortInfo portInfo : getPortsAvail())
-        ret.append(new Factory(portInfo, parent));
     return ret;
 }
 

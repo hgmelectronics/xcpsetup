@@ -195,22 +195,7 @@ private:
     boost::optional<Filter> mCfgdFilter;
 };
 
-class Factory : public ::SetupTools::Xcp::Interface::Can::Factory
-{
-    Q_OBJECT
-    Q_PROPERTY(QString text READ text CONSTANT)
-public:
-    Factory(QSerialPortInfo info, QObject *parent = 0);
-    virtual ~Factory() {}
-    virtual SetupTools::Xcp::Interface::Can::Interface *make(QObject *parent = 0);
-    virtual QString text();
-private:
-    QSerialPortInfo mPortInfo;
-};
-
-QList<QSerialPortInfo>  getPortsAvail();
-
-QList<Factory *>  getInterfacesAvail(QObject *parent = 0);
+QList<QSerialPortInfo> getPortsAvail();
 
 class Registry
 {
