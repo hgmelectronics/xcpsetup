@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     test_scalar_range.cpp \
     test_table_range.cpp \
     test_slot.cpp \
-    test_scalar_param.cpp
+    test_scalar_param.cpp \
+    test_table_param.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libxconfproto/release/ -lxconfproto
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libxconfproto/debug/ -lxconfproto

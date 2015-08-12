@@ -40,6 +40,7 @@ public:
     QString xUnit() const;
     QString yUnit() const;
     QString valueUnit() const;
+    const TableMemoryRange *range() const;
 
     QString name;
 signals:

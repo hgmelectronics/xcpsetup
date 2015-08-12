@@ -61,6 +61,9 @@ private slots:
 
     void paramDownloadUpload_data();
     void paramDownloadUpload();
+
+    void tableParamDownloadUpload_data();
+    void tableParamDownloadUpload();
 private:
     void updateAg(int ag);
     void setWaitConnState(const MemoryRangeTable *table, Connection::State state);

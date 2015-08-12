@@ -93,6 +93,11 @@ QString TableParam::valueUnit() const
     return mSlot->unit();
 }
 
+const TableMemoryRange *TableParam::range() const
+{
+    return mRange;
+}
+
 void TableParam::onAxisXUnitChanged()
 {
     emit xUnitChanged();
