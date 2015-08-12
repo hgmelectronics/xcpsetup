@@ -1,13 +1,5 @@
 #include "test.h"
-#include <memory>
-#include "Xcp_ScalarMemoryRange.h"
-#include "Xcp_TableMemoryRange.h"
 #include "LinearSlot.h"
-#include "Xcp_ScalarParam.h"
-#include "Xcp_ParamRegistry.h"
-
-#include <QPair>
-#include <QTime>
 
 namespace SetupTools
 {
