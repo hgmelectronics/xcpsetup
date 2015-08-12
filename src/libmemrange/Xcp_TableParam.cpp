@@ -8,7 +8,8 @@ TableParam::TableParam(TableMemoryRange *range, const Slot *slot, const TableAxi
     mRange(range),
     mSlot(slot),
     mAxis(axis),
-    mModel(new TableParamListModel(this))
+    mStringModel(new TableParamListModel(true, this)),
+    mFloatModel(new TableParamListModel(false, this))
 {
     Q_ASSERT(mAxis->rowCount() == range->rowCount());
     Q_ASSERT(mAxis->roleNames().size());   // must have at least an x
@@ -40,9 +41,14 @@ QString TableParam::unit(int role)
     }
 }
 
-TableParamListModel *TableParam::model()
+TableParamListModel *TableParam::stringModel()
 {
-    return mModel;
+    return mStringModel;
+}
+
+TableParamListModel *TableParam::floatModel()
+{
+    return mFloatModel;
 }
 
 QString TableParam::xLabel() const
@@ -113,30 +119,16 @@ void TableParam::onSlotUnitChanged()
     emit valueUnitChanged();
 }
 
-TableParamListModel::TableParamListModel(TableParam *parent) :
+TableParamListModel::TableParamListModel(bool stringFormat, TableParam *parent) :
     QAbstractListModel(parent),
     mParam(parent),
-    mStringFormat(true)
+    mStringFormat(stringFormat)
 {
     connect(mParam, &TableParam::xLabelChanged, this, &TableParamListModel::onTableLabelChanged);
     connect(mParam, &TableParam::yLabelChanged, this, &TableParamListModel::onTableLabelChanged);
     connect(mParam, &TableParam::valueLabelChanged, this, &TableParamListModel::onTableLabelChanged);
     connect(mParam->mSlot, &Slot::valueParamChanged, this, &TableParamListModel::onValueParamChanged);
     connect(mParam->mRange, &TableMemoryRange::dataChanged, this, &TableParamListModel::onRangeDataChanged);
-}
-
-bool TableParamListModel::stringFormat() const
-{
-    return mStringFormat;
-}
-
-void TableParamListModel::setStringFormat(bool newVal)
-{
-    if(updateDelta<>(mStringFormat, newVal))
-    {
-        emit stringDataChanged();
-        onValueParamChanged();
-    }
 }
 
 int TableParamListModel::rowCount(const QModelIndex &parent) const

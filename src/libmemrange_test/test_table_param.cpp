@@ -83,61 +83,50 @@ void Test::tableParamDownloadUpload()
     if(spy.isEmpty())
         spy.wait(100);
     spy.clear();
-    for(int i = 0; i < param->model()->rowCount(); ++i)
+    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        param->model()->setStringFormat(false);
-        QVERIFY(std::isnan(param->model()->data(param->model()->index(i), TableAxisRole::ValueRole).toDouble()));
-        param->model()->setStringFormat(true);
-        QCOMPARE(param->model()->data(param->model()->index(i), TableAxisRole::ValueRole).toString(), QString("nan"));
+        QVERIFY(std::isnan(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble()));
+        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), QString("nan"));
     }
 
-    param->model()->setStringFormat(false);
-    for(int i = 0; i < param->model()->rowCount(); ++i)
+    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        QVERIFY(param->model()->setData(param->model()->index(i), QVariant(FLOAT_ENGR[i]), TableAxisRole::ValueRole));
+        QVERIFY(param->floatModel()->setData(param->floatModel()->index(i), QVariant(FLOAT_ENGR[i]), TableAxisRole::ValueRole));
         if(spy.isEmpty())
             spy.wait(100);
         spy.clear();
     }
-    for(int i = 0; i < param->model()->rowCount(); ++i)
+    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        param->model()->setStringFormat(false);
-        QCOMPARE(param->model()->data(param->model()->index(i), TableAxisRole::ValueRole).toDouble(), FLOAT_ENGR[i]);
-        param->model()->setStringFormat(true);
-        QCOMPARE(param->model()->data(param->model()->index(i), TableAxisRole::ValueRole).toString(), STRING_ENGR[i]);
+        QCOMPARE(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble(), FLOAT_ENGR[i]);
+        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), STRING_ENGR[i]);
         QCOMPARE(slaveMemRangeValue[i], RAW[i]);
     }
 
-    param->model()->setStringFormat(true);
-    for(int i = 0; i < param->model()->rowCount(); ++i)
+    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        QVERIFY(param->model()->setData(param->model()->index(i), QVariant("nan"), TableAxisRole::ValueRole));
+        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant("nan"), TableAxisRole::ValueRole));
         if(spy.isEmpty())
             spy.wait(100);
         spy.clear();
     }
-    for(int i = 0; i < param->model()->rowCount(); ++i)
+    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        param->model()->setStringFormat(false);
-        QVERIFY(std::isnan(param->model()->data(param->model()->index(i), TableAxisRole::ValueRole).toDouble()));
-        param->model()->setStringFormat(true);
-        QCOMPARE(param->model()->data(param->model()->index(i), TableAxisRole::ValueRole).toString(), QString("nan"));
+        QVERIFY(std::isnan(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble()));
+        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), QString("nan"));
     }
 
-    param->model()->setStringFormat(true);
-    for(int i = 0; i < param->model()->rowCount(); ++i)
+    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        QVERIFY(param->model()->setData(param->model()->index(i), QVariant(STRING_ENGR[i]), TableAxisRole::ValueRole));
+        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant(STRING_ENGR[i]), TableAxisRole::ValueRole));
         if(spy.isEmpty())
             spy.wait(100);
         spy.clear();
     }
-    for(int i = 0; i < param->model()->rowCount(); ++i)
+    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        param->model()->setStringFormat(false);
-        QCOMPARE(param->model()->data(param->model()->index(i), TableAxisRole::ValueRole).toDouble(), FLOAT_ENGR[i]);
-        param->model()->setStringFormat(true);
-        QCOMPARE(param->model()->data(param->model()->index(i), TableAxisRole::ValueRole).toString(), STRING_ENGR[i]);
+        QCOMPARE(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble(), FLOAT_ENGR[i]);
+        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), STRING_ENGR[i]);
         QCOMPARE(slaveMemRangeValue[i], RAW[i]);
     }
 }
