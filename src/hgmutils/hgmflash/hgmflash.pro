@@ -26,8 +26,18 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/re
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/debug/ -lxconfproto
 else:unix: LIBS += -L$$OUT_PWD/../../libxconfproto/ -lxconfproto
 
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libmemrange/release/ -lmemrange
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libmemrange/debug/ -lmemrange
+else:unix: LIBS += -L$$OUT_PWD/../../libmemrange/ -lmemrange
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/release/ -lxconfproto
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/debug/ -lxconfproto
+else:unix: LIBS += -L$$OUT_PWD/../../libxconfproto/ -lxconfproto
+
 INCLUDEPATH += $$PWD/../../libxconfproto
 DEPENDPATH += $$PWD/../../libxconfproto
+INCLUDEPATH += $$PWD/../../libmemrange
+DEPENDPATH += $$PWD/../../libmemrange
 
 HEADERS += \
     Cs2Tool.h

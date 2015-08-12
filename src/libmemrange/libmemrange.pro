@@ -26,7 +26,8 @@ SOURCES +=  \
     Xcp_ScalarParam.cpp \
     Xcp_Param.cpp \
     Xcp_TableParam.cpp \
-    TableAxis.cpp
+    TableAxis.cpp \
+    ParamFile.cpp
 
 
 HEADERS += \
@@ -42,7 +43,8 @@ HEADERS += \
     Xcp_ScalarParam.h \
     Xcp_Param.h \
     Xcp_TableParam.h \
-    TableAxis.h
+    TableAxis.h \
+    ParamFile.h
 
 INCLUDEPATH += $$PWD/../libxconfproto
 
