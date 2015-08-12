@@ -13,6 +13,11 @@
 typedef std::pair<SetupTools::Xcp::CksumType, quint32> CksumPair;
 Q_DECLARE_METATYPE(CksumPair)
 
+namespace QTest
+{
+char *toString(const SetupTools::Xcp::OpResult &res);
+}
+
 namespace SetupTools
 {
 namespace Xcp
@@ -28,6 +33,14 @@ public:
 
 private slots:
     void initTestCase();
+
+    void linearSlotToFloat_data();
+    void linearSlotToFloat();
+    void linearSlotToString_data();
+    void linearSlotToString();
+    void linearSlotToRaw_data();
+    void linearSlotToRaw();
+
     void uploadNoOverlap_data();
     void uploadNoOverlap();
     void downloadNoOverlap_data();
@@ -36,6 +49,7 @@ private slots:
     void setupOverlap();
     void uploadOverlap_data();
     void uploadOverlap();
+
     void uploadTableNoOverlap_data();
     void uploadTableNoOverlap();
     void downloadTableNoOverlap_data();
@@ -44,13 +58,6 @@ private slots:
     void uploadTableSub();
     void uploadTableOverlap_data();
     void uploadTableOverlap();
-
-    void linearSlotToFloat_data();
-    void linearSlotToFloat();
-    void linearSlotToString_data();
-    void linearSlotToString();
-    void linearSlotToRaw_data();
-    void linearSlotToRaw();
 
     void paramDownloadUpload_data();
     void paramDownloadUpload();
