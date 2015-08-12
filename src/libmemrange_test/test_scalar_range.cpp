@@ -65,7 +65,7 @@ void Test::uploadNoOverlap()
     std::vector<std::shared_ptr<QSignalSpy>> rangeSpy;
     for(int idx = 0; idx < base.size(); ++idx)
     {
-        range[idx] = qobject_cast<ScalarMemoryRange *>(table->addRange(MemoryRange::U32, {base[idx], 0}, 1, false));
+        range[idx] = qobject_cast<ScalarMemoryRange *>(table->addScalarRange(MemoryRange::U32, {base[idx], 0}, false));
         QVERIFY(range[idx] != nullptr);
         rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::valueChanged));
     }
@@ -129,7 +129,7 @@ void Test::downloadNoOverlap()
     std::vector<std::shared_ptr<QSignalSpy>> rangeSpy;
     for(int idx = 0; idx < base.size(); ++idx)
     {
-        range[idx] = qobject_cast<ScalarMemoryRange *>(table->addRange(MemoryRange::U32, {base[idx], 0}, 1, true));
+        range[idx] = qobject_cast<ScalarMemoryRange *>(table->addScalarRange(MemoryRange::U32, {base[idx], 0}, true));
         QVERIFY(range[idx] != nullptr);
         rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::valueUploaded));
     }
@@ -194,7 +194,7 @@ void Test::setupOverlap()
     std::vector<ScalarMemoryRange *> range(base.size());
     for(int idx = 0; idx < base.size(); ++idx)
     {
-        range[idx] = qobject_cast<ScalarMemoryRange *>(table->addRange(MemoryRange::U32, {base[idx], 0}, 1, true));
+        range[idx] = qobject_cast<ScalarMemoryRange *>(table->addScalarRange(MemoryRange::U32, {base[idx], 0}, true));
         QVERIFY(range[idx] != nullptr);
     }
     ListDescList tableLists;
@@ -256,7 +256,7 @@ void Test::uploadOverlap()
     std::vector<std::shared_ptr<QSignalSpy>> rangeSpy;
     for(quint32 idx = 0; idx < range.size(); ++idx)
     {
-        range[idx] = qobject_cast<ScalarMemoryRange *>(table->addRange(MemoryRange::U32, {(0x400 + 2 * idx) / ag, 0}, 1, true));
+        range[idx] = qobject_cast<ScalarMemoryRange *>(table->addScalarRange(MemoryRange::U32, {(0x400 + 2 * idx) / ag, 0}, true));
         QVERIFY(range[idx] != nullptr);
         QCOMPARE(range[idx]->value().isNull(), true);
         rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::valueChanged));

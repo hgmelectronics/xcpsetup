@@ -71,7 +71,7 @@ void Test::paramDownloadUpload()
     quint32 *slaveMemRangeValue = reinterpret_cast<quint32 *>(slaveMemRange.data());
     *slaveMemRangeValue = 0xFFFFFFFF;  // trick to make valueChanged get emitted later on initial load
 
-    ScalarParam *param = qobject_cast<ScalarParam *>(registry->addParam(MemoryRange::MemoryRangeType::U32, {base, 0}, 1, true, false, &slot, KEY));
+    ScalarParam *param = qobject_cast<ScalarParam *>(registry->addScalarParam(MemoryRange::MemoryRangeType::U32, {base, 0}, true, false, &slot, KEY));
     QCOMPARE(param, qobject_cast<ScalarParam *>(registry->getParam(KEY)));
     QSignalSpy spy(param->range(), &ScalarMemoryRange::valueUploaded);
 

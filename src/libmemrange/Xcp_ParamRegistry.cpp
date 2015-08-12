@@ -1,6 +1,8 @@
 #include "Xcp_ParamRegistry.h"
 #include "Xcp_ScalarMemoryRange.h"
 #include "Xcp_ScalarParam.h"
+#include "Xcp_TableMemoryRange.h"
+#include "Xcp_TableParam.h"
 
 namespace SetupTools {
 namespace Xcp {
@@ -37,32 +39,45 @@ const MemoryRangeTable *ParamRegistry::table() const
     return &mTable;
 }
 
-Param *ParamRegistry::addParam(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable, bool saveable, const Slot *slot, QString key)
+Param *ParamRegistry::addScalarParam(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable, bool saveable, const Slot *slot, QString key)
 {
     std::string stdKey(key.toStdString());
     if(mParams.count(stdKey))
         return nullptr;
 
-    MemoryRange *range = mTable.addRange(type, base, count, writable);
+    MemoryRange *range = mTable.addScalarRange(type, base, writable);
     if(range == nullptr)
         return nullptr;
 
-    if(count == 1)
-    {
-        ScalarMemoryRange *scalarRange = qobject_cast<ScalarMemoryRange *>(range);
-        Q_ASSERT(scalarRange != nullptr);
-        ScalarParam *param = new ScalarParam(scalarRange, slot, this);
-        Q_ASSERT(param != nullptr);
-        param->saveable = saveable;
-        mParams[stdKey] = param;
-        return param;
-    }
-    else if(count > 1)
-    {
-        return nullptr; // FIXME add table support
-    }
-    else
+    ScalarMemoryRange *scalarRange = qobject_cast<ScalarMemoryRange *>(range);
+    Q_ASSERT(scalarRange != nullptr);
+    ScalarParam *param = new ScalarParam(scalarRange, slot, this);
+    Q_ASSERT(param != nullptr);
+    param->saveable = saveable;
+    mParams[stdKey] = param;
+    return param;
+}
+
+Param *ParamRegistry::addTableParam(MemoryRange::MemoryRangeType type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const TableAxis *axis, QString key)
+{
+    std::string stdKey(key.toStdString());
+    if(mParams.count(stdKey))
         return nullptr;
+
+    if(count < 1)
+        return nullptr;
+
+    MemoryRange *range = mTable.addTableRange(type, base, count, writable);
+    if(range == nullptr)
+        return nullptr;
+
+    TableMemoryRange *tableRange = qobject_cast<TableMemoryRange *>(range);
+    Q_ASSERT(tableRange != nullptr);
+    TableParam *param = new TableParam(tableRange, slot, axis, this);
+    Q_ASSERT(param != nullptr);
+    param->saveable = saveable;
+    mParams[stdKey] = param;
+    return param;
 }
 
 Param *ParamRegistry::getParam(QString key)

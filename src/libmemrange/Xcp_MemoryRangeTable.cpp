@@ -44,32 +44,35 @@ bool MemoryRangeTable::connectionOk() const
     return mConnectionOk;
 }
 
-MemoryRange *MemoryRangeTable::addRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable)
+MemoryRange *MemoryRangeTable::addScalarRange(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable)
 {
     if(memoryRangeTypeSize(type) % mAddrGran)   // reject unaligned types
         return nullptr;
 
-    MemoryRange *newRange = nullptr;
-    if(count == 1)
-    {
-        newRange = new ScalarMemoryRange(type, base, writable, mAddrGran, nullptr);
-    }
-    else if(count > 1)
-    {
-        newRange = new TableMemoryRange(type, count, base, writable, mAddrGran, nullptr);
-    }
+    MemoryRange *newRange = new ScalarMemoryRange(type, base, writable, mAddrGran, nullptr);
 
     if(newRange == nullptr)
         return nullptr;
 
-    ListRange overlap = findOverlap(base, newRange->size());
+    insertRange(newRange);
 
-    MemoryRangeList *newList = new MemoryRangeList(mAddrGran, this);
-    newList->addRange(newRange);
-    for(MemoryRangeList *list : overlap)
-        newList->merge(*list);
-    QList<MemoryRangeList *>::iterator insertIt = mEntries.erase(overlap.begin(), overlap.end());
-    mEntries.insert(insertIt, newList);
+    return newRange;
+}
+
+MemoryRange *MemoryRangeTable::addTableRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable)
+{
+    if(memoryRangeTypeSize(type) % mAddrGran)   // reject unaligned types
+        return nullptr;
+    if(count < 1)
+        return nullptr;
+
+    MemoryRange *newRange = new TableMemoryRange(type, count, base, writable, mAddrGran, nullptr);
+
+    if(newRange == nullptr)
+        return nullptr;
+
+    insertRange(newRange);
+
     return newRange;
 }
 
@@ -145,6 +148,18 @@ MemoryRangeTable::ListRange MemoryRangeTable::findOverlap(XcpPtr addr, int len)
     QList<MemoryRangeList *>::iterator end = findOverlapEnd(addr + (len / mAddrGran));
     Q_ASSERT(std::distance(begin, end) >= 0);
     return boost::iterator_range<QList<MemoryRangeList *>::iterator>(begin, end);
+}
+
+void MemoryRangeTable::insertRange(MemoryRange *newRange)
+{
+    ListRange overlap = findOverlap(newRange->base(), newRange->size());
+
+    MemoryRangeList *newList = new MemoryRangeList(mAddrGran, this);
+    newList->addRange(newRange);
+    for(MemoryRangeList *list : overlap)
+        newList->merge(*list);
+    QList<MemoryRangeList *>::iterator insertIt = mEntries.erase(overlap.begin(), overlap.end());
+    mEntries.insert(insertIt, newList);
 }
 
 }   // namespace Xcp

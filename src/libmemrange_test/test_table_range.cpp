@@ -55,7 +55,7 @@ void Test::uploadTableNoOverlap()
         setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
         QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
     }
-    TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base, 0}, value.size(), false));
+    TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addTableRange(MemoryRange::U32, {base, 0}, value.size(), false));
     QVERIFY(range != nullptr);
     QSignalSpy rangeSpy(range, &TableMemoryRange::dataChanged);
     if(constructBeforeOpen)
@@ -117,7 +117,7 @@ void Test::downloadTableNoOverlap()
     boost::iterator_range<quint32 *> slaveMemRangeValue(slaveMemRangeValueBase, slaveMemRangeValueBase + value.size());
     std::fill(slaveMemRangeValue.begin(), slaveMemRangeValue.end(), 0);
 
-    TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base, 0}, value.size(), true));
+    TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addTableRange(MemoryRange::U32, {base, 0}, value.size(), true));
     QVERIFY(range != nullptr);
     QSignalSpy rangeSpy(range, &TableMemoryRange::dataUploaded);
     {
@@ -199,8 +199,8 @@ void Test::uploadTableSub()
     setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
     QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
 
-    TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base, 0}, value.size(), false));
-    TableMemoryRange *subRange = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base + sizeof(quint32) / ag, 0}, value.size() - 2, false));
+    TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addTableRange(MemoryRange::U32, {base, 0}, value.size(), false));
+    TableMemoryRange *subRange = qobject_cast<TableMemoryRange *>(table->addTableRange(MemoryRange::U32, {base + sizeof(quint32) / ag, 0}, value.size() - 2, false));
     QVERIFY(range != nullptr);
     QVERIFY(subRange != nullptr);
     QSignalSpy rangeSpy(range, &TableMemoryRange::dataChanged);
@@ -255,7 +255,7 @@ void Test::uploadTableOverlap()
     setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
     QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
 
-    TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base, 0}, value.size(), false));
+    TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addTableRange(MemoryRange::U32, {base, 0}, value.size(), false));
     QVERIFY(range != nullptr);
     QSignalSpy rangeSpy(range, &TableMemoryRange::dataChanged);
     quint32 tableAgs = value.size() * sizeof(quint32) / ag;

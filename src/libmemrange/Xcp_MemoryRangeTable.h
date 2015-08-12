@@ -30,7 +30,8 @@ public:
     /**
      * @brief adds a memrange to table, either in new list or overlapping list, or returns an identical one if existing
      */
-    Q_INVOKABLE MemoryRange *addRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable);
+    Q_INVOKABLE MemoryRange *addScalarRange(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable);
+    Q_INVOKABLE MemoryRange *addTableRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable);
 
     /**
      * @brief Clear all ranges from table - mostly useful for testing
@@ -54,11 +55,13 @@ public slots:
 private:
     typedef QList<MemoryRangeList *>::iterator ListIterator;
     typedef boost::iterator_range<ListIterator> ListRange;
+
     static bool listBeginLessThan(const MemoryRangeList *list, const XcpPtr &addr);
     static bool listEndLessThan(const MemoryRangeList *list, const XcpPtr &addr);
     ListIterator findOverlapBegin(XcpPtr addr);
     ListIterator findOverlapEnd(XcpPtr addr);
     ListRange findOverlap(XcpPtr base, int len);
+    void insertRange(MemoryRange *newRange);
 
     const quint32 mAddrGran;
     Xcp::ConnectionFacade *mConnectionFacade;

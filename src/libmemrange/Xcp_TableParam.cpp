@@ -78,6 +78,21 @@ void TableParam::setValueLabel(QString newVal)
         emit valueLabelChanged();
 }
 
+QString TableParam::xUnit() const
+{
+    return mAxis->xUnit();
+}
+
+QString TableParam::yUnit() const
+{
+    return mAxis->yUnit();
+}
+
+QString TableParam::valueUnit() const
+{
+    return mSlot->unit();
+}
+
 void TableParam::onAxisXUnitChanged()
 {
     emit xUnitChanged();

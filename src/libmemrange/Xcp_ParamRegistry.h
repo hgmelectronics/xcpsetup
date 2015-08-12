@@ -3,6 +3,7 @@
 
 #include "Xcp_MemoryRangeTable.h"
 #include "Slot.h"
+#include "TableAxis.h"
 #include "Xcp_Param.h"
 #include "Xcp_ConnectionFacade.h"
 
@@ -29,7 +30,8 @@ public:
     bool connectionOk() const;
     const MemoryRangeTable *table() const;
 
-    Q_INVOKABLE Param *addParam(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable, bool saveable, const Slot *slot, QString key);
+    Q_INVOKABLE Param *addScalarParam(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable, bool saveable, const Slot *slot, QString key);
+    Q_INVOKABLE Param *addTableParam(MemoryRange::MemoryRangeType type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const TableAxis *axis, QString key);
     Q_INVOKABLE Param *getParam(QString key);
 signals:
     void connectionChanged();
