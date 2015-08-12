@@ -57,7 +57,7 @@ private slots:
 private:
     void updateAg(int ag);
     void setWaitConnState(const MemoryRangeTable *table, Connection::State state);
-    static const int CONN_TIMEOUT = 50;
+    static const int CONN_TIMEOUT = 100;
     static const int CONN_NVWRITE_TIMEOUT = 100;
     static const int CONN_RESET_TIMEOUT = 100;
     static const int CONN_PROGCLEAR_TIMEOUT = 100;
