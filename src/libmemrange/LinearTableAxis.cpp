@@ -67,13 +67,12 @@ QVariant LinearTableAxis::data(const QModelIndex &index, int role) const
             || index.row() >= size())
         return QVariant();
     else
-        return mMin + ((mMax - mMin) * index.row()) / mSize;
+        return mMin + ((mMax - mMin) * index.row()) / (mSize - 1);
 }
 
 QHash<int, QByteArray> LinearTableAxis::roleNames() const
 {
-    static const QHash<int, QByteArray> ROLENAMES({ {TableAxisRole::XRole,     "x"},
-                                                    {TableAxisRole::ValueRole, "value"}});
+    static const QHash<int, QByteArray> ROLENAMES({ {TableAxisRole::XRole, "x"} });
     return ROLENAMES;
 }
 
