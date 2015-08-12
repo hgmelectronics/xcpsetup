@@ -3,58 +3,132 @@
 
 namespace SetupTools {
 
-LinearSlot::LinearSlot() :
-    engrA(NAN),
-    engrB(NAN),
-    oorEngr(NAN),
-    rawA(quint32(0)),
-    rawB(quint32(0)),
-    oorRaw(quint32(0xFFFFFFFF))
+LinearSlot::LinearSlot(QObject *parent) :
+    Slot(parent),
+    mEngrA(NAN),
+    mEngrB(NAN),
+    mOorEngr(NAN),
+    mRawA(quint32(0)),
+    mRawB(quint32(0)),
+    mOorRaw(quint32(0xFFFFFFFF))
 {}
+
+double LinearSlot::engrA() const
+{
+    return mEngrA;
+}
+void LinearSlot::setEngrA(double newVal)
+{
+    if(updateDelta<>(mEngrA, newVal))
+    {
+        emit valueParamChanged();
+        emit linearValueParamChanged();
+    }
+}
+double LinearSlot::engrB() const
+{
+    return mEngrB;
+}
+void LinearSlot::setEngrB(double newVal)
+{
+    if(updateDelta<>(mEngrB, newVal))
+    {
+        emit valueParamChanged();
+        emit linearValueParamChanged();
+    }
+}
+double LinearSlot::oorEngr() const
+{
+    return mOorEngr;
+}
+void LinearSlot::setOorEngr(double newVal)
+{
+    if(updateDelta<>(mOorEngr, newVal))
+    {
+        emit valueParamChanged();
+        emit linearValueParamChanged();
+    }
+}
+double LinearSlot::rawA() const
+{
+    return mRawA;
+}
+void LinearSlot::setRawA(double newVal)
+{
+    if(updateDelta<>(mRawA, newVal))
+    {
+        emit valueParamChanged();
+        emit linearValueParamChanged();
+    }
+}
+double LinearSlot::rawB() const
+{
+    return mRawB;
+}
+void LinearSlot::setRawB(double newVal)
+{
+    if(updateDelta<>(mRawB, newVal))
+    {
+        emit valueParamChanged();
+        emit linearValueParamChanged();
+    }
+}
+double LinearSlot::oorRaw() const
+{
+    return mOorRaw;
+}
+void LinearSlot::setOorRaw(double newVal)
+{
+    if(updateDelta<>(mOorRaw, newVal))
+    {
+        emit valueParamChanged();
+        emit linearValueParamChanged();
+    }
+}
 
 double LinearSlot::toFloat(QVariant raw) const
 {
     bool convertedOk = false;
     double rawConv = raw.toDouble(&convertedOk);
-    if(!convertedOk || !inRange(rawConv, rawA, rawB))
-        return oorEngr;
-    return (rawConv - rawA) / (rawB - rawA) * (engrB - engrA) + engrA;
+    if(!convertedOk || !inRange(rawConv, mRawA, mRawB))
+        return mOorEngr;
+    return (rawConv - mRawA) / (mRawB - mRawA) * (mEngrB - mEngrA) + mEngrA;
 }
 
 QString LinearSlot::toString(QVariant raw) const
 {
     double engr = toFloat(raw);
-    if(base == 10)
-        return QString::number(engr, 'f', precision);
+    if(base() == 10)
+        return QString::number(engr, 'f', precision());
     else
-        return QString::number(qint64(engr), base);
+        return QString::number(qint64(engr), base());
 }
 
 QVariant LinearSlot::toRaw(QVariant engr) const
 {
     bool convertedOk = false;
     double engrConv;
-    if(base == 10 || engr.type() != QVariant::Type::String)
+    if(base() == 10 || engr.type() != QVariant::Type::String)
     {
         engrConv = engr.toDouble(&convertedOk);
     }
     else
     {
         QString engrStr = engr.toString();
-        engrConv = engrStr.toLongLong(&convertedOk, base);
+        engrConv = engrStr.toLongLong(&convertedOk, base());
     }
 
-    if(!convertedOk || !inRange(engrConv, engrA, engrB))
-        return oorRaw;
-    double raw = (engrConv - engrA) / (engrB - engrA) * (rawB - rawA) + rawA;
+    if(!convertedOk || !inRange(engrConv, mEngrA, mEngrB))
+        return mOorRaw;
+    double raw = (engrConv - mEngrA) / (mEngrB - mEngrA) * (mRawB - mRawA) + mRawA;
 
-    if(storageType != QMetaType::Float && storageType != QMetaType::Double)
+    if(storageType() != QMetaType::Float && storageType() != QMetaType::Double)
         raw = round(raw);
     QVariant rawVar = raw;
-    if(rawVar.convert(storageType))
+    if(rawVar.convert(storageType()))
         return rawVar;
     else
-        return oorRaw;
+        return mOorRaw;
 }
 
 } // namespace SetupTools

@@ -165,4 +165,12 @@ bool inRange(QVariant val, QVariant a, QVariant b)
         return false;
 }
 
+ScopeExit::ScopeExit(std::function<void()> func) : mFunc(func)
+{}
+ScopeExit::~ScopeExit()
+{
+    mFunc();
+}
+
+
 }   // namespace SetupTools

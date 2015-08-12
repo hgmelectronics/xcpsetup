@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QByteArray>
 #include <deque>
+#include <functional>
 #include <QtQml/QQmlEngine>
 #include <QtQml/QJSEngine>
 #include <QtQml/QQmlListProperty>
@@ -244,6 +245,15 @@ QString ToHexString(Ii begin, Ii end)
 
 bool inRange(double val, double a, double b); //!< Determines if val is between a and b inclusive; a and b can be in either order.
 bool inRange(QVariant val, QVariant a, QVariant b); //!< Determines if val is between a and b inclusive; a and b can be in either order.
+
+class ScopeExit
+{
+public:
+    ScopeExit(std::function<void()> func);
+    ~ScopeExit();
+private:
+    std::function<void()> mFunc;
+};
 
 }   // namespace SetupTools
 #endif // UTIL_H

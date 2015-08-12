@@ -24,7 +24,8 @@ public:
 
     virtual bool operator==(MemoryRange &other);
 signals:
-    void valueChanged();
+    void dataUploaded(quint32 beginIndex, quint32 endIndex);
+    void dataChanged(quint32 beginIndex, quint32 endIndex);
 public slots:
     virtual void download();
     void download(quint32 beginIndex, const QList<QVariant> &data);
@@ -40,7 +41,7 @@ private:
     std::vector<quint8> mCache;
     boost::dynamic_bitset<> mCacheLoaded;
 
-    QList<QVariant> mValue;
+    QList<QVariant> mData;
 };
 
 } // namespace Xcp

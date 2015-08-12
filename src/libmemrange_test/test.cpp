@@ -71,7 +71,7 @@ void Test::setWaitConnState(const MemoryRangeTable *table, Connection::State sta
 
     QSignalSpy spy(table, &MemoryRangeTable::connectionChanged);
     mConnFacade->setState(state);
-    spy.wait(100);
+    spy.wait(200);
 }
 
 void Test::initTestCase()
@@ -123,6 +123,10 @@ void Test::uploadNoOverlap()
     updateAg(ag);
     std::shared_ptr<MemoryRangeTable> table(new MemoryRangeTable(ag, this));
     table->setConnectionFacade(mConnFacade);
+    ScopeExit connCloser([this, table](){
+        setWaitConnState(table.get(), Xcp::Connection::State::Closed);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+    });
     std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
     std::vector<quint32 *> slaveMemRangeValue(base.size());
     for(int idx = 0; idx < base.size(); ++idx)
@@ -157,15 +161,12 @@ void Test::uploadNoOverlap()
     }
     for(int idx = 0; idx < base.size(); ++idx)
     {
-        if(range[idx]->value().isNull())    // still has a race condition, but just delays the test worst case
-            rangeSpy[idx]->wait(100);       // need to make a SignalSpy equivalent that has thread locking primitives to allow atomic test and wait
+        if(rangeSpy[idx]->isEmpty())
+            rangeSpy[idx]->wait(100);
         QCOMPARE(range[idx]->valid(), true);
         QCOMPARE(range[idx]->writable(), false);
         QCOMPARE(range[idx]->value().toUInt(), value[idx]);
     }
-
-    setWaitConnState(table.get(), Xcp::Connection::State::Closed);
-    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
 void Test::downloadNoOverlap_data()
@@ -192,12 +193,16 @@ void Test::downloadNoOverlap()
     updateAg(ag);
     std::shared_ptr<MemoryRangeTable> table(new MemoryRangeTable(ag, this));
     table->setConnectionFacade(mConnFacade);
+    ScopeExit connCloser([this, table](){
+        setWaitConnState(table.get(), Xcp::Connection::State::Closed);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+    });
     std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
     std::vector<quint32 *> slaveMemRangeValue(base.size());
     for(int idx = 0; idx < base.size(); ++idx)
     {
         slaveMemRangeValue[idx] = reinterpret_cast<quint32 *>(slaveMemRange.data() + idx * sizeof(quint32));
-        *slaveMemRangeValue[idx] = 0xFFFFFFFF;  // trick to make valueChanged get emitted later on initial load
+        *slaveMemRangeValue[idx] = 0;
     }
 
     std::vector<ScalarMemoryRange *> range(base.size());
@@ -206,7 +211,7 @@ void Test::downloadNoOverlap()
     {
         range[idx] = qobject_cast<ScalarMemoryRange *>(table->addRange(MemoryRange::U32, {base[idx], 0}, 1, true));
         QVERIFY(range[idx] != nullptr);
-        rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::valueChanged));
+        rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::valueUploaded));
     }
     {
         setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
@@ -214,26 +219,23 @@ void Test::downloadNoOverlap()
     }
     for(int idx = 0; idx < base.size(); ++idx)
     {
-        if(range[idx]->value().isNull())
+        if(rangeSpy[idx]->isEmpty())
             rangeSpy[idx]->wait(100);
         rangeSpy[idx]->clear();
         QCOMPARE(range[idx]->valid(), true);
         QCOMPARE(range[idx]->writable(), true);
-        QCOMPARE(range[idx]->value().toUInt(), quint32(0xFFFFFFFF));
+        QCOMPARE(range[idx]->value().toUInt(), quint32(0));
     }
     for(int idx = 0; idx < base.size(); ++idx)
         range[idx]->setValue(value[idx]);
     for(int idx = 0; idx < base.size(); ++idx)
     {
-        if(range[idx]->value().toUInt() != value[idx])
+        if(rangeSpy[idx]->isEmpty())
             rangeSpy[idx]->wait(100);
         rangeSpy[idx]->clear();
         QCOMPARE(range[idx]->value().toUInt(), value[idx]);
         QCOMPARE(*slaveMemRangeValue[idx], value[idx]);
     }
-
-    setWaitConnState(table.get(), Xcp::Connection::State::Closed);
-    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
 typedef QList<QPair<quint32, quint32> > ListDescList;
@@ -318,6 +320,10 @@ void Test::uploadOverlap()
     updateAg(ag);
     std::shared_ptr<MemoryRangeTable> table(new MemoryRangeTable(ag, this));
     table->setConnectionFacade(mConnFacade);
+    ScopeExit connCloser([this, table](){
+        setWaitConnState(table.get(), Xcp::Connection::State::Closed);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+    });
 
     static constexpr std::array<quint8, 8> DATA = {0x01, 0x02, 0xDE, 0xAD, 0xBE, 0xEF, 0x55, 0xAA};
     static constexpr std::array<quint32, 3> RANGEDATA = {0xADDE0201, 0xEFBEADDE, 0xAA55EFBE};
@@ -341,8 +347,15 @@ void Test::uploadOverlap()
 
     for(quint32 idx : expectValid)
     {
-        if(range[idx]->value().isNull())
+        if(rangeSpy[idx]->isEmpty())
             rangeSpy[idx]->wait(100);
+        rangeSpy[idx]->clear();
+        if(range[idx]->value().isNull())
+        {
+            if(rangeSpy[idx]->isEmpty())
+                rangeSpy[idx]->wait(100);
+        }
+        rangeSpy[idx]->clear();
         QCOMPARE(range[idx]->value().isNull(), false);
         QCOMPARE(range[idx]->value().toUInt(), RANGEDATA[idx]);
     }
@@ -383,6 +396,10 @@ void Test::uploadTableNoOverlap()
     updateAg(ag);
     std::shared_ptr<MemoryRangeTable> table(new MemoryRangeTable(ag, this));
     table->setConnectionFacade(mConnFacade);
+    ScopeExit connCloser([this, table](){
+        setWaitConnState(table.get(), Xcp::Connection::State::Closed);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+    });
     std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
     Q_ASSERT(base * ag >= mSlave->getMemRangeBase(0).addr);
     quint32 memRangeOffset = base * ag - mSlave->getMemRangeBase(0).addr;
@@ -396,7 +413,7 @@ void Test::uploadTableNoOverlap()
     }
     TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base, 0}, value.size(), false));
     QVERIFY(range != nullptr);
-    QSignalSpy rangeSpy(range, &TableMemoryRange::valueChanged);
+    QSignalSpy rangeSpy(range, &TableMemoryRange::dataChanged);
     if(constructBeforeOpen)
     {
         setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
@@ -408,17 +425,15 @@ void Test::uploadTableNoOverlap()
     }
     for(int idx = 0; idx < value.size(); ++idx)
     {
-        if(range->data()[idx].isNull())    // still has a race condition, but just delays the test worst case
-            rangeSpy.wait(100);       // need to make a SignalSpy equivalent that has thread locking primitives to allow atomic test and wait
+        if(range->data()[idx].isNull() && rangeSpy.isEmpty())
+            rangeSpy.wait(100);
     }
+    rangeSpy.clear();
 
     QCOMPARE(range->valid(), true);
     QCOMPARE(range->writable(), false);
     for(int idx = 0; idx < value.size(); ++idx)
         QCOMPARE(range->data()[idx].toUInt(), value[idx]);
-
-    setWaitConnState(table.get(), Xcp::Connection::State::Closed);
-    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
 void Test::downloadTableNoOverlap_data()
@@ -447,31 +462,37 @@ void Test::downloadTableNoOverlap()
     updateAg(ag);
     std::shared_ptr<MemoryRangeTable> table(new MemoryRangeTable(ag, this));
     table->setConnectionFacade(mConnFacade);
+    ScopeExit connCloser([this, table](){
+        setWaitConnState(table.get(), Xcp::Connection::State::Closed);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+    });
     std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
     Q_ASSERT(base * ag >= mSlave->getMemRangeBase(0).addr);
     quint32 memRangeOffset = base * ag - mSlave->getMemRangeBase(0).addr;
     quint32 *slaveMemRangeValueBase = reinterpret_cast<decltype(value)::value_type *>(slaveMemRange.data() + memRangeOffset);
     boost::iterator_range<quint32 *> slaveMemRangeValue(slaveMemRangeValueBase, slaveMemRangeValueBase + value.size());
-    std::fill(slaveMemRangeValue.begin(), slaveMemRangeValue.end(), 0xFFFFFFFF);  // trick to make valueChanged get emitted later on initial load
+    std::fill(slaveMemRangeValue.begin(), slaveMemRangeValue.end(), 0);
 
     TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base, 0}, value.size(), true));
     QVERIFY(range != nullptr);
-    QSignalSpy rangeSpy(range, &TableMemoryRange::valueChanged);
+    QSignalSpy rangeSpy(range, &TableMemoryRange::dataUploaded);
     {
         setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
         QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
     }
-    for(int idx = 0; idx < value.size(); ++idx)
+    for(int endIdxUploaded = 0; endIdxUploaded < range->rowCount(); )
     {
-        if(range->data()[idx].isNull())
+        if(rangeSpy.isEmpty())
             rangeSpy.wait(100);
+        if(rangeSpy.isEmpty())
+            break;
+        endIdxUploaded = rangeSpy.takeFirst()[1].toInt();
     }
-    rangeSpy.clear();
     QCOMPARE(range->valid(), true);
     QCOMPARE(range->writable(), true);
     for(int idx = 0; idx < value.size(); ++idx)
     {
-        QCOMPARE(range->data()[idx].toUInt(), quint32(0xFFFFFFFF));
+        QCOMPARE(range->data()[idx].toUInt(), quint32(0));
     }
     if(useSetDataRange)
     {
@@ -485,20 +506,19 @@ void Test::downloadTableNoOverlap()
         for(int idx = 0; idx < value.size(); ++idx)
             range->setData(value[idx], idx);
     }
-    for(int idx = 0; idx < value.size(); ++idx)
+    for(int endIdxUploaded = 0; endIdxUploaded < range->rowCount(); )
     {
-        if(range->data()[idx] != value[idx])
+        if(rangeSpy.isEmpty())
             rangeSpy.wait(100);
+        if(rangeSpy.isEmpty())
+            break;
+        endIdxUploaded = rangeSpy.takeFirst()[1].toInt();
     }
-    rangeSpy.clear();
     for(int idx = 0; idx < value.size(); ++idx)
     {
         QCOMPARE(range->data()[idx].toUInt(), value[idx]);
         QCOMPARE(slaveMemRangeValue[idx], value[idx]);
     }
-
-    setWaitConnState(table.get(), Xcp::Connection::State::Closed);
-    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
 void Test::uploadTableSub_data()
@@ -522,6 +542,10 @@ void Test::uploadTableSub()
     updateAg(ag);
     std::shared_ptr<MemoryRangeTable> table(new MemoryRangeTable(ag, this));
     table->setConnectionFacade(mConnFacade);
+    ScopeExit connCloser([this, table](){
+        setWaitConnState(table.get(), Xcp::Connection::State::Closed);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+    });
     std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
     Q_ASSERT(base * ag >= mSlave->getMemRangeBase(0).addr);
     quint32 memRangeOffset = base * ag - mSlave->getMemRangeBase(0).addr;
@@ -535,13 +559,14 @@ void Test::uploadTableSub()
     TableMemoryRange *subRange = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base + sizeof(quint32) / ag, 0}, value.size() - 2, false));
     QVERIFY(range != nullptr);
     QVERIFY(subRange != nullptr);
-    QSignalSpy rangeSpy(range, &TableMemoryRange::valueChanged);
+    QSignalSpy rangeSpy(range, &TableMemoryRange::dataChanged);
     subRange->refresh();
     for(int idx = 1; idx < (value.size() - 1); ++idx)
     {
         if(range->data()[idx].isNull())
             rangeSpy.wait(100);
     }
+    rangeSpy.clear();
 
     QCOMPARE(range->valid(), false);
     QCOMPARE(subRange->valid(), true);
@@ -550,9 +575,6 @@ void Test::uploadTableSub()
     for(int idx = 1; idx < (value.size() - 1); ++idx)
         QCOMPARE(range->data()[idx].toUInt(), value[idx]);
     QCOMPARE(range->data().last().isNull(), true);
-
-    setWaitConnState(table.get(), Xcp::Connection::State::Closed);
-    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
 void Test::uploadTableOverlap_data()
@@ -576,6 +598,10 @@ void Test::uploadTableOverlap()
     updateAg(ag);
     std::shared_ptr<MemoryRangeTable> table(new MemoryRangeTable(ag, this));
     table->setConnectionFacade(mConnFacade);
+    ScopeExit connCloser([this, table](){
+        setWaitConnState(table.get(), Xcp::Connection::State::Closed);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+    });
     std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
     Q_ASSERT(base * ag >= mSlave->getMemRangeBase(0).addr);
     quint32 memRangeOffset = base * ag - mSlave->getMemRangeBase(0).addr;
@@ -587,15 +613,15 @@ void Test::uploadTableOverlap()
 
     TableMemoryRange *range = qobject_cast<TableMemoryRange *>(table->addRange(MemoryRange::U32, {base, 0}, value.size(), false));
     QVERIFY(range != nullptr);
-    QSignalSpy rangeSpy(range, &TableMemoryRange::valueChanged);
+    QSignalSpy rangeSpy(range, &TableMemoryRange::dataChanged);
     quint32 tableAgs = value.size() * sizeof(quint32) / ag;
     Q_ASSERT(tableAgs % 2 == 0);
     mConnFacade->upload({base, 0}, (tableAgs / 2 - 1) * ag);
-    if(range->data().first().isNull())
+    if(rangeSpy.isEmpty())
         rangeSpy.wait(100);
     rangeSpy.clear();
     mConnFacade->upload({base + tableAgs / 2 - 1, 0}, (tableAgs / 2 + 1) * ag);
-    if(range->data().last().isNull())
+    if(rangeSpy.isEmpty())
         rangeSpy.wait(100);
     rangeSpy.clear();
 
@@ -603,9 +629,6 @@ void Test::uploadTableOverlap()
     QCOMPARE(range->writable(), false);
     for(int idx = 0; idx < value.size(); ++idx)
         QCOMPARE(range->data()[idx].toUInt(), value[idx]);
-
-    setWaitConnState(table.get(), Xcp::Connection::State::Closed);
-    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
 void Test::linearSlotToFloat_data()
@@ -653,15 +676,15 @@ void Test::linearSlotToFloat()
 
     LinearSlot slot;
 
-    slot.base = base;
-    slot.precision = precision;
-    slot.storageType = storageType;
-    slot.engrA = engrA;
-    slot.engrB = engrB;
-    slot.oorEngr = oorEngr;
-    slot.rawA = rawA;
-    slot.rawB = rawB;
-    slot.oorRaw = oorRaw;
+    slot.setBase(base);
+    slot.setPrecision(precision);
+    slot.setStorageType(storageType);
+    slot.setEngrA(engrA);
+    slot.setEngrB(engrB);
+    slot.setOorEngr(oorEngr);
+    slot.setRawA(rawA);
+    slot.setRawB(rawB);
+    slot.setOorRaw(oorRaw);
 
     if(std::isnan(engrOut))
         QVERIFY(std::isnan(slot.toFloat(rawIn)));
@@ -715,15 +738,15 @@ void Test::linearSlotToString()
 
     LinearSlot slot;
 
-    slot.base = base;
-    slot.precision = precision;
-    slot.storageType = storageType;
-    slot.engrA = engrA;
-    slot.engrB = engrB;
-    slot.oorEngr = oorEngr;
-    slot.rawA = rawA;
-    slot.rawB = rawB;
-    slot.oorRaw = oorRaw;
+    slot.setBase(base);
+    slot.setPrecision(precision);
+    slot.setStorageType(storageType);
+    slot.setEngrA(engrA);
+    slot.setEngrB(engrB);
+    slot.setOorEngr(oorEngr);
+    slot.setRawA(rawA);
+    slot.setRawB(rawB);
+    slot.setOorRaw(oorRaw);
 
     QCOMPARE(slot.toString(rawIn), engrOut);
 }
@@ -773,15 +796,15 @@ void Test::linearSlotToRaw()
 
     LinearSlot slot;
 
-    slot.base = base;
-    slot.precision = precision;
-    slot.storageType = storageType;
-    slot.engrA = engrA;
-    slot.engrB = engrB;
-    slot.oorEngr = oorEngr;
-    slot.rawA = rawA;
-    slot.rawB = rawB;
-    slot.oorRaw = oorRaw;
+    slot.setBase(base);
+    slot.setPrecision(precision);
+    slot.setStorageType(storageType);
+    slot.setEngrA(engrA);
+    slot.setEngrB(engrB);
+    slot.setOorEngr(oorEngr);
+    slot.setRawA(rawA);
+    slot.setRawB(rawB);
+    slot.setOorRaw(oorRaw);
 
     QCOMPARE(slot.toRaw(engrIn), rawOut);
 }
@@ -819,21 +842,25 @@ void Test::paramDownloadUpload()
     static const QString KEY("fnord");
 
     LinearSlot slot;
-    slot.base = 10;
-    slot.precision = 3;
-    slot.storageType = int(QMetaType::UInt);
-    slot.engrA = 0.0;
-    slot.engrB = 64.255;
-    slot.oorEngr = NAN;
-    slot.rawA = 0;
-    slot.rawB = 64255;
-    slot.oorRaw = 65535;
+    slot.setBase(10);
+    slot.setPrecision(3);
+    slot.setStorageType(int(QMetaType::UInt));
+    slot.setEngrA(0.0);
+    slot.setEngrB(64.255);
+    slot.setOorEngr(NAN);
+    slot.setRawA(0);
+    slot.setRawB(64255);
+    slot.setOorRaw(65535);
 
     QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 
     updateAg(ag);
     std::shared_ptr<ParamRegistry> registry(new ParamRegistry(ag));
     registry->setConnectionFacade(mConnFacade);
+    ScopeExit connCloser([this, registry](){
+        setWaitConnState(registry->table(), Xcp::Connection::State::Closed);
+        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
+    });
     std::vector<quint8> &slaveMemRange = mSlave->getMemRange(0);
     Q_ASSERT(base * ag == mSlave->getMemRangeBase(0).addr);
     quint32 *slaveMemRangeValue = reinterpret_cast<quint32 *>(slaveMemRange.data());
@@ -841,40 +868,41 @@ void Test::paramDownloadUpload()
 
     ScalarParam *param = qobject_cast<ScalarParam *>(registry->addParam(MemoryRange::MemoryRangeType::U32, {base, 0}, 1, true, false, &slot, KEY));
     QCOMPARE(param, qobject_cast<ScalarParam *>(registry->getParam(KEY)));
-    QSignalSpy paramSpy(param, &ScalarParam::valChanged);
+    QSignalSpy spy(param->range(), &ScalarMemoryRange::valueUploaded);
 
     {
         setWaitConnState(registry->table(), Xcp::Connection::State::CalMode);
         QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
     }
 
-    paramSpy.wait(100);
-    paramSpy.clear();
+    if(spy.isEmpty())
+        spy.wait(100);
+    spy.clear();
     QVERIFY(std::isnan(param->floatVal()));
     QCOMPARE(param->stringVal(), QString("nan"));
 
     param->setFloatVal(floatEngr);
-    paramSpy.wait(100);
-    paramSpy.clear();
+    if(spy.isEmpty())
+        spy.wait(100);
+    spy.clear();
     QCOMPARE(param->floatVal(), floatEngr);
     QCOMPARE(param->stringVal(), stringEngr);
     QCOMPARE(*slaveMemRangeValue, raw);
 
     param->setStringVal("nan");
-    paramSpy.wait(100);
-    paramSpy.clear();
+    if(spy.isEmpty())
+        spy.wait(100);
+    spy.clear();
     QVERIFY(std::isnan(param->floatVal()));
     QCOMPARE(param->stringVal(), QString("nan"));
 
     param->setStringVal(stringEngr);
-    paramSpy.wait(100);
-    paramSpy.clear();
+    if(spy.isEmpty())
+        spy.wait(100);
+    spy.clear();
     QCOMPARE(param->floatVal(), floatEngr);
     QCOMPARE(param->stringVal(), stringEngr);
     QCOMPARE(*slaveMemRangeValue, raw);
-
-    setWaitConnState(registry->table(), Xcp::Connection::State::Closed);
-    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 }
 
 }

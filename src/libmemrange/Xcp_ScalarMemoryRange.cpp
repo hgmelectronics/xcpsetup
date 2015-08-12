@@ -27,15 +27,14 @@ void ScalarMemoryRange::setValue(QVariant value)
     if(convertedValue == mValue)
         return;
 
+    mValue = convertedValue;
+    // Always emit valueChanged: if slave accepts the change nothing will happen on readback,
+    // if slave rejects the change then the reverted/altered value will get loaded on readback.
+    // If we do not update mValue now and slave rejects change, the controls bound to value
+    // will continue to show the unacceptable value the user entered.
+    emit valueChanged();
     if(connectionFacade()->state() == Connection::State::CalMode)
-    {
         download(convertedValue);
-    }
-    else
-    {
-        mValue = convertedValue;
-        emit valueChanged();
-    }
 }
 
 bool ScalarMemoryRange::operator==(MemoryRange &other)
@@ -97,12 +96,13 @@ void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int
                 mCacheLoaded.reset();
             }
         }
-        if(newValue != mValue)
+        if(newValue != mValue || mValue.isNull())
         {
             mValue = newValue;
             emit valueChanged();
         }
         setValid(true);
+        emit valueUploaded();
     }
     else if(result == Xcp::OpResult::SlaveErrorOutOfRange)
     {

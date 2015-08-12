@@ -16,12 +16,18 @@ class ScalarParam : public Param
 
     Q_PROPERTY(double floatVal READ floatVal WRITE setFloatVal NOTIFY valChanged)
     Q_PROPERTY(QString stringVal READ stringVal WRITE setStringVal NOTIFY valChanged)
+    Q_PROPERTY(QString unit READ unit)
+    Q_PROPERTY(QString name MEMBER name)
 public:
     ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *parent = nullptr);
     double floatVal() const;
     QString stringVal() const;
     void setFloatVal(double);
     void setStringVal(QString);
+    QString unit() const;
+    const ScalarMemoryRange *range() const;
+
+    QString name;
 signals:
     void valChanged();
 public slots:

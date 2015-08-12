@@ -24,6 +24,7 @@ public:
     virtual bool operator==(MemoryRange &other);
 
 signals:
+    void valueUploaded();
     void valueChanged();
 
 public slots:

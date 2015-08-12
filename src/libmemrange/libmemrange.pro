@@ -24,7 +24,9 @@ SOURCES +=  \
     LinearSlot.cpp \
     Xcp_ParamRegistry.cpp \
     Xcp_ScalarParam.cpp \
-    Xcp_Param.cpp
+    Xcp_Param.cpp \
+    Xcp_TableParam.cpp \
+    TableAxis.cpp
 
 
 HEADERS += \
@@ -38,7 +40,9 @@ HEADERS += \
     LinearSlot.h \
     Xcp_ParamRegistry.h \
     Xcp_ScalarParam.h \
-    Xcp_Param.h
+    Xcp_Param.h \
+    Xcp_TableParam.h \
+    TableAxis.h
 
 INCLUDEPATH += $$PWD/../libxconfproto
 

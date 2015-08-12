@@ -4,7 +4,7 @@
 namespace SetupTools {
 
 LinearTableAxis::LinearTableAxis(QObject *parent) :
-    QAbstractListModel(parent),
+    TableAxis(parent),
     mMin(NAN),
     mMax(NAN),
     mSize(0)
@@ -51,20 +51,30 @@ void LinearTableAxis::setSize(int size)
         emit dimChanged();
 }
 
-int LinearTableAxis::rowCount() const
+int LinearTableAxis::rowCount(const QModelIndex & parent) const
 {
-    return mSize;
+    if(parent.isValid())
+        return 0;
+    else
+        return mSize;
 }
 
 QVariant LinearTableAxis::data(const QModelIndex &index, int role) const
 {
     if(index.column() != 0
-            || role != Qt::DisplayRole
+            || role != int(TableAxisRole::XRole)
             || index.row() < 0
             || index.row() >= size())
         return QVariant();
     else
         return mMin + ((mMax - mMin) * index.row()) / mSize;
+}
+
+QHash<int, QByteArray> LinearTableAxis::roleNames() const
+{
+    static const QHash<int, QByteArray> ROLENAMES({ {TableAxisRole::XRole,     "x"},
+                                                    {TableAxisRole::ValueRole, "value"}});
+    return ROLENAMES;
 }
 
 } // namespace SetupTools

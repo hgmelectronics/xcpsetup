@@ -31,6 +31,15 @@ void ScalarParam::setStringVal(QString val)
 {
     mRange->setValue(mSlot->toRaw(val));
 }
+QString ScalarParam::unit() const
+{
+    return mSlot->unit();
+}
+
+const ScalarMemoryRange *ScalarParam::range() const
+{
+    return mRange;
+}
 
 void ScalarParam::onRangeValChanged()
 {

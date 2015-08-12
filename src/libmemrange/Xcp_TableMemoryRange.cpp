@@ -12,9 +12,9 @@ TableMemoryRange::TableMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPt
     mCache(size()),
     mCacheLoaded(size())
 {
-    mValue.reserve(dim);
+    mData.reserve(dim);
     for(quint32 i = 0; i < dim; ++i)
-        mValue.push_back(QVariant(mQtType));
+        mData.push_back(QVariant(mQtType));
     Q_ASSERT(dim > 0);
     Q_ASSERT(quint64(dim) * memoryRangeTypeSize(type) < std::numeric_limits<quint32>::max());
 }
@@ -27,14 +27,14 @@ int TableMemoryRange::rowCount() const
 QVariant TableMemoryRange::operator[](quint32 index) const
 {
     if(index < mDim)
-        return mValue[index];
+        return mData[index];
     else
         return QVariant();
 }
 
 const QList<QVariant> &TableMemoryRange::data() const
 {
-    return mValue;
+    return mData;
 }
 
 bool TableMemoryRange::setData(const QVariant &value, quint32 index)
@@ -47,17 +47,18 @@ bool TableMemoryRange::setData(const QVariant &value, quint32 index)
     // check for convertibility
     if(!convertedValue.isValid())
         return false;
-    if(convertedValue == mValue)
+    if(convertedValue == mData)
         return true;
 
-    if(connectionFacade()->state() == Connection::State::CalMode)
+
+    if(updateDelta<>(mData[index], value))
     {
-        download(index, QList<QVariant>({convertedValue}));
-    }
-    else
-    {
-        if(updateDelta<>(mValue[index], value))
-            emit valueChanged();
+        // Always emit dataChanged: if slave accepts the change nothing will happen on readback,
+        // if slave rejects the change then the reverted/altered value will get loaded on readback
+        emit dataChanged(index, index + 1);
+
+        if(connectionFacade()->state() == Connection::State::CalMode)
+            download(index, QList<QVariant>({convertedValue}));
     }
     return true;
 }
@@ -68,34 +69,41 @@ bool TableMemoryRange::setDataRange(const QList<QVariant> &data, quint32 beginIn
         return false;
 
     QList<QVariant> convertedData = data;
-    quint32 compareIndex = beginIndex;
-    bool changed = false;
     for(QVariant &item : convertedData)
     {
         item.convert(mQtType);
         if(!item.isValid())
             return false;
-        if(mValue[compareIndex] != item)
-            changed = true;
-        ++compareIndex;
     }
-    if(!changed)
-        return true;
 
-    if(connectionFacade()->state() == Connection::State::CalMode)
+    bool changed = false;
+    quint32 beginChanged;
+    quint32 endChanged;
+    for(quint32 index = beginIndex, endIndex = beginIndex + convertedData.size(); index != endIndex; ++index)
     {
-        download(beginIndex, convertedData);
-    }
-    else
-    {
-        bool changed = false;
-        QList<QVariant>::iterator valueIt = mValue.begin() + beginIndex;
-        for(const QVariant &item : convertedData)
-            changed |= updateDelta<>(*valueIt, item);
+        bool itemChanged = updateDelta<>(mData[index], convertedData[index]);
+        if(itemChanged)
+        {
+            if(!changed)
+            {
+                beginChanged = index;
+                changed = true;
+            }
 
-        if(changed)
-            emit valueChanged();
+            endChanged = index + 1;
+        }
     }
+
+    if(changed)
+    {
+        // Always emit dataChanged: if slave accepts the change nothing will happen on readback,
+        // if slave rejects the change then the reverted/altered value will get loaded on readback
+        emit dataChanged(beginChanged, endChanged);
+
+        if(connectionFacade()->state() == Connection::State::CalMode)
+            download(beginIndex, convertedData);
+    }
+
     return true;
 }
 
@@ -116,7 +124,7 @@ bool TableMemoryRange::operator==(MemoryRange &other)
 
 void TableMemoryRange::download()
 {
-    download(0, mValue);
+    download(0, mData);
 }
 
 void TableMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
@@ -160,7 +168,7 @@ void TableMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int 
         quint32 beginFullIndex = (beginTableOffset + mElemSize - 1) / mElemSize;
         quint32 endFullIndex = endTableOffset / mElemSize;
 
-        QList<QVariant> newValue = mValue;
+        QList<QVariant> newValue = mData;
 
         for(quint32 i = beginFullIndex; i < endFullIndex; ++i)
         {
@@ -185,13 +193,30 @@ void TableMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int 
             if(partValue.isValid())
                 newValue[endIndex - 1] = partValue;
         }
-        if(newValue != mValue)
+        quint32 beginChanged = beginIndex;
+        quint32 endChanged = endIndex;
+        while(beginChanged != endChanged)
         {
-            mValue = newValue;
-            emit valueChanged();
+            if(mData[beginChanged] == newValue[beginChanged] && !mData[beginChanged].isNull())
+                ++beginChanged;
+            else
+                break;
+        }
+        while(beginChanged != endChanged)
+        {
+            if(mData[endChanged - 1] == newValue[endChanged - 1] && !mData[endChanged - 1].isNull())
+                --endChanged;
+            else
+                break;
+        }
+
+        if(beginChanged < endChanged)
+        {
+            mData = newValue;
+            emit dataChanged(beginChanged, endChanged);
         }
         bool valid = true;
-        for(const QVariant &elem : mValue)
+        for(const QVariant &elem : mData)
         {
             if(elem.isNull())
             {
@@ -200,6 +225,7 @@ void TableMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int 
             }
         }
         setValid(valid);
+        emit dataUploaded(beginIndex, endIndex);
     }
     else if(result == Xcp::OpResult::SlaveErrorOutOfRange)
     {
