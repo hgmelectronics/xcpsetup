@@ -27,7 +27,8 @@ SOURCES +=  \
     Xcp_Param.cpp \
     Xcp_TableParam.cpp \
     TableAxis.cpp \
-    ParamFile.cpp
+    ParamFile.cpp \
+    Xcp_ParamLayer.cpp
 
 
 HEADERS += \
@@ -44,7 +45,8 @@ HEADERS += \
     Xcp_Param.h \
     Xcp_TableParam.h \
     TableAxis.h \
-    ParamFile.h
+    ParamFile.h \
+    Xcp_ParamLayer.h
 
 INCLUDEPATH += $$PWD/../libxconfproto
 
