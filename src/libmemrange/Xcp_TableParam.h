@@ -18,7 +18,8 @@ class TableParam : public SetupTools::Xcp::Param
 
     friend class TableParamListModel;
 
-    Q_PROPERTY(TableParamListModel *model READ model)
+    Q_PROPERTY(TableParamListModel *stringModel READ stringModel)
+    Q_PROPERTY(TableParamListModel *floatModel READ floatModel)
     Q_PROPERTY(QString name MEMBER name)
     Q_PROPERTY(QString xLabel READ xLabel WRITE setXLabel NOTIFY xLabelChanged)
     Q_PROPERTY(QString yLabel READ yLabel WRITE setYLabel NOTIFY yLabelChanged)
@@ -30,7 +31,8 @@ public:
     TableParam(TableMemoryRange *range, const Slot *slot, const TableAxis *axis, QObject *parent = nullptr);
 
     Q_INVOKABLE QString unit(int role);
-    TableParamListModel *model();
+    TableParamListModel *stringModel();
+    TableParamListModel *floatModel();
     QString xLabel() const;
     void setXLabel(QString);
     QString yLabel() const;
@@ -58,27 +60,21 @@ private:
     TableMemoryRange * const mRange;    // owned by the ParamRegistry
     const Slot * const mSlot;           // owned by QML
     const TableAxis * const mAxis;      // owned by QML
-    TableParamListModel *mModel;        // owned by this
+    TableParamListModel *mStringModel;  // owned by this
+    TableParamListModel *mFloatModel;   // owned by this
     QString mXLabel, mYLabel, mValueLabel;
 };
 
 class TableParamListModel : public QAbstractListModel
 {
     Q_OBJECT
-
-    Q_PROPERTY(bool stringFormat READ stringFormat WRITE setStringFormat NOTIFY stringDataChanged)
 public:
-    TableParamListModel(TableParam *parent);
-
-    bool stringFormat() const;
-    void setStringFormat(bool);
+    TableParamListModel(bool stringFormat, TableParam *parent);
 
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
-signals:
-    void stringDataChanged();
 public slots:
     void onTableLabelChanged();
     void onValueParamChanged();
