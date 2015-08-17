@@ -39,10 +39,14 @@ const MemoryRangeTable *ParamRegistry::table() const
     return &mTable;
 }
 
+const QList<QString> &ParamRegistry::paramKeys() const
+{
+    return mParamKeys;
+}
+
 Param *ParamRegistry::addScalarParam(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable, bool saveable, const Slot *slot, QString key)
 {
-    std::string stdKey(key.toStdString());
-    if(mParams.count(stdKey))
+    if(mParams.count(key))
         return nullptr;
 
     MemoryRange *range = mTable.addScalarRange(type, base, writable);
@@ -54,14 +58,13 @@ Param *ParamRegistry::addScalarParam(MemoryRange::MemoryRangeType type, XcpPtr b
     ScalarParam *param = new ScalarParam(scalarRange, slot, this);
     Q_ASSERT(param != nullptr);
     param->saveable = saveable;
-    mParams[stdKey] = param;
+    mParams[key] = param;
     return param;
 }
 
 Param *ParamRegistry::addTableParam(MemoryRange::MemoryRangeType type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const TableAxis *axis, QString key)
 {
-    std::string stdKey(key.toStdString());
-    if(mParams.count(stdKey))
+    if(mParams.count(key))
         return nullptr;
 
     if(count < 1)
@@ -76,15 +79,15 @@ Param *ParamRegistry::addTableParam(MemoryRange::MemoryRangeType type, XcpPtr ba
     TableParam *param = new TableParam(tableRange, slot, axis, this);
     Q_ASSERT(param != nullptr);
     param->saveable = saveable;
-    mParams[stdKey] = param;
+    mParams[key] = param;
     return param;
 }
 
 Param *ParamRegistry::getParam(QString key)
 {
-    auto it = mParams.find(key.toStdString());
+    auto it = mParams.find(key);
     if(it != mParams.end())
-        return it->second;
+        return *it;
     else
         return nullptr;
 }
@@ -92,6 +95,13 @@ Param *ParamRegistry::getParam(QString key)
 void ParamRegistry::onTableConnectionChanged()
 {
     emit connectionChanged();
+}
+
+void ParamRegistry::addParamKey(QString key)
+{
+    auto beforeIt = std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key);
+    mParamKeys.insert(beforeIt, key);
+    emit paramsChanged();
 }
 
 } // namespace Xcp

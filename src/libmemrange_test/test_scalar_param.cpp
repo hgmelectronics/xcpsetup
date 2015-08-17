@@ -69,20 +69,17 @@ void Test::paramDownloadUpload()
 
     ScalarParam *param = qobject_cast<ScalarParam *>(registry->addScalarParam(MemoryRange::MemoryRangeType::U32, {base, 0}, true, false, &slot, KEY));
     QCOMPARE(param, qobject_cast<ScalarParam *>(registry->getParam(KEY)));
-    QSignalSpy spy(param->range(), &ScalarMemoryRange::valueUploaded);
+    QSignalSpy spy(param->range(), &ScalarMemoryRange::uploadDone);
 
-    {
-        setWaitConnState(registry->table(), Xcp::Connection::State::CalMode);
-        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
-    }
+    setWaitConnState(registry->table(), Xcp::Connection::State::CalMode);
+    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
 
-    if(spy.isEmpty())
-        spy.wait(100);
-    spy.clear();
     QVERIFY(std::isnan(param->floatVal()));
     QCOMPARE(param->stringVal(), QString("nan"));
+    QVERIFY(spy.isEmpty());
 
     param->setFloatVal(floatEngr);
+    param->download();
     if(spy.isEmpty())
         spy.wait(100);
     spy.clear();
@@ -91,6 +88,7 @@ void Test::paramDownloadUpload()
     QCOMPARE(*slaveMemRangeValue, raw);
 
     param->setStringVal("nan");
+    param->download();
     if(spy.isEmpty())
         spy.wait(100);
     spy.clear();
@@ -98,6 +96,7 @@ void Test::paramDownloadUpload()
     QCOMPARE(param->stringVal(), QString("nan"));
 
     param->setStringVal(stringEngr);
+    param->download();
     if(spy.isEmpty())
         spy.wait(100);
     spy.clear();

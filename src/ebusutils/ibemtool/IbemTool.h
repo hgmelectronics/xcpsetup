@@ -64,15 +64,15 @@ signals:
 
     void programmingDone(bool ok);
 public slots:
-    void onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void startProgramming();
     void pollForSlaves();
     void abort();
-    void onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
-    void onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
+    void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
+    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
     void onWatchdogExpired();
-    void onProgramResetDone(Xcp::OpResult result);
-    void onProgramModeDone(Xcp::OpResult result);
+    void onProgramResetDone(SetupTools::Xcp::OpResult result);
+    void onProgramModeDone(SetupTools::Xcp::OpResult result);
     void onProgFileChanged();
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();

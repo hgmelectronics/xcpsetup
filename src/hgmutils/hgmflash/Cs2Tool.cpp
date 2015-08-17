@@ -198,7 +198,7 @@ void Cs2Tool::startProgramming()
             || !mProgFileOkToFlash
             || mState != State::Idle)
     {
-        emit programmingDone(static_cast<int>(Xcp::OpResult::InvalidOperation));
+        emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
         return;
     }
 
@@ -212,7 +212,7 @@ void Cs2Tool::startReset()
 {
     if(mState != State::Idle)
     {
-        emit resetDone(static_cast<int>(Xcp::OpResult::InvalidOperation));
+        emit resetDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
         return;
     }
 
@@ -226,7 +226,7 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
 {
     if(mState == State::Program_InitialConnect)
     {
-        if(result != Xcp::OpResult::Success)
+        if(result != SetupTools::Xcp::OpResult::Success)
         {
             setState(State::Idle);
             emit programmingDone(static_cast<int>(result));
@@ -249,10 +249,10 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
     }
     else if(mState == State::Program_CalMode)
     {
-        if(result == Xcp::OpResult::Success)
+        if(result == SetupTools::Xcp::OpResult::Success)
         {
             setState(State::Idle);
-            emit programmingDone(static_cast<int>(Xcp::OpResult::Success));
+            emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::Success));
         }
         else
         {
@@ -289,12 +289,12 @@ int Cs2Tool::nBlocksInRange(uint progBase, uint progSize, uint rangeBase, uint r
     return lastBlock - firstBlock + 1;
 }
 
-void Cs2Tool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
+void Cs2Tool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
 {
     Q_UNUSED(prog);
     Q_UNUSED(addrExt);
     Q_ASSERT(mState == State::Program_Program);
-    if(result != Xcp::OpResult::Success)
+    if(result != SetupTools::Xcp::OpResult::Success)
     {
         setState(State::Idle);
         emit programmingDone(static_cast<int>(result));
@@ -305,13 +305,13 @@ void Cs2Tool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrEx
     mProgLayer->programVerify(mProgFile->progPtr(), CKSUM_TYPE);
 }
 
-void Cs2Tool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
+void Cs2Tool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
 {
     Q_UNUSED(prog);
     Q_UNUSED(type);
     Q_UNUSED(addrExt);
     Q_ASSERT(mState == State::Program_Verify);
-    if(result != Xcp::OpResult::Success)
+    if(result != SetupTools::Xcp::OpResult::Success)
     {
         setState(State::Idle);
         emit programmingDone(static_cast<int>(result));
@@ -322,11 +322,11 @@ void Cs2Tool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::Ck
 
     mProgLayer->programReset();
 }
-void Cs2Tool::onProgramResetDone(Xcp::OpResult result)
+void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
 {
     if(mState == State::Program_ResetToBootloader)
     {
-        if(result != Xcp::OpResult::Success)
+        if(result != SetupTools::Xcp::OpResult::Success)
         {
             setState(State::Idle);
             emit programmingDone(static_cast<int>(result));
@@ -337,7 +337,7 @@ void Cs2Tool::onProgramResetDone(Xcp::OpResult result)
     }
     else if(mState == State::Program_ResetToApplication)
     {
-        if(result != Xcp::OpResult::Success)
+        if(result != SetupTools::Xcp::OpResult::Success)
         {
             setState(State::Idle);
             emit programmingDone(static_cast<int>(static_cast<int>(result)));

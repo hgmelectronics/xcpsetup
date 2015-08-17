@@ -79,19 +79,19 @@ public slots:
     void startParamNvWrite();
     void stopParamEdit();
 
-    void onProgCalModeDone(Xcp::OpResult result);
-    void onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
-    void onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
-    void onProgramResetDone(Xcp::OpResult result);
+    void onProgCalModeDone(SetupTools::Xcp::OpResult result);
+    void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
+    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, SetupTools::Xcp::CksumType type, quint8 addrExt);
+    void onProgramResetDone(SetupTools::Xcp::OpResult result);
     void onProgFileChanged();
 
     void onParamLayerStateChanged();
     void onParamLayerProgressChanged();
 
-    void onParamCalModeDone(Xcp::OpResult result);
-    void onParamLoadFileDone(Xcp::OpResult result, ParamFile *file);
-    void onParamSaveFileDone(Xcp::OpResult result, ParamFile *file);
-    void onParamNvWriteDone(Xcp::OpResult result);
+    void onParamCalModeDone(SetupTools::Xcp::OpResult result);
+    void onParamLoadFileDone(SetupTools::Xcp::OpResult result, ParamFile *file);
+    void onParamSaveFileDone(SetupTools::Xcp::OpResult result, ParamFile *file);
+    void onParamNvWriteDone(SetupTools::Xcp::OpResult result);
     void onParamFileChanged();
 
     void onProgLayerStateChanged();

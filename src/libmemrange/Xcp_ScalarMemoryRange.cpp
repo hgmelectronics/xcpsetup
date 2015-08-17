@@ -6,9 +6,9 @@ namespace Xcp {
 ScalarMemoryRange::ScalarMemoryRange(MemoryRangeType type, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent) :
     MemoryRange(base, memoryRangeTypeSize(type), writable, addrGran, parent),
     mType(type),
-    mCache(size()),
-    mCacheLoaded(size()),
-    mValue(QVariant::Type(memoryRangeTypeQtCode(type)))    // make a null QVariant of requested type
+    mVariantType(QVariant::Type(memoryRangeTypeQtCode(type))),
+    mReadCache(size()),
+    mReadCacheLoaded(size())
 {}
 
 QVariant ScalarMemoryRange::value() const
@@ -19,22 +19,14 @@ QVariant ScalarMemoryRange::value() const
 void ScalarMemoryRange::setValue(QVariant value)
 {
     QVariant convertedValue = value;
-    convertedValue.convert(mValue.type());
+    convertedValue.convert(mVariantType);
 
     // check for convertibility
-    if(!convertedValue.isValid())
-        return;
-    if(convertedValue == mValue)
-        return;
+    if(convertedValue.isValid()
+            && (!mValue.isValid() || convertedValue != mValue))
+        mValue = convertedValue;
 
-    mValue = convertedValue;
-    // Always emit valueChanged: if slave accepts the change nothing will happen on readback,
-    // if slave rejects the change then the reverted/altered value will get loaded on readback.
-    // If we do not update mValue now and slave rejects change, the controls bound to value
-    // will continue to show the unacceptable value the user entered.
-    emit valueChanged();
-    if(connectionFacade()->state() == Connection::State::CalMode)
-        download(convertedValue);
+    emit valueChanged();    // always emit valueChanged so if conversion fails the previous value gets propagated back
 }
 
 bool ScalarMemoryRange::operator==(MemoryRange &other)
@@ -57,21 +49,28 @@ void ScalarMemoryRange::download()
 
 void ScalarMemoryRange::download(QVariant value)
 {
-    std::vector<quint8> buffer(size());
-    convertToSlave(mType, connectionFacade(), value, buffer.data());
-    connectionFacade()->download(base(), buffer);
+    if(value != mSlaveValue)
+    {
+        std::vector<quint8> buffer(size());
+        convertToSlave(mType, connectionFacade(), value, buffer.data());
+        connectionFacade()->download(base(), buffer);
+    }
+    else
+    {
+        emit downloadDone(OpResult::Success);
+    }
 }
 
-void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
+void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
 {
     Q_UNUSED(len);
 
-    if(result == Xcp::OpResult::Success)
+    if(result == SetupTools::Xcp::OpResult::Success)
     {
         if(base.ext != mBase.ext)
             return;
 
-        QVariant newValue = mValue;
+        bool uploadIsDone = true;
         quint32 dataEnd = base.addr + data.size() / mAddrGran;
         quint32 copyBegin = std::max(base.addr, mBase.addr);
         quint32 copyEnd = std::min(dataEnd, mBase.addr + mSize / mAddrGran);
@@ -79,33 +78,41 @@ void ScalarMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int
         if(copyBegin == mBase.addr && copyEnd == (mBase.addr + mSize / mAddrGran))
         {
             // no caching needed, entire value loaded at once
-            newValue = convertFromSlave(mType, connectionFacade(), data.data() + copyBeginOffset);
-            mCacheLoaded.reset();
+            mSlaveValue = convertFromSlave(mType, connectionFacade(), data.data() + copyBeginOffset);
+            mReadCacheLoaded.reset();
         }
         else if(end() > base && mBase < dataEnd)  // check if ranges overlap at all
         {
             quint32 copyEndOffset = (copyEnd - base.addr) * mAddrGran;
             quint32 copyBeginCacheOffset = (copyBegin - mBase.addr) * mAddrGran;
             quint32 copyEndCacheOffset = (copyEnd - mBase.addr) * mAddrGran;
-            std::copy(data.begin() + copyBeginOffset, data.begin() + copyEndOffset, mCache.begin() + copyBeginCacheOffset);
+            std::copy(data.begin() + copyBeginOffset, data.begin() + copyEndOffset, mReadCache.begin() + copyBeginCacheOffset);
             for(quint32 iCacheByte = copyBeginCacheOffset; iCacheByte < copyEndCacheOffset; ++iCacheByte)
-                mCacheLoaded[iCacheByte] = true;
-            if(mCacheLoaded.all())
+                mReadCacheLoaded[iCacheByte] = true;
+            if(mReadCacheLoaded.all())
             {
-                newValue = convertFromSlave(mType, connectionFacade(), mCache.data());
-                mCacheLoaded.reset();
+                mSlaveValue = convertFromSlave(mType, connectionFacade(), mReadCache.data());
+                mReadCacheLoaded.reset();
             }
         }
-        if(newValue != mValue || mValue.isNull())
+        else
         {
-            mValue = newValue;
-            emit valueChanged();
+            uploadIsDone = false;
         }
-        setValid(true);
-        emit valueUploaded();
+
+        if(mSlaveValue.isValid())
+        {
+            setValid(true);
+            if(updateDelta<>(mValue, mSlaveValue))
+                emit valueChanged();
+        }
+        if(uploadIsDone)    // some part got uploaded
+            emit uploadDone(result);
     }
-    else if(result == Xcp::OpResult::SlaveErrorOutOfRange)
+    else if(result == SetupTools::Xcp::OpResult::SlaveErrorOutOfRange)
     {
+        mValue = QVariant();
+        mSlaveValue = QVariant();
         setValid(false);
     }
 }

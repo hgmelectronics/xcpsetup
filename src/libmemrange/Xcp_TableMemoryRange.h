@@ -29,7 +29,7 @@ signals:
 public slots:
     virtual void download();
     void download(quint32 beginIndex, const QList<QVariant> &data);
-    virtual void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    virtual void onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
 private:
     QVariant partialUpload(quint32 offset, boost::iterator_range<quint8 *> data);
 
@@ -38,10 +38,10 @@ private:
     const quint32 mElemSize;
     const quint32 mDim;
 
-    std::vector<quint8> mCache;
-    boost::dynamic_bitset<> mCacheLoaded;
+    std::vector<quint8> mReadCache;
+    boost::dynamic_bitset<> mReadCacheLoaded;
 
-    QList<QVariant> mData;
+    QList<QVariant> mData, mSlaveData;
 };
 
 } // namespace Xcp

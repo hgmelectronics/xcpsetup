@@ -13,8 +13,6 @@ class ScalarMemoryRange: public MemoryRange
 
     Q_PROPERTY(XcpPtr base READ base)
     Q_PROPERTY(quint32 size READ size) //!< size in bytes
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-
 public:
     ScalarMemoryRange(MemoryRangeType type, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent);
 
@@ -22,25 +20,20 @@ public:
     void setValue(QVariant value);
 
     virtual bool operator==(MemoryRange &other);
-
 signals:
-    void valueUploaded();
-    void valueChanged();
-
 public slots:
     virtual void download();
     void download(QVariant value);
-    virtual void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    virtual void onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
 
 private:
     MemoryRangeType mType;
+    QVariant::Type mVariantType;
 
-    bool mValid;    //!< discovered by trying to read in onOpenDone
+    std::vector<quint8> mReadCache;
+    boost::dynamic_bitset<> mReadCacheLoaded;
 
-    std::vector<quint8> mCache;
-    boost::dynamic_bitset<> mCacheLoaded;
-
-    QVariant mValue;
+    QVariant mValue, mSlaveValue;
 };
 
 } // namespace Xcp

@@ -49,8 +49,8 @@ signals:
 
 public slots:
     void onConnStateChanged();
-    void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
-    void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, std::vector<quint8> data);
+    void onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    void onDownloadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, std::vector<quint8> data);
 
 private:
     typedef QList<MemoryRangeList *>::iterator ListIterator;

@@ -185,7 +185,7 @@ void IbemTool::abort()
     }
 }
 
-void IbemTool::onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds)
+void IbemTool::onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds)
 {
     Q_UNUSED(bcastId);
     Q_UNUSED(filter);
@@ -196,7 +196,7 @@ void IbemTool::onGetAvailSlavesStrDone(Xcp::OpResult result, QString bcastId, QS
 
     mSlaveListModel->removeRows(0, mSlaveListModel->rowCount());
 
-    if(result != Xcp::OpResult::Success)
+    if(result != SetupTools::Xcp::OpResult::Success)
     {
         emit slaveListModelChanged();
         return;
@@ -305,12 +305,12 @@ void IbemTool::startProgramming()
     mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * nPages);
     mProgLayer->program(mProgFile->progPtr(), 0, false);
 }
-void IbemTool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
+void IbemTool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
 {
     Q_UNUSED(prog);
     Q_UNUSED(addrExt);
     Q_ASSERT(mState == State::Program);
-    if(result != Xcp::OpResult::Success)
+    if(result != SetupTools::Xcp::OpResult::Success)
     {
         mState = State::Idle;
         emit programmingDone(false);
@@ -323,13 +323,13 @@ void IbemTool::onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrE
     mProgLayer->programVerify(mProgFile->progPtr(), CKSUM_TYPE);
 }
 
-void IbemTool::onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
+void IbemTool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
 {
     Q_UNUSED(prog);
     Q_UNUSED(type);
     Q_UNUSED(addrExt);
     Q_ASSERT(mState == State::ProgramVerify);
-    if(result != Xcp::OpResult::Success)
+    if(result != SetupTools::Xcp::OpResult::Success)
     {
         mState = State::Idle;
         emit programmingDone(false);
@@ -354,12 +354,12 @@ void IbemTool::onWatchdogExpired()
     mProgLayer->pgmMode();
 }
 
-void IbemTool::onProgramResetDone(Xcp::OpResult result)
+void IbemTool::onProgramResetDone(SetupTools::Xcp::OpResult result)
 {
     Q_ASSERT(mState == State::ProgramReset1 ||
              mState == State::ProgramReset2);
 
-    if(result != Xcp::OpResult::Success)
+    if(result != SetupTools::Xcp::OpResult::Success)
     {
         mState = State::Idle;
         emit progressChanged();
@@ -407,10 +407,10 @@ void IbemTool::onProgramResetDone(Xcp::OpResult result)
     }
 }
 
-void IbemTool::onProgramModeDone(Xcp::OpResult result)
+void IbemTool::onProgramModeDone(SetupTools::Xcp::OpResult result)
 {
     Q_ASSERT(mState == State::ProgramMode);
-    if(result == Xcp::OpResult::Timeout
+    if(result == SetupTools::Xcp::OpResult::Timeout
             && mRemainingProgramModeTries > 0)
     {
         // Timeout is OK, means slave is not yet awake - try again
@@ -418,7 +418,7 @@ void IbemTool::onProgramModeDone(Xcp::OpResult result)
         mProgLayer->pgmMode();
         return;
     }
-    if(result != Xcp::OpResult::Success)
+    if(result != SetupTools::Xcp::OpResult::Success)
     {
         mState = State::Idle;
         emit progressChanged();

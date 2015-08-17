@@ -10,6 +10,8 @@ ScalarParam::ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *pa
     mSlot(slot)
 {
     connect(mRange, &ScalarMemoryRange::valueChanged, this, &ScalarParam::onRangeValChanged);
+    connect(mRange, &MemoryRange::uploadDone, this, &ScalarParam::onRangeUploadDone);
+    connect(mRange, &MemoryRange::downloadDone, this, &ScalarParam::onRangeDownloadDone);
 }
 
 double ScalarParam::floatVal() const
@@ -44,6 +46,26 @@ const ScalarMemoryRange *ScalarParam::range() const
 void ScalarParam::onRangeValChanged()
 {
     emit valChanged();
+}
+
+void ScalarParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
+{
+    emit uploadDone(result);
+}
+
+void ScalarParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
+{
+    emit downloadDone(result);
+}
+
+void ScalarParam::upload()
+{
+    mRange->upload();
+}
+
+void ScalarParam::download()
+{
+    mRange->download();
 }
 
 } // namespace Xcp

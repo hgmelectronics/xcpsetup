@@ -13,7 +13,7 @@ MemoryRange::MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, quint8 a
     mSize(size),
     mAddrGran(addrGran),
     mWritable(writable),
-    mValid(false),
+    mValid(true),
     mFullReload(true)
 {}
 
@@ -59,27 +59,26 @@ quint32 MemoryRange::size() const
     return mSize;
 }
 
-void MemoryRange::refresh()
+void MemoryRange::upload()
 {
     connectionFacade()->upload(mBase, mSize);
 }
 
 void MemoryRange::onConnectionChanged(bool ok)
 {
-    setValid(false);
-    if(ok)
-        refresh();
+    Q_UNUSED(ok);
 }
 
-void MemoryRange::onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data)
+void MemoryRange::onDownloadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data)
 {
-    if(result != OpResult::Success)
-        return;
-
-    if(mFullReload)
-        connectionFacade()->upload(mBase, mSize);
-    else
-        connectionFacade()->upload(base, data.size() / mAddrGran);
+    if(result == OpResult::Success)
+    {
+        if(mFullReload)
+            connectionFacade()->upload(mBase, mSize);
+        else
+            connectionFacade()->upload(base, data.size() / mAddrGran);
+    }
+    emit downloadDone(result);
 }
 
 Xcp::ConnectionFacade *MemoryRange::connectionFacade() const

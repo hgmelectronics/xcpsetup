@@ -263,7 +263,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         {
             mState = State::Idle;
             emit stateChanged();
-            emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+            emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mActiveProgBlock = mActiveProg->blocks().begin();
         mConn->programClear({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data.size());
@@ -280,7 +280,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         {
             mState = State::Idle;
             emit stateChanged();
-            emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+            emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         {
             Q_ASSERT(mActiveProg->blocks().size() == 1);
@@ -303,7 +303,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         {
             mState = State::Idle;
             emit stateChanged();
-            emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+            emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mActiveProgBlock = mActiveProg->blocks().begin();
         mConn->buildChecksum({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data.size());
@@ -321,7 +321,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         {
             mState = State::Idle;
             emit stateChanged();
-            emit programDone(Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+            emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mConn->programReset();
         break;
