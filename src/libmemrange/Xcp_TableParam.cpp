@@ -20,6 +20,8 @@ TableParam::TableParam(TableMemoryRange *range, const Slot *slot, const TableAxi
     connect(mAxis, &TableAxis::xUnitChanged, this, &TableParam::onAxisXUnitChanged);
     connect(mAxis, &TableAxis::yUnitChanged, this, &TableParam::onAxisYUnitChanged);
     connect(mSlot, &Slot::unitChanged, this, &TableParam::onSlotUnitChanged);
+    connect(mRange, &MemoryRange::uploadDone, this, &TableParam::onRangeUploadDone);
+    connect(mRange, &MemoryRange::downloadDone, this, &TableParam::onRangeDownloadDone);
 }
 
 QString TableParam::unit(int role)
@@ -117,6 +119,26 @@ void TableParam::onAxisYUnitChanged()
 void TableParam::onSlotUnitChanged()
 {
     emit valueUnitChanged();
+}
+
+void TableParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
+{
+    emit uploadDone(result);
+}
+
+void TableParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
+{
+    emit downloadDone(result);
+}
+
+void TableParam::upload()
+{
+    mRange->upload();
+}
+
+void TableParam::download()
+{
+    mRange->download();
 }
 
 TableParamListModel::TableParamListModel(bool stringFormat, TableParam *parent) :

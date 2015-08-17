@@ -73,56 +73,49 @@ void Test::tableParamDownloadUpload()
 
     TableParam *param = qobject_cast<TableParam *>(registry->addTableParam(MemoryRange::MemoryRangeType::U32, {base, 0}, FLOAT_ENGR.size(), true, false, &slot, &axis, KEY));
     QCOMPARE(param, qobject_cast<TableParam *>(registry->getParam(KEY)));
-    QSignalSpy spy(param->range(), &TableMemoryRange::dataUploaded);
+    QSignalSpy spy(param->range(), &TableMemoryRange::uploadDone);
 
     {
         setWaitConnState(registry->table(), Xcp::Connection::State::CalMode);
         QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
     }
-
-    if(spy.isEmpty())
-        spy.wait(100);
-    spy.clear();
     for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
         QVERIFY(std::isnan(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble()));
         QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), QString("nan"));
-    }
-
-    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
-    {
         QVERIFY(param->floatModel()->setData(param->floatModel()->index(i), QVariant(FLOAT_ENGR[i]), TableAxisRole::ValueRole));
-        if(spy.isEmpty())
-            spy.wait(100);
-        spy.clear();
     }
+    QVERIFY(spy.isEmpty());
+    param->download();
+    if(spy.isEmpty())
+        spy.wait(100);
+    spy.clear();
+
     for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
         QCOMPARE(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble(), FLOAT_ENGR[i]);
         QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), STRING_ENGR[i]);
         QCOMPARE(slaveMemRangeValue[i], RAW[i]);
+        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant("nan"), TableAxisRole::ValueRole));
     }
 
-    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
-    {
-        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant("nan"), TableAxisRole::ValueRole));
-        if(spy.isEmpty())
-            spy.wait(100);
-        spy.clear();
-    }
+    param->download();
+    if(spy.isEmpty())
+        spy.wait(100);
+    spy.clear();
+
     for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
         QVERIFY(std::isnan(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble()));
         QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), QString("nan"));
+        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant(STRING_ENGR[i]), TableAxisRole::ValueRole));
     }
 
-    for(int i = 0; i < param->stringModel()->rowCount(); ++i)
-    {
-        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant(STRING_ENGR[i]), TableAxisRole::ValueRole));
-        if(spy.isEmpty())
-            spy.wait(100);
-        spy.clear();
-    }
+    param->download();
+    if(spy.isEmpty())
+        spy.wait(100);
+    spy.clear();
+
     for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
         QCOMPARE(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble(), FLOAT_ENGR[i]);

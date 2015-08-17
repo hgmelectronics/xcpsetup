@@ -11,13 +11,9 @@ void Test::uploadNoOverlap_data()
     QTest::addColumn<quint32>("ag");
     QTest::addColumn<QList<quint32> >("base");
     QTest::addColumn<QList<quint32> >("value");
-    QTest::addColumn<bool>("constructBeforeOpen");
-    QTest::newRow("AG==1 cbo=0") << quint32(0x1) << QList<quint32>({0x400, 0x404, 0x408, 0x40C}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF}) << false;
-    QTest::newRow("AG==1 cbo=1") << quint32(0x1) << QList<quint32>({0x400, 0x404, 0x408, 0x40C}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF}) << true;
-    QTest::newRow("AG==2 cbo=0") << quint32(0x2) << QList<quint32>({0x200, 0x202, 0x204, 0x206}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF}) << false;
-    QTest::newRow("AG==2 cbo=1") << quint32(0x2) << QList<quint32>({0x200, 0x202, 0x204, 0x206}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF}) << true;
-    QTest::newRow("AG==4 cbo=0") << quint32(0x4) << QList<quint32>({0x100, 0x101, 0x102, 0x103}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF}) << false;
-    QTest::newRow("AG==4 cbo=1") << quint32(0x4) << QList<quint32>({0x100, 0x101, 0x102, 0x103}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF}) << true;
+    QTest::newRow("AG==1") << quint32(0x1) << QList<quint32>({0x400, 0x404, 0x408, 0x40C}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF});
+    QTest::newRow("AG==2") << quint32(0x2) << QList<quint32>({0x200, 0x202, 0x204, 0x206}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF});
+    QTest::newRow("AG==4") << quint32(0x4) << QList<quint32>({0x100, 0x101, 0x102, 0x103}) << QList<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF});
 }
 
 /**
@@ -28,7 +24,6 @@ void Test::uploadNoOverlap()
     QFETCH(quint32, ag);
     QFETCH(QList<quint32>, base);
     QFETCH(QList<quint32>, value);
-    QFETCH(bool, constructBeforeOpen);
 
     QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 
@@ -47,36 +42,28 @@ void Test::uploadNoOverlap()
         *slaveMemRangeValue[idx] = value[idx];
     }
 
-    if(!constructBeforeOpen)
-    {
-        // call refresh after open
-        setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
-        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
-    }
+    setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
+    QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
+
     std::vector<ScalarMemoryRange *> range(base.size());
     std::vector<std::shared_ptr<QSignalSpy>> rangeSpy;
     for(int idx = 0; idx < base.size(); ++idx)
     {
         range[idx] = qobject_cast<ScalarMemoryRange *>(table->addScalarRange(MemoryRange::U32, {base[idx], 0}, false));
         QVERIFY(range[idx] != nullptr);
-        rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::valueChanged));
+        rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::uploadDone));
+        QVERIFY(!range[idx]->value().isValid());
     }
-    if(constructBeforeOpen)
-    {
-        setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
-        QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
-    }
-    else
-    {
-        for(int idx = 0; idx < base.size(); ++idx)
-            range[idx]->refresh();
-    }
+
+    for(int idx = 0; idx < base.size(); ++idx)
+        range[idx]->upload();
+
     for(int idx = 0; idx < base.size(); ++idx)
     {
         if(rangeSpy[idx]->isEmpty())
             rangeSpy[idx]->wait(100);
-        QCOMPARE(range[idx]->valid(), true);
-        QCOMPARE(range[idx]->writable(), false);
+        QVERIFY(range[idx]->valid());
+        QVERIFY(!range[idx]->writable());
         QCOMPARE(range[idx]->value().toUInt(), value[idx]);
     }
 }
@@ -123,7 +110,7 @@ void Test::downloadNoOverlap()
     {
         range[idx] = qobject_cast<ScalarMemoryRange *>(table->addScalarRange(MemoryRange::U32, {base[idx], 0}, true));
         QVERIFY(range[idx] != nullptr);
-        rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::valueUploaded));
+        rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::uploadDone));
     }
     {
         setWaitConnState(table.get(), Xcp::Connection::State::CalMode);
@@ -131,15 +118,15 @@ void Test::downloadNoOverlap()
     }
     for(int idx = 0; idx < base.size(); ++idx)
     {
-        if(rangeSpy[idx]->isEmpty())
-            rangeSpy[idx]->wait(100);
-        rangeSpy[idx]->clear();
         QCOMPARE(range[idx]->valid(), true);
         QCOMPARE(range[idx]->writable(), true);
-        QCOMPARE(range[idx]->value().toUInt(), quint32(0));
+        QCOMPARE(range[idx]->value().isValid(), false);
     }
     for(int idx = 0; idx < base.size(); ++idx)
+    {
         range[idx]->setValue(value[idx]);
+        range[idx]->download();
+    }
     for(int idx = 0; idx < base.size(); ++idx)
     {
         if(rangeSpy[idx]->isEmpty())
@@ -251,11 +238,11 @@ void Test::uploadOverlap()
         range[idx] = qobject_cast<ScalarMemoryRange *>(table->addScalarRange(MemoryRange::U32, {(0x400 + 2 * idx) / ag, 0}, true));
         QVERIFY(range[idx] != nullptr);
         QCOMPARE(range[idx]->value().isNull(), true);
-        rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::valueChanged));
+        rangeSpy.emplace_back(new QSignalSpy(range[idx], &ScalarMemoryRange::uploadDone));
     }
 
     for(quint32 rangeIdx : readOrder)
-        range[rangeIdx]->refresh();
+        range[rangeIdx]->upload();
 
     for(quint32 idx : expectValid)
     {

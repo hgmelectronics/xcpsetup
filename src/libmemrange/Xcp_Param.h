@@ -2,6 +2,7 @@
 #define SETUPTOOLS_XCP_PARAM_H
 
 #include <QObject>
+#include <Xcp_Exception.h>
 
 namespace SetupTools {
 namespace Xcp {
@@ -16,7 +17,11 @@ public:
 
     bool saveable;
 signals:
+    void uploadDone(SetupTools::Xcp::OpResult result);
+    void downloadDone(SetupTools::Xcp::OpResult result);
 public slots:
+    virtual void upload() = 0;
+    virtual void download() = 0;
 };
 
 }   // namespace Xcp

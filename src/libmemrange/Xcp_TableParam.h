@@ -56,6 +56,10 @@ public slots:
     void onAxisXUnitChanged();
     void onAxisYUnitChanged();
     void onSlotUnitChanged();
+    void onRangeUploadDone(SetupTools::Xcp::OpResult result);
+    void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
+    virtual void upload();
+    virtual void download();
 private:
     TableMemoryRange * const mRange;    // owned by the ParamRegistry
     const Slot * const mSlot;           // owned by QML

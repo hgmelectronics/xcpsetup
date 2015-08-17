@@ -32,6 +32,10 @@ signals:
     void valChanged();
 public slots:
     void onRangeValChanged();
+    void onRangeUploadDone(SetupTools::Xcp::OpResult result);
+    void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
+    virtual void upload();
+    virtual void download();
 private:
     ScalarMemoryRange * const mRange;   // owned by the ParamRegistry
     const Slot * const mSlot;           // owned by QML

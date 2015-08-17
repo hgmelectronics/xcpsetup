@@ -58,10 +58,10 @@ signals:
 public slots:
     void startProgramming();
     void startReset();
-    void onCalModeDone(Xcp::OpResult result);
-    void onProgramDone(Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
-    void onProgramVerifyDone(Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
-    void onProgramResetDone(Xcp::OpResult result);
+    void onCalModeDone(SetupTools::Xcp::OpResult result);
+    void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
+    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
+    void onProgramResetDone(SetupTools::Xcp::OpResult result);
     void onProgFileChanged();
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();

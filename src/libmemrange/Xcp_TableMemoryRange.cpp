@@ -9,12 +9,16 @@ TableMemoryRange::TableMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPt
     mQtType(QVariant::Type(memoryRangeTypeQtCode(type))),
     mElemSize(memoryRangeTypeSize(type)),
     mDim(dim),
-    mCache(size()),
-    mCacheLoaded(size())
+    mReadCache(size()),
+    mReadCacheLoaded(size())
 {
     mData.reserve(dim);
+    mSlaveData.reserve(dim);
     for(quint32 i = 0; i < dim; ++i)
-        mData.push_back(QVariant(mQtType));
+    {
+        mData.push_back(QVariant());
+        mSlaveData.push_back(QVariant());
+    }
     Q_ASSERT(dim > 0);
     Q_ASSERT(quint64(dim) * memoryRangeTypeSize(type) < std::numeric_limits<quint32>::max());
 }
@@ -47,18 +51,11 @@ bool TableMemoryRange::setData(const QVariant &value, quint32 index)
     // check for convertibility
     if(!convertedValue.isValid())
         return false;
-    if(convertedValue == mData)
-        return true;
 
-
-    if(updateDelta<>(mData[index], value))
+    if(updateDelta<>(mData[index], convertedValue))
     {
-        // Always emit dataChanged: if slave accepts the change nothing will happen on readback,
-        // if slave rejects the change then the reverted/altered value will get loaded on readback
         emit dataChanged(index, index + 1);
-
-        if(connectionFacade()->state() == Connection::State::CalMode)
-            download(index, QList<QVariant>({convertedValue}));
+        emit valueChanged();
     }
     return true;
 }
@@ -73,12 +70,15 @@ bool TableMemoryRange::setDataRange(const QList<QVariant> &data, quint32 beginIn
     {
         item.convert(mQtType);
         if(!item.isValid())
+        {
+            emit dataChanged(beginIndex, beginIndex + data.size());
+            emit valueChanged();
             return false;
+        }
     }
 
     bool changed = false;
-    quint32 beginChanged;
-    quint32 endChanged;
+    quint32 beginChanged, endChanged;
     for(quint32 index = beginIndex, endIndex = beginIndex + convertedData.size(); index != endIndex; ++index)
     {
         bool itemChanged = updateDelta<>(mData[index], convertedData[index]);
@@ -86,22 +86,17 @@ bool TableMemoryRange::setDataRange(const QList<QVariant> &data, quint32 beginIn
         {
             if(!changed)
             {
-                beginChanged = index;
                 changed = true;
+                beginChanged = index;
             }
-
             endChanged = index + 1;
         }
     }
 
     if(changed)
     {
-        // Always emit dataChanged: if slave accepts the change nothing will happen on readback,
-        // if slave rejects the change then the reverted/altered value will get loaded on readback
         emit dataChanged(beginChanged, endChanged);
-
-        if(connectionFacade()->state() == Connection::State::CalMode)
-            download(beginIndex, convertedData);
+        emit valueChanged();
     }
 
     return true;
@@ -124,32 +119,57 @@ bool TableMemoryRange::operator==(MemoryRange &other)
 
 void TableMemoryRange::download()
 {
-    download(0, mData);
+    bool changed = false;
+    quint32 beginChanged;
+    quint32 endChanged;
+    for(quint32 index = 0; index != mDim; ++index)
+    {
+        if(mData[index] != mSlaveData[index])
+        {
+            if(!changed)
+            {
+                beginChanged = index;
+                changed = true;
+            }
+
+            endChanged = index + 1;
+        }
+    }
+    download(beginChanged, mData.mid(beginChanged, endChanged - beginChanged));
 }
 
 void TableMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
 {
-    ConnectionFacade *facade = connectionFacade();
-    Q_ASSERT(beginIndex + data.size() <= mDim);
-    Q_ASSERT(facade);
-    std::vector<quint8> buffer(mElemSize * data.size());
-    quint8 *bufIt = buffer.data();
-    for(const QVariant &item : data)
+    if(!data.empty())
     {
-        convertToSlave(mType, facade, item, bufIt);
-        bufIt += mElemSize;
+        ConnectionFacade *facade = connectionFacade();
+        Q_ASSERT(beginIndex + data.size() <= mDim);
+        Q_ASSERT(facade);
+
+        std::vector<quint8> buffer(mElemSize * data.size());
+        quint8 *bufIt = buffer.data();
+        for(const QVariant &item : data)
+        {
+            convertToSlave(mType, facade, item, bufIt);
+            bufIt += mElemSize;
+        }
+        facade->download(base() + (beginIndex * mElemSize / mAddrGran), buffer);
     }
-    facade->download(base() + (beginIndex * mElemSize / mAddrGran), buffer);
+    else
+    {
+        emit downloadDone(OpResult::Success);
+        return;
+    }
 }
 
-void TableMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
+void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
 {
     Q_UNUSED(base);
     Q_UNUSED(len);
 
     ConnectionFacade *facade = connectionFacade();
 
-    if(result == Xcp::OpResult::Success)
+    if(result == SetupTools::Xcp::OpResult::Success)
     {
         if(base.ext != mBase.ext)
             return;
@@ -174,7 +194,7 @@ void TableMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int 
         {
             quint32 elemDataOffset = i * mElemSize + (mBase.addr - base.addr) * mAddrGran;
             newValue[i] = convertFromSlave(mType, facade, data.data() + elemDataOffset);
-            mCacheLoaded.reset(i);
+            mReadCacheLoaded.reset(i);
         }
         if(beginIndex < beginFullIndex)
         {
@@ -214,6 +234,7 @@ void TableMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int 
         {
             mData = newValue;
             emit dataChanged(beginChanged, endChanged);
+            emit valueChanged();
         }
         bool valid = true;
         for(const QVariant &elem : mData)
@@ -226,8 +247,9 @@ void TableMemoryRange::onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int 
         }
         setValid(valid);
         emit dataUploaded(beginIndex, endIndex);
+        emit uploadDone(result);
     }
-    else if(result == Xcp::OpResult::SlaveErrorOutOfRange)
+    else if(result == SetupTools::Xcp::OpResult::SlaveErrorOutOfRange)
     {
         setValid(false);
     }
@@ -237,9 +259,9 @@ QVariant TableMemoryRange::partialUpload(quint32 offset, boost::iterator_range<q
 {
     QVariant newValue;
 
-    std::copy(data.begin(), data.end(), mCache.begin() + offset);
+    std::copy(data.begin(), data.end(), mReadCache.begin() + offset);
     for(quint32 iCacheByte = offset, end = offset + data.size(); iCacheByte < end; ++iCacheByte)
-        mCacheLoaded[iCacheByte] = true;
+        mReadCacheLoaded[iCacheByte] = true;
 
     quint32 index = offset / mElemSize;
     quint32 elemOffset = index * mElemSize;
@@ -247,7 +269,7 @@ QVariant TableMemoryRange::partialUpload(quint32 offset, boost::iterator_range<q
     bool allLoaded = true;
     for(quint32 i = elemOffset, end = elemOffset + data.size(); i < end; ++i)
     {
-        if(!mCacheLoaded[i])
+        if(!mReadCacheLoaded[i])
         {
             allLoaded = false;
             break;
@@ -255,9 +277,9 @@ QVariant TableMemoryRange::partialUpload(quint32 offset, boost::iterator_range<q
     }
     if(allLoaded)
     {
-        newValue = convertFromSlave(mType, connectionFacade(), mCache.data() + elemOffset);
+        newValue = convertFromSlave(mType, connectionFacade(), mReadCache.data() + elemOffset);
         for(quint32 i = elemOffset, end = elemOffset + data.size(); i < end; ++i)
-            mCacheLoaded.reset(i);
+            mReadCacheLoaded.reset(i);
     }
     return newValue;
 }

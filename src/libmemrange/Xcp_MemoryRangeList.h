@@ -59,7 +59,7 @@ public slots:
      * @param len
      * @param data
      */
-    void onUploadDone(Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    void onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
 
     /**
      * @brief Passes callback down to all ranges within this list
@@ -68,7 +68,7 @@ public slots:
      * @param len
      * @param data
      */
-    void onDownloadDone(Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
+    void onDownloadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
 private:
     QList<MemoryRange *> mRanges;
     XcpPtr mBase;

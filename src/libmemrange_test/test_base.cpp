@@ -73,6 +73,7 @@ void Test::setWaitConnState(const MemoryRangeTable *table, Connection::State sta
 
 void Test::initTestCase()
 {
+    qRegisterMetaType<SetupTools::Xcp::OpResult>();
     mIntfc = new Interface::Loopback::Interface();
     if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
         mIntfc->setPacketLog(true);
