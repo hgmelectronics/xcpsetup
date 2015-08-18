@@ -59,6 +59,7 @@ signals:
     void uploadDone(SetupTools::Xcp::OpResult result, QStringList keys);
     void connectSlaveDone(SetupTools::Xcp::OpResult result);
     void disconnectSlaveDone(SetupTools::Xcp::OpResult result);
+    void nvWriteDone(SetupTools::Xcp::OpResult result);
     void stateChanged();
     void opProgressChanged();
     void writeCacheDirtyChanged();
@@ -67,11 +68,14 @@ public slots:
     void upload();
     void download(QStringList keys);
     void upload(QStringList keys);
+    void nvWrite();
     void connectSlave();
     void disconnectSlave();
 
     void onConnSetStateDone(SetupTools::Xcp::OpResult result);
     void onConnStateChanged();
+
+    void onConnNvWriteDone(SetupTools::Xcp::OpResult result);
 
     void onParamDownloadDone(SetupTools::Xcp::OpResult result);
     void onParamUploadDone(SetupTools::Xcp::OpResult result);
@@ -86,6 +90,7 @@ private:
         Connected,
         Download,
         Upload,
+        NvWrite,
         Disconnect
     };
 

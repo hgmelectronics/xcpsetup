@@ -10,7 +10,11 @@ ParamLayer::ParamLayer(quint32 addrGran, QObject *parent) :
     mState(State::IntfcNotOk),
     mOpProgressNotifyPeriod(1),
     mActiveKeyIt(mActiveKeys.end())
-{}
+{
+    connect(mConn, &ConnectionFacade::setStateDone, this, &ParamLayer::onConnSetStateDone);
+    connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
+    connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
+}
 
 QUrl ParamLayer::intfcUri()
 {
@@ -199,6 +203,23 @@ void ParamLayer::upload(QStringList keys)
         uploadKey();
 }
 
+void ParamLayer::nvWrite()
+{
+    if(!(mState == State::Disconnected || mState == State::Connected)
+            || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode))
+    {
+        emit nvWriteDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    setState(State::NvWrite);
+
+    if(mConn->state() != Connection::State::CalMode)
+        mConn->setState(Connection::State::CalMode);
+    else
+        mConn->nvWrite();
+}
+
 void ParamLayer::connectSlave()
 {
     if(!(mState == State::Disconnected || mState == State::Connected)
@@ -208,9 +229,9 @@ void ParamLayer::connectSlave()
         return;
     }
 
+    disconnect(mActiveParamConnection);
     mActiveKeys.clear();
     mActiveKeyIt = mActiveKeys.end();
-    disconnect(mActiveParamConnection);
 
     if(mConn->state() == Connection::State::CalMode)
     {
@@ -232,9 +253,9 @@ void ParamLayer::disconnectSlave()
         return;
     }
 
+    disconnect(mActiveParamConnection);
     mActiveKeys.clear();
     mActiveKeyIt = mActiveKeys.end();
-    disconnect(mActiveParamConnection);
 
     if(mConn->state() == Connection::State::IntfcInvalid)
     {
@@ -286,6 +307,18 @@ void ParamLayer::onConnSetStateDone(OpResult result)
             emit uploadDone(result, mActiveKeys);
         }
         break;
+    case State::NvWrite:
+        if(result == OpResult::Success)
+        {
+            Q_ASSERT(mConn->state() == Connection::State::CalMode);
+            mConn->nvWrite();
+        }
+        else
+        {
+            setState(State::Disconnected);
+            emit nvWriteDone(result);
+        }
+        break;
     case State::Disconnect:
         setState(State::Disconnected);
         emit disconnectSlaveDone(result);
@@ -308,6 +341,14 @@ void ParamLayer::onConnStateChanged()
         setState(State::Disconnected);
     else
         Q_ASSERT(0);
+}
+
+void ParamLayer::onConnNvWriteDone(OpResult result)
+{
+    if(mState == State::NvWrite)    // set state only if actually in NV write state, because if not,
+        setState(State::Connected); // the user probably aborted the operation with a disconnect
+
+    emit nvWriteDone(result);
 }
 
 void ParamLayer::onParamDownloadDone(OpResult result)
