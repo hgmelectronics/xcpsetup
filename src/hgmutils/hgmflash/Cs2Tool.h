@@ -28,7 +28,8 @@ class Cs2Tool : public QObject
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(QString slaveCmdId READ slaveCmdId WRITE setSlaveCmdId NOTIFY slaveIdChanged)
     Q_PROPERTY(QString slaveResId READ slaveResId WRITE setSlaveResId NOTIFY slaveIdChanged)
-    Q_PROPERTY(ParamLayer *paramLayer READ paramLayer)
+    Q_PROPERTY(Xcp::ParamLayer *paramLayer READ paramLayer)
+    Q_PROPERTY(bool paramWriteCacheDirty READ paramWriteCacheDirty NOTIFY paramWriteCacheDirtyChanged)
 public:
     explicit Cs2Tool(QObject *parent = 0);
     ~Cs2Tool();
@@ -53,8 +54,8 @@ public:
     void setSlaveResId(QString id);
     bool intfcOk();
     bool idle();
+    Xcp::ParamLayer *paramLayer();
 
-    ParamLayer *paramLayer();
 signals:
     void stateChanged();
     void programChanged();
@@ -72,8 +73,8 @@ public slots:
 
     void startReset();
 
-    void startOnlineParamEdit();
-    void startOfflineParamEdit();
+    void downloadParam();
+    void uploadParam();
     void loadParamFile();
     void saveParamFile();
     void startParamNvWrite();
@@ -108,10 +109,15 @@ private:
         Program_ResetToApplication,
         Program_CalMode,
         Reset_Reset,
-        Param_Connect,
-        Param_Edit,
-        Param_NvWrite,
-        ParamOffline_Edit,
+        ParamDownload_Connect,
+        ParamDownload_Download,
+        ParamDownload_Disconnect,
+        ParamUpload_Connect,
+        ParamUpload_Upload,
+        ParamUpload_Disconnect,
+        ParamNvWrite_Connect,
+        ParamNvWrite_NvWrite,
+        ParamNvWrite_Disconnect,
         _N_STATES
     };
     constexpr static const int N_STATES = static_cast<int>(State::_N_STATES);
