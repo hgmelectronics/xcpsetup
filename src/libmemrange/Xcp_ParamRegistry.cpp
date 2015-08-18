@@ -111,6 +111,12 @@ Param *ParamRegistry::getParam(QString key)
         return nullptr;
 }
 
+void ParamRegistry::resetCaches()
+{
+    for(Param *param : mParams)
+        param->resetCaches();
+}
+
 void ParamRegistry::onTableConnectionChanged()
 {
     emit connectionChanged();

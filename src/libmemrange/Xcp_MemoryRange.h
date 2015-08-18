@@ -59,6 +59,8 @@ public:
 
     quint32 size() const; //!< size in bytes
 
+    virtual void resetCaches() = 0;
+
     virtual bool operator==(MemoryRange &other) = 0;
     inline bool operator!=(MemoryRange &other) { return !(*this == other); }
 

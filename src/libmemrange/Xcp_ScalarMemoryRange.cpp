@@ -32,6 +32,13 @@ void ScalarMemoryRange::setValue(QVariant value)
     emit valueChanged();    // always emit valueChanged so if conversion fails the previous value gets propagated back
 }
 
+void ScalarMemoryRange::resetCaches()
+{
+    mReadCacheLoaded.reset();
+    mSlaveValue = QVariant();
+    setWriteCacheDirty(true);
+}
+
 bool ScalarMemoryRange::operator==(MemoryRange &other)
 {
     ScalarMemoryRange *castOther = qobject_cast<ScalarMemoryRange *>(&other);

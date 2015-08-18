@@ -137,6 +137,11 @@ bool TableParam::setSerializableValue(const QVariant &val)
     return mRange->setDataRange(rawList, 0);
 }
 
+void TableParam::resetCaches()
+{
+    mRange->resetCaches();
+}
+
 void TableParam::onAxisXUnitChanged()
 {
     emit xUnitChanged();

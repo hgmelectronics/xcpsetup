@@ -105,6 +105,13 @@ bool TableMemoryRange::setDataRange(const QList<QVariant> &data, quint32 beginIn
     return true;
 }
 
+void TableMemoryRange::resetCaches()
+{
+    mReadCacheLoaded.reset();
+    std::fill(mSlaveData.begin(), mSlaveData.end(), QVariant());
+    setWriteCacheDirty(true);
+}
+
 bool TableMemoryRange::operator==(MemoryRange &other)
 {
     TableMemoryRange *castOther = qobject_cast<TableMemoryRange *>(&other);

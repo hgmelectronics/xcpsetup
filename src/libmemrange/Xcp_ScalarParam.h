@@ -28,6 +28,7 @@ public:
     const ScalarMemoryRange *range() const;
     virtual QVariant getSerializableValue();
     virtual bool setSerializableValue(const QVariant &val);
+    virtual void resetCaches();
 
     QString name;
 signals:

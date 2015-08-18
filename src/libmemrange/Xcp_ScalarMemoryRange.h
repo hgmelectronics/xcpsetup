@@ -19,6 +19,8 @@ public:
     QVariant value() const;
     void setValue(QVariant value);
 
+    virtual void resetCaches();
+
     virtual bool operator==(MemoryRange &other);
 signals:
 public slots:

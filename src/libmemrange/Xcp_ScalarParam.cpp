@@ -58,6 +58,11 @@ bool ScalarParam::setSerializableValue(const QVariant &val)
     return true;
 }
 
+void ScalarParam::resetCaches()
+{
+    mRange->resetCaches();
+}
+
 void ScalarParam::onRangeValChanged()
 {
     emit valChanged();

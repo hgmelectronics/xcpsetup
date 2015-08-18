@@ -39,6 +39,7 @@ public:
     Q_INVOKABLE Param *addScalarParam(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable, bool saveable, const Slot *slot);
     Q_INVOKABLE Param *addTableParam(MemoryRange::MemoryRangeType type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const TableAxis *axis);
     Q_INVOKABLE Param *getParam(QString key);
+    Q_INVOKABLE void resetCaches();
 signals:
     void connectionChanged();
     void paramsChanged();

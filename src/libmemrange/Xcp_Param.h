@@ -21,6 +21,7 @@ public:
     bool writeCacheDirty() const;
     virtual QVariant getSerializableValue() = 0;
     virtual bool setSerializableValue(const QVariant &val) = 0;
+    virtual void resetCaches() = 0;  //!< Set all write cache dirty and clear all read cache
 
     bool saveable;
     QString key;
