@@ -5,6 +5,7 @@
 #include "libxconfproto_global.h"
 #include "Xcp_ConnectionFacade.h"
 #include "FlashProg.h"
+#include "Xcp_ParamRegistry.h"
 
 namespace SetupTools {
 namespace Xcp {
@@ -21,75 +22,88 @@ class ParamLayer : public QObject
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
     Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
     Q_PROPERTY(ConnectionFacade *conn READ conn)
+    Q_PROPERTY(ParamRegistry *registry READ registry)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
     Q_PROPERTY(int slaveTimeout READ slaveTimeout WRITE setSlaveTimeout)
     Q_PROPERTY(int slaveNvWriteTimeout READ slaveNvWriteTimeout WRITE setSlaveNvWriteTimeout)
-    Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
+    Q_PROPERTY(int opProgressNotifyPeriod READ opProgressNotifyPeriod WRITE setOpProgressNotifyPeriod)
     Q_PROPERTY(double opProgress READ opProgress NOTIFY opProgressChanged)
+    Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
 public:
-    explicit ProgramLayer(QObject *parent = 0);
-    virtual ~ProgramLayer();
+    explicit ParamLayer(quint32 addrGran, QObject *parent = 0);
+    virtual ~ParamLayer();
 
     QUrl intfcUri();
     void setIntfcUri(QUrl);
     QString slaveId();
     void setSlaveId(QString);
     ConnectionFacade *conn();
+    ParamRegistry *registry();
     bool idle();
     bool intfcOk();
     int slaveTimeout();
     void setSlaveTimeout(int);
     int slaveNvWriteTimeout();
     void setSlaveNvWriteTimeout(int);
-    int slaveProgClearTimeout();
-    void setSlaveProgClearTimeout(int);
-    bool slaveProgResetIsAcked();
-    void setSlaveProgResetIsAcked(bool);
-    double opProgressNotifyFrac();
-    void setOpProgressNotifyFrac(double);
+    int opProgressNotifyPeriod();
+    void setOpProgressNotifyPeriod(int);
     double opProgress();
+    bool writeCacheDirty();
+
+    QMap<QString, QVariant> data();
+    QMap<QString, QVariant> data(const QStringList &keys);
+    QStringList setData(const QMap<QString, QVariant> &data);   //!< Returns keys that did not set successfully
 signals:
-    void downloadDone(OpResult result, QMap<QString, QVariant> *data);
-    void uploadDone(OpResult result, QMap<QString, QVariant> *data);
-    void calModeDone(OpResult result);
-    void disconnectDone(OpResult result);
+    void downloadDone(SetupTools::Xcp::OpResult result, QStringList keys);
+    void uploadDone(SetupTools::Xcp::OpResult result, QStringList keys);
+    void connectSlaveDone(SetupTools::Xcp::OpResult result);
+    void disconnectSlaveDone(SetupTools::Xcp::OpResult result);
     void stateChanged();
     void opProgressChanged();
+    void writeCacheDirtyChanged();
 public slots:
-    void download(QMap<QString, QVariant> *data);
-    void upload(QMap<QString, QVariant> *data);
-    void calMode();
-    void disconnect();
+    void download();
+    void upload();
+    void download(QStringList keys);
+    void upload(QStringList keys);
+    void connectSlave();
+    void disconnectSlave();
 
-    void onConnSetStateDone(OpResult result);
-    void onConnProgramClearDone(OpResult result, XcpPtr base, int len);
-    void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
-    void onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc);
-    void onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
-    void onConnProgramResetDone(OpResult result);
+    void onConnSetStateDone(SetupTools::Xcp::OpResult result);
     void onConnStateChanged();
-    void onConnOpProgressChanged();
+
+    void onParamDownloadDone(SetupTools::Xcp::OpResult result);
+    void onParamUploadDone(SetupTools::Xcp::OpResult result);
+
+    void onRegistryWriteCacheDirtyChanged();
 private:
     enum class State
     {
         IntfcNotOk,
-        Idle,
-        Program,
-        ProgramVerify,
-        BuildChecksumVerify,
-        ProgramReset,
-        CalMode,
-        PgmMode
+        Disconnected,
+        Connect,
+        Connected,
+        Download,
+        Upload,
+        Disconnect
     };
 
+    void downloadKey();
+    void uploadKey();
+    Param *getNextParam();
+    void setState(State);
+    void notifyProgress();
+
     ConnectionFacade *mConn;
+    ParamRegistry *mRegistry;
     State mState;
-    FlashProg *mActiveProg;
-    quint8 mActiveAddrExt;
-    CksumType mActiveCksumType;
-    bool mActiveFinalEmptyPacket;
-    QList<FlashBlock *>::const_iterator mActiveProgBlock;
+    int mOpProgressNotifyPeriod;
+
+    QStringList mActiveKeys;
+    QStringList::iterator mActiveKeyIt;
+    QMetaObject::Connection mActiveParamConnection;
+    SetupTools::Xcp::OpResult mActiveResult;
 };
 
 } // namespace Xcp

@@ -15,6 +15,52 @@ namespace SetupTools
 namespace Xcp
 {
 
+QString XcpPtr::toString() const
+{
+    if(ext == 0)
+        return QString("%1").arg(addr, 16, 8, QChar('0'));
+    else
+        return QString("%1:%1").arg(ext, 16, 2, QChar('0')).arg(addr, 16, 8, QChar('0'));
+}
+
+XcpPtr XcpPtr::fromString(QString str, bool *ok)
+{
+    QStringList split = str.split(QChar(':'));
+
+    if(split.size() < 1 || split.size() > 2)
+    {
+        if(ok)
+            *ok = false;
+        return XcpPtr();
+    }
+
+    QList<quint32> num;
+    for(const QString &splitStr : split)
+    {
+        bool convOk;
+        num.push_back(splitStr.toULong(&convOk, 16));
+        if(!convOk)
+        {
+            if(ok)
+                *ok = false;
+            return XcpPtr();
+        }
+    }
+
+    Q_ASSERT(num.size() == split.size());
+    if(num.size() == 2 && num[0] > std::numeric_limits<quint8>::max())
+    {
+        if(ok)
+            *ok = false;
+        return XcpPtr();
+    }
+
+    if(num.size() == 1)
+        return XcpPtr(num[0]);
+    else
+        return XcpPtr(num[1], quint8(num[0]));
+}
+
 #define RESETMTA_RETURN_ON_FAIL(value) { OpResult EMIT_RETURN__ret = value; if(EMIT_RETURN__ret != OpResult::Success) { mCalcMta.reset(); return EMIT_RETURN__ret; } }
 
 boost::optional<quint32> computeCksumStatic(CksumType type, const std::vector<quint8> &data)

@@ -131,4 +131,21 @@ QVariant LinearSlot::toRaw(QVariant engr) const
         return mOorRaw;
 }
 
+bool LinearSlot::engrInRange(QVariant engr) const
+{
+    bool convertedOk = false;
+    double engrConv;
+    if(base() == 10 || engr.type() != QVariant::Type::String)
+    {
+        engrConv = engr.toDouble(&convertedOk);
+    }
+    else
+    {
+        QString engrStr = engr.toString();
+        engrConv = engrStr.toLongLong(&convertedOk, base());
+    }
+
+    return (convertedOk && inRange(engrConv, mEngrA, mEngrB));
+}
+
 } // namespace SetupTools

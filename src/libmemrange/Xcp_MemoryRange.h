@@ -19,6 +19,7 @@ class MemoryRange: public QObject
     Q_PROPERTY(bool writable READ writable WRITE setWritable NOTIFY writableChanged)
     Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
     Q_PROPERTY(bool fullReload READ fullReload WRITE setFullReload NOTIFY fullReloadChanged)
+    Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
     Q_ENUMS(MemoryRangeType)
 
 public:
@@ -61,10 +62,13 @@ public:
     virtual bool operator==(MemoryRange &other) = 0;
     inline bool operator!=(MemoryRange &other) { return !(*this == other); }
 
+    bool writeCacheDirty() const;
+
 signals:
     void writableChanged();
     void validChanged();
     void fullReloadChanged();
+    void writeCacheDirtyChanged();
     void uploadDone(SetupTools::Xcp::OpResult result);
     void downloadDone(SetupTools::Xcp::OpResult result);
     void valueChanged();
@@ -78,6 +82,7 @@ public slots:
 protected:
     Xcp::ConnectionFacade *connectionFacade() const;
     void setValid(bool newValid);
+    void setWriteCacheDirty(bool newWriteCacheDirty);
 
     const Xcp::XcpPtr mBase;
     const quint32 mSize;
@@ -86,6 +91,7 @@ protected:
     bool mWritable;
     bool mValid;
     bool mFullReload;
+    bool mWriteCacheDirty;
 };
 
 void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, QVariant value, quint8 *buf);

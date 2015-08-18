@@ -5,7 +5,7 @@ namespace SetupTools {
 namespace Xcp {
 
 ScalarParam::ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *parent) :
-    Param(parent),
+    Param(range, parent),
     mRange(range),
     mSlot(slot)
 {
@@ -41,6 +41,21 @@ QString ScalarParam::unit() const
 const ScalarMemoryRange *ScalarParam::range() const
 {
     return mRange;
+}
+
+QVariant ScalarParam::getSerializableValue()
+{
+    return stringVal();
+}
+
+bool ScalarParam::setSerializableValue(const QVariant &val)
+{
+    QString str = val.toString();
+    if(!mSlot->engrInRange(str))
+        return false;
+
+    setStringVal(str);
+    return true;
 }
 
 void ScalarParam::onRangeValChanged()

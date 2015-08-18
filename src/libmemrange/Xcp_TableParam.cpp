@@ -4,7 +4,7 @@ namespace SetupTools {
 namespace Xcp {
 
 TableParam::TableParam(TableMemoryRange *range, const Slot *slot, const TableAxis *axis, QObject *parent) :
-    Param(parent),
+    Param(range, parent),
     mRange(range),
     mSlot(slot),
     mAxis(axis),
@@ -104,6 +104,37 @@ QString TableParam::valueUnit() const
 const TableMemoryRange *TableParam::range() const
 {
     return mRange;
+}
+
+QVariant TableParam::getSerializableValue()
+{
+    QStringList ret;
+    ret.reserve(mRange->rowCount());
+    for(QVariant elem : mRange->data())
+        ret.append(mSlot->toString(elem));
+    return ret;
+}
+
+bool TableParam::setSerializableValue(const QVariant &val)
+{
+    if(val.type() != QVariant::StringList && val.type() != QVariant::List)
+        return false;
+    QStringList stringList = val.toStringList();
+    if(stringList.size() != mRange->rowCount())
+        return false;
+
+    for(QString str : stringList)
+    {
+        if(!mSlot->engrInRange(str))
+            return false;
+    }
+
+    QVariantList rawList;
+    rawList.reserve(mRange->rowCount());
+    for(QString str : stringList)
+        rawList.push_back(mSlot->toRaw(str));
+
+    return mRange->setDataRange(rawList, 0);
 }
 
 void TableParam::onAxisXUnitChanged()

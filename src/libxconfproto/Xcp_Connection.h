@@ -72,6 +72,10 @@ public:
     XcpPtr(quint32 addr_in) : addr(addr_in), ext(0) {}
     XcpPtr(quint32 addr_in, quint8 ext_in) : addr(addr_in), ext(ext_in) {}
 
+    QString toString() const;
+
+    static XcpPtr fromString(QString str, bool *ok = nullptr);
+
     inline XcpPtr &operator+=(quint32 offset)
     {
         addr += offset;

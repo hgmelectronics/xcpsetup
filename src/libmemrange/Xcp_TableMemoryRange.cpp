@@ -1,4 +1,5 @@
 #include "Xcp_TableMemoryRange.h"
+#include <functional>
 
 namespace SetupTools {
 namespace Xcp {
@@ -56,6 +57,7 @@ bool TableMemoryRange::setData(const QVariant &value, quint32 index)
     {
         emit dataChanged(index, index + 1);
         emit valueChanged();
+        setWriteCacheDirty(true);
     }
     return true;
 }
@@ -97,6 +99,7 @@ bool TableMemoryRange::setDataRange(const QList<QVariant> &data, quint32 beginIn
     {
         emit dataChanged(beginChanged, endChanged);
         emit valueChanged();
+        setWriteCacheDirty(true);
     }
 
     return true;
@@ -187,13 +190,25 @@ void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPt
         quint32 endIndex = (endTableOffset + mElemSize - 1) / mElemSize;
         quint32 beginFullIndex = (beginTableOffset + mElemSize - 1) / mElemSize;
         quint32 endFullIndex = endTableOffset / mElemSize;
+        quint32 beginChangedIndex = std::numeric_limits<quint32>::max();
+        quint32 endChangedIndex = std::numeric_limits<quint32>::min();
 
-        QList<QVariant> newValue = mData;
+        std::function<void(quint32 index, QVariant value)> setDataValue =
+                [this, &beginChangedIndex, &endChangedIndex](quint32 index, QVariant value)->void
+            {
+                mSlaveData[index] = value;
+                bool changed = updateDelta<>(mData[index], value);
+                if(changed)
+                {
+                    beginChangedIndex = std::min(beginChangedIndex, index);
+                    endChangedIndex = std::max(endChangedIndex, index + 1);
+                }
+            };
 
         for(quint32 i = beginFullIndex; i < endFullIndex; ++i)
         {
             quint32 elemDataOffset = i * mElemSize + (mBase.addr - base.addr) * mAddrGran;
-            newValue[i] = convertFromSlave(mType, facade, data.data() + elemDataOffset);
+            setDataValue(i, convertFromSlave(mType, facade, data.data() + elemDataOffset));
             mReadCacheLoaded.reset(i);
         }
         if(beginIndex < beginFullIndex)
@@ -202,7 +217,7 @@ void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPt
             quint32 partSize = (beginFullIndex * mElemSize) - beginTableOffset;
             QVariant partValue = partialUpload(beginTableOffset, {data.data() + beginDataOffset, data.data() + beginDataOffset + partSize});
             if(partValue.isValid())
-                newValue[beginIndex] = partValue;
+                setDataValue(beginIndex, partValue);
         }
         if(endIndex > endFullIndex)
         {
@@ -211,47 +226,24 @@ void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPt
             quint32 beginDataOffset = endDataOffset - partSize;
             QVariant partValue = partialUpload(endFullIndex * mElemSize, {data.data() + beginDataOffset, data.data() + endDataOffset});
             if(partValue.isValid())
-                newValue[endIndex - 1] = partValue;
-        }
-        quint32 beginChanged = beginIndex;
-        quint32 endChanged = endIndex;
-        while(beginChanged != endChanged)
-        {
-            if(mData[beginChanged] == newValue[beginChanged] && !mData[beginChanged].isNull())
-                ++beginChanged;
-            else
-                break;
-        }
-        while(beginChanged != endChanged)
-        {
-            if(mData[endChanged - 1] == newValue[endChanged - 1] && !mData[endChanged - 1].isNull())
-                --endChanged;
-            else
-                break;
+                setDataValue(endIndex - 1, partValue);
         }
 
-        if(beginChanged < endChanged)
+        if(beginChangedIndex < endChangedIndex)
         {
-            mData = newValue;
-            emit dataChanged(beginChanged, endChanged);
+            emit dataChanged(beginChangedIndex, endChangedIndex);
             emit valueChanged();
         }
-        bool valid = true;
-        for(const QVariant &elem : mData)
-        {
-            if(elem.isNull())
-            {
-                valid = false;
-                break;
-            }
-        }
-        setValid(valid);
+        setValid(true);
         emit dataUploaded(beginIndex, endIndex);
         emit uploadDone(result);
+        setWriteCacheDirty(mData != mSlaveData);
     }
     else if(result == SetupTools::Xcp::OpResult::SlaveErrorOutOfRange)
     {
         setValid(false);
+        std::fill(mData.begin(), mData.end(), QVariant());
+        std::fill(mSlaveData.begin(), mSlaveData.end(), QVariant());
     }
 }
 
