@@ -130,8 +130,8 @@ bool TableMemoryRange::operator==(MemoryRange &other)
 void TableMemoryRange::download()
 {
     bool changed = false;
-    quint32 beginChanged;
-    quint32 endChanged;
+    quint32 beginChanged = 0;
+    quint32 endChanged = 0;
     for(quint32 index = 0; index != mDim; ++index)
     {
         if(mData[index] != mSlaveData[index])
