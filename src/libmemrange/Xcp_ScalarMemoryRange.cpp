@@ -24,9 +24,19 @@ void ScalarMemoryRange::setValue(QVariant value)
     // check for convertibility
     if(convertedValue.isValid()
             && (!mValue.isValid() || convertedValue != mValue))
+    {
+        setWriteCacheDirty(true);
         mValue = convertedValue;
+    }
 
     emit valueChanged();    // always emit valueChanged so if conversion fails the previous value gets propagated back
+}
+
+void ScalarMemoryRange::resetCaches()
+{
+    mReadCacheLoaded.reset();
+    mSlaveValue = QVariant();
+    setWriteCacheDirty(true);
 }
 
 bool ScalarMemoryRange::operator==(MemoryRange &other)
@@ -70,8 +80,11 @@ void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpP
         if(base.ext != mBase.ext)
             return;
 
-        bool uploadIsDone = true;
         quint32 dataEnd = base.addr + data.size() / mAddrGran;
+
+        if(end() <= base || mBase >= dataEnd)  // check if ranges overlap at all
+            return;
+
         quint32 copyBegin = std::max(base.addr, mBase.addr);
         quint32 copyEnd = std::min(dataEnd, mBase.addr + mSize / mAddrGran);
         quint32 copyBeginOffset = (copyBegin - base.addr) * mAddrGran;
@@ -81,7 +94,7 @@ void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpP
             mSlaveValue = convertFromSlave(mType, connectionFacade(), data.data() + copyBeginOffset);
             mReadCacheLoaded.reset();
         }
-        else if(end() > base && mBase < dataEnd)  // check if ranges overlap at all
+        else if(end() > base && mBase < dataEnd)
         {
             quint32 copyEndOffset = (copyEnd - base.addr) * mAddrGran;
             quint32 copyBeginCacheOffset = (copyBegin - mBase.addr) * mAddrGran;
@@ -95,26 +108,22 @@ void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpP
                 mReadCacheLoaded.reset();
             }
         }
-        else
-        {
-            uploadIsDone = false;
-        }
-
         if(mSlaveValue.isValid())
         {
             setValid(true);
             if(updateDelta<>(mValue, mSlaveValue))
                 emit valueChanged();
         }
-        if(uploadIsDone)    // some part got uploaded
-            emit uploadDone(result);
+        emit uploadDone(result);
     }
     else if(result == SetupTools::Xcp::OpResult::SlaveErrorOutOfRange)
     {
         mValue = QVariant();
         mSlaveValue = QVariant();
+        emit valueChanged();
         setValid(false);
     }
+    setWriteCacheDirty((mValue == mSlaveValue) || (!mValue.isValid() && !mSlaveValue.isValid()));
 }
 
 } // namespace Xcp

@@ -44,6 +44,10 @@ public:
     QString valueUnit() const;
     const TableMemoryRange *range() const;
 
+    virtual QVariant getSerializableValue();
+    virtual bool setSerializableValue(const QVariant &val);
+    virtual void resetCaches();
+
     QString name;
 signals:
     void xLabelChanged();

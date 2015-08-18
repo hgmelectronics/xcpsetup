@@ -13,7 +13,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     mSlaveResId("18FCD4F9")
 {
     connect(mProgFile, &ProgFile::progChanged, this, &Cs2Tool::onProgFileChanged);
-    connect(mProgLayer, &Xcp::ProgramLayer::calModeDone, this, &Cs2Tool::onCalModeDone);
+    connect(mProgLayer, &Xcp::ProgramLayer::calModeDone, this, &Cs2Tool::onProgCalModeDone);
     connect(mProgLayer, &Xcp::ProgramLayer::stateChanged, this, &Cs2Tool::onProgLayerStateChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::programDone, this, &Cs2Tool::onProgramDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programVerifyDone, this, &Cs2Tool::onProgramVerifyDone);
@@ -222,7 +222,7 @@ void Cs2Tool::startReset()
     mProgLayer->programReset();
 }
 
-void Cs2Tool::onCalModeDone(SetupTools::Xcp::OpResult result)
+void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
 {
     if(mState == State::Program_InitialConnect)
     {

@@ -4,7 +4,9 @@
 #include <QObject>
 #include <ProgFile.h>
 #include <Xcp_ProgramLayer.h>
-#include "Xcp_Interface_Can_Interface.h"
+#include <ParamFile.h>
+#include <Xcp_ParamLayer.h>
+#include <Xcp_Interface_Can_Interface.h>
 
 namespace SetupTools
 {
@@ -13,6 +15,7 @@ class Cs2Tool : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString programFilePath READ programFilePath WRITE setProgramFilePath NOTIFY programChanged)
+    Q_PROPERTY(QString paramFilePath READ paramFilePath WRITE setParamFilePath NOTIFY paramFileChanged)
     Q_PROPERTY(int programFileType READ programFileType WRITE setProgramFileType NOTIFY programChanged)
     Q_PROPERTY(int programSize READ programSize NOTIFY programChanged)
     Q_PROPERTY(qlonglong programBase READ programBase NOTIFY programChanged)
@@ -25,12 +28,16 @@ class Cs2Tool : public QObject
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(QString slaveCmdId READ slaveCmdId WRITE setSlaveCmdId NOTIFY slaveIdChanged)
     Q_PROPERTY(QString slaveResId READ slaveResId WRITE setSlaveResId NOTIFY slaveIdChanged)
+    Q_PROPERTY(Xcp::ParamLayer *paramLayer READ paramLayer)
+    Q_PROPERTY(bool paramWriteCacheDirty READ paramWriteCacheDirty NOTIFY paramWriteCacheDirtyChanged)
 public:
     explicit Cs2Tool(QObject *parent = 0);
     ~Cs2Tool();
 
     QString programFilePath();
     void setProgramFilePath(QString path);
+    QString paramFilePath();
+    void setParamFilePath(QString path);
     int programFileType();
     void setProgramFileType(int type);
     int programSize();
@@ -47,22 +54,47 @@ public:
     void setSlaveResId(QString id);
     bool intfcOk();
     bool idle();
+    Xcp::ParamLayer *paramLayer();
+
 signals:
     void stateChanged();
     void programChanged();
+    void paramFileChanged();
     void intfcUriChanged();
     void slaveIdChanged();
 
     void programmingDone(int result);
     void resetDone(int result);
+    void saveParamFileDone(int result);
+    void loadParamFileDone(int result);
+    void paramNvWriteDone(int result);
 public slots:
     void startProgramming();
+
     void startReset();
-    void onCalModeDone(SetupTools::Xcp::OpResult result);
+
+    void downloadParam();
+    void uploadParam();
+    void loadParamFile();
+    void saveParamFile();
+    void startParamNvWrite();
+    void stopParamEdit();
+
+    void onProgCalModeDone(SetupTools::Xcp::OpResult result);
     void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
-    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
+    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, SetupTools::Xcp::CksumType type, quint8 addrExt);
     void onProgramResetDone(SetupTools::Xcp::OpResult result);
     void onProgFileChanged();
+
+    void onParamLayerStateChanged();
+    void onParamLayerProgressChanged();
+
+    void onParamCalModeDone(SetupTools::Xcp::OpResult result);
+    void onParamLoadFileDone(SetupTools::Xcp::OpResult result, ParamFile *file);
+    void onParamSaveFileDone(SetupTools::Xcp::OpResult result, ParamFile *file);
+    void onParamNvWriteDone(SetupTools::Xcp::OpResult result);
+    void onParamFileChanged();
+
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();
 private:
@@ -77,11 +109,20 @@ private:
         Program_ResetToApplication,
         Program_CalMode,
         Reset_Reset,
-
+        ParamDownload_Connect,
+        ParamDownload_Download,
+        ParamDownload_Disconnect,
+        ParamUpload_Connect,
+        ParamUpload_Upload,
+        ParamUpload_Disconnect,
+        ParamNvWrite_Connect,
+        ParamNvWrite_NvWrite,
+        ParamNvWrite_Disconnect,
         _N_STATES
     };
     constexpr static const int N_STATES = static_cast<int>(State::_N_STATES);
     constexpr static const int TIMEOUT_MSEC = 250;
+    constexpr static const int NVWRITE_TIMEOUT_MSEC = 250;
     constexpr static const int RESET_TIMEOUT_MSEC = 3000;
     constexpr static const int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
     constexpr static const int PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC = 1050;
@@ -105,6 +146,8 @@ private:
     ProgFile *mProgFile;
     bool mProgFileOkToFlash;
     int mRemainingCalTries;
+    Xcp::ParamLayer *mParamLayer;
+    ParamFile *mParamFile;
     State mState;
     QString mSlaveCmdId, mSlaveResId;
 };

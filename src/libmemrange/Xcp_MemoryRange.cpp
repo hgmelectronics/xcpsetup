@@ -14,7 +14,8 @@ MemoryRange::MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, quint8 a
     mAddrGran(addrGran),
     mWritable(writable),
     mValid(true),
-    mFullReload(true)
+    mFullReload(true),
+    mWriteCacheDirty(false)
 {}
 
 bool MemoryRange::writable() const
@@ -59,6 +60,11 @@ quint32 MemoryRange::size() const
     return mSize;
 }
 
+bool MemoryRange::writeCacheDirty() const
+{
+    return mWriteCacheDirty;
+}
+
 void MemoryRange::upload()
 {
     connectionFacade()->upload(mBase, mSize);
@@ -90,6 +96,12 @@ void MemoryRange::setValid(bool newValid)
 {
     if(updateDelta<bool>(mValid, newValid))
         emit validChanged();
+}
+
+void MemoryRange::setWriteCacheDirty(bool newWriteCacheDirty)
+{
+    if(updateDelta<bool>(mWriteCacheDirty, newWriteCacheDirty))
+        emit writeCacheDirtyChanged();
 }
 
 void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, QVariant value, quint8 *buf)

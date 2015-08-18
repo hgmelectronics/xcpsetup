@@ -22,6 +22,8 @@ public:
     bool setData(const QVariant &value, quint32 index);
     bool setDataRange(const QList<QVariant> &data, quint32 beginIndex = 0);  //!< write multiple entries at once to take advantage of block transfer
 
+    virtual void resetCaches();
+
     virtual bool operator==(MemoryRange &other);
 signals:
     void dataUploaded(quint32 beginIndex, quint32 endIndex);
