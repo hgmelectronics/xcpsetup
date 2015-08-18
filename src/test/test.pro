@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS = elm327 \
-    xcpconnection
+    xcpconnection \
+    memrange

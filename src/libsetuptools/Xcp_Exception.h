@@ -3,7 +3,6 @@
 
 #include <QException>
 #include <QObject>
-#include "libxconfproto_global.h"
 #include <QQmlEngine>
 
 #define EMIT_RETURN(signal, value, ...) { OpResult EMIT_RETURN__ret = (value); emit (signal)(EMIT_RETURN__ret, ##__VA_ARGS__); return EMIT_RETURN__ret; }

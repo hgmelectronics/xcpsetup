@@ -7,7 +7,6 @@
 #include <boost/range/iterator_range.hpp>
 #include <vector>
 
-#include "libxconfproto_global.h"
 #include "Xcp_Interface_Interface.h"
 #include "Xcp_Interface_Can_Interface.h"
 

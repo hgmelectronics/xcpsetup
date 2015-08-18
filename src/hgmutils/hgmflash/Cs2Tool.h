@@ -29,7 +29,7 @@ class Cs2Tool : public QObject
     Q_PROPERTY(QString slaveCmdId READ slaveCmdId WRITE setSlaveCmdId NOTIFY slaveIdChanged)
     Q_PROPERTY(QString slaveResId READ slaveResId WRITE setSlaveResId NOTIFY slaveIdChanged)
     Q_PROPERTY(Xcp::ParamLayer *paramLayer READ paramLayer)
-    Q_PROPERTY(bool paramWriteCacheDirty READ paramWriteCacheDirty NOTIFY paramWriteCacheDirtyChanged)
+    //Q_PROPERTY(bool paramWriteCacheDirty READ paramWriteCacheDirty NOTIFY paramWriteCacheDirtyChanged)
 public:
     explicit Cs2Tool(QObject *parent = 0);
     ~Cs2Tool();

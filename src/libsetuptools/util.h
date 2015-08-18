@@ -11,7 +11,6 @@
 #include <QtQml/QQmlEngine>
 #include <QtQml/QJSEngine>
 #include <QtQml/QQmlListProperty>
-#include "libxconfproto_global.h"
 
 namespace SetupTools
 {

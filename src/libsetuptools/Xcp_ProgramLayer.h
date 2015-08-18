@@ -2,7 +2,6 @@
 #define SETUPTOOLS_XCP_PROGRAMLAYER_H
 
 #include <QObject>
-#include "libxconfproto_global.h"
 #include "Xcp_ConnectionFacade.h"
 #include "FlashProg.h"
 

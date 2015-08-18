@@ -3,8 +3,6 @@
 
 #include <boost/optional.hpp>
 
-#include "libxconfproto_global.h"
-
 #include "Xcp_Interface_Interface.h"
 
 namespace SetupTools

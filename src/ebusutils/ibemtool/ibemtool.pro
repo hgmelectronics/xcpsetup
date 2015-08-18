@@ -23,12 +23,12 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/release/ -lxconfproto
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libxconfproto/debug/ -lxconfproto
-else:unix: LIBS += -L$$OUT_PWD/../../libxconfproto/ -lxconfproto
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libsetuptools/release/ -lsetuptools
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libsetuptools/debug/ -lsetuptools
+else:unix: LIBS += -L$$OUT_PWD/../../libsetuptools/ -lsetuptools
 
-INCLUDEPATH += $$PWD/../../libxconfproto
-DEPENDPATH += $$PWD/../../libxconfproto
+INCLUDEPATH += $$PWD/../../libsetuptools
+DEPENDPATH += $$PWD/../../libsetuptools
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../ebussetuptools/release/ -lebussetuptools
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../ebussetuptools/debug/ -lebussetuptools

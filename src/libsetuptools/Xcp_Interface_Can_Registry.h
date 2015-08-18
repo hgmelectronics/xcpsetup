@@ -1,8 +1,6 @@
 #ifndef XCP_INTERFACE_REGISTRY_H
 #define XCP_INTERFACE_REGISTRY_H
 
-#include "libxconfproto_global.h"
-
 #include <QList>
 #include <QUrl>
 #include <Xcp_Interface_Can_Interface.h>

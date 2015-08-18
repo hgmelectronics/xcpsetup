@@ -1,7 +1,6 @@
 #ifndef XCP_INTERFACE_CAN_ELM327_INTERFACE_H
 #define XCP_INTERFACE_CAN_ELM327_INTERFACE_H
 
-#include "libxconfproto_global.h"
 #include <QObject>
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>

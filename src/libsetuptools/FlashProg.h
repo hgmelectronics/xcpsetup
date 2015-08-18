@@ -4,7 +4,6 @@
 #include <boost/optional.hpp>
 #include <QObject>
 #include <QQmlListProperty>
-#include "libxconfproto_global.h"
 
 namespace SetupTools
 {
