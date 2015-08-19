@@ -18,6 +18,8 @@ ScalarParam::ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *pa
     connect(mRange, &ScalarMemoryRange::valueChanged, this, &ScalarParam::onRangeValChanged);
     connect(mRange, &MemoryRange::uploadDone, this, &ScalarParam::onRangeUploadDone);
     connect(mRange, &MemoryRange::downloadDone, this, &ScalarParam::onRangeDownloadDone);
+    connect(mSlot, &Slot::unitChanged, this, &ScalarParam::onSlotUnitChanged);
+    connect(mSlot, &Slot::valueParamChanged, this, &ScalarParam::onSlotValueParamChanged);
 }
 
 double ScalarParam::floatVal() const
@@ -84,6 +86,16 @@ void ScalarParam::resetCaches()
 }
 
 void ScalarParam::onRangeValChanged()
+{
+    emit valChanged();
+}
+
+void ScalarParam::onSlotUnitChanged()
+{
+    emit unitChanged();
+}
+
+void ScalarParam::onSlotValueParamChanged()
 {
     emit valChanged();
 }

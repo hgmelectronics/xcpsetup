@@ -16,7 +16,7 @@ class ScalarParam : public Param
 
     Q_PROPERTY(double floatVal READ floatVal WRITE setFloatVal NOTIFY valChanged)
     Q_PROPERTY(QString stringVal READ stringVal WRITE setStringVal NOTIFY valChanged)
-    Q_PROPERTY(QString unit READ unit)
+    Q_PROPERTY(QString unit READ unit NOTIFY unitChanged)
     Q_PROPERTY(QString name MEMBER name)
 public:
     ScalarParam(QObject *parent = nullptr);
@@ -35,6 +35,7 @@ public:
     QString name;
 signals:
     void valChanged();
+    void unitChanged();
 public slots:
     void onRangeValChanged();
     void onRangeUploadDone(SetupTools::Xcp::OpResult result);
