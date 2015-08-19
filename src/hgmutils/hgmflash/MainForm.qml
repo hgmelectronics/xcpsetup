@@ -312,7 +312,7 @@ ColumnLayout {
         }
 
         RowLayout {
-            id: paramFileActionRow
+            id: paramActionRow
             anchors.left: parent.left
             anchors.right: parent.right
             Button {
@@ -322,12 +322,6 @@ ColumnLayout {
                 text: qsTr("Edit")
                 onClicked: root.userShowParamEdit()
             }
-        }
-
-        RowLayout {
-            id: paramActionRow
-            anchors.left: parent.left
-            anchors.right: parent.right
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true

@@ -43,5 +43,6 @@
         <file>QtWinExtras/qmldir</file>
         <file>ParamWindow.qml</file>
         <file>Slots.qml</file>
+        <file>ScalarParamEdit.qml</file>
     </qresource>
 </RCC>
