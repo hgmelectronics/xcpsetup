@@ -83,6 +83,7 @@ ApplicationWindow {
         progSizeText: cs2Tool.programOk ? cs2Tool.programSize.toString(10) : ""
         progCksumText: cs2Tool.programOk ? "0x00000000".substr(0, 10 - cs2Tool.programCksum.toString(16).length) + cs2Tool.programCksum.toString(16).toUpperCase() : ""
         progressValue: cs2Tool.progress
+        paramFilePath: cs2Tool.paramFilePath
         onUserStartProg: cs2Tool.startProgramming()
         onUserResetProg: cs2Tool.startReset()
         onUserConnectParam: cs2Tool.startParamConnect()
