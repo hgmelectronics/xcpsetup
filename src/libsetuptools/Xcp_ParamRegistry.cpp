@@ -61,7 +61,18 @@ bool ParamRegistry::writeCacheDirty() const
 ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot, QString key)
 {
     if(mParams.count(key))
-        return nullptr;
+    {
+        ScalarParam *other = qobject_cast<ScalarParam *>(mParams[key]);
+        if(!other
+                || other->range()->base() != base
+                || other->range()->type() != type
+                || other->range()->writable() != writable
+                || other->saveable != saveable
+                || other->slot() != slot)
+            return nullptr;
+        else
+            return other;
+    }
 
     if(!MemoryRange::isValidType(type))
         return nullptr;
@@ -87,7 +98,20 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
 TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const SetupTools::TableAxis *axis, QString key)
 {
     if(mParams.count(key))
-        return nullptr;
+    {
+        TableParam *other = qobject_cast<TableParam *>(mParams[key]);
+        if(!other
+                || other->range()->base() != base
+                || other->range()->type() != type
+                || other->range()->writable() != writable
+                || other->range()->dim() != quint32(count)
+                || other->saveable != saveable
+                || other->slot() != slot
+                || other->axis() != axis)
+            return nullptr;
+        else
+            return other;
+    }
 
     if(count < 1)
         return nullptr;

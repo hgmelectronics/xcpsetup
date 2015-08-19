@@ -44,6 +44,8 @@ public:
     QString yUnit() const;
     QString valueUnit() const;
     const TableMemoryRange *range() const;
+    const Slot *slot() const;
+    const TableAxis *axis() const;
 
     virtual QVariant getSerializableValue();
     virtual bool setSerializableValue(const QVariant &val);

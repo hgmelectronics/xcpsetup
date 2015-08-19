@@ -27,6 +27,7 @@ public:
     void setStringVal(QString);
     QString unit() const;
     const ScalarMemoryRange *range() const;
+    const Slot *slot() const;
     virtual QVariant getSerializableValue();
     virtual bool setSerializableValue(const QVariant &val);
     virtual void resetCaches();
@@ -38,6 +39,8 @@ public slots:
     void onRangeValChanged();
     void onRangeUploadDone(SetupTools::Xcp::OpResult result);
     void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
+    void onSlotUnitChanged();
+    void onSlotValueParamChanged();
     virtual void upload();
     virtual void download();
 private:

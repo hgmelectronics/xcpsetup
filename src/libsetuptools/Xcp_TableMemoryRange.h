@@ -24,6 +24,11 @@ public:
 
     virtual void resetCaches();
 
+    MemoryRangeType type() const;
+    quint32 dim() const;
+    XcpPtr base() const;
+    bool writable() const;
+
     virtual bool operator==(MemoryRange &other);
 signals:
     void dataUploaded(quint32 beginIndex, quint32 endIndex);

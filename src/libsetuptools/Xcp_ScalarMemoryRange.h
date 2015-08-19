@@ -21,6 +21,10 @@ public:
 
     virtual void resetCaches();
 
+    MemoryRangeType type() const;
+    XcpPtr base() const;
+    bool writable() const;
+
     virtual bool operator==(MemoryRange &other);
 signals:
 public slots:

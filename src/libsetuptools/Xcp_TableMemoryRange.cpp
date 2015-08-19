@@ -29,6 +29,23 @@ int TableMemoryRange::rowCount() const
     return int(mDim);
 }
 
+MemoryRange::MemoryRangeType TableMemoryRange::type() const
+{
+    return mType;
+}
+XcpPtr TableMemoryRange::base() const
+{
+    return mBase;
+}
+quint32 TableMemoryRange::dim() const
+{
+    return mDim;
+}
+bool TableMemoryRange::writable() const
+{
+    return mWritable;
+}
+
 QVariant TableMemoryRange::operator[](quint32 index) const
 {
     if(index < mDim)

@@ -128,6 +128,18 @@ const TableMemoryRange *TableParam::range() const
     return mRange;
 }
 
+const Slot *TableParam::slot() const
+{
+    Q_ASSERT(mAxis && mRange && mSlot);
+    return mSlot;
+}
+
+const TableAxis *TableParam::axis() const
+{
+    Q_ASSERT(mAxis && mRange && mSlot);
+    return mAxis;
+}
+
 QVariant TableParam::getSerializableValue()
 {
     Q_ASSERT(mAxis && mRange && mSlot);

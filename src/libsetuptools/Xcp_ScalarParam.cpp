@@ -55,6 +55,12 @@ const ScalarMemoryRange *ScalarParam::range() const
     return mRange;
 }
 
+const Slot *ScalarParam::slot() const
+{
+    Q_ASSERT(mRange && mSlot);
+    return mSlot;
+}
+
 QVariant ScalarParam::getSerializableValue()
 {
     return stringVal();

@@ -16,6 +16,19 @@ QVariant ScalarMemoryRange::value() const
     return mValue;
 }
 
+MemoryRange::MemoryRangeType ScalarMemoryRange::type() const
+{
+    return mType;
+}
+XcpPtr ScalarMemoryRange::base() const
+{
+    return mBase;
+}
+bool ScalarMemoryRange::writable() const
+{
+    return mWritable;
+}
+
 void ScalarMemoryRange::setValue(QVariant value)
 {
     QVariant convertedValue = value;
