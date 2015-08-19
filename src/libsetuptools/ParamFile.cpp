@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <algorithm>
 #include "ParamFile.h"
+#include <QDebug>
 
 namespace SetupTools
 {
@@ -104,12 +105,13 @@ ParamFile::Result ParamFile::readJson(QFile &file, QMap<QString, QVariant> &mapO
         emit parseError("document root is not an object");
         return Result::CorruptedFile;
     }
+    QJsonObject object = doc.object();
 
-    for(QJsonObject::iterator it = doc.object().begin(), end = doc.object().end(); it != end; ++it)
+    for(auto it = object.begin(), end = object.end(); it != end; ++it)
     {
         if(it.value().isArray())
         {
-            for(QJsonValueRef elem : it.value().toArray())
+            for(auto elem : it.value().toArray())
             {
                 if(!elem.isString())
                     return Result::CorruptedFile;
@@ -123,7 +125,7 @@ ParamFile::Result ParamFile::readJson(QFile &file, QMap<QString, QVariant> &mapO
 
     mapOut.clear();
 
-    for(QJsonObject::iterator it = doc.object().begin(), end = doc.object().end(); it != end; ++it)
+    for(auto it = object.begin(), end = object.end(); it != end; ++it)
     {
         if(it.value().isArray())
         {
