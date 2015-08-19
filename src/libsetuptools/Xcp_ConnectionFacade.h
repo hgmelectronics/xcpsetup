@@ -16,7 +16,7 @@ class ConnectionFacade : public QObject
     Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
     Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
     Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
-    Q_PROPERTY(Connection::State state READ state WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(SetupTools::Xcp::Connection::State state READ state WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(bool progResetIsAcked READ progResetIsAcked WRITE setProgResetIsAcked)
 
     /**
@@ -29,7 +29,8 @@ public:
     ~ConnectionFacade();
     QUrl intfcUri();
     void setIntfcUri(QUrl);
-    void setIntfc(Interface::Interface *intfc); // for testing purposes only
+    Interface::Interface *intfc();
+    void setIntfc(Interface::Interface *intfc, QUrl uri = QUrl("testing")); // for interfaces shared between higher layers - use with caution!
     QString slaveId();
     void setSlaveId(QString);
     int timeout();

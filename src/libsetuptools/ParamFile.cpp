@@ -14,7 +14,7 @@ namespace SetupTools
 ParamFile::ParamFile(QObject *parent) :
     QObject(parent),
     mType(Invalid),
-    mValid(false)
+    mExists(false)
 {}
 
 QString ParamFile::name()
@@ -25,11 +25,8 @@ QString ParamFile::name()
 void ParamFile::setName(QString newName)
 {
     mName = newName;
-    if(mValid)
-    {
-        mValid = false;
-        emit mapChanged();
-    }
+    mExists = QFile::exists(newName);
+    emit nameChanged();
 }
 
 ParamFile::Type ParamFile::type()
@@ -40,44 +37,37 @@ ParamFile::Type ParamFile::type()
 void ParamFile::setType(ParamFile::Type newType)
 {
     mType = newType;
-    if(mValid)
-    {
-        mValid = false;
-        emit mapChanged();
-    }
+    emit typeChanged();
 }
 
-bool ParamFile::valid()
+bool ParamFile::exists()
 {
-    return mValid;
+    return mExists;
 }
 
-ParamFile::Result ParamFile::read()
+ParamFile::Result ParamFile::read(QMap<QString, QVariant> &mapOut)
 {
     if(!isTypeOk())
         return Result::InvalidType;
 
-    mMap.clear();
-    mValid = false;
+    mapOut.clear();
 
     QFile file(mName);
     if(!file.open(QFile::ReadOnly))
         return Result::FileOpenFail;
 
-    Result ret = Result::InvalidType;
     switch(mType)
     {
     case Json:
-        ret = readJson(file);
+        return readJson(file, mapOut);
         break;
     default:
+        return Result::InvalidType;
         break;
     }
-    emit mapChanged();
-    return ret;
 }
 
-ParamFile::Result ParamFile::write()
+ParamFile::Result ParamFile::write(const QMap<QString, QVariant> &map)
 {
     if(!isTypeOk())
         return Result::InvalidType;
@@ -89,7 +79,7 @@ ParamFile::Result ParamFile::write()
     switch(mType)
     {
     case Json:
-        return writeJson(file);
+        return writeJson(file, map);
         break;
     default:
         return Result::InvalidType;
@@ -97,7 +87,7 @@ ParamFile::Result ParamFile::write()
     }
 }
 
-ParamFile::Result ParamFile::readJson(QFile &file)
+ParamFile::Result ParamFile::readJson(QFile &file, QMap<QString, QVariant> &mapOut)
 {
     QJsonParseError parseErr;
     QByteArray bytes = file.readAll();
@@ -106,12 +96,12 @@ ParamFile::Result ParamFile::readJson(QFile &file)
     {
         int lineNum = bytes.left(parseErr.offset).count('\n') + 1;
         int colNum = parseErr.offset - bytes.lastIndexOf('\n', parseErr.offset);
-        emit jsonParseError(parseErr.errorString() + QString(" at line %1 col %2").arg(lineNum).arg(colNum));
+        emit parseError(parseErr.errorString() + QString(" at line %1 col %2").arg(lineNum).arg(colNum));
         return Result::CorruptedFile;
     }
     if(!doc.isObject())
     {
-        emit jsonParseError("document root is not an object");
+        emit parseError("document root is not an object");
         return Result::CorruptedFile;
     }
 
@@ -131,7 +121,7 @@ ParamFile::Result ParamFile::readJson(QFile &file)
         }
     }
 
-    mMap.clear();
+    mapOut.clear();
 
     for(QJsonObject::iterator it = doc.object().begin(), end = doc.object().end(); it != end; ++it)
     {
@@ -142,21 +132,21 @@ ParamFile::Result ParamFile::readJson(QFile &file)
             stringList.reserve(array.size());
             for(QJsonValueRef elem : array)
                 stringList.push_back(elem.toString());
-            mMap.insert(it.key(), stringList);
+            mapOut.insert(it.key(), stringList);
         }
         else
         {
             Q_ASSERT(it.value().isString());
-            mMap.insert(it.key(), it.value().toString());
+            mapOut.insert(it.key(), it.value().toString());
         }
     }
     return Result::Ok;
 }
 
-ParamFile::Result ParamFile::writeJson(QFile &file)
+ParamFile::Result ParamFile::writeJson(QFile &file, const QMap<QString, QVariant> &map)
 {
     QJsonObject root;
-    for(QMap<QString, QVariant>::iterator it = mMap.begin(), end = mMap.end(); it != end; ++it)
+    for(QMap<QString, QVariant>::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
     {
         if(it.value().type() == QVariant::List || it.value().type() == QVariant::StringList)
         {
@@ -192,6 +182,17 @@ bool ParamFile::isTypeOk() const
     default:
         return false;
         break;
+    }
+}
+
+QString ParamFile::resultString(int result){
+    switch(result) {
+    case Ok:                        return "OK";
+    case CorruptedFile:             return "File corrupted";
+    case FileOpenFail:              return "Unable to open file";
+    case InvalidType:               return "Invalid file type set";
+    case FileWriteFail:             return "Unable to write file";
+    default:                        return "Undefined error";
     }
 }
 

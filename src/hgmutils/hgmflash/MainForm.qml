@@ -1,8 +1,10 @@
 import QtQuick 2.4
-import QtQuick.Controls 1.3
-import QtQuick.Layouts 1.1
+import QtQuick.Controls 1.4
+import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import com.setuptools.xcp 1.0
+import com.setuptools 1.0
 
 ColumnLayout {
     id: root
@@ -16,106 +18,27 @@ ColumnLayout {
     property alias progBaseText: progBaseField.text
     property alias progSizeText: progSizeField.text
     property alias progCksumText: progCksumField.text
+    property string paramFilePath
     property string targetCmdId
     property string targetResId
     property string intfcUri: ""
     property alias progressValue: progressBar.value
-    property bool toolReady
-    property bool toolReadyResetOnly
+    property bool toolReadyProg
+    property bool toolReadyReset
+    property bool toolReadyParam
     property bool toolBusy
+    property bool paramWriteCacheDirty
     signal progFileAccepted()
-    signal userStart()
-    signal userReset()
+    signal userStartProg()
+    signal userResetProg()
+    signal userConnectParam()
+    signal userDownloadParam()
+    signal userUploadParam()
+    signal userDisconnectParam()
+    signal userShowParamEdit()
 
     function selectProg() { progFileDialog.open() }
-
-    ColumnLayout {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        spacing: 5
-        Label {
-            font.pixelSize: 14
-            text: "Program"
-        }
-
-        FileDialog {
-            property string filePath
-            property int fileType: ProgFile.Invalid
-            id: progFileDialog
-            title: qsTr("Select program file")
-            modality: Qt.NonModal
-            nameFilters: [ "S-record files (*.srec)", "Foobar (*)" ]
-            onAccepted: {
-                filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
-                if(selectedNameFilter == "S-record files (*.srec)")
-                    fileType = ProgFile.Srec;
-                else
-                    fileType = ProgFile.Invalid;
-                root.progFileAccepted()
-            }
-        }
-
-        RowLayout {
-            id: progRow1
-            spacing: 10
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            TextField {
-                id: progFileNameField
-                text: progFilePath
-                readOnly: true
-                anchors.left: parent.left
-                anchors.right: parent.right
-            }
-        }
-
-        RowLayout {
-            id: progRow2
-            spacing: 10
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            RowLayout {
-                spacing: 5
-
-                Label {
-                    text: qsTr("Base")
-                }
-                TextField {
-                    id: progBaseField
-                    readOnly: true
-                    implicitWidth: 90
-                }
-            }
-
-            RowLayout {
-                spacing: 5
-
-                Label {
-                    text: qsTr("Size")
-                }
-                TextField {
-                    id: progSizeField
-                    readOnly: true
-                    implicitWidth: 70
-                }
-            }
-
-            RowLayout {
-                spacing: 5
-
-                Label {
-                    text: qsTr("CRC")
-                }
-                TextField {
-                    id: progCksumField
-                    readOnly: true
-                    implicitWidth: 90
-                }
-            }
-        }
-    }
+    function selectLoadParam() { paramLoadFileDialog.open() }
 
     ColumnLayout {
         anchors.left: parent.left
@@ -250,26 +173,192 @@ ColumnLayout {
                 }
             }
         }
+    }
+
+    ColumnLayout {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        spacing: 5
+        Label {
+            font.pixelSize: 14
+            text: "Program"
+        }
+
+        FileDialog {
+            property string filePath
+            property int fileType: ProgFile.Invalid
+            id: progFileDialog
+            title: qsTr("Select program file")
+            modality: Qt.NonModal
+            nameFilters: [ "S-record files (*.srec)", "All files (*)" ]
+            onAccepted: {
+                filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
+                if(selectedNameFilter == "S-record files (*.srec)")
+                    fileType = ProgFile.Srec;
+                else
+                    fileType = ProgFile.Invalid;
+                root.progFileAccepted()
+            }
+        }
 
         RowLayout {
-            id: actionRow
+            id: progRow1
+            spacing: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            TextField {
+                id: progFileNameField
+                text: progFilePath
+                readOnly: true
+                anchors.left: parent.left
+                anchors.right: parent.right
+            }
+        }
+
+        RowLayout {
+            id: progRow2
+            spacing: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            RowLayout {
+                spacing: 5
+
+                Label {
+                    text: qsTr("Base")
+                }
+                TextField {
+                    id: progBaseField
+                    readOnly: true
+                    implicitWidth: 90
+                }
+            }
+
+            RowLayout {
+                spacing: 5
+
+                Label {
+                    text: qsTr("Size")
+                }
+                TextField {
+                    id: progSizeField
+                    readOnly: true
+                    implicitWidth: 70
+                }
+            }
+
+            RowLayout {
+                spacing: 5
+
+                Label {
+                    text: qsTr("CRC")
+                }
+                TextField {
+                    id: progCksumField
+                    readOnly: true
+                    implicitWidth: 90
+                }
+            }
+        }
+
+        RowLayout {
+            id: progActionRow
             anchors.left: parent.left
             anchors.right: parent.right
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
-                id: startButton
+                id: progStartButton
                 text: qsTr("Start")
-                onClicked: root.userStart()
-                enabled: toolReady
+                onClicked: root.userStartProg()
+                enabled: toolReadyProg && !toolBusy
             }
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
-                id: resetButton
+                id: progResetButton
                 text: qsTr("Reset Target")
-                onClicked: root.userReset()
-                enabled: toolReadyResetOnly
+                onClicked: root.userResetProg()
+                enabled: toolReadyReset && !toolBusy
+            }
+        }
+    }
+
+    ColumnLayout {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        spacing: 5
+
+
+        Label {
+            font.pixelSize: 14
+            text: "Parameters"
+        }
+
+        RowLayout {
+            id: paramFileRow
+            spacing: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            TextField {
+                id: paramFileNameField
+                text: paramFilePath
+                readOnly: true
+                anchors.left: parent.left
+                anchors.right: parent.right
+            }
+        }
+
+        RowLayout {
+            id: paramFileActionRow
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Button {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.fillWidth: true
+                id: paramEditButton
+                text: qsTr("Edit")
+                onClicked: root.userShowParamEdit()
+            }
+        }
+
+        RowLayout {
+            id: paramActionRow
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Button {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.fillWidth: true
+                id: paramConnectButton
+                text: qsTr("Connect")
+                onClicked: root.userConnectParam()
+                enabled: !toolBusy
+            }
+            Button {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.fillWidth: true
+                id: paramDownloadButton
+                text: qsTr("Download")
+                onClicked: root.userDownloadParam()
+                enabled: toolReadyParam
+            }
+            Button {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.fillWidth: true
+                id: paramUploadButton
+                text: qsTr("Upload")
+                onClicked: root.userUploadParam()
+                enabled: toolReadyParam
+            }
+            Button {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.fillWidth: true
+                id: paramDisconnectButton
+                text: qsTr("Disconnect")
+                onClicked: root.userDisconnectParam()
+                enabled: toolReadyParam && toolBusy
             }
         }
     }

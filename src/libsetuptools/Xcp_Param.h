@@ -16,6 +16,7 @@ class Param : public QObject
     Q_PROPERTY(QString key MEMBER key)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
 public:
+    explicit Param(QObject *parent = 0);
     explicit Param(MemoryRange *baseRange, QObject *parent = 0);
 
     bool writeCacheDirty() const;

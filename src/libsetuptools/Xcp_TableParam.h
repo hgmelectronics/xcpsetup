@@ -28,6 +28,7 @@ class TableParam : public SetupTools::Xcp::Param
     Q_PROPERTY(QString yUnit READ yUnit NOTIFY yUnitChanged)
     Q_PROPERTY(QString valueUnit READ valueUnit NOTIFY valueUnitChanged)
 public:
+    TableParam(QObject *parent = nullptr);
     TableParam(TableMemoryRange *range, const Slot *slot, const TableAxis *axis, QObject *parent = nullptr);
 
     Q_INVOKABLE QString unit(int role);

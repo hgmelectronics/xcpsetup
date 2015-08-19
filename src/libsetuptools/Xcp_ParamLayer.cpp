@@ -11,6 +11,7 @@ ParamLayer::ParamLayer(quint32 addrGran, QObject *parent) :
     mOpProgressNotifyPeriod(1),
     mActiveKeyIt(mActiveKeys.end())
 {
+    mRegistry->setConnectionFacade(mConn);
     connect(mConn, &ConnectionFacade::setStateDone, this, &ParamLayer::onConnSetStateDone);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
@@ -24,6 +25,18 @@ QUrl ParamLayer::intfcUri()
 void ParamLayer::setIntfcUri(QUrl uri)
 {
     mConn->setIntfcUri(uri);
+    emit intfcChanged();
+}
+
+Interface::Interface *ParamLayer::intfc()
+{
+    return mConn->intfc();
+}
+
+void ParamLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
+{
+    mConn->setIntfc(intfc, uri);
+    emit intfcChanged();
 }
 
 QString ParamLayer::slaveId()
@@ -103,6 +116,11 @@ bool ParamLayer::writeCacheDirty()
 QMap<QString, QVariant> ParamLayer::data()
 {
     return data(mRegistry->paramKeys());
+}
+
+QMap<QString, QVariant> ParamLayer::saveableData()
+{
+    return data(mRegistry->saveableParamKeys());
 }
 
 QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
@@ -325,6 +343,7 @@ void ParamLayer::onConnSetStateDone(OpResult result)
         break;
     case State::IntfcNotOk:
     case State::Disconnected:
+        break;  // do nothing - interface may be shared with another data layer e.g. ProgramLayer
     case State::Connected:
     default:
         Q_ASSERT(0);
@@ -341,8 +360,6 @@ void ParamLayer::onConnStateChanged()
         setState(State::IntfcNotOk);
     else if(mState == State::IntfcNotOk && newState == Connection::State::Closed)
         setState(State::Disconnected);
-    else
-        Q_ASSERT(0);
 }
 
 void ParamLayer::onConnNvWriteDone(OpResult result)

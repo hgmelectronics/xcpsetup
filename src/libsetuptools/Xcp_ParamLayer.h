@@ -18,10 +18,10 @@ namespace Xcp {
 class ParamLayer : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
+    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcChanged)
     Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
-    Q_PROPERTY(ConnectionFacade *conn READ conn)
-    Q_PROPERTY(ParamRegistry *registry READ registry)
+    Q_PROPERTY(ConnectionFacade *conn READ conn NOTIFY never)
+    Q_PROPERTY(ParamRegistry *registry READ registry NOTIFY never)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
     Q_PROPERTY(int slaveTimeout READ slaveTimeout WRITE setSlaveTimeout)
@@ -31,10 +31,12 @@ class ParamLayer : public QObject
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
 public:
     explicit ParamLayer(quint32 addrGran, QObject *parent = 0);
-    virtual ~ParamLayer();
+    virtual ~ParamLayer() {}
 
     QUrl intfcUri();
     void setIntfcUri(QUrl);
+    Interface::Interface *intfc();
+    void setIntfc(Interface::Interface *intfc, QUrl uri = QUrl("testing")); // for interfaces shared between higher layers - use with caution!
     QString slaveId();
     void setSlaveId(QString);
     ConnectionFacade *conn();
@@ -51,6 +53,7 @@ public:
     bool writeCacheDirty();
 
     QMap<QString, QVariant> data();
+    QMap<QString, QVariant> saveableData();
     QMap<QString, QVariant> data(const QStringList &keys);
     QStringList setData(const QMap<QString, QVariant> &data);   //!< Returns keys that did not set successfully
 signals:
@@ -62,6 +65,9 @@ signals:
     void stateChanged();
     void opProgressChanged();
     void writeCacheDirtyChanged();
+    void intfcChanged();
+
+    void never();
 public slots:
     void download();
     void upload();

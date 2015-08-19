@@ -7,36 +7,40 @@
 namespace SetupTools {
 namespace Xcp {
 
+ParamRegistry::ParamRegistry(QObject *parent) :
+    QObject(parent)
+{}
+
 ParamRegistry::ParamRegistry(quint32 addrGran, QObject *parent) :
     QObject(parent),
-    mTable(addrGran, this)
+    mTable(new MemoryRangeTable(addrGran, this))
 {
-    connect(&mTable, &MemoryRangeTable::connectionChanged, this, &ParamRegistry::onTableConnectionChanged);
+    connect(mTable, &MemoryRangeTable::connectionChanged, this, &ParamRegistry::onTableConnectionChanged);
 }
 
 quint32 ParamRegistry::addrGran() const
 {
-    return mTable.addrGran();
+    return mTable->addrGran();
 }
 
 ConnectionFacade *ParamRegistry::connectionFacade() const
 {
-    return mTable.connectionFacade();
+    return mTable->connectionFacade();
 }
 
 void ParamRegistry::setConnectionFacade(ConnectionFacade *facade)
 {
-    mTable.setConnectionFacade(facade);
+    mTable->setConnectionFacade(facade);
 }
 
 bool ParamRegistry::connectionOk() const
 {
-    return mTable.connectionOk();
+    return mTable->connectionOk();
 }
 
 const MemoryRangeTable *ParamRegistry::table() const
 {
-    return &mTable;
+    return mTable;
 }
 
 const QList<QString> &ParamRegistry::paramKeys() const
@@ -44,17 +48,25 @@ const QList<QString> &ParamRegistry::paramKeys() const
     return mParamKeys;
 }
 
+const QList<QString> &ParamRegistry::saveableParamKeys() const
+{
+    return mSaveableParamKeys;
+}
+
 bool ParamRegistry::writeCacheDirty() const
 {
     return !mWriteCacheDirtyKeys.empty();
 }
 
-Param *ParamRegistry::addScalarParam(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable, bool saveable, const Slot *slot, QString key)
+ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot, QString key)
 {
     if(mParams.count(key))
         return nullptr;
 
-    MemoryRange *range = mTable.addScalarRange(type, base, writable);
+    if(!MemoryRange::isValidType(type))
+        return nullptr;
+
+    MemoryRange *range = mTable->addScalarRange(MemoryRange::MemoryRangeType(type), base, writable);
     if(range == nullptr)
         return nullptr;
 
@@ -65,11 +77,14 @@ Param *ParamRegistry::addScalarParam(MemoryRange::MemoryRangeType type, XcpPtr b
     param->saveable = saveable;
     param->key = key;
     mParams[key] = param;
+    mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key), key);
+    if(saveable)
+        mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), key), key);
     connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
     return param;
 }
 
-Param *ParamRegistry::addTableParam(MemoryRange::MemoryRangeType type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const TableAxis *axis, QString key)
+TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const SetupTools::TableAxis *axis, QString key)
 {
     if(mParams.count(key))
         return nullptr;
@@ -77,7 +92,10 @@ Param *ParamRegistry::addTableParam(MemoryRange::MemoryRangeType type, XcpPtr ba
     if(count < 1)
         return nullptr;
 
-    MemoryRange *range = mTable.addTableRange(type, base, count, writable);
+    if(!MemoryRange::isValidType(type))
+        return nullptr;
+
+    MemoryRange *range = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
     if(range == nullptr)
         return nullptr;
 
@@ -88,18 +106,57 @@ Param *ParamRegistry::addTableParam(MemoryRange::MemoryRangeType type, XcpPtr ba
     param->saveable = saveable;
     param->key = key;
     mParams[key] = param;
+    mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key), key);
+    if(saveable)
+        mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), key), key);
     connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
     return param;
 }
 
-Param *ParamRegistry::addScalarParam(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable, bool saveable, const Slot *slot)
+ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot)
 {
     return addScalarParam(type, base, writable, saveable, slot, base.toString());
 }
 
-Param *ParamRegistry::addTableParam(MemoryRange::MemoryRangeType type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const TableAxis *axis)
+TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, int count, bool writable, bool saveable, const SetupTools::Slot *slot, const SetupTools::TableAxis *axis)
 {
     return addTableParam(type, base, count, writable, saveable, slot, axis, base.toString());
+}
+
+ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar, QString key)
+{
+    const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
+    Q_ASSERT(slot);
+    XcpPtr basePtr(base);
+    return addScalarParam(type, basePtr, writable, saveable, slot, key);
+}
+
+TableParam *ParamRegistry::addTableParam(int type, quint32 base, int count, bool writable, bool saveable, QVariant slotVar, QVariant axisVar, QString key)
+{
+    const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
+    Q_ASSERT(slot);
+    const TableAxis *axis = qobject_cast<TableAxis *>(axisVar.value<QObject *>());
+    Q_ASSERT(axis);
+    XcpPtr basePtr(base);
+    return addTableParam(type, basePtr, count, writable, saveable, slot, axis, key);
+}
+
+ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar)
+{
+    const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
+    Q_ASSERT(slot);
+    XcpPtr basePtr(base);
+    return addScalarParam(type, basePtr, writable, saveable, slot, basePtr.toString());
+}
+
+TableParam *ParamRegistry::addTableParam(int type, quint32 base, int count, bool writable, bool saveable, QVariant slotVar, QVariant axisVar)
+{
+    const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
+    Q_ASSERT(slot);
+    const TableAxis *axis = qobject_cast<TableAxis *>(axisVar.value<QObject *>());
+    Q_ASSERT(axis);
+    XcpPtr basePtr(base);
+    return addTableParam(type, basePtr, count, writable, saveable, slot, axis, basePtr.toString());
 }
 
 Param *ParamRegistry::getParam(QString key)

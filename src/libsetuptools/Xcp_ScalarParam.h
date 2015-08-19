@@ -19,6 +19,7 @@ class ScalarParam : public Param
     Q_PROPERTY(QString unit READ unit)
     Q_PROPERTY(QString name MEMBER name)
 public:
+    ScalarParam(QObject *parent = nullptr);
     ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *parent = nullptr);
     double floatVal() const;
     QString stringVal() const;

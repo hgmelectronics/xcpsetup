@@ -34,6 +34,18 @@ QUrl ProgramLayer::intfcUri()
 void ProgramLayer::setIntfcUri(QUrl uri)
 {
     mConn->setIntfcUri(uri);
+    emit intfcChanged();
+}
+
+Interface::Interface *ProgramLayer::intfc()
+{
+    return mConn->intfc();
+}
+
+void ProgramLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
+{
+    mConn->setIntfc(intfc, uri);
+    emit intfcChanged();
 }
 
 QString ProgramLayer::slaveId()

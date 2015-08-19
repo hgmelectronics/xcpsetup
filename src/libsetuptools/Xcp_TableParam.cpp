@@ -3,6 +3,15 @@
 namespace SetupTools {
 namespace Xcp {
 
+TableParam::TableParam(QObject *parent) :
+    Param(parent),
+    mRange(nullptr),
+    mSlot(nullptr),
+    mAxis(nullptr),
+    mStringModel(new TableParamListModel(true, this)),
+    mFloatModel(new TableParamListModel(false, this))
+{}
+
 TableParam::TableParam(TableMemoryRange *range, const Slot *slot, const TableAxis *axis, QObject *parent) :
     Param(range, parent),
     mRange(range),
@@ -26,6 +35,7 @@ TableParam::TableParam(TableMemoryRange *range, const Slot *slot, const TableAxi
 
 QString TableParam::unit(int role)
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     switch(role)
     {
     case TableAxisRole::XRole:
@@ -45,69 +55,82 @@ QString TableParam::unit(int role)
 
 TableParamListModel *TableParam::stringModel()
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mStringModel;
 }
 
 TableParamListModel *TableParam::floatModel()
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mFloatModel;
 }
 
 QString TableParam::xLabel() const
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mXLabel;
 }
 
 QString TableParam::yLabel() const
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mYLabel;
 }
 
 QString TableParam::valueLabel() const
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mValueLabel;
 }
 
 void TableParam::setXLabel(QString newVal)
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     if(updateDelta<>(mXLabel, newVal))
         emit xLabelChanged();
 }
 
 void TableParam::setYLabel(QString newVal)
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     if(updateDelta<>(mYLabel, newVal))
         emit yLabelChanged();
 }
 
 void TableParam::setValueLabel(QString newVal)
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     if(updateDelta<>(mValueLabel, newVal))
         emit valueLabelChanged();
 }
 
 QString TableParam::xUnit() const
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mAxis->xUnit();
 }
 
 QString TableParam::yUnit() const
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mAxis->yUnit();
 }
 
 QString TableParam::valueUnit() const
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mSlot->unit();
 }
 
 const TableMemoryRange *TableParam::range() const
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     return mRange;
 }
 
 QVariant TableParam::getSerializableValue()
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     QStringList ret;
     ret.reserve(mRange->rowCount());
     for(QVariant elem : mRange->data())
@@ -117,6 +140,7 @@ QVariant TableParam::getSerializableValue()
 
 bool TableParam::setSerializableValue(const QVariant &val)
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     QStringList stringList = val.toStringList();
@@ -139,6 +163,7 @@ bool TableParam::setSerializableValue(const QVariant &val)
 
 void TableParam::resetCaches()
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     mRange->resetCaches();
 }
 
@@ -169,11 +194,13 @@ void TableParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
 
 void TableParam::upload()
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     mRange->upload();
 }
 
 void TableParam::download()
 {
+    Q_ASSERT(mAxis && mRange && mSlot);
     mRange->download();
 }
 

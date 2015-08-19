@@ -19,6 +19,7 @@ namespace Xcp
 
 enum class OpResult {
     Success,
+    _FAILURE_BEGIN,
     NoIntfc,
     NotConnected,
     WrongMode,
@@ -51,7 +52,14 @@ enum class OpResult {
     SlaveErrorMemoryOverflow,
     SlaveErrorGeneric,
     SlaveErrorVerify,
-    SlaveErrorUndefined
+    SlaveErrorUndefined,
+    UnknownError,
+    CorruptedFile,
+    FileOpenFail,
+    FileReadFail,
+    FileWriteFail,
+    _WARNING_BEGIN,
+    WarnKeyLoadFailure
 };
 
 class OpResultWrapper : public QObject
@@ -94,10 +102,19 @@ public:
         SlaveErrorMemoryOverflow =  static_cast<int>(SetupTools::Xcp::OpResult::SlaveErrorMemoryOverflow),
         SlaveErrorGeneric =         static_cast<int>(SetupTools::Xcp::OpResult::SlaveErrorGeneric),
         SlaveErrorVerify =          static_cast<int>(SetupTools::Xcp::OpResult::SlaveErrorVerify),
-        SlaveErrorUndefined =       static_cast<int>(SetupTools::Xcp::OpResult::SlaveErrorUndefined)
+        SlaveErrorUndefined =       static_cast<int>(SetupTools::Xcp::OpResult::SlaveErrorUndefined),
+        UnknownError =              static_cast<int>(SetupTools::Xcp::OpResult::UnknownError),
+        CorruptedFile =             static_cast<int>(SetupTools::Xcp::OpResult::CorruptedFile),
+        FileOpenFail =              static_cast<int>(SetupTools::Xcp::OpResult::FileOpenFail),
+        FileReadFail =              static_cast<int>(SetupTools::Xcp::OpResult::FileReadFail),
+        FileWriteFail =             static_cast<int>(SetupTools::Xcp::OpResult::FileWriteFail),
+        WarnKeyLoadFailure =        static_cast<int>(SetupTools::Xcp::OpResult::WarnKeyLoadFailure)
     };
 
     Q_INVOKABLE QString asString(int result);
+    Q_INVOKABLE bool isOk(int result);
+    Q_INVOKABLE bool isFailure(int result);
+    Q_INVOKABLE bool isWarning(int result);
 
     static QObject *create(QQmlEngine *engine, QJSEngine *scriptEngine);
 private:

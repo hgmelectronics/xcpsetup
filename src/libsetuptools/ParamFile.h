@@ -14,9 +14,9 @@ class ParamFile : public QObject
     Q_OBJECT
     Q_ENUMS(Type)
     Q_ENUMS(Result)
-    Q_PROPERTY(QString name READ name WRITE setName)
-    Q_PROPERTY(Type type READ type WRITE setType)
-    Q_PROPERTY(bool valid READ valid NOTIFY mapChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(Type type READ type WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(bool exists READ exists NOTIFY nameChanged)
 public:
     enum Type
     {
@@ -29,6 +29,7 @@ public:
         Ok,
         CorruptedFile,
         FileOpenFail,
+        FileReadFail,
         InvalidType,
         FileWriteFail
     };
@@ -38,23 +39,24 @@ public:
     void setName(QString newName);
     Type type();
     void setType(Type newType);
-    bool valid();
-    QMap<QString, QVariant> &map();
+    bool exists();
+
+    Q_INVOKABLE static QString resultString(int result);
 public slots:
-    Result read();
-    Result write();
+    Result read(QMap<QString, QVariant> &mapOut);
+    Result write(const QMap<QString, QVariant> &map);
 signals:
-    void mapChanged();
-    void jsonParseError(QString info);
+    void nameChanged();
+    void typeChanged();
+    void parseError(QString info);
 private:
-    Result readJson(QFile &file);
-    Result writeJson(QFile &file);
+    Result readJson(QFile &file, QMap<QString, QVariant> &mapOut);
+    Result writeJson(QFile &file, const QMap<QString, QVariant> &map);
     bool isTypeOk() const;
 
     QString mName;
     Type mType;
-    bool mValid;
-    QMap<QString, QVariant> mMap;
+    bool mExists;
 };
 
 }   // namespace SetupTools

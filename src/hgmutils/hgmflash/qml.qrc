@@ -41,5 +41,7 @@
         <file>QtWebChannel/qmldir</file>
         <file>QtWebSockets/qmldir</file>
         <file>QtWinExtras/qmldir</file>
+        <file>ParamWindow.qml</file>
+        <file>Slots.qml</file>
     </qresource>
 </RCC>

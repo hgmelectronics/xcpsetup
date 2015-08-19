@@ -65,13 +65,18 @@ void ConnectionFacade::setIntfcUri(QUrl val)
     }
 }
 
-void ConnectionFacade::setIntfc(Interface::Interface *intfc)
+Interface::Interface *ConnectionFacade::intfc()
+{
+    return mIntfc;
+}
+
+void ConnectionFacade::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
     if(mIntfc != intfc)
     {
         if(mIntfc)
             delete mIntfc;
-        mIntfcUri = "testing";
+        mIntfcUri = uri;
         mIntfc = intfc;
         mConn->setIntfc(intfc);
     }

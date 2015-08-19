@@ -66,6 +66,10 @@ public:
 
     bool writeCacheDirty() const;
 
+    static inline bool isValidType(int type) {
+        return (type >= U8 && type < F64);
+    }
+
 signals:
     void writableChanged();
     void validChanged();

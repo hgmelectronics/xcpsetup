@@ -18,9 +18,9 @@ namespace Xcp
 QString XcpPtr::toString() const
 {
     if(ext == 0)
-        return QString("%1").arg(addr, 16, 8, QChar('0'));
+        return QString("%1").arg(addr, 8, 16, QChar('0'));
     else
-        return QString("%1:%1").arg(ext, 16, 2, QChar('0')).arg(addr, 16, 8, QChar('0'));
+        return QString("%1:%1").arg(ext, 2, 16, QChar('0')).arg(addr, 16, 8, QChar('0'));
 }
 
 XcpPtr XcpPtr::fromString(QString str, bool *ok)

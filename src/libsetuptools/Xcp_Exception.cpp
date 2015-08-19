@@ -54,8 +54,29 @@ namespace SetupTools
             case SlaveErrorGeneric:         return "Slave error: generic";
             case SlaveErrorVerify:          return "Slave error: verification failed";
             case SlaveErrorUndefined:       return "Slave error: undefined error";
-            default:                                    return "Untranslated error";
+            case UnknownError:              return "Unknown error";
+            case CorruptedFile:             return "Corrupted file";
+            case FileOpenFail:              return "Unable to open file";
+            case FileReadFail:              return "Unable to read file";
+            case FileWriteFail:             return "Unable to write file";
+            case WarnKeyLoadFailure:        return "Some keys failed to load";
+            default:                        return "Untranslated error";
             }
+        }
+
+        bool OpResultWrapper::isOk(int result)
+        {
+            return (result == Success);
+        }
+
+        bool OpResultWrapper::isFailure(int result)
+        {
+            return (result > static_cast<int>(SetupTools::Xcp::OpResult::_FAILURE_BEGIN)) && (result < static_cast<int>(SetupTools::Xcp::OpResult::_WARNING_BEGIN));
+        }
+
+        bool OpResultWrapper::isWarning(int result)
+        {
+            return (result > static_cast<int>(SetupTools::Xcp::OpResult::_WARNING_BEGIN));
         }
     }
 }

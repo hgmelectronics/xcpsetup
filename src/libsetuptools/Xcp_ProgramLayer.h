@@ -11,7 +11,7 @@ namespace Xcp {
 class ProgramLayer : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
+    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcChanged)
     Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
     Q_PROPERTY(ConnectionFacade *conn READ conn)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
@@ -28,6 +28,8 @@ public:
 
     QUrl intfcUri();
     void setIntfcUri(QUrl);
+    Interface::Interface *intfc();
+    void setIntfc(Interface::Interface *intfc, QUrl uri = QUrl("testing")); // for interfaces shared between higher layers - use with caution!
     QString slaveId();
     void setSlaveId(QString);
     ConnectionFacade *conn();
@@ -53,6 +55,7 @@ signals:
     void pgmModeDone(OpResult result);
     void stateChanged();
     void opProgressChanged();
+    void intfcChanged();
 public slots:
     void program(FlashProg *prog, quint8 addrExt = 0, bool finalEmptyPacket = true);
     void programVerify(FlashProg *prog, CksumType type, quint8 addrExt = 0);    // For bootloaders that need PROGRAM_VERIFY to finish their flash write
