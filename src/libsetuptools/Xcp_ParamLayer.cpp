@@ -176,7 +176,8 @@ void ParamLayer::download(QStringList keys)
     }
 
     mActiveKeys = keys;
-    mActiveKeyIt = keys.begin();
+    mActiveKeyIt = mActiveKeys.begin();
+    mActiveResult = OpResult::Success;
     emit opProgressChanged();
 
     if(keys.empty())
@@ -203,7 +204,7 @@ void ParamLayer::upload(QStringList keys)
     }
 
     mActiveKeys = keys;
-    mActiveKeyIt = keys.begin();
+    mActiveKeyIt = mActiveKeys.begin();
     mActiveResult = OpResult::Success;
     emit opProgressChanged();
 
@@ -229,6 +230,8 @@ void ParamLayer::nvWrite()
         emit nvWriteDone(OpResult::InvalidOperation);
         return;
     }
+
+    mActiveResult = OpResult::Success;
 
     setState(State::NvWrite);
 
