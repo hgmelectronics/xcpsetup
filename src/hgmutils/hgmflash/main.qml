@@ -89,6 +89,7 @@ ApplicationWindow {
         onUserConnectParam: cs2Tool.startParamConnect()
         onUserDownloadParam: cs2Tool.startParamDownload()
         onUserUploadParam: cs2Tool.startParamUpload()
+        onUserNvWriteParam: cs2Tool.startParamNvWrite()
         onUserDisconnectParam: cs2Tool.startParamDisconnect()
         onUserShowParamEdit: paramWindow.show()
         targetCmdId: cs2Tool.slaveCmdId
@@ -137,6 +138,12 @@ ApplicationWindow {
                 messageDialog.show("Parameter upload complete")
             else
                 errorDialog.show("Parameter upload failed: " + OpResult.asString(result))
+        }
+        onParamNvWriteDone: {
+            if(result == OpResult.Success)
+                messageDialog.show("Nonvolatile memory write complete")
+            else
+                errorDialog.show("Nonvolatile memory write failed: " + OpResult.asString(result))
         }
         onParamDisconnectDone: {
             if(result != OpResult.Success)

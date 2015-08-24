@@ -34,6 +34,7 @@ ColumnLayout {
     signal userConnectParam()
     signal userDownloadParam()
     signal userUploadParam()
+    signal userNvWriteParam()
     signal userDisconnectParam()
     signal userShowParamEdit()
 
@@ -344,6 +345,14 @@ ColumnLayout {
                 id: paramUploadButton
                 text: qsTr("Upload")
                 onClicked: root.userUploadParam()
+                enabled: toolReadyParam
+            }
+            Button {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                Layout.fillWidth: true
+                id: paramNvWriteButton
+                text: qsTr("NV Write")
+                onClicked: root.userNvWriteParam()
                 enabled: toolReadyParam
             }
             Button {
