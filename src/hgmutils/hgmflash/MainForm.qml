@@ -329,7 +329,7 @@ ColumnLayout {
                 id: paramConnectButton
                 text: qsTr("Connect")
                 onClicked: root.userConnectParam()
-                enabled: !toolBusy
+                enabled: toolReadyParam && !toolBusy
             }
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
