@@ -21,7 +21,7 @@ public:
 
     Id();
     Id(quint32 addr_in, Type ext_in);
-    operator QString();
+    operator QString() const;
 
     quint32 addr;
     Type type;
@@ -62,7 +62,7 @@ public:
     Frame();
     Frame(Id id_in, const std::vector<quint8> &data_in);
     Frame(quint32 id_in, Id::Type idType_in, const std::vector<quint8> &data_in);
-    operator QString();
+    operator QString() const;
 
     Id id;
     std::vector<quint8> data;

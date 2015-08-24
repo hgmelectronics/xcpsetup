@@ -19,7 +19,7 @@ Id::Id(quint32 addr_in, Type ext_in) :
     type(ext_in)
 {}
 
-Id::operator QString()
+Id::operator QString() const
 {
     if(type == Type::Std)
         return QString("%1").arg(addr, 3, 16, QChar('0'));
@@ -137,7 +137,7 @@ Frame::Frame(quint32 id_in, Id::Type idType_in, const std::vector<quint8> &data_
     data(data_in)
 {}
 
-Frame::operator QString()
+Frame::operator QString() const
 {
     QByteArray dataArr(reinterpret_cast<const char *>(data.data()), data.size());
 
