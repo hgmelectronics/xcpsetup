@@ -168,6 +168,13 @@ void Cs2Tool::setIntfcUri(QUrl uri)
 
     mProgLayer->setIntfcUri(uri);
     mParamLayer->setIntfc(mProgLayer->intfc(), uri);
+    if(mProgLayer->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mProgLayer->intfc()->setPacketLog(true);
+        else
+            mProgLayer->intfc()->setPacketLog(false);
+    }
     emit intfcUriChanged();
 }
 
