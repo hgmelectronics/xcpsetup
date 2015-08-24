@@ -54,9 +54,10 @@ std::vector<std::vector<quint8> >  Interface::slaveReceive(int timeoutMsec)
     return mSlaveReceiveQueue.getAll(timeoutMsec);
 }
 
-void  Interface::setPacketLog(bool enable)
+SetupTools::Xcp::OpResult Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
+    return OpResult::Success;
 }
 
  void Interface::setHasReliableTx(bool val)
