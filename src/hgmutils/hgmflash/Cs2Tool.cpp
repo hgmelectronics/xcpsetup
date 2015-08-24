@@ -281,7 +281,7 @@ void Cs2Tool::startParamConnect()
 
 void Cs2Tool::startParamDownload()
 {
-    if(mState != State::Idle || mState != State::ParamConnected)
+    if(mState != State::Idle && mState != State::ParamConnected)
     {
         emit paramDownloadDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
         return;
@@ -297,7 +297,7 @@ void Cs2Tool::startParamDownload()
 
 void Cs2Tool::startParamUpload()
 {
-    if(mState != State::Idle || mState != State::ParamConnected)
+    if(mState != State::Idle && mState != State::ParamConnected)
     {
         emit paramUploadDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
         return;
@@ -369,7 +369,7 @@ void Cs2Tool::saveParamFile()
 
 void Cs2Tool::startParamNvWrite()
 {
-    if(mState != State::Idle || mState != State::ParamConnected)
+    if(mState != State::Idle && mState != State::ParamConnected)
     {
         emit paramNvWriteDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
         return;
@@ -385,7 +385,7 @@ void Cs2Tool::startParamNvWrite()
 
 void Cs2Tool::startParamDisconnect()
 {
-    if(mState != State::Idle || mState != State::ParamConnected)
+    if(mState != State::Idle && mState != State::ParamConnected)
     {
         emit paramDisconnectDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
         return;
