@@ -30,6 +30,7 @@ Window {
         anchors.fill: parent
         Tab {
             title: "System"
+            active: true
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
@@ -46,6 +47,7 @@ Window {
         }
         Tab {
             title: "Ratios And More"
+            active: true
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
@@ -62,6 +64,7 @@ Window {
         }
         Tab {
             title: "Foo"
+            active: true
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
@@ -74,6 +77,7 @@ Window {
         }
         Tab {
             title: "Bar"
+            active: true
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
