@@ -412,6 +412,7 @@ void ParamLayer::downloadKey()
     Param *param = getNextParam();
     if(param == nullptr)
     {
+        setState(State::Connected);
         emit downloadDone(mActiveResult, mActiveKeys);
         return;
     }
@@ -427,6 +428,7 @@ void ParamLayer::uploadKey()
     Param *param = getNextParam();
     if(param == nullptr)
     {
+        setState(State::Connected);
         emit uploadDone(mActiveResult, mActiveKeys);
         return;
     }
