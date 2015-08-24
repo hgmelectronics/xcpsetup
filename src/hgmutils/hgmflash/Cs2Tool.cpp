@@ -564,7 +564,7 @@ void Cs2Tool::onParamDownloadDone(SetupTools::Xcp::OpResult result, QStringList 
     if(mParamDisconnectWhenDone)
     {
         mLastParamResult = result;
-        mParamLayer->disconnect();
+        mParamLayer->disconnectSlave();
     }
     else
     {
@@ -582,7 +582,7 @@ void Cs2Tool::onParamUploadDone(SetupTools::Xcp::OpResult result, QStringList ke
     if(mParamDisconnectWhenDone)
     {
         mLastParamResult = result;
-        mParamLayer->disconnect();
+        mParamLayer->disconnectSlave();
     }
     else
     {
@@ -598,7 +598,7 @@ void Cs2Tool::onParamNvWriteDone(SetupTools::Xcp::OpResult result)
     if(mParamDisconnectWhenDone)
     {
         mLastParamResult = result;
-        mParamLayer->disconnect();
+        mParamLayer->disconnectSlave();
     }
     else
     {
