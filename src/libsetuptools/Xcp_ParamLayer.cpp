@@ -407,7 +407,7 @@ void ParamLayer::onRegistryWriteCacheDirtyChanged()
 void ParamLayer::downloadKey()
 {
     Q_ASSERT(mState == State::Download);
-    Q_ASSERT(mActiveKeyIt >= mActiveKeys.begin() && mActiveKeyIt < mActiveKeys.end());
+    Q_ASSERT(mActiveKeyIt >= mActiveKeys.begin() && mActiveKeyIt <= mActiveKeys.end());
 
     Param *param = getNextParam();
     if(param == nullptr)
@@ -423,7 +423,7 @@ void ParamLayer::downloadKey()
 void ParamLayer::uploadKey()
 {
     Q_ASSERT(mState == State::Upload);
-    Q_ASSERT(mActiveKeyIt >= mActiveKeys.begin() && mActiveKeyIt < mActiveKeys.end());
+    Q_ASSERT(mActiveKeyIt >= mActiveKeys.begin() && mActiveKeyIt <= mActiveKeys.end());
 
     Param *param = getNextParam();
     if(param == nullptr)
