@@ -207,7 +207,7 @@ bool Cs2Tool::intfcOk()
 
 bool Cs2Tool::idle()
 {
-    return mProgLayer->idle();
+    return mProgLayer->idle() && mParamLayer->idle();
 }
 
 Xcp::ParamLayer *Cs2Tool::paramLayer()
