@@ -479,8 +479,11 @@ OpResult Interface::receiveFrames(int timeoutMsec, std::vector<Frame> &out, cons
         for(const Frame & newFrame : mIo->getRcvdFrames(queueReadTimeout))
         {
             if(filter.Matches(newFrame.id) &&
-                    (!validator || validator(newFrame)))
+                    (!validator || validator(newFrame))) {
                 out.push_back(newFrame);
+                if(mPacketLogEnabled)
+                    qDebug() << QString(newFrame);
+            }
         }
     } while(timer.nsecsElapsed() <= timeoutNsec && !out.size());
 
