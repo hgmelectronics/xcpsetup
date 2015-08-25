@@ -40,13 +40,13 @@ public:
     bool writeCacheDirty() const;
 
     SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot, QString key);
-    SetupTools::Xcp::TableParam *addTableParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, const SetupTools::Slot *slot, const SetupTools::TableAxis *axis, QString key);
+    SetupTools::Xcp::TableParam *addTableParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot, const SetupTools::TableAxis *axis, QString key);
     SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot);
-    SetupTools::Xcp::TableParam *addTableParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, const SetupTools::Slot *slot, const SetupTools::TableAxis *axis);
+    SetupTools::Xcp::TableParam *addTableParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot, const SetupTools::TableAxis *axis);
     Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slot, QString key);
-    Q_INVOKABLE SetupTools::Xcp::TableParam *addTableParam(int type, quint32 base, int count, bool writable, bool saveable, QVariant slot, QVariant axis, QString key);
+    Q_INVOKABLE SetupTools::Xcp::TableParam *addTableParam(int type, quint32 base, bool writable, bool saveable, QVariant slot, QVariant axis, QString key);
     Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slot);
-    Q_INVOKABLE SetupTools::Xcp::TableParam *addTableParam(int type, quint32 base, int count, bool writable, bool saveable, QVariant slot, QVariant axis);
+    Q_INVOKABLE SetupTools::Xcp::TableParam *addTableParam(int type, quint32 base, bool writable, bool saveable, QVariant slot, QVariant axis);
     Q_INVOKABLE SetupTools::Xcp::Param *getParam(QString key);
     Q_INVOKABLE void resetCaches();
 signals:

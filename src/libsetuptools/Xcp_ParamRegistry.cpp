@@ -95,8 +95,10 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
     return param;
 }
 
-TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, int count, bool writable, bool saveable, const Slot *slot, const SetupTools::TableAxis *axis, QString key)
+TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, bool saveable, const Slot *slot, const SetupTools::TableAxis *axis, QString key)
 {
+    if(slot == nullptr || axis == nullptr)
+        return nullptr;
     if(mParams.count(key))
     {
         TableParam *other = qobject_cast<TableParam *>(mParams[key]);
@@ -104,7 +106,7 @@ TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, int count, bool 
                 || other->range()->base() != base
                 || other->range()->type() != type
                 || other->range()->writable() != writable
-                || other->range()->dim() != quint32(count)
+                || other->range()->dim() != quint32(axis->rowCount())
                 || other->saveable != saveable
                 || other->slot() != slot
                 || other->axis() != axis)
@@ -113,13 +115,13 @@ TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, int count, bool 
             return other;
     }
 
-    if(count < 1)
+    if(axis->rowCount() < 1)
         return nullptr;
 
     if(!MemoryRange::isValidType(type))
         return nullptr;
 
-    MemoryRange *range = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
+    MemoryRange *range = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, axis->rowCount(), writable);
     if(range == nullptr)
         return nullptr;
 
@@ -142,9 +144,9 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
     return addScalarParam(type, base, writable, saveable, slot, base.toString());
 }
 
-TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, int count, bool writable, bool saveable, const SetupTools::Slot *slot, const SetupTools::TableAxis *axis)
+TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot, const SetupTools::TableAxis *axis)
 {
-    return addTableParam(type, base, count, writable, saveable, slot, axis, base.toString());
+    return addTableParam(type, base, writable, saveable, slot, axis, base.toString());
 }
 
 ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar, QString key)
@@ -155,14 +157,14 @@ ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable
     return addScalarParam(type, basePtr, writable, saveable, slot, key);
 }
 
-TableParam *ParamRegistry::addTableParam(int type, quint32 base, int count, bool writable, bool saveable, QVariant slotVar, QVariant axisVar, QString key)
+TableParam *ParamRegistry::addTableParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar, QVariant axisVar, QString key)
 {
     const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
     Q_ASSERT(slot);
     const TableAxis *axis = qobject_cast<TableAxis *>(axisVar.value<QObject *>());
     Q_ASSERT(axis);
     XcpPtr basePtr(base);
-    return addTableParam(type, basePtr, count, writable, saveable, slot, axis, key);
+    return addTableParam(type, basePtr, writable, saveable, slot, axis, key);
 }
 
 ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar)
@@ -173,14 +175,14 @@ ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable
     return addScalarParam(type, basePtr, writable, saveable, slot, basePtr.toString());
 }
 
-TableParam *ParamRegistry::addTableParam(int type, quint32 base, int count, bool writable, bool saveable, QVariant slotVar, QVariant axisVar)
+TableParam *ParamRegistry::addTableParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar, QVariant axisVar)
 {
     const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
     Q_ASSERT(slot);
     const TableAxis *axis = qobject_cast<TableAxis *>(axisVar.value<QObject *>());
     Q_ASSERT(axis);
     XcpPtr basePtr(base);
-    return addTableParam(type, basePtr, count, writable, saveable, slot, axis, basePtr.toString());
+    return addTableParam(type, basePtr, writable, saveable, slot, axis, basePtr.toString());
 }
 
 Param *ParamRegistry::getParam(QString key)
