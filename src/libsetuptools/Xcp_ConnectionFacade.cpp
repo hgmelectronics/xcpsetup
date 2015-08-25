@@ -8,6 +8,7 @@ namespace Xcp {
 ConnectionFacade::ConnectionFacade(QObject *parent) :
     QObject(parent),
     mIntfc(),
+    mIntfcOwned(false),
     mConn(new Connection(nullptr)),
     mConnThread(new QThread(this))
 {
@@ -57,10 +58,11 @@ void ConnectionFacade::setIntfcUri(QUrl val)
 {
     if(mIntfcUri != val)
     {
-        if(mIntfc)
+        if(mIntfc && mIntfcOwned)
             delete mIntfc;
         mIntfcUri = val;
         mIntfc = Interface::Registry().make(mIntfcUri);
+        mIntfcOwned = true;
         mConn->setIntfc(mIntfc);
     }
 }
@@ -74,10 +76,11 @@ void ConnectionFacade::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
     if(mIntfc != intfc)
     {
-        if(mIntfc)
+        if(mIntfc && mIntfcOwned)
             delete mIntfc;
         mIntfcUri = uri;
         mIntfc = intfc;
+        mIntfcOwned = false;
         mConn->setIntfc(intfc);
     }
 }

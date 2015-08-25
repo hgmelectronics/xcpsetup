@@ -119,6 +119,7 @@ public slots:
     void onConnOpProgressChanged();
 private:
     Interface::Interface* mIntfc;
+    bool mIntfcOwned;
     QUrl mIntfcUri;
     Connection *mConn;
     QThread *mConnThread;
