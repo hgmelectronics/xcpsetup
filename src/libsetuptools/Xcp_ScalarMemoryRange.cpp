@@ -136,7 +136,7 @@ void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpP
         emit valueChanged();
         setValid(false);
     }
-    setWriteCacheDirty((mValue == mSlaveValue) || (!mValue.isValid() && !mSlaveValue.isValid()));
+    setWriteCacheDirty(mValue != mSlaveValue);
 }
 
 } // namespace Xcp
