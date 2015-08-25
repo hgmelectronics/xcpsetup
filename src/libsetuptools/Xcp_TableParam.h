@@ -18,8 +18,8 @@ class TableParam : public SetupTools::Xcp::Param
 
     friend class TableParamListModel;
 
-    Q_PROPERTY(TableParamListModel *stringModel READ stringModel)
-    Q_PROPERTY(TableParamListModel *floatModel READ floatModel)
+    Q_PROPERTY(TableParamListModel *stringModel READ stringModel NOTIFY modelDataChanged)
+    Q_PROPERTY(TableParamListModel *floatModel READ floatModel NOTIFY modelDataChanged)
     Q_PROPERTY(QString name MEMBER name)
     Q_PROPERTY(QString xLabel READ xLabel WRITE setXLabel NOTIFY xLabelChanged)
     Q_PROPERTY(QString yLabel READ yLabel WRITE setYLabel NOTIFY yLabelChanged)
@@ -59,12 +59,14 @@ signals:
     void xUnitChanged();
     void yUnitChanged();
     void valueUnitChanged();
+    void modelDataChanged();
 public slots:
     void onAxisXUnitChanged();
     void onAxisYUnitChanged();
     void onSlotUnitChanged();
     void onRangeUploadDone(SetupTools::Xcp::OpResult result);
     void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
+    void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
     virtual void upload();
     virtual void download();
 private:

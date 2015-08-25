@@ -31,6 +31,7 @@ TableParam::TableParam(TableMemoryRange *range, const Slot *slot, const TableAxi
     connect(mSlot, &Slot::unitChanged, this, &TableParam::onSlotUnitChanged);
     connect(mRange, &MemoryRange::uploadDone, this, &TableParam::onRangeUploadDone);
     connect(mRange, &MemoryRange::downloadDone, this, &TableParam::onRangeDownloadDone);
+    connect(mRange, &TableMemoryRange::dataChanged, this, &TableParam::onRangeDataChanged);
 }
 
 QString TableParam::unit(int role)
@@ -202,6 +203,13 @@ void TableParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
 void TableParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
 {
     emit downloadDone(result);
+}
+
+void TableParam::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)
+{
+    Q_UNUSED(beginChanged);
+    Q_UNUSED(endChanged);
+    emit modelDataChanged();
 }
 
 void TableParam::upload()

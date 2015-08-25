@@ -29,6 +29,7 @@ void registerTypes()
     qmlRegisterUncreatableType<SetupTools::Xcp::Param>("com.setuptools.xcp", 1, 0, "Param", "SetupTools::Xcp::Param is uncreatable from within QML");
     qmlRegisterType<SetupTools::Xcp::ScalarParam>("com.setuptools.xcp", 1, 0, "ScalarParam");
     qmlRegisterType<SetupTools::Xcp::TableParam>("com.setuptools.xcp", 1, 0, "TableParam");
+    qmlRegisterUncreatableType<SetupTools::Xcp::TableParamListModel>("com.setuptools.xcp", 1, 0, "TableParamListModel", "SetupTools::Xcp::TableParamListModel is uncreatable from within QML");
     qmlRegisterUncreatableType<SetupTools::Xcp::MemoryRange>("com.setuptools.xcp", 1, 0, "MemoryRange", "SetupTools::Xcp::MemoryRange is uncreatable from within QML");
     qmlRegisterUncreatableType<SetupTools::Slot>("com.setuptools", 1, 0, "Slot", "SetupTools::Slot is uncreatable from within QML");
     qmlRegisterType<SetupTools::LinearSlot>("com.setuptools", 1, 0, "LinearSlot");
