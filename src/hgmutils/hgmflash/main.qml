@@ -128,15 +128,11 @@ ApplicationWindow {
                 errorDialog.show("Parameter load failed: " + OpResult.asString(result))
         }
         onParamDownloadDone: {
-            if(result == OpResult.Success)
-                messageDialog.show("Parameter download complete")
-            else
+            if(result != OpResult.Success)
                 errorDialog.show("Parameter download failed: " + OpResult.asString(result))
         }
         onParamUploadDone: {
-            if(result == OpResult.Success)
-                messageDialog.show("Parameter upload complete")
-            else
+            if(result != OpResult.Success)
                 errorDialog.show("Parameter upload failed: " + OpResult.asString(result))
         }
         onParamNvWriteDone: {
