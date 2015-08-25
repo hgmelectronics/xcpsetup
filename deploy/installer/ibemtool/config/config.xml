@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>IBEMTool</Name>
+    <Version>1.2</Version>
+    <Title>IBEM Flash Tool</Title>
+    <Publisher>Ebus Inc.</Publisher>
+    <StartMenuDir>Ebus</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/Ebus/IBEMTool</TargetDir>
+    <AllowSpaceInPath>true</AllowSpaceInPath>
+</Installer>

@@ -2,7 +2,12 @@ syntax: glob
 
 __pycache__
 *.pyc
-build
+build*
 dist
 MANIFEST
-src/cmdline/data
+local
+*.user
+deploy/installer/*/packages/*/data
+deploy/installer/*/*.exe
+deploy/installer/*/*.zip
+Thumbs.db

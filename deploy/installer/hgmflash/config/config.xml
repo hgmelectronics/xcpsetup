@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>HGMFlash</Name>
+    <Version>1.0</Version>
+    <Title>HGM Flash Tool</Title>
+    <Publisher>HGM Automotive Electronics</Publisher>
+    <StartMenuDir>HGM</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/HGM/HGMFlash</TargetDir>
+    <Logo>hgmlogo.png</Logo>
+    <AllowSpaceInPath>true</AllowSpaceInPath>
+	<WizardStyle>Modern</WizardStyle>
+</Installer>

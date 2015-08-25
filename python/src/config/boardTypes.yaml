@@ -1,0 +1,41 @@
+xcptoolsBoardTypes:
+  ebus-ibem:
+    timeouts:
+      regular: 0.5
+      nvWrite: 2.0
+      reboot: 5.0
+      broadcast: 0.2
+    broadcastId: 0x9F000000
+    ids:
+      _indexed:
+        cmdBase: 0x9F000100
+        resBase: 0x9F000101
+        idxRange: [0, 256]
+        idPitch: 0x00000002
+      recovery:
+        cmd: 0x9F000010
+        res: 0x9F000011
+  ebus-cda:
+    timeouts:
+      regular: 0.5
+      nvWrite: 2.0
+      reboot: 3.0
+      broadcast: 0.2
+    ids:
+      _indexed:
+        cmdBase: 0x9F000080
+        resBase: 0x9F000081
+        idxRange: [0, 2]
+        idPitch: 0x00000002
+      recovery:
+        cmd: 0x9F000010
+        res: 0x9F000011
+  hgm-cs2:
+    timeouts:
+      regular: 0.5
+      nvWrite: 5.0
+      reboot: 5.0
+    ids:
+      singleton:
+        cmd: 0x98FCD403
+        res: 0x98FCD4F9
