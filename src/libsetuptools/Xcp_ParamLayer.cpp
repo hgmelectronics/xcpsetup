@@ -362,7 +362,8 @@ void ParamLayer::onConnSetStateDone(OpResult result)
 
 void ParamLayer::onConnStateChanged()
 {
-    mRegistry->resetCaches();
+    if(mState == State::Disconnected && mConn->state() == Connection::State::CalMode)
+        mRegistry->resetCaches();
 
     Connection::State newState = mConn->state();
     if(newState == Connection::State::IntfcInvalid)
