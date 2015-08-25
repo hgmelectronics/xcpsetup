@@ -27,4 +27,12 @@ Item {
         unit: "rpm"
         precision: 0
     }
+    property LinearSlot booleanOnOff1: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1
+        engrB: 1
+        unit: ""
+        precision: 0
+    }
 }

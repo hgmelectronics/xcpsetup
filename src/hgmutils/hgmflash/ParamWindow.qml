@@ -24,6 +24,10 @@ Window {
     Slots {
         id: slots
     }
+
+    Axes {
+        id: axes
+    }
     
     TabView {
         id: paramTabView
@@ -63,15 +67,27 @@ Window {
             }
         }
         Tab {
-            title: "Foo"
+            title: "Tables"
             active: true
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
-                ScalarParamEdit {   // duplicate to illustrate binding
-                    name: "Display Brightness"
-                    param: registry.addScalarParam(MemoryRange.U32, 0x01020000, true, true, slots.percentage1)
+                TableParamView {
+                    name: "Switch Monitor Input"
+                    param: registry.addTableParam(MemoryRange.U32, 0x80500000, false, false, slots.booleanOnOff1, axes.switchMonitorId);
+                    Component.onCompleted: {
+                        param.xLabel = "Switch #"
+                        param.valueLabel = "State"
+                    }
+                }
+                TableParamEdit {
+                    name: "Shift Table 1-2 A"
+                    param: registry.addTableParam(MemoryRange.U32, 0x04240000, true, true, slots.rpm1, axes.percentage1);
+                    Component.onCompleted: {
+                        param.xLabel = "TPS"
+                        param.valueLabel = "TOSS"
+                    }
                 }
             }
         }
