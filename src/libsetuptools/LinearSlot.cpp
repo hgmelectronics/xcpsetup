@@ -131,6 +131,13 @@ QVariant LinearSlot::toRaw(QVariant engr) const
         return mOorRaw;
 }
 
+bool LinearSlot::rawInRange(QVariant raw) const
+{
+    bool convertedOk = false;
+    double rawConv = raw.toDouble(&convertedOk);
+    return (convertedOk && inRange(rawConv, mRawA, mRawB));
+}
+
 bool LinearSlot::engrInRange(QVariant engr) const
 {
     bool convertedOk = false;

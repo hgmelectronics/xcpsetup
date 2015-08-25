@@ -28,7 +28,7 @@ public:
     QString unit() const;
     const ScalarMemoryRange *range() const;
     const Slot *slot() const;
-    virtual QVariant getSerializableValue();
+    virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
     virtual bool setSerializableValue(const QVariant &val);
     virtual void resetCaches();
 

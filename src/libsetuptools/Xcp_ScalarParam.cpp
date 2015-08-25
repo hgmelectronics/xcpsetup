@@ -63,8 +63,13 @@ const Slot *ScalarParam::slot() const
     return mSlot;
 }
 
-QVariant ScalarParam::getSerializableValue()
+QVariant ScalarParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 {
+    bool inRange = mSlot->rawInRange(mRange->value());
+    if(allInRange)
+        *allInRange = inRange;
+    if(anyInRange)
+        *anyInRange = inRange;
     return stringVal();
 }
 

@@ -14,13 +14,15 @@ class Param : public QObject
 
     Q_PROPERTY(bool saveable MEMBER saveable)
     Q_PROPERTY(QString key MEMBER key)
+    Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
 public:
     explicit Param(QObject *parent = 0);
     explicit Param(MemoryRange *baseRange, QObject *parent = 0);
 
+    bool valid() const;
     bool writeCacheDirty() const;
-    virtual QVariant getSerializableValue() = 0;
+    virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr) = 0;
     virtual bool setSerializableValue(const QVariant &val) = 0;
     virtual void resetCaches() = 0;  //!< Set all write cache dirty and clear all read cache
 
@@ -30,9 +32,11 @@ signals:
     void uploadDone(SetupTools::Xcp::OpResult result);
     void downloadDone(SetupTools::Xcp::OpResult result);
     void writeCacheDirtyChanged(QString key);
+    void validChanged();
 public slots:
     virtual void upload() = 0;
     virtual void download() = 0;
+    void onRangeValidChanged();
     void onRangeWriteCacheDirtyChanged();
 private:
     MemoryRange *mBaseRange;

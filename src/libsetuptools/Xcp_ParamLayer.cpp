@@ -130,7 +130,13 @@ QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
     {
         Param *param = mRegistry->getParam(key);
         Q_ASSERT(param != nullptr);
-        ret[key] = param->getSerializableValue();
+        if(param->valid())
+        {
+            bool anyInRange = false;
+            QVariant value = param->getSerializableValue(nullptr, &anyInRange);
+            if(anyInRange)
+                ret[key] = value;
+        }
     }
     return ret;
 }

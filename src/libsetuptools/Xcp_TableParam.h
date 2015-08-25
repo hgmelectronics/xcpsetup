@@ -47,7 +47,7 @@ public:
     const Slot *slot() const;
     const TableAxis *axis() const;
 
-    virtual QVariant getSerializableValue();
+    virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
     virtual bool setSerializableValue(const QVariant &val);
     virtual void resetCaches();
 

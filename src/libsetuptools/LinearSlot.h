@@ -35,6 +35,7 @@ public:
     Q_INVOKABLE virtual double toFloat(QVariant raw) const;
     Q_INVOKABLE virtual QString toString(QVariant raw) const;
     Q_INVOKABLE virtual QVariant toRaw(QVariant engr) const;
+    Q_INVOKABLE virtual bool rawInRange(QVariant raw) const;
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const;
 signals:
     void linearValueParamChanged();

@@ -141,13 +141,24 @@ const TableAxis *TableParam::axis() const
     return mAxis;
 }
 
-QVariant TableParam::getSerializableValue()
+QVariant TableParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 {
     Q_ASSERT(mAxis && mRange && mSlot);
     QStringList ret;
     ret.reserve(mRange->rowCount());
+    bool allInRangeAccum = true;
+    bool anyInRangeAccum = false;
     for(QVariant elem : mRange->data())
+    {
+        bool inRange = mSlot->rawInRange(elem);
+        allInRangeAccum &= inRange;
+        anyInRangeAccum |= inRange;
         ret.append(mSlot->toString(elem));
+    }
+    if(allInRange)
+        *allInRange = allInRangeAccum;
+    if(anyInRange)
+        *anyInRange = anyInRangeAccum;
     return ret;
 }
 
