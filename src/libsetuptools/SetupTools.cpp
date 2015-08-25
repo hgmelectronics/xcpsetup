@@ -21,7 +21,8 @@ void registerTypes()
     qmlRegisterType<SetupTools::Xcp::Interface::QmlRegistry>("com.setuptools.xcp", 1, 0, "InterfaceRegistry");
     qmlRegisterType<SetupTools::Xcp::Interface::Info>("com.setuptools.xcp", 1, 0, "InterfaceInfo");
     qmlRegisterType<SetupTools::Xcp::Connection>("com.setuptools.xcp", 1, 0, "ConnectionState");  // for State enum
-    qmlRegisterType<SetupTools::ProgFile>("com.setuptools.xcp", 1, 0, "ProgFile");  // for Type enum
+    qmlRegisterSingletonType<SetupTools::ProgFile>("com.setuptools.xcp", 1, 0, "ProgFile", &SetupTools::ProgFile::create);  // for its static functions
+    qmlRegisterType<SetupTools::FlashProg>("com.setuptools", 1, 0, "FlashProg");
     qmlRegisterSingletonType<SetupTools::Xcp::OpResultWrapper>("com.setuptools.xcp", 1, 0, "OpResult", &SetupTools::Xcp::OpResultWrapper::create);
     qmlRegisterSingletonType<SetupTools::UrlUtil>("com.setuptools.xcp", 1, 0, "UrlUtil", &SetupTools::UrlUtil::create);
     qmlRegisterUncreatableType<SetupTools::Xcp::ParamLayer>("com.setuptools.xcp", 1, 0, "ParamLayer", "SetupTools::Xcp::ParamLayer is uncreatable from within QML");

@@ -79,9 +79,9 @@ ApplicationWindow {
         toolReadyParam: cs2Tool.intfcOk && cs2Tool.paramReady
         toolBusy: !cs2Tool.idle
         paramWriteCacheDirty: cs2Tool.paramWriteCacheDirty
-        progBaseText: cs2Tool.programOk ? "0x00000000".substr(0, 10 - cs2Tool.programBase.toString(16).length) + cs2Tool.programBase.toString(16).toUpperCase() : ""
-        progSizeText: cs2Tool.programOk ? cs2Tool.programSize.toString(10) : ""
-        progCksumText: cs2Tool.programOk ? "0x00000000".substr(0, 10 - cs2Tool.programCksum.toString(16).length) + cs2Tool.programCksum.toString(16).toUpperCase() : ""
+        progBaseText: cs2Tool.programData ? "0x00000000".substr(0, 10 - cs2Tool.programBase.toString(16).length) + cs2Tool.programBase.toString(16).toUpperCase() : ""
+        progSizeText: cs2Tool.programData ? cs2Tool.programSize.toString(10) : ""
+        progCksumText: cs2Tool.programData ? "0x00000000".substr(0, 10 - cs2Tool.programCksum.toString(16).length) + cs2Tool.programCksum.toString(16).toUpperCase() : ""
         progressValue: cs2Tool.progress
         paramFilePath: cs2Tool.paramFilePath
         onUserStartProg: cs2Tool.startProgramming()
@@ -98,8 +98,7 @@ ApplicationWindow {
 
     Cs2Tool {
         id: cs2Tool
-        programFilePath: mainForm.progFilePath
-        programFileType: mainForm.progFileType
+        programData: mainForm.progFileData
         intfcUri: mainForm.intfcUri
         onProgrammingDone: {
             if(result === OpResult.Success)

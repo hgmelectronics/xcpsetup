@@ -14,8 +14,7 @@ namespace SetupTools
 class Cs2Tool : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString programFilePath READ programFilePath WRITE setProgramFilePath NOTIFY programChanged)
-    Q_PROPERTY(int programFileType READ programFileType WRITE setProgramFileType NOTIFY programChanged)
+    Q_PROPERTY(FlashProg *programData READ programData WRITE setProgramData NOTIFY programChanged)
     Q_PROPERTY(QString paramFilePath READ paramFilePath WRITE setParamFilePath NOTIFY paramFileChanged)
     Q_PROPERTY(int programSize READ programSize NOTIFY programChanged)
     Q_PROPERTY(qlonglong programBase READ programBase NOTIFY programChanged)
@@ -38,12 +37,10 @@ public:
     explicit Cs2Tool(QObject *parent = 0);
     ~Cs2Tool();
 
-    QString programFilePath();
-    void setProgramFilePath(QString path);
+    FlashProg *programData();
+    void setProgramData(FlashProg *prog);
     QString paramFilePath();
     void setParamFilePath(QString path);
-    int programFileType();
-    void setProgramFileType(int type);
     int programSize();
     qlonglong programBase();
     qlonglong programCksum();
@@ -102,7 +99,6 @@ public slots:
     void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
     void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, SetupTools::Xcp::CksumType type, quint8 addrExt);
     void onProgramResetDone(SetupTools::Xcp::OpResult result);
-    void onProgFileChanged();
 
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();
@@ -159,7 +155,8 @@ private:
     void setState(State newState);
 
     Xcp::ProgramLayer *mProgLayer;
-    ProgFile *mProgFile;
+    FlashProg *mProgData;
+    FlashProg mInfilledProgData;
     bool mProgFileOkToFlash;
     int mRemainingCalTries;
     Xcp::ParamLayer *mParamLayer;

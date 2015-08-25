@@ -14,7 +14,7 @@ ColumnLayout {
     anchors.margins: 10
 
     property string progFilePath: progFileDialog.filePath
-    property int progFileType: progFileDialog.fileType
+    property FlashProg progFileData
     property alias progBaseText: progBaseField.text
     property alias progSizeText: progSizeField.text
     property alias progCksumText: progCksumField.text
@@ -187,7 +187,6 @@ ColumnLayout {
 
         FileDialog {
             property string filePath
-            property int fileType: ProgFile.Invalid
             id: progFileDialog
             title: qsTr("Select program file")
             modality: Qt.NonModal
@@ -195,9 +194,9 @@ ColumnLayout {
             onAccepted: {
                 filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
                 if(selectedNameFilter == "S-record files (*.srec)")
-                    fileType = ProgFile.Srec;
+                    root.progFileData = ProgFile.readSrec(filePath)
                 else
-                    fileType = ProgFile.Invalid;
+                    root.progFileData = ProgFile.readSrec(filePath) // default to S-record
                 root.progFileAccepted()
             }
         }

@@ -6,7 +6,6 @@ namespace SetupTools
 Cs2Tool::Cs2Tool(QObject *parent) :
     QObject(parent),
     mProgLayer(new Xcp::ProgramLayer(this)),
-    mProgFile(new ProgFile(this)),
     mProgFileOkToFlash(false),
     mParamLayer(new Xcp::ParamLayer(ADDR_GRAN, this)),
     mParamFile(new ParamFile(this)),
@@ -14,7 +13,6 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     mSlaveCmdId("18FCD403"),
     mSlaveResId("18FCD4F9")
 {
-    connect(mProgFile, &ProgFile::progChanged, this, &Cs2Tool::onProgFileChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::calModeDone, this, &Cs2Tool::onProgCalModeDone);
     connect(mProgLayer, &Xcp::ProgramLayer::stateChanged, this, &Cs2Tool::onProgLayerStateChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::programDone, this, &Cs2Tool::onProgramDone);
@@ -42,16 +40,41 @@ Cs2Tool::Cs2Tool(QObject *parent) :
 
 Cs2Tool::~Cs2Tool() {}
 
-QString Cs2Tool::programFilePath()
+FlashProg *Cs2Tool::programData()
 {
-    return mProgFile->name();
+    return mProgData;
 }
 
-void Cs2Tool::setProgramFilePath(QString path)
+void Cs2Tool::setProgramData(FlashProg *prog)
 {
-    mProgFile->setName(path);
+    mProgData = prog;
 
-    rereadProgFile();
+    mProgFileOkToFlash = false;
+
+    if(!mProgData)
+    {
+        emit programChanged();
+        return;
+    }
+
+    mInfilledProgData = *mProgData;
+
+    mInfilledProgData.infillToSingleBlock();
+
+    if(mInfilledProgData.base() < SMALLBLOCK_BASE
+         || (mInfilledProgData.base() + mInfilledProgData.size()) > LARGEBLOCK_TOP)
+    {
+        emit programChanged();
+        return;
+    }
+
+    int nBlocks = 0;
+    nBlocks += nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
+    nBlocks += nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), LARGEBLOCK_BASE, LARGEBLOCK_TOP, LARGEBLOCK_SIZE);
+    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * nBlocks);
+
+    mProgFileOkToFlash = true;
+    emit programChanged();
 }
 
 QString Cs2Tool::paramFilePath()
@@ -65,36 +88,30 @@ void Cs2Tool::setParamFilePath(QString path)
     emit paramFileChanged();
 }
 
-int Cs2Tool::programFileType()
-{
-    return mProgFile->type();
-}
-
-void Cs2Tool::setProgramFileType(int type)
-{
-    mProgFile->setType(static_cast<ProgFile::Type>(type));
-
-    rereadProgFile();
-}
-
 int Cs2Tool::programSize()
 {
-    return mProgFile->size();
+    if(!mProgData)
+        return 0;
+
+    int size = 0;
+    for(FlashBlock *block : mProgData->blocks())
+        size += block->data.size();
+    return size;
 }
 
 qlonglong Cs2Tool::programBase()
 {
-    if(mProgFile->prog().blocks().size() != 1)
+    if(!mProgData || mProgData->blocks().size() == 0)
         return -1;
 
-    return mProgFile->base();
+    return mProgData->blocks()[0]->base;
 }
 
 qlonglong Cs2Tool::programCksum()
 {
-    if(mProgFile->prog().blocks().size() != 1)
+    if(mInfilledProgData.blocks().size() != 1)
         return -1;
-    boost::optional<quint32> cksum = Xcp::computeCksumStatic(CKSUM_TYPE, mProgFile->prog().blocks().first()->data);
+    boost::optional<quint32> cksum = Xcp::computeCksumStatic(CKSUM_TYPE, mInfilledProgData.blocks().first()->data);
     if(!cksum)
         return -1;
     return cksum.get();
@@ -102,7 +119,7 @@ qlonglong Cs2Tool::programCksum()
 
 bool Cs2Tool::programOk()
 {
-    return mProgFile->valid() && mProgFileOkToFlash;
+    return mProgData && mProgFileOkToFlash;
 }
 
 bool Cs2Tool::paramFileExists()
@@ -237,7 +254,7 @@ bool Cs2Tool::paramReady()
 
 void Cs2Tool::startProgramming()
 {
-    if(!mProgFile->valid()
+    if(!mProgData
             || !mProgFileOkToFlash
             || mState != State::Idle)
     {
@@ -409,7 +426,7 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
             {
                 // already in bootloader
                 setState(State::Program_Program);
-                mProgLayer->program(mProgFile->progPtr());
+                mProgLayer->program(&mInfilledProgData);
             }
             else
             {
@@ -459,7 +476,7 @@ void Cs2Tool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, q
     }
     setState(State::Program_Verify);
 
-    mProgLayer->programVerify(mProgFile->progPtr(), CKSUM_TYPE);
+    mProgLayer->programVerify(&mInfilledProgData, CKSUM_TYPE);
 }
 
 void Cs2Tool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
@@ -490,7 +507,7 @@ void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
             return;
         }
         setState(State::Program_Program);
-        mProgLayer->program(mProgFile->progPtr());
+        mProgLayer->program(&mInfilledProgData);
     }
     else if(mState == State::Program_ResetToApplication)
     {
@@ -512,11 +529,6 @@ void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
     {
         Q_ASSERT(0);
     }
-}
-
-void Cs2Tool::onProgFileChanged()
-{
-    emit programChanged();
 }
 
 void Cs2Tool::onProgLayerStateChanged()
@@ -632,32 +644,6 @@ void Cs2Tool::onParamDisconnectSlaveDone(Xcp::OpResult result)
         Q_ASSERT(0);
         break;
     }
-}
-
-void Cs2Tool::rereadProgFile()
-{
-    mProgFileOkToFlash = false;
-    emit programChanged();
-
-    if(mProgFile->name().size() <= 0 ||  mProgFile->type() == ProgFile::Type::Invalid)
-        return;
-
-    if(mProgFile->read() != ProgFile::Result::Ok)
-        return;
-
-    mProgFile->prog().infillToSingleBlock();
-
-    if(mProgFile->prog().base() < SMALLBLOCK_BASE
-            || (mProgFile->prog().base() + mProgFile->prog().size()) > LARGEBLOCK_TOP)
-        return; // program is outside of LPC2929 flash
-
-    int nBlocks = 0;
-    nBlocks += nBlocksInRange(mProgFile->prog().base(), mProgFile->prog().size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
-    nBlocks += nBlocksInRange(mProgFile->prog().base(), mProgFile->prog().size(), LARGEBLOCK_BASE, LARGEBLOCK_TOP, LARGEBLOCK_SIZE);
-    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * nBlocks);
-
-    mProgFileOkToFlash = true;
-    emit programChanged();
 }
 
 int Cs2Tool::nBlocksInRange(uint progBase, uint progSize, uint rangeBase, uint rangeTop, uint blockSize)

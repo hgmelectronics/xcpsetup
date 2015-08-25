@@ -26,8 +26,10 @@ public:
     FlashProg(QObject *parent = NULL);
     virtual ~FlashProg();
 
-    QList<FlashBlock *> &blocks();
-    QQmlListProperty<FlashBlock> blocksQml();
+    QList<SetupTools::FlashBlock *> &blocks();
+    QQmlListProperty<SetupTools::FlashBlock> blocksQml();
+    void clear();
+    SetupTools::FlashProg &operator=(const SetupTools::FlashProg &other);
     Q_INVOKABLE void infillToSingleBlock(quint8 fillValue = 0xFF);
     int size();
     uint base();

@@ -8,100 +8,13 @@ namespace SetupTools
 {
 
 ProgFile::ProgFile(QObject *parent) :
-    QObject(parent),
-    mType(Invalid),
-    mValid(false)
+    QObject(parent)
+{}
+QObject *ProgFile::create(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
-    connect(&mProg, &FlashProg::changed, this, &ProgFile::onProgChanged);
-}
-
-QString ProgFile::name()
-{
-    return mName;
-}
-
-void ProgFile::setName(QString newName)
-{
-    mName = newName;
-    if(mValid)
-    {
-        mValid = false;
-        emit progChanged();
-    }
-}
-
-ProgFile::Type ProgFile::type()
-{
-    return mType;
-}
-
-void ProgFile::setType(ProgFile::Type newType)
-{
-    mType = newType;
-    if(mValid)
-    {
-        mValid = false;
-        emit progChanged();
-    }
-}
-
-bool ProgFile::valid()
-{
-    return mValid;
-}
-
-FlashProg *ProgFile::progPtr()
-{
-    return &mProg;
-}
-
-FlashProg &ProgFile::prog()
-{
-    return mProg;
-}
-
-const FlashProg &ProgFile::prog() const
-{
-    return mProg;
-}
-
-int ProgFile::size()
-{
-    return mProg.size();
-}
-
-uint ProgFile::base()
-{
-    return mProg.base();
-}
-
-ProgFile::Result ProgFile::read()
-{
-    for(auto blockPtr : mProg.blocks())
-        delete blockPtr;
-    mProg.blocks().clear();
-    mValid = false;
-
-    QFile file(mName);
-    if(!file.open(QFile::ReadOnly))
-        return Result::FileOpenFail;
-
-    Result ret = Result::InvalidType;
-    switch(mType)
-    {
-    case Srec:
-        ret = readSrec(file);
-        break;
-    default:
-        break;
-    }
-    emit progChanged();
-    return ret;
-}
-
-void ProgFile::onProgChanged()
-{
-    emit progChanged();
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+    return new ProgFile();
 }
 
 namespace SrecDetail
@@ -194,8 +107,15 @@ std::pair<Result, Line> ConvertLine(const QString &text)
 
 }   // namespace SrecDetail
 
-ProgFile::Result ProgFile::readSrec(QFile &file)
+FlashProg *ProgFile::readSrec(QString path)
 {
+    QFile file(path);
+
+    if(!file.exists())
+        return nullptr;
+
+    file.open(QIODevice::ReadOnly);
+
     QTextStream stream(&file);
     std::vector<SrecDetail::Line> lines;
     while(1)
@@ -206,9 +126,8 @@ ProgFile::Result ProgFile::readSrec(QFile &file)
         if(conv.first == SrecDetail::Result::Ok)
             lines.emplace_back(std::move(conv.second));
         else if(conv.first == SrecDetail::Result::BadRecord)
-            return Result::CorruptedFile;
+            return nullptr;
     }
-
 
     std::sort(lines.begin(), lines.end(), SrecDetail::CompareLine);
 
@@ -216,30 +135,35 @@ ProgFile::Result ProgFile::readSrec(QFile &file)
     for(const SrecDetail::Line &line : lines)
         remainingSize += line.data.size();
 
+    FlashProg *prog = new FlashProg();
+
     for(const SrecDetail::Line &line : lines)
     {
-        QList<FlashBlock *>::iterator appendBlockIt = SrecDetail::FindAppendBlock(mProg.blocks(), line.base);
+        QList<FlashBlock *>::iterator appendBlockIt = SrecDetail::FindAppendBlock(prog->blocks(), line.base);
         FlashBlock *appendBlock;
-        if(appendBlockIt != mProg.blocks().end())
+        if(appendBlockIt != prog->blocks().end())
             appendBlock = *appendBlockIt;
         else
         {
             // No block exists that we can tack this line onto
-            if(mProg.blocks().size())
+            if(prog->blocks().size())
             {
                 // First confirm we do not have overlapping blocks
-                FlashBlock *lastBlock = mProg.blocks().back();
+                FlashBlock *lastBlock = prog->blocks().back();
                 quint32 lastBlockEnd = lastBlock->base + lastBlock->data.size();
                 if(lastBlockEnd > line.base)
-                    return Result::CorruptedFile;
+                {
+                    delete prog;
+                    return nullptr;
+                }
 
                 // Last block probably needs compacting
                 lastBlock->data.shrink_to_fit();
             }
 
             // make a new block
-            mProg.blocks().push_back(new FlashBlock(&mProg));
-            appendBlock = mProg.blocks().back();
+            prog->blocks().push_back(new FlashBlock(prog));
+            appendBlock = prog->blocks().back();
             appendBlock->base = line.base;
         }
 
@@ -251,8 +175,8 @@ ProgFile::Result ProgFile::readSrec(QFile &file)
 
         remainingSize -= line.data.size();
     }
-    mValid = true;
-    return Result::Ok;
+
+    return prog;
 }
 
 }   // namespace SetupTools

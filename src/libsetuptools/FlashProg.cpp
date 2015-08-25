@@ -15,6 +15,25 @@ QQmlListProperty<FlashBlock> FlashProg::blocksQml()
 {
     return QQmlListProperty<FlashBlock>(this, mBlocks);
 }
+void FlashProg::clear()
+{
+    for(FlashBlock *block : mBlocks)
+        delete block;
+    mBlocks.clear();
+}
+FlashProg &FlashProg::operator=(const FlashProg &other)
+{
+    clear();
+    for(const FlashBlock *otherBlock : other.mBlocks)
+    {
+        FlashBlock *block = new FlashBlock(this);
+        block->base = otherBlock->base;
+        block->data = otherBlock->data;
+        mBlocks.append(block);
+    }
+    return *this;
+}
+
 void FlashProg::infillToSingleBlock(quint8 fillValue)
 {
     if(mBlocks.size() < 2)
@@ -37,9 +56,7 @@ void FlashProg::infillToSingleBlock(quint8 fillValue)
         std::copy(block->data.begin(), block->data.end(), combined->data.begin() + offset);
     }
 
-    for(FlashBlock *block : mBlocks)
-        delete block;
-    mBlocks.clear();
+    clear();
     mBlocks.append(combined);
     emit changed();
 }
