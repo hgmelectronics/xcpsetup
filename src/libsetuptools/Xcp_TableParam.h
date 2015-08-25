@@ -88,6 +88,8 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
+    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+    virtual QHash<int, QByteArray> roleNames() const;
 public slots:
     void onTableLabelChanged();
     void onValueParamChanged();
@@ -95,6 +97,7 @@ public slots:
 private:
     TableParam *mParam;
     bool mStringFormat;
+    QHash<int, QByteArray> mRoleNames;
 };
 
 } // namespace Xcp

@@ -229,6 +229,9 @@ TableParamListModel::TableParamListModel(bool stringFormat, TableParam *parent) 
     mParam(parent),
     mStringFormat(stringFormat)
 {
+    mRoleNames = mParam->mAxis->roleNames();
+    mRoleNames[TableAxisRole::ValueRole] = QByteArray("value");
+
     connect(mParam, &TableParam::xLabelChanged, this, &TableParamListModel::onTableLabelChanged);
     connect(mParam, &TableParam::yLabelChanged, this, &TableParamListModel::onTableLabelChanged);
     connect(mParam, &TableParam::valueLabelChanged, this, &TableParamListModel::onTableLabelChanged);
@@ -299,6 +302,17 @@ bool TableParamListModel::setData(const QModelIndex &index, const QVariant &valu
         return false;
 
     return mParam->mRange->setData(mParam->mSlot->toRaw(value), index.row());
+}
+
+Qt::ItemFlags TableParamListModel::flags(const QModelIndex &index) const
+{
+    Q_UNUSED(index);
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+}
+
+QHash<int, QByteArray> TableParamListModel::roleNames() const
+{
+    return mRoleNames;
 }
 
 void TableParamListModel::onTableLabelChanged()
