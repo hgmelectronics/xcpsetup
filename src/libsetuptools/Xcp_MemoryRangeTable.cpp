@@ -10,7 +10,8 @@ namespace Xcp
 MemoryRangeTable::MemoryRangeTable(quint32 addrGran, QObject *parent):
   QObject(parent),
   mAddrGran(addrGran),
-  mConnectionFacade(nullptr)
+  mConnectionFacade(nullptr),
+  mConnectionOk(false)
 {}
 
 quint32 MemoryRangeTable::addrGran() const
