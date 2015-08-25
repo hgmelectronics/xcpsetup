@@ -23,6 +23,15 @@ ColumnLayout {
                     forceActiveFocus()
                 }
             }
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    tableView.currentRow = styleData.row
+                    tableView.selection.clear()
+                    tableView.selection.select(styleData.row)
+                }
+            }
         }
     }
 
