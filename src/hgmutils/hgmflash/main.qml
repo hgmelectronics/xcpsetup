@@ -179,7 +179,7 @@ ApplicationWindow {
 
         onYes: {
             visible = false
-            cs2Tool.loadParamFile()
+            paramLoadFileDialog.open()
         }
 
         onRejected: {
