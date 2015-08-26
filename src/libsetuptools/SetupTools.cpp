@@ -11,6 +11,7 @@
 #include "Xcp_TableParam.h"
 #include "LinearSlot.h"
 #include "LinearTableAxis.h"
+#include "EncodingSlot.h"
 #include "ParamFile.h"
 
 namespace SetupTools
@@ -34,6 +35,8 @@ void registerTypes()
     qmlRegisterUncreatableType<SetupTools::Xcp::MemoryRange>("com.setuptools.xcp", 1, 0, "MemoryRange", "SetupTools::Xcp::MemoryRange is uncreatable from within QML");
     qmlRegisterUncreatableType<SetupTools::Slot>("com.setuptools", 1, 0, "Slot", "SetupTools::Slot is uncreatable from within QML");
     qmlRegisterType<SetupTools::LinearSlot>("com.setuptools", 1, 0, "LinearSlot");
+    qmlRegisterType<SetupTools::EncodingSlot>("com.setuptools", 1, 0, "EncodingSlot");
+    qmlRegisterType<SetupTools::EncodingListModel>("com.setuptools", 1, 0, "EncodingListModel");
     qmlRegisterUncreatableType<SetupTools::TableAxis>("com.setuptools", 1, 0, "TableAxis", "SetupTools::TableAxis is uncreatable from within QML");
     qmlRegisterType<SetupTools::LinearTableAxis>("com.setuptools", 1, 0, "LinearTableAxis");
     qmlRegisterType<SetupTools::ParamFile>("com.setuptools", 1, 0, "ParamFile");

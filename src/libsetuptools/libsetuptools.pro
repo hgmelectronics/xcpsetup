@@ -43,7 +43,8 @@ SOURCES += \
     Xcp_TableParam.cpp \
     TableAxis.cpp \
     ParamFile.cpp \
-    Xcp_ParamLayer.cpp
+    Xcp_ParamLayer.cpp \
+    EncodingSlot.cpp
 
 HEADERS += \
     util.h \
@@ -74,7 +75,8 @@ HEADERS += \
     Xcp_TableParam.h \
     TableAxis.h \
     ParamFile.h \
-    Xcp_ParamLayer.h
+    Xcp_ParamLayer.h \
+    EncodingSlot.h
 
 unix {
     target.path = /usr/lib
