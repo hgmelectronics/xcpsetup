@@ -19,43 +19,13 @@ struct EncodingPair
     }
 };
 
-class EncodingListModel : public QAbstractListModel
-{
-    Q_OBJECT
-public:
-    EncodingListModel(QObject *parent = nullptr);
-
-    virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
-    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-    virtual QHash<int, QByteArray> roleNames() const;
-    virtual bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
-    virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
-
-    Q_INVOKABLE void append(double raw, QString engr);
-
-    boost::optional<QString> rawToEngr(double raw) const;
-    boost::optional<double> engrToRaw(QString engr) const;
-signals:
-    void changed();
-private:
-    constexpr static int TEXT_ROLE = Qt::DisplayRole;
-    constexpr static int RAW_ROLE = Qt::UserRole;
-
-    void removeRowFromMaps(const EncodingPair &row);
-
-    QList<EncodingPair> mList;
-    QMap<double, QString> mRawToEngr;
-    QMap<QString, double> mEngrToRaw;
-};
-
 class EncodingSlot : public Slot
 {
     Q_OBJECT
 
     Q_PROPERTY(SetupTools::Slot *unencodedSlot READ unencodedSlot WRITE setUnencodedSlot NOTIFY unencodedSlotChanged)       //!< SLOT used when the value to be converted is not in the encoding model
-    Q_PROPERTY(SetupTools::EncodingListModel *model READ model NOTIFY modelChanged)
+    Q_PROPERTY(QVariant encodingList READ encodingList WRITE setEncodingList NOTIFY encodingListChanged)
+    Q_PROPERTY(QStringList encodingStringList READ encodingStringList NOTIFY encodingListChanged)
     Q_PROPERTY(double oorFloat MEMBER oorFloat) //!< Engineering value returned when raw value is not convertible
     Q_PROPERTY(QString oorString MEMBER oorString) //!< Engineering value returned when raw value is not convertible
     Q_PROPERTY(QVariant oorRaw MEMBER oorRaw)   //!< Raw value returned when engineering value is not convertible
@@ -64,25 +34,32 @@ public:
 
     SetupTools::Slot *unencodedSlot();
     void setUnencodedSlot(Slot *);
-    SetupTools::EncodingListModel *model();
+    QVariant encodingList();
+    void setEncodingList(QVariant);
+    QStringList encodingStringList();
 
     Q_INVOKABLE virtual double toFloat(QVariant raw) const;
     Q_INVOKABLE virtual QString toString(QVariant raw) const;
     Q_INVOKABLE virtual QVariant toRaw(QVariant engr) const;
     Q_INVOKABLE virtual bool rawInRange(QVariant raw) const;
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const;
+    Q_INVOKABLE int engrToEncodingIndex(QVariant engr) const;
+    Q_INVOKABLE void append(double raw, QString engr);
 
     double oorFloat;
     QString oorString;
     QVariant oorRaw;
 signals:
     void unencodedSlotChanged();
-    void modelChanged();
+    void encodingListChanged();
 public slots:
-    void onModelChanged();
+    void onUnencodedSlotUnitChanged();
 private:
     Slot *mUnencodedSlot;
-    EncodingListModel *mModel;
+    QList<EncodingPair> mList;
+    QMap<double, QString> mRawToEngr;
+    QMap<QString, double> mEngrToRaw;
+    QMap<QString, int> mEngrToIndex;
 };
 
 } // namespace SetupTools

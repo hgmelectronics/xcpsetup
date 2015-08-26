@@ -58,7 +58,7 @@ bool ParamRegistry::writeCacheDirty() const
     return !mWriteCacheDirtyKeys.empty();
 }
 
-ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot, QString key)
+ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
 {
     if(mParams.count(key))
     {
@@ -95,7 +95,7 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
     return param;
 }
 
-TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, bool saveable, const Slot *slot, const SetupTools::TableAxis *axis, QString key)
+TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, bool saveable, Slot *slot, const SetupTools::TableAxis *axis, QString key)
 {
     if(slot == nullptr || axis == nullptr)
         return nullptr;
@@ -139,19 +139,19 @@ TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, b
     return param;
 }
 
-ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot)
+ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot)
 {
     return addScalarParam(type, base, writable, saveable, slot, base.toString());
 }
 
-TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, bool saveable, const SetupTools::Slot *slot, const SetupTools::TableAxis *axis)
+TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, const SetupTools::TableAxis *axis)
 {
     return addTableParam(type, base, writable, saveable, slot, axis, base.toString());
 }
 
 ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar, QString key)
 {
-    const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
+    Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
     Q_ASSERT(slot);
     XcpPtr basePtr(base);
     return addScalarParam(type, basePtr, writable, saveable, slot, key);
@@ -159,7 +159,7 @@ ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable
 
 TableParam *ParamRegistry::addTableParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar, QVariant axisVar, QString key)
 {
-    const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
+    Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
     Q_ASSERT(slot);
     const TableAxis *axis = qobject_cast<TableAxis *>(axisVar.value<QObject *>());
     Q_ASSERT(axis);
@@ -169,7 +169,7 @@ TableParam *ParamRegistry::addTableParam(int type, quint32 base, bool writable, 
 
 ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar)
 {
-    const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
+    Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
     Q_ASSERT(slot);
     XcpPtr basePtr(base);
     return addScalarParam(type, basePtr, writable, saveable, slot, basePtr.toString());
@@ -177,7 +177,7 @@ ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable
 
 TableParam *ParamRegistry::addTableParam(int type, quint32 base, bool writable, bool saveable, QVariant slotVar, QVariant axisVar)
 {
-    const Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
+    Slot *slot = qobject_cast<Slot *>(slotVar.value<QObject *>());
     Q_ASSERT(slot);
     const TableAxis *axis = qobject_cast<TableAxis *>(axisVar.value<QObject *>());
     Q_ASSERT(axis);

@@ -10,7 +10,7 @@ ScalarParam::ScalarParam(QObject *parent) :
     mSlot(nullptr)
 {}
 
-ScalarParam::ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *parent) :
+ScalarParam::ScalarParam(ScalarMemoryRange *range, Slot *slot, QObject *parent) :
     Param(range, parent),
     mRange(range),
     mSlot(slot)
@@ -58,6 +58,12 @@ const ScalarMemoryRange *ScalarParam::range() const
 }
 
 const Slot *ScalarParam::slot() const
+{
+    Q_ASSERT(mRange && mSlot);
+    return mSlot;
+}
+
+Slot *ScalarParam::slot()
 {
     Q_ASSERT(mRange && mSlot);
     return mSlot;

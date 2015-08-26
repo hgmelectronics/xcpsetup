@@ -18,16 +18,18 @@ class ScalarParam : public Param
     Q_PROPERTY(QString stringVal READ stringVal WRITE setStringVal NOTIFY valChanged)
     Q_PROPERTY(QString unit READ unit NOTIFY unitChanged)
     Q_PROPERTY(QString name MEMBER name)
+    Q_PROPERTY(SetupTools::Slot *slot READ slot NOTIFY neverChanges)
 public:
     ScalarParam(QObject *parent = nullptr);
-    ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *parent = nullptr);
+    ScalarParam(ScalarMemoryRange *range, Slot *slot, QObject *parent = nullptr);
     double floatVal() const;
     QString stringVal() const;
     void setFloatVal(double);
     void setStringVal(QString);
     QString unit() const;
     const ScalarMemoryRange *range() const;
-    const Slot *slot() const;
+    const SetupTools::Slot *slot() const;
+    SetupTools::Slot *slot();
     virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
     virtual bool setSerializableValue(const QVariant &val);
     virtual void resetCaches();
@@ -36,6 +38,7 @@ public:
 signals:
     void valChanged();
     void unitChanged();
+    void neverChanges();
 public slots:
     void onRangeValChanged();
     void onRangeUploadDone(SetupTools::Xcp::OpResult result);
@@ -46,7 +49,7 @@ public slots:
     virtual void download();
 private:
     ScalarMemoryRange * const mRange;   // owned by the ParamRegistry
-    const Slot * const mSlot;           // owned by QML
+    Slot * const mSlot;                 // owned by QML
 };
 
 } // namespace Xcp

@@ -102,6 +102,10 @@ Window {
                     name: "Display Brightness"
                     param: registry.addScalarParam(MemoryRange.U32, 0x01020000, true, true, slots.percentage1)
                 }
+                EncodingParamEdit {
+                    name: "Spaceball 1 Speed"
+                    param: registry.addScalarParam(MemoryRange.U32, 0xFEDC0000, true, true, slots.spaceball1)
+                }
             }
         }
     }

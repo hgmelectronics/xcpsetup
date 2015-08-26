@@ -38,10 +38,10 @@ Item {
 
     property EncodingSlot spaceball1: EncodingSlot {
         unencodedSlot: rpm1
-        Component.onCompleted: {
-            model.append(0, "Stopped")
-            model.append(299792458, "Lightspeed")
-            model.append(4000000000, "Ludicrous Speed")
-        }
+        encodingList: [
+            {raw: 0, engr: "Stopped"},
+            {raw: 299792458, engr: "Lightspeed"},
+            {raw: 4000000000, engr: "Ludicrous Speed"}
+        ]
     }
 }
