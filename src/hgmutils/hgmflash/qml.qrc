@@ -5,42 +5,6 @@
         <file>AboutDialog.qml</file>
         <file>HelpDialog.qml</file>
         <file>hgmlogo-about.png</file>
-        <file>Qt/labs/folderlistmodel/qmldir</file>
-        <file>Qt/labs/settings/qmldir</file>
-        <file>Qt/WebSockets/qmldir</file>
-        <file>Qt3D/Input/qmldir</file>
-        <file>Qt3D/qmldir</file>
-        <file>Qt3D/Renderer/qmldir</file>
-        <file>QtBluetooth/qmldir</file>
-        <file>QtCanvas3D/qmldir</file>
-        <file>QtGraphicalEffects/qmldir</file>
-        <file>QtLocation/qmldir</file>
-        <file>QtMultimedia/qmldir</file>
-        <file>QtNfc/qmldir</file>
-        <file>QtPositioning/qmldir</file>
-        <file>QtQml/Models.2/qmldir</file>
-        <file>QtQml/StateMachine/qmldir</file>
-        <file>QtQuick/Controls/Private/qmldir</file>
-        <file>QtQuick/Controls/qmldir</file>
-        <file>QtQuick/Controls/Styles/Desktop/qmldir</file>
-        <file>QtQuick/Controls/Styles/Flat/qmldir</file>
-        <file>QtQuick/Controls/Styles/qmldir</file>
-        <file>QtQuick/Dialogs/Private/qmldir</file>
-        <file>QtQuick/Dialogs/qmldir</file>
-        <file>QtQuick/Extras/qmldir</file>
-        <file>QtQuick/Layouts/qmldir</file>
-        <file>QtQuick/LocalStorage/qmldir</file>
-        <file>QtQuick/Particles.2/qmldir</file>
-        <file>QtQuick/PrivateWidgets/qmldir</file>
-        <file>QtQuick/Scene3D/qmldir</file>
-        <file>QtQuick/Window.2/qmldir</file>
-        <file>QtQuick/XmlListModel/qmldir</file>
-        <file>QtQuick.2/qmldir</file>
-        <file>QtSensors/qmldir</file>
-        <file>QtTest/qmldir</file>
-        <file>QtWebChannel/qmldir</file>
-        <file>QtWebSockets/qmldir</file>
-        <file>QtWinExtras/qmldir</file>
         <file>ParamWindow.qml</file>
         <file>Slots.qml</file>
         <file>ScalarParamEdit.qml</file>

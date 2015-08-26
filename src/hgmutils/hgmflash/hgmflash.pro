@@ -5,7 +5,8 @@ QT += qml quick widgets serialport
 SOURCES += main.cpp \
     Cs2Tool.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    qmldirs.qrc
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 
