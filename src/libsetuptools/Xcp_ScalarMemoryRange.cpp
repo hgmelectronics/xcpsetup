@@ -135,6 +135,11 @@ void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpP
         mSlaveValue = QVariant();
         emit valueChanged();
         setValid(false);
+        emit uploadDone(OpResult::Success); // swallow out-of-range errors since they just indicate this param doesn't exist on slave
+    }
+    else
+    {
+        emit uploadDone(result);
     }
     setWriteCacheDirty(mValue != mSlaveValue);
 }

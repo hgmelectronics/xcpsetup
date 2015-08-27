@@ -268,6 +268,11 @@ void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPt
         setValid(false);
         std::fill(mData.begin(), mData.end(), QVariant());
         std::fill(mSlaveData.begin(), mSlaveData.end(), QVariant());
+        emit uploadDone(OpResult::Success);
+    }
+    else
+    {
+        emit uploadDone(result);
     }
 }
 
