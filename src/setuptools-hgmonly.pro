@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
-SUBDIRS += hgmutils \
-        libsetuptools
+SUBDIRS += \
+libsetuptools \
+hgmutils
+
 
 libsetuptools.subdir = libsetuptools
 hgmutils.depends = libsetuptools
