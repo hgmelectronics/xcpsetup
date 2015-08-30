@@ -563,7 +563,10 @@ void Cs2Tool::onParamConnectSlaveDone(Xcp::OpResult result)
 {
     Q_ASSERT(mState == State::ParamConnect);
 
-    setState(State::ParamConnected);
+    if(result == Xcp::OpResult::Success)
+        setState(State::ParamConnected);
+    else
+        setState(State::Idle);
     emit paramConnectDone(static_cast<int>(result));
 }
 
