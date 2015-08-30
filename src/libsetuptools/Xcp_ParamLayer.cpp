@@ -423,7 +423,7 @@ void ParamLayer::downloadKey()
         emit downloadDone(mActiveResult, mActiveKeys);
         return;
     }
-    mActiveParamConnection = QObject::connect(param, &Param::downloadDone, this, onParamDownloadDone);
+    mActiveParamConnection = QObject::connect(param, &Param::downloadDone, this, &ParamLayer::onParamDownloadDone);
     param->download();
 }
 
@@ -439,7 +439,7 @@ void ParamLayer::uploadKey()
         emit uploadDone(mActiveResult, mActiveKeys);
         return;
     }
-    mActiveParamConnection = QObject::connect(param, &Param::uploadDone, this, onParamUploadDone);
+    mActiveParamConnection = QObject::connect(param, &Param::uploadDone, this, &ParamLayer::onParamUploadDone);
     param->upload();
 }
 
