@@ -71,7 +71,7 @@ void Test::tableParamDownloadUpload()
     for(int i = 0; i < RAW.size(); ++i)
         slaveMemRangeValue[i] = 0xFFFFFFFF;  // make initially read value be NAN
 
-    TableParam *param = qobject_cast<TableParam *>(registry->addTableParam(MemoryRange::MemoryRangeType::U32, {base, 0}, FLOAT_ENGR.size(), true, false, &slot, &axis, KEY));
+    TableParam *param = qobject_cast<TableParam *>(registry->addTableParam(MemoryRange::MemoryRangeType::U32, {base,0}, true, false, &slot, &axis, KEY));
     QCOMPARE(param, qobject_cast<TableParam *>(registry->getParam(KEY)));
     QSignalSpy spy(param->range(), &TableMemoryRange::uploadDone);
 

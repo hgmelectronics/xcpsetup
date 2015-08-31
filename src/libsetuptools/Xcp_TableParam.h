@@ -18,65 +18,67 @@ class TableParam : public SetupTools::Xcp::Param
 
     friend class TableParamListModel;
 
-    Q_PROPERTY(TableParamListModel *stringModel READ stringModel NOTIFY modelDataChanged)
-    Q_PROPERTY(TableParamListModel *floatModel READ floatModel NOTIFY modelDataChanged)
-    Q_PROPERTY(QString name MEMBER name)
-    Q_PROPERTY(QString xLabel READ xLabel WRITE setXLabel NOTIFY xLabelChanged)
-    Q_PROPERTY(QString yLabel READ yLabel WRITE setYLabel NOTIFY yLabelChanged)
-    Q_PROPERTY(QString valueLabel READ valueLabel WRITE setValueLabel NOTIFY valueLabelChanged)
-    Q_PROPERTY(QString xUnit READ xUnit NOTIFY xUnitChanged)
-    Q_PROPERTY(QString yUnit READ yUnit NOTIFY yUnitChanged)
-    Q_PROPERTY(QString valueUnit READ valueUnit NOTIFY valueUnitChanged)
+    Q_PROPERTY(TableParamListModel* stringModel READ stringModel NOTIFY modelDataChanged)
+    Q_PROPERTY(TableParamListModel* floatModel READ floatModel NOTIFY modelDataChanged)
+    Q_PROPERTY(int count READ count NOTIFY neverChanges)
+    Q_PROPERTY(TableMemoryRange* range READ range NOTIFY neverChanges)
+    Q_PROPERTY(TableAxis* axis READ axis NOTIFY neverChanges)
+
 public:
     TableParam(QObject *parent = nullptr);
-    TableParam(TableMemoryRange *range, const Slot *slot, const TableAxis *axis, QObject *parent = nullptr);
+    TableParam(TableMemoryRange* range, Slot* slot, TableAxis* axis, QObject *parent = nullptr);
 
-    Q_INVOKABLE QString unit(int role);
-    TableParamListModel *stringModel();
-    TableParamListModel *floatModel();
-    QString xLabel() const;
-    void setXLabel(QString);
-    QString yLabel() const;
-    void setYLabel(QString);
-    QString valueLabel() const;
-    void setValueLabel(QString);
-    QString xUnit() const;
-    QString yUnit() const;
-    QString valueUnit() const;
-    const TableMemoryRange *range() const;
-    const Slot *slot() const;
-    const TableAxis *axis() const;
+    // gets the value in enginering units
+    Q_INVOKABLE QVariant get(int row) const;
+
+    // sets the value in engineering units
+    Q_INVOKABLE bool set(int row, const QVariant& data) const;
+
+    int count() const;
+
+    TableParamListModel* stringModel() const
+    {
+        return mStringModel;
+    }
+
+    TableParamListModel* floatModel() const
+    {
+        return mFloatModel;
+    }
+
+    TableMemoryRange* range() const
+    {
+        return mRange;
+    }
+
+    TableAxis* axis() const
+    {
+        return mAxis;
+    }
 
     virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
     virtual bool setSerializableValue(const QVariant &val);
     virtual void resetCaches();
 
-    QString name;
 signals:
-    void xLabelChanged();
-    void yLabelChanged();
-    void valueLabelChanged();
-    void xUnitChanged();
-    void yUnitChanged();
-    void valueUnitChanged();
     void modelDataChanged();
+    void neverChanges();
+
 public slots:
-    void onAxisXUnitChanged();
-    void onAxisYUnitChanged();
-    void onSlotUnitChanged();
+    virtual void upload();
+    virtual void download();
+
+private slots:
     void onRangeUploadDone(SetupTools::Xcp::OpResult result);
     void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
     void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
-    virtual void upload();
-    virtual void download();
 private:
-    TableMemoryRange * const mRange;    // owned by the ParamRegistry
-    const Slot * const mSlot;           // owned by QML
-    const TableAxis * const mAxis;      // owned by QML
-    TableParamListModel *mStringModel;  // owned by this
-    TableParamListModel *mFloatModel;   // owned by this
-    QString mXLabel, mYLabel, mValueLabel;
+    TableMemoryRange* const mRange;    // owned by the ParamRegistry
+    TableAxis* const mAxis;      // owned by QML
+    TableParamListModel* const mStringModel;  // owned by this
+    TableParamListModel* const mFloatModel;   // owned by this
 };
+
 
 class TableParamListModel : public QAbstractListModel
 {
@@ -90,13 +92,12 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
     virtual QHash<int, QByteArray> roleNames() const;
-public slots:
-    void onTableLabelChanged();
+
+private:
     void onValueParamChanged();
     void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
-private:
-    TableParam *mParam;
-    bool mStringFormat;
+    TableParam* const mParam;
+    const bool mStringFormat;
     QHash<int, QByteArray> mRoleNames;
 };
 

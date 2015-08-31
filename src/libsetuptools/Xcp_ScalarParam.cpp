@@ -6,72 +6,51 @@ namespace Xcp {
 
 ScalarParam::ScalarParam(QObject *parent) :
     Param(parent),
-    mRange(nullptr),
-    mSlot(nullptr)
-{}
+    mRange(nullptr)
+{
+}
 
 ScalarParam::ScalarParam(ScalarMemoryRange *range, Slot *slot, QObject *parent) :
-    Param(range, parent),
-    mRange(range),
-    mSlot(slot)
+    Param(range, slot, parent),
+    mRange(range)
 {
+    Q_ASSERT(mRange && slot);
     connect(mRange, &ScalarMemoryRange::valueChanged, this, &ScalarParam::onRangeValChanged);
     connect(mRange, &MemoryRange::uploadDone, this, &ScalarParam::onRangeUploadDone);
     connect(mRange, &MemoryRange::downloadDone, this, &ScalarParam::onRangeDownloadDone);
-    connect(mSlot, &Slot::unitChanged, this, &ScalarParam::onSlotUnitChanged);
-    connect(mSlot, &Slot::valueParamChanged, this, &ScalarParam::onSlotValueParamChanged);
+    connect(slot, &Slot::valueParamChanged, this, &ScalarParam::onSlotValueParamChanged);
 }
+
+ScalarMemoryRange* ScalarParam::range() const
+{
+    Q_ASSERT(mRange);
+    return mRange;
+}
+
 
 double ScalarParam::floatVal() const
 {
-    Q_ASSERT(mRange && mSlot);
-    return mSlot->toFloat(mRange->value());
+    return slot()->asFloat(mRange->value());
 }
 
 QString ScalarParam::stringVal() const
 {
-    Q_ASSERT(mRange && mSlot);
-    return mSlot->toString(mRange->value());
+    return slot()->asString(mRange->value());
 }
 
 void ScalarParam::setFloatVal(double val)
 {
-    Q_ASSERT(mRange && mSlot);
-    mRange->setValue(mSlot->toRaw(val));
+    mRange->setValue(slot()->asRaw(val));
 }
 
 void ScalarParam::setStringVal(QString val)
 {
-    Q_ASSERT(mRange && mSlot);
-    mRange->setValue(mSlot->toRaw(val));
-}
-QString ScalarParam::unit() const
-{
-    Q_ASSERT(mRange && mSlot);
-    return mSlot->unit();
-}
-
-const ScalarMemoryRange *ScalarParam::range() const
-{
-    Q_ASSERT(mRange && mSlot);
-    return mRange;
-}
-
-const Slot *ScalarParam::slot() const
-{
-    Q_ASSERT(mRange && mSlot);
-    return mSlot;
-}
-
-Slot *ScalarParam::slot()
-{
-    Q_ASSERT(mRange && mSlot);
-    return mSlot;
+    mRange->setValue(slot()->asRaw(val));
 }
 
 QVariant ScalarParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 {
-    bool inRange = mSlot->rawInRange(mRange->value());
+    bool inRange = slot()->rawInRange(mRange->value());
     if(allInRange)
         *allInRange = inRange;
     if(anyInRange)
@@ -81,9 +60,9 @@ QVariant ScalarParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 
 bool ScalarParam::setSerializableValue(const QVariant &val)
 {
-    Q_ASSERT(mRange && mSlot);
+    Q_ASSERT(mRange);
     QString str = val.toString();
-    if(!mSlot->engrInRange(str))
+    if(!slot()->engrInRange(str))
         return false;
 
     setStringVal(str);
@@ -92,18 +71,13 @@ bool ScalarParam::setSerializableValue(const QVariant &val)
 
 void ScalarParam::resetCaches()
 {
-    Q_ASSERT(mRange && mSlot);
+    Q_ASSERT(mRange);
     mRange->resetCaches();
 }
 
 void ScalarParam::onRangeValChanged()
 {
     emit valChanged();
-}
-
-void ScalarParam::onSlotUnitChanged()
-{
-    emit unitChanged();
 }
 
 void ScalarParam::onSlotValueParamChanged()
@@ -123,13 +97,11 @@ void ScalarParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
 
 void ScalarParam::upload()
 {
-    Q_ASSERT(mRange && mSlot);
     mRange->upload();
 }
 
 void ScalarParam::download()
 {
-    Q_ASSERT(mRange && mSlot);
     mRange->download();
 }
 

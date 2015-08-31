@@ -47,12 +47,10 @@ public:
 signals:
     void connectionChanged(bool ok);
 
-public slots:
+private:
     void onConnStateChanged();
     void onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
     void onDownloadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, std::vector<quint8> data);
-
-private:
     typedef QList<MemoryRangeList *>::iterator ListIterator;
     typedef boost::iterator_range<ListIterator> ListRange;
 

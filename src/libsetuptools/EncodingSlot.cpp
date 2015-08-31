@@ -78,7 +78,7 @@ QStringList EncodingSlot::encodingStringList()
     return list;
 }
 
-double EncodingSlot::toFloat(QVariant raw) const
+double EncodingSlot::asFloat(QVariant raw) const
 {
     bool convOk;
     double rawDouble = raw.toDouble(&convOk);
@@ -88,12 +88,12 @@ double EncodingSlot::toFloat(QVariant raw) const
     if(mRawToEngr.count(rawDouble))
         return rawDouble;
     else if(mUnencodedSlot)
-        return mUnencodedSlot->toFloat(raw);
+        return mUnencodedSlot->asFloat(raw);
     else
         return oorFloat;
 }
 
-QString EncodingSlot::toString(QVariant raw) const
+QString EncodingSlot::asString(QVariant raw) const
 {
     bool convOk;
     double rawDouble = raw.toDouble(&convOk);
@@ -103,12 +103,12 @@ QString EncodingSlot::toString(QVariant raw) const
     if(mRawToEngr.count(rawDouble))
         return mRawToEngr[rawDouble];
     else if(mUnencodedSlot)
-        return mUnencodedSlot->toString(raw);
+        return mUnencodedSlot->asString(raw);
     else
         return oorString;
 }
 
-QVariant EncodingSlot::toRaw(QVariant engr) const
+QVariant EncodingSlot::asRaw(QVariant engr) const
 {
     QString engrString = engr.toString();
     if(mEngrToRaw.count(engrString))
@@ -119,7 +119,7 @@ QVariant EncodingSlot::toRaw(QVariant engr) const
     }
     else if(mUnencodedSlot)
     {
-        return mUnencodedSlot->toRaw(engr);
+        return mUnencodedSlot->asRaw(engr);
     }
     else
     {

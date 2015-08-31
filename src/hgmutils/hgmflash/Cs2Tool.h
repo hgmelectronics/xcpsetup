@@ -95,6 +95,7 @@ public slots:
     void startParamNvWrite();
     void startParamDisconnect();
 
+private:
     void onProgCalModeDone(SetupTools::Xcp::OpResult result);
     void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
     void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, SetupTools::Xcp::CksumType type, quint8 addrExt);
@@ -112,7 +113,7 @@ public slots:
     void onParamUploadDone(SetupTools::Xcp::OpResult result, QStringList keys);
     void onParamNvWriteDone(SetupTools::Xcp::OpResult result);
     void onParamDisconnectSlaveDone(SetupTools::Xcp::OpResult);
-private:
+
     enum class State
     {
         IntfcNotOk = 0,

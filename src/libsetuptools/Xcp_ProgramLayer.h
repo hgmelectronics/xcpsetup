@@ -64,6 +64,7 @@ public slots:
     void calMode();
     void pgmMode();
 
+private:
     void onConnSetStateDone(OpResult result);
     void onConnProgramClearDone(OpResult result, XcpPtr base, int len);
     void onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
@@ -72,7 +73,7 @@ public slots:
     void onConnProgramResetDone(OpResult result);
     void onConnStateChanged();
     void onConnOpProgressChanged();
-private:
+
     enum class State
     {
         IntfcNotOk,
