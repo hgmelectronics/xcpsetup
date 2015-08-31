@@ -16,7 +16,7 @@ class ScalarParam : public Param
 
     Q_PROPERTY(double floatVal READ floatVal WRITE setFloatVal NOTIFY valChanged)
     Q_PROPERTY(QString stringVal READ stringVal WRITE setStringVal NOTIFY valChanged)
-    Q_PROPERTY(ScalarMemoryRange* range READ range NOTIFY neverChanges)
+    Q_PROPERTY(ScalarMemoryRange* range READ range CONSTANT)
 
 public:
     ScalarParam(QObject *parent = nullptr);
@@ -36,7 +36,6 @@ public:
 
 signals:
     void valChanged();
-    void neverChanges();
 
 public slots:
     virtual void upload();

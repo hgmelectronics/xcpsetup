@@ -20,9 +20,9 @@ class TableParam : public SetupTools::Xcp::Param
 
     Q_PROPERTY(TableParamListModel* stringModel READ stringModel NOTIFY modelDataChanged)
     Q_PROPERTY(TableParamListModel* floatModel READ floatModel NOTIFY modelDataChanged)
-    Q_PROPERTY(int count READ count NOTIFY neverChanges)
-    Q_PROPERTY(TableMemoryRange* range READ range NOTIFY neverChanges)
-    Q_PROPERTY(TableAxis* axis READ axis NOTIFY neverChanges)
+    Q_PROPERTY(int count READ count CONSTANT)
+    Q_PROPERTY(TableMemoryRange* range READ range CONSTANT)
+    Q_PROPERTY(TableAxis* axis READ axis CONSTANT)
 
 public:
     TableParam(QObject *parent = nullptr);
@@ -62,7 +62,6 @@ public:
 
 signals:
     void modelDataChanged();
-    void neverChanges();
 
 public slots:
     virtual void upload();

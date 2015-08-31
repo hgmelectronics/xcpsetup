@@ -17,7 +17,7 @@ class Param : public QObject
     Q_PROPERTY(QString key MEMBER key)
     Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
-    Q_PROPERTY(Slot* slot READ slot NOTIFY neverChanges)
+    Q_PROPERTY(Slot* slot READ slot CONSTANT)
 
 public:
     explicit Param(QObject *parent = nullptr);
@@ -39,7 +39,6 @@ signals:
     void downloadDone(SetupTools::Xcp::OpResult result);
     void writeCacheDirtyChanged(QString key);
     void validChanged();
-    void neverChanges();
 
 public slots:
     virtual void upload() = 0;
