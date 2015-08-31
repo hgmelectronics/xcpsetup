@@ -102,7 +102,7 @@ void Test::downloadTableNoOverlap()
         QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
     }
     range->upload();
-    for(int endIdxUploaded = 0; endIdxUploaded < range->rowCount(); )
+    for(int endIdxUploaded = 0; endIdxUploaded < range->count(); )
     {
         if(rangeSpy.isEmpty())
             rangeSpy.wait(100);
@@ -126,10 +126,10 @@ void Test::downloadTableNoOverlap()
     else
     {
         for(int idx = 0; idx < value.size(); ++idx)
-            range->setData(value[idx], idx);
+            range->set(idx, value[idx]);
     }
     range->download();
-    for(int endIdxUploaded = 0; endIdxUploaded < range->rowCount(); )
+    for(int endIdxUploaded = 0; endIdxUploaded < range->count(); )
     {
         if(rangeSpy.isEmpty())
             rangeSpy.wait(100);

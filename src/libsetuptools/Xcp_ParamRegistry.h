@@ -39,24 +39,25 @@ public:
     const QList<QString> &saveableParamKeys() const;
     bool writeCacheDirty() const;
 
-    SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, QString key);
-    SetupTools::Xcp::TableParam *addTableParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, const SetupTools::TableAxis *axis, QString key);
-    SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot);
-    SetupTools::Xcp::TableParam *addTableParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, const SetupTools::TableAxis *axis);
-    Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slot, QString key);
-    Q_INVOKABLE SetupTools::Xcp::TableParam *addTableParam(int type, quint32 base, bool writable, bool saveable, QVariant slot, QVariant axis, QString key);
-    Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, quint32 base, bool writable, bool saveable, QVariant slot);
-    Q_INVOKABLE SetupTools::Xcp::TableParam *addTableParam(int type, quint32 base, bool writable, bool saveable, QVariant slot, QVariant axis);
+    SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot);
+    SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
+    SetupTools::Xcp::TableParam *addTableParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot, SetupTools::TableAxis* axis);
+    SetupTools::Xcp::TableParam *addTableParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot, SetupTools::TableAxis* axis, QString key);
+
+    Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot*  slot);
+    Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot*  slot, QString key);
+    Q_INVOKABLE SetupTools::Xcp::TableParam *addTableParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot*  slot, SetupTools::TableAxis* axis);
+    Q_INVOKABLE SetupTools::Xcp::TableParam *addTableParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot*  slot, SetupTools::TableAxis* axis, QString key);
     Q_INVOKABLE SetupTools::Xcp::Param *getParam(QString key);
     Q_INVOKABLE void resetCaches();
 signals:
     void connectionChanged();
     void paramsChanged();
     void writeCacheDirtyChanged();
-public slots:
+
+private:
     void onTableConnectionChanged();
     void onParamWriteCacheDirtyChanged(QString key);
-private:
     void addParamKey(QString key);
     MemoryRangeTable *mTable;
     QMap<QString, Param *> mParams;

@@ -4,8 +4,7 @@ namespace SetupTools {
 namespace Xcp {
 
 ScalarMemoryRange::ScalarMemoryRange(MemoryRangeType type, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent) :
-    MemoryRange(base, memoryRangeTypeSize(type), writable, addrGran, parent),
-    mType(type),
+    MemoryRange(type, base, memoryRangeTypeSize(type), writable, addrGran, parent),
     mVariantType(QVariant::Type(memoryRangeTypeQtCode(type))),
     mReadCache(size()),
     mReadCacheLoaded(size())
@@ -14,19 +13,6 @@ ScalarMemoryRange::ScalarMemoryRange(MemoryRangeType type, Xcp::XcpPtr base, boo
 QVariant ScalarMemoryRange::value() const
 {
     return mValue;
-}
-
-MemoryRange::MemoryRangeType ScalarMemoryRange::type() const
-{
-    return mType;
-}
-XcpPtr ScalarMemoryRange::base() const
-{
-    return mBase;
-}
-bool ScalarMemoryRange::writable() const
-{
-    return mWritable;
 }
 
 void ScalarMemoryRange::setValue(QVariant value)
@@ -59,7 +45,7 @@ bool ScalarMemoryRange::operator==(MemoryRange &other)
     if(castOther == nullptr)
         return false;
 
-    if(castOther->base() == base() && castOther->mType == mType)
+    if(castOther->base() == base() && castOther->type() == type())
         return true;
 
     return false;
@@ -75,7 +61,7 @@ void ScalarMemoryRange::download(QVariant value)
     if(value != mSlaveValue)
     {
         std::vector<quint8> buffer(size());
-        convertToSlave(mType, connectionFacade(), value, buffer.data());
+        convertToSlave(value, buffer.data());
         connectionFacade()->download(base(), buffer);
     }
     else
@@ -84,40 +70,40 @@ void ScalarMemoryRange::download(QVariant value)
     }
 }
 
-void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
+void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr baseAddr, int len, std::vector<quint8> data)
 {
     Q_UNUSED(len);
 
     if(result == SetupTools::Xcp::OpResult::Success)
     {
-        if(base.ext != mBase.ext)
+        if(baseAddr.ext != base().ext)
             return;
 
-        quint32 dataEnd = base.addr + data.size() / mAddrGran;
+        quint32 dataEnd = baseAddr.addr + data.size() / addrGran();
 
-        if(end() <= base || mBase >= dataEnd)  // check if ranges overlap at all
+        if(end() <= baseAddr || base() >= dataEnd)  // check if ranges overlap at all
             return;
 
-        quint32 copyBegin = std::max(base.addr, mBase.addr);
-        quint32 copyEnd = std::min(dataEnd, mBase.addr + mSize / mAddrGran);
-        quint32 copyBeginOffset = (copyBegin - base.addr) * mAddrGran;
-        if(copyBegin == mBase.addr && copyEnd == (mBase.addr + mSize / mAddrGran))
+        quint32 copyBegin = std::max(baseAddr.addr, base().addr);
+        quint32 copyEnd = std::min(dataEnd, base().addr + size() / addrGran());
+        quint32 copyBeginOffset = (copyBegin - baseAddr.addr) * addrGran();
+        if(copyBegin == base().addr && copyEnd == (base().addr + size() / addrGran()))
         {
             // no caching needed, entire value loaded at once
-            mSlaveValue = convertFromSlave(mType, connectionFacade(), data.data() + copyBeginOffset);
+            mSlaveValue = convertFromSlave(data.data() + copyBeginOffset);
             mReadCacheLoaded.reset();
         }
-        else if(end() > base && mBase < dataEnd)
+        else if(end() > baseAddr && base() < dataEnd)
         {
-            quint32 copyEndOffset = (copyEnd - base.addr) * mAddrGran;
-            quint32 copyBeginCacheOffset = (copyBegin - mBase.addr) * mAddrGran;
-            quint32 copyEndCacheOffset = (copyEnd - mBase.addr) * mAddrGran;
+            quint32 copyEndOffset = (copyEnd - baseAddr.addr) * addrGran();
+            quint32 copyBeginCacheOffset = (copyBegin - base().addr) * addrGran();
+            quint32 copyEndCacheOffset = (copyEnd - base().addr) * addrGran();
             std::copy(data.begin() + copyBeginOffset, data.begin() + copyEndOffset, mReadCache.begin() + copyBeginCacheOffset);
             for(quint32 iCacheByte = copyBeginCacheOffset; iCacheByte < copyEndCacheOffset; ++iCacheByte)
                 mReadCacheLoaded[iCacheByte] = true;
             if(mReadCacheLoaded.all())
             {
-                mSlaveValue = convertFromSlave(mType, connectionFacade(), mReadCache.data());
+                mSlaveValue = convertFromSlave(mReadCache.data());
                 mReadCacheLoaded.reset();
             }
         }

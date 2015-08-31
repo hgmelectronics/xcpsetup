@@ -5,8 +5,7 @@ namespace SetupTools {
 namespace Xcp {
 
 TableMemoryRange::TableMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent) :
-    MemoryRange(base, memoryRangeTypeSize(type) * dim, writable, addrGran, parent),
-    mType(type),
+    MemoryRange(type, base, memoryRangeTypeSize(type) * dim, writable, addrGran, parent),
     mQtType(QVariant::Type(memoryRangeTypeQtCode(type))),
     mElemSize(memoryRangeTypeSize(type)),
     mDim(dim),
@@ -24,45 +23,17 @@ TableMemoryRange::TableMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPt
     Q_ASSERT(quint64(dim) * memoryRangeTypeSize(type) < std::numeric_limits<quint32>::max());
 }
 
-int TableMemoryRange::rowCount() const
+bool TableMemoryRange::inRange(int index) const
 {
-    return int(mDim);
+    return 0 <= index && index<count();
 }
 
-MemoryRange::MemoryRangeType TableMemoryRange::type() const
+bool TableMemoryRange::set(int index, const QVariant &value)
 {
-    return mType;
-}
-XcpPtr TableMemoryRange::base() const
-{
-    return mBase;
-}
-quint32 TableMemoryRange::dim() const
-{
-    return mDim;
-}
-bool TableMemoryRange::writable() const
-{
-    return mWritable;
-}
-
-QVariant TableMemoryRange::operator[](quint32 index) const
-{
-    if(index < mDim)
-        return mData[index];
-    else
-        return QVariant();
-}
-
-const QList<QVariant> &TableMemoryRange::data() const
-{
-    return mData;
-}
-
-bool TableMemoryRange::setData(const QVariant &value, quint32 index)
-{
-    if(index >= mDim)
+    if(!inRange(index))
+    {
         return false;
+    }
 
     QVariant convertedValue = value;
     convertedValue.convert(mQtType);
@@ -137,8 +108,8 @@ bool TableMemoryRange::operator==(MemoryRange &other)
         return false;
 
     if(castOther->base() == base()
-            && castOther->mType == mType
-            && castOther->mDim == mDim)
+            && castOther->type() == type()
+            && castOther->dim() == dim())
         return true;
 
     return false;
@@ -149,7 +120,7 @@ void TableMemoryRange::download()
     bool changed = false;
     quint32 beginChanged = 0;
     quint32 endChanged = 0;
-    for(quint32 index = 0; index != mDim; ++index)
+    for(quint32 index = 0; index != dim(); ++index)
     {
         if(mData[index] != mSlaveData[index])
         {
@@ -169,18 +140,16 @@ void TableMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
 {
     if(!data.empty())
     {
-        ConnectionFacade *facade = connectionFacade();
         Q_ASSERT(beginIndex + data.size() <= mDim);
-        Q_ASSERT(facade);
 
         std::vector<quint8> buffer(mElemSize * data.size());
         quint8 *bufIt = buffer.data();
         for(const QVariant &item : data)
         {
-            convertToSlave(mType, facade, item, bufIt);
+            convertToSlave(item, bufIt);
             bufIt += mElemSize;
         }
-        facade->download(base() + (beginIndex * mElemSize / mAddrGran), buffer);
+        connectionFacade()->download(base() + (beginIndex * mElemSize / addrGran()), buffer);
     }
     else
     {
@@ -189,66 +158,63 @@ void TableMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
     }
 }
 
-void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
+void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr baseAddr, int len, std::vector<quint8> data)
 {
-    Q_UNUSED(base);
     Q_UNUSED(len);
-
-    ConnectionFacade *facade = connectionFacade();
 
     if(result == SetupTools::Xcp::OpResult::Success)
     {
-        if(base.ext != mBase.ext)
+        if(baseAddr.ext != base().ext)
             return;
 
-        quint32 dataEnd = base.addr + data.size() / mAddrGran;
+        quint32 dataEnd = baseAddr.addr + data.size() / addrGran();
 
-        if(end() <= base || mBase >= dataEnd)
+        if(end() <= baseAddr || base() >= dataEnd)
             return;
 
-        quint32 beginAddr = std::max(base.addr, mBase.addr);
-        quint32 endAddr = std::min(dataEnd, mBase.addr + mSize / mAddrGran);
-        quint32 beginTableOffset = (beginAddr - mBase.addr) * mAddrGran;
-        quint32 endTableOffset = (endAddr - mBase.addr) * mAddrGran;
-        quint32 beginIndex = beginTableOffset / mElemSize;
-        quint32 endIndex = (endTableOffset + mElemSize - 1) / mElemSize;
-        quint32 beginFullIndex = (beginTableOffset + mElemSize - 1) / mElemSize;
-        quint32 endFullIndex = endTableOffset / mElemSize;
+        quint32 beginAddr = std::max(baseAddr.addr, base().addr);
+        quint32 endAddr = std::min(dataEnd, base().addr + size() / addrGran());
+        quint32 beginTableOffset = (beginAddr - base().addr) * addrGran();
+        quint32 endTableOffset = (endAddr - base().addr) * addrGran();
+        quint32 beginIndex = beginTableOffset / elemSize();
+        quint32 endIndex = (endTableOffset + elemSize() - 1) / elemSize();
+        quint32 beginFullIndex = (beginTableOffset + elemSize() - 1) / elemSize();
+        quint32 endFullIndex = endTableOffset / elemSize();
         quint32 beginChangedIndex = std::numeric_limits<quint32>::max();
         quint32 endChangedIndex = std::numeric_limits<quint32>::min();
 
         std::function<void(quint32 index, QVariant value)> setDataValue =
                 [this, &beginChangedIndex, &endChangedIndex](quint32 index, QVariant value)->void
+        {
+            mSlaveData[index] = value;
+            bool changed = updateDelta<>(mData[index], value);
+            if(changed)
             {
-                mSlaveData[index] = value;
-                bool changed = updateDelta<>(mData[index], value);
-                if(changed)
-                {
-                    beginChangedIndex = std::min(beginChangedIndex, index);
-                    endChangedIndex = std::max(endChangedIndex, index + 1);
-                }
-            };
+                beginChangedIndex = std::min(beginChangedIndex, index);
+                endChangedIndex = std::max(endChangedIndex, index + 1);
+            }
+        };
 
         for(quint32 i = beginFullIndex; i < endFullIndex; ++i)
         {
-            quint32 elemDataOffset = i * mElemSize + (mBase.addr - base.addr) * mAddrGran;
-            setDataValue(i, convertFromSlave(mType, facade, data.data() + elemDataOffset));
+            quint32 elemDataOffset = i * elemSize() + (base().addr - baseAddr.addr) * addrGran();
+            setDataValue(i, convertFromSlave(data.data() + elemDataOffset));
             mReadCacheLoaded.reset(i);
         }
         if(beginIndex < beginFullIndex)
         {
-            quint32 beginDataOffset = (beginAddr - base.addr) * mAddrGran;
-            quint32 partSize = (beginFullIndex * mElemSize) - beginTableOffset;
+            quint32 beginDataOffset = (beginAddr - baseAddr.addr) * addrGran();
+            quint32 partSize = (beginFullIndex * elemSize()) - beginTableOffset;
             QVariant partValue = partialUpload(beginTableOffset, {data.data() + beginDataOffset, data.data() + beginDataOffset + partSize});
             if(partValue.isValid())
                 setDataValue(beginIndex, partValue);
         }
         if(endIndex > endFullIndex)
         {
-            quint32 endDataOffset = (endAddr - base.addr) * mAddrGran;
-            quint32 partSize = endTableOffset % mElemSize;
+            quint32 endDataOffset = (endAddr - baseAddr.addr) * addrGran();
+            quint32 partSize = endTableOffset % elemSize();
             quint32 beginDataOffset = endDataOffset - partSize;
-            QVariant partValue = partialUpload(endFullIndex * mElemSize, {data.data() + beginDataOffset, data.data() + endDataOffset});
+            QVariant partValue = partialUpload(endFullIndex * elemSize(), {data.data() + beginDataOffset, data.data() + endDataOffset});
             if(partValue.isValid())
                 setDataValue(endIndex - 1, partValue);
         }
@@ -284,8 +250,8 @@ QVariant TableMemoryRange::partialUpload(quint32 offset, boost::iterator_range<q
     for(quint32 iCacheByte = offset, end = offset + data.size(); iCacheByte < end; ++iCacheByte)
         mReadCacheLoaded[iCacheByte] = true;
 
-    quint32 index = offset / mElemSize;
-    quint32 elemOffset = index * mElemSize;
+    quint32 index = offset / elemSize();
+    quint32 elemOffset = index * elemSize();
 
     bool allLoaded = true;
     for(quint32 i = elemOffset, end = elemOffset + data.size(); i < end; ++i)
@@ -298,7 +264,7 @@ QVariant TableMemoryRange::partialUpload(quint32 offset, boost::iterator_range<q
     }
     if(allLoaded)
     {
-        newValue = convertFromSlave(mType, connectionFacade(), mReadCache.data() + elemOffset);
+        newValue = convertFromSlave(mReadCache.data() + elemOffset);
         for(quint32 i = elemOffset, end = elemOffset + data.size(); i < end; ++i)
             mReadCacheLoaded.reset(i);
     }

@@ -46,11 +46,13 @@ public:
     void waitWriteComplete();
     void clearWriteComplete();
 	void setSerialLog(bool on);
+
 public slots:
     void init();
     void portReadyRead();
     void portBytesWritten(qint64 bytes);
     void write(std::vector<quint8> data);
+
 private:
     constexpr static const uchar EOL = '\r';
     constexpr static const int PROMPT_DELAY_USEC = 200;

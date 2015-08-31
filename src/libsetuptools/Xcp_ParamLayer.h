@@ -77,16 +77,14 @@ public slots:
     void connectSlave();
     void disconnectSlave();
 
+private:
     void onConnSetStateDone(SetupTools::Xcp::OpResult result);
     void onConnStateChanged();
-
     void onConnNvWriteDone(SetupTools::Xcp::OpResult result);
-
     void onParamDownloadDone(SetupTools::Xcp::OpResult result);
     void onParamUploadDone(SetupTools::Xcp::OpResult result);
-
     void onRegistryWriteCacheDirtyChanged();
-private:
+
     enum class State
     {
         IntfcNotOk,

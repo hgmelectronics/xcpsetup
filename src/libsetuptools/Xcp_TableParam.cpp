@@ -6,204 +6,104 @@ namespace Xcp {
 TableParam::TableParam(QObject *parent) :
     Param(parent),
     mRange(nullptr),
-    mSlot(nullptr),
     mAxis(nullptr),
     mStringModel(new TableParamListModel(true, this)),
     mFloatModel(new TableParamListModel(false, this))
-{}
+{
 
-TableParam::TableParam(TableMemoryRange *range, const Slot *slot, const TableAxis *axis, QObject *parent) :
-    Param(range, parent),
+}
+
+TableParam::TableParam(TableMemoryRange* range, Slot* slot, TableAxis* axis, QObject* parent) :
+    Param(range, slot, parent),
     mRange(range),
-    mSlot(slot),
     mAxis(axis),
     mStringModel(new TableParamListModel(true, this)),
     mFloatModel(new TableParamListModel(false, this))
 {
-    Q_ASSERT(mAxis->rowCount() == range->rowCount());
+    Q_ASSERT(mAxis && mRange && slot);
+    Q_ASSERT(mAxis->rowCount() == range->count());
     Q_ASSERT(mAxis->roleNames().size());   // must have at least an x
+
     for(int role = TableAxisRole::XRole, endRole = TableAxisRole::XRole + mAxis->roleNames().size(); role != endRole; ++role)
         Q_ASSERT(mAxis->roleNames().count(role));
+
     Q_ASSERT(mAxis->roleNames().count(TableAxisRole::ValueRole) == 0);
 
-    connect(mAxis, &TableAxis::xUnitChanged, this, &TableParam::onAxisXUnitChanged);
-    connect(mAxis, &TableAxis::yUnitChanged, this, &TableParam::onAxisYUnitChanged);
-    connect(mSlot, &Slot::unitChanged, this, &TableParam::onSlotUnitChanged);
     connect(mRange, &MemoryRange::uploadDone, this, &TableParam::onRangeUploadDone);
     connect(mRange, &MemoryRange::downloadDone, this, &TableParam::onRangeDownloadDone);
     connect(mRange, &TableMemoryRange::dataChanged, this, &TableParam::onRangeDataChanged);
 }
 
-QString TableParam::unit(int role)
+QVariant TableParam::get(int row) const
 {
-    Q_ASSERT(mAxis && mRange && mSlot);
-    switch(role)
-    {
-    case TableAxisRole::XRole:
-        return mAxis->xUnit();
-        break;
-    case TableAxisRole::YRole:
-        return mAxis->yUnit();
-        break;
-    case TableAxisRole::ValueRole:
-        return mSlot->unit();
-        break;
-    default:
-        return QString("");
-        break;
-    }
+    return slot()->asFloat(mRange->get(row));
 }
 
-TableParamListModel *TableParam::stringModel()
+bool TableParam::set(int row, const QVariant& value) const
 {
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mStringModel;
+    return mRange->set(row, slot()->asRaw(value));
 }
 
-TableParamListModel *TableParam::floatModel()
+int TableParam::count() const
 {
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mFloatModel;
+    return mRange->count();
 }
 
-QString TableParam::xLabel() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mXLabel;
-}
-
-QString TableParam::yLabel() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mYLabel;
-}
-
-QString TableParam::valueLabel() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mValueLabel;
-}
-
-void TableParam::setXLabel(QString newVal)
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    if(updateDelta<>(mXLabel, newVal))
-        emit xLabelChanged();
-}
-
-void TableParam::setYLabel(QString newVal)
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    if(updateDelta<>(mYLabel, newVal))
-        emit yLabelChanged();
-}
-
-void TableParam::setValueLabel(QString newVal)
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    if(updateDelta<>(mValueLabel, newVal))
-        emit valueLabelChanged();
-}
-
-QString TableParam::xUnit() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mAxis->xUnit();
-}
-
-QString TableParam::yUnit() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mAxis->yUnit();
-}
-
-QString TableParam::valueUnit() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mSlot->unit();
-}
-
-const TableMemoryRange *TableParam::range() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mRange;
-}
-
-const Slot *TableParam::slot() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mSlot;
-}
-
-const TableAxis *TableParam::axis() const
-{
-    Q_ASSERT(mAxis && mRange && mSlot);
-    return mAxis;
-}
 
 QVariant TableParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 {
-    Q_ASSERT(mAxis && mRange && mSlot);
+    Q_ASSERT(mAxis && mRange && slot());
+
     QStringList ret;
-    ret.reserve(mRange->rowCount());
+    ret.reserve(mRange->count());
+
     bool allInRangeAccum = true;
     bool anyInRangeAccum = false;
+
     for(QVariant elem : mRange->data())
     {
-        bool inRange = mSlot->rawInRange(elem);
+        bool inRange = slot()->rawInRange(elem);
         allInRangeAccum &= inRange;
         anyInRangeAccum |= inRange;
-        ret.append(mSlot->toString(elem));
+        ret.append(slot()->asString(elem));
     }
+
     if(allInRange)
         *allInRange = allInRangeAccum;
+
     if(anyInRange)
         *anyInRange = anyInRangeAccum;
+
     return ret;
 }
 
 bool TableParam::setSerializableValue(const QVariant &val)
 {
-    Q_ASSERT(mAxis && mRange && mSlot);
+    Q_ASSERT(mAxis && mRange && slot());
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     QStringList stringList = val.toStringList();
-    if(stringList.size() != mRange->rowCount())
+    if(stringList.size() != mRange->count())
         return false;
 
     for(QString str : stringList)
     {
-        if(!mSlot->engrInRange(str))
+        if(!slot()->engrInRange(str))
             return false;
     }
 
     QVariantList rawList;
-    rawList.reserve(mRange->rowCount());
+    rawList.reserve(mRange->count());
     for(QString str : stringList)
-        rawList.push_back(mSlot->toRaw(str));
+        rawList.push_back(slot()->asRaw(str));
 
     return mRange->setDataRange(rawList, 0);
 }
 
 void TableParam::resetCaches()
 {
-    Q_ASSERT(mAxis && mRange && mSlot);
+    Q_ASSERT(mAxis && mRange && slot());
     mRange->resetCaches();
-}
-
-void TableParam::onAxisXUnitChanged()
-{
-    emit xUnitChanged();
-}
-
-void TableParam::onAxisYUnitChanged()
-{
-    emit yUnitChanged();
-}
-
-void TableParam::onSlotUnitChanged()
-{
-    emit valueUnitChanged();
 }
 
 void TableParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
@@ -225,13 +125,13 @@ void TableParam::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)
 
 void TableParam::upload()
 {
-    Q_ASSERT(mAxis && mRange && mSlot);
+    Q_ASSERT(mAxis && mRange && slot());
     mRange->upload();
 }
 
 void TableParam::download()
 {
-    Q_ASSERT(mAxis && mRange && mSlot);
+    Q_ASSERT(mAxis && mRange && slot());
     mRange->download();
 }
 
@@ -243,19 +143,13 @@ TableParamListModel::TableParamListModel(bool stringFormat, TableParam *parent) 
     mRoleNames = mParam->mAxis->roleNames();
     mRoleNames[TableAxisRole::ValueRole] = QByteArray("value");
 
-    connect(mParam, &TableParam::xLabelChanged, this, &TableParamListModel::onTableLabelChanged);
-    connect(mParam, &TableParam::yLabelChanged, this, &TableParamListModel::onTableLabelChanged);
-    connect(mParam, &TableParam::valueLabelChanged, this, &TableParamListModel::onTableLabelChanged);
-    connect(mParam->mSlot, &Slot::valueParamChanged, this, &TableParamListModel::onValueParamChanged);
-    connect(mParam->mRange, &TableMemoryRange::dataChanged, this, &TableParamListModel::onRangeDataChanged);
+    connect(mParam->slot(), &Slot::valueParamChanged, this, &TableParamListModel::onValueParamChanged);
+    connect(mParam->range(), &TableMemoryRange::dataChanged, this, &TableParamListModel::onRangeDataChanged);
 }
 
 int TableParamListModel::rowCount(const QModelIndex &parent) const
 {
-    if(parent.isValid())
-        return 0;
-    else
-        return mParam->mRange->rowCount();
+    return parent.isValid() ? 0 : mParam->range()->count();
 }
 
 QVariant TableParamListModel::data(const QModelIndex &index, int role) const
@@ -263,16 +157,16 @@ QVariant TableParamListModel::data(const QModelIndex &index, int role) const
     if(!index.isValid()
             || index.column() != 0
             || index.row() < 0
-            || index.row() >= mParam->mRange->rowCount())
+            || index.row() >= mParam->range()->count())
         return QVariant();
 
     if(role == TableAxisRole::ValueRole)
     {
-        QVariant rawData = mParam->mRange->data()[index.row()];
+        QVariant rawData = mParam->range()->get(index.row());
         if(mStringFormat)
-            return mParam->mSlot->toString(rawData);
+            return mParam->slot()->asString(rawData);
         else
-            return mParam->mSlot->toFloat(rawData);
+            return mParam->slot()->asFloat(rawData);
     }
     else
     {
@@ -286,21 +180,7 @@ QVariant TableParamListModel::headerData(int section, Qt::Orientation orientatio
             || orientation != Qt::Horizontal)
         return QVariant();
 
-    switch(role)
-    {
-    case TableAxisRole::XRole:
-        return mParam->xLabel();
-        break;
-    case TableAxisRole::YRole:
-        return mParam->yLabel();
-        break;
-    case TableAxisRole::ValueRole:
-        return mParam->valueLabel();
-        break;
-    default:
-        return QVariant();
-        break;
-    }
+    return QString(mRoleNames[role]);
 }
 
 bool TableParamListModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -308,11 +188,11 @@ bool TableParamListModel::setData(const QModelIndex &index, const QVariant &valu
     if(!index.isValid()
             || index.column() != 0
             || index.row() < 0
-            || index.row() >= mParam->mRange->rowCount()
+            || index.row() >= mParam->range()->count()
             || role != TableAxisRole::ValueRole)
         return false;
 
-    return mParam->mRange->setData(mParam->mSlot->toRaw(value), index.row());
+    return mParam->range()->set(index.row(), mParam->slot()->asRaw(value));
 }
 
 Qt::ItemFlags TableParamListModel::flags(const QModelIndex &index) const
@@ -326,14 +206,9 @@ QHash<int, QByteArray> TableParamListModel::roleNames() const
     return mRoleNames;
 }
 
-void TableParamListModel::onTableLabelChanged()
-{
-    emit headerDataChanged(Qt::Horizontal, 0, 0);
-}
-
 void TableParamListModel::onValueParamChanged()
 {
-    onRangeDataChanged(0, mParam->mRange->rowCount());
+    onRangeDataChanged(0, mParam->mRange->count());
 }
 
 void TableParamListModel::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)

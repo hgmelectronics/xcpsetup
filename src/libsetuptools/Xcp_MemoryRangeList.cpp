@@ -14,25 +14,18 @@ MemoryRangeList::MemoryRangeList(quint8 addrGran, MemoryRangeTable *parent) :
     mAddrGran(addrGran)
 {}
 
-XcpPtr MemoryRangeList::base() const
+
+Xcp::ConnectionFacade *MemoryRangeList::connectionFacade() const
 {
-    return mBase;
+    return qobject_cast<MemoryRangeTable *>(parent())->connectionFacade();
 }
+
 
 XcpPtr MemoryRangeList::end() const
 {
     return mBase + size() / mAddrGran;
 }
 
-quint32 MemoryRangeList::size() const
-{
-    return mSize;
-}
-
-Xcp::ConnectionFacade *MemoryRangeList::connectionFacade() const
-{
-    return qobject_cast<MemoryRangeTable *>(parent())->connectionFacade();
-}
 
 MemoryRange *MemoryRangeList::addRange(MemoryRange *newRange)
 {

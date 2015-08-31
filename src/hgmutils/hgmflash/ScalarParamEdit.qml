@@ -6,6 +6,9 @@ import com.setuptools.xcp 1.0
 ColumnLayout {
     property string name
     property ScalarParam param
+
+    enabled: param.valid
+
     Label {
         text: name
     }
@@ -17,7 +20,7 @@ ColumnLayout {
         }
 
         Label {
-            text: param.unit
+            text: param.slot.unit
         }
     }
 }
