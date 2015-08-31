@@ -3,7 +3,7 @@ import com.setuptools.xcp 1.0
 import com.setuptools 1.0
 
 QtObject {
-    property LinearSlot cylinderCount: LinearSlot {
+    readonly property LinearSlot cylinderCount: LinearSlot {
         rawA: 0
         engrA: 0
         rawB: 16
@@ -11,7 +11,7 @@ QtObject {
         precision: 0
     }
 
-    property LinearSlot percentage1: LinearSlot {
+    readonly property LinearSlot percentage1: LinearSlot {
         rawA: 0
         engrA: 0
         rawB: 100
@@ -19,7 +19,7 @@ QtObject {
         unit: "%"
         precision: 0
     }
-    property LinearSlot ratio1: LinearSlot {
+    readonly property LinearSlot ratio1: LinearSlot {
         rawA: 0
         engrA: 0
         rawB: 1000000000
@@ -27,7 +27,7 @@ QtObject {
         unit: ":1"
         precision: 2
     }
-    property LinearSlot rpm1: LinearSlot {
+    readonly property LinearSlot rpm1: LinearSlot {
         rawA: 0
         engrA: 0
         rawB:  1000000000
@@ -36,7 +36,7 @@ QtObject {
         precision: 0
     }
 
-    property LinearSlot length: LinearSlot{
+    readonly property LinearSlot length: LinearSlot{
         rawA: 0
         engrA: 0
         rawB: 10000
@@ -45,7 +45,7 @@ QtObject {
         precision: 1
     }
 
-    property LinearSlot booleanOnOff1: LinearSlot {
+    readonly property LinearSlot booleanOnOff1: LinearSlot {
         rawA: 0
         engrA: 0
         rawB: 1
@@ -54,21 +54,21 @@ QtObject {
         precision: 0
     }
 
-    property EncodingSlot yesNo: EncodingSlot {
+    readonly property EncodingSlot yesNo: EncodingSlot {
         encodingList: [
             {raw: 0, engr: "No"},
             {raw: 1, engr: "Yes"},
         ]
     }
 
-    property EncodingSlot onOff: EncodingSlot {
+    readonly property EncodingSlot onOff: EncodingSlot {
         encodingList: [
             {raw: 0, engr: "Off"},
             {raw: 1, engr: "On"},
         ]
     }
 
-    property EncodingSlot switchId: EncodingSlot {
+    readonly property EncodingSlot switchId: EncodingSlot {
         encodingList: [
             {raw: 0, engr: "SG0"},
             {raw: 1, engr: "SG1"},
