@@ -62,9 +62,9 @@ void Test::linearSlotToFloat()
     slot.setOorRaw(oorRaw);
 
     if(std::isnan(engrOut))
-        QVERIFY(std::isnan(slot.toFloat(rawIn)));
+        QVERIFY(std::isnan(slot.asFloat(rawIn)));
     else
-        QCOMPARE(slot.toFloat(rawIn), engrOut);
+        QCOMPARE(slot.asFloat(rawIn), engrOut);
 }
 
 
@@ -123,7 +123,7 @@ void Test::linearSlotToString()
     slot.setRawB(rawB);
     slot.setOorRaw(oorRaw);
 
-    QCOMPARE(slot.toString(rawIn), engrOut);
+    QCOMPARE(slot.asString(rawIn), engrOut);
 }
 
 void Test::linearSlotToRaw_data()
@@ -181,7 +181,7 @@ void Test::linearSlotToRaw()
     slot.setRawB(rawB);
     slot.setOorRaw(oorRaw);
 
-    QCOMPARE(slot.toRaw(engrIn), rawOut);
+    QCOMPARE(slot.asRaw(engrIn), rawOut);
 }
 
 }   // namespace Xcp

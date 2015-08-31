@@ -104,6 +104,7 @@ public slots:
     void buildChecksum(XcpPtr base, int len);
     void getAvailSlavesStr(QString bcastId, QString filter);
 
+private:
     void onConnSetStateDone(SetupTools::Xcp::OpResult);
     void onConnUploadDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, std::vector<quint8> data);
     void onConnDownloadDone(SetupTools::Xcp::OpResult result, XcpPtr base, std::vector<quint8> data);
@@ -117,7 +118,7 @@ public slots:
     void onConnGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void onConnStateChanged();
     void onConnOpProgressChanged();
-private:
+
     Interface::Interface* mIntfc;
     bool mIntfcOwned;
     QUrl mIntfcUri;
@@ -140,12 +141,14 @@ public:
 signals:
     void uploadUint32Done(int result, quint32 data);
     void downloadUint32Done(int result);
+
 public slots:
     void uploadUint32(quint32 base);
     void downloadUint32(quint32 base, quint32 data);
+
+private:
     void onConnUploadDone(SetupTools::Xcp::OpResult, XcpPtr, int, const std::vector<quint8> &);
     void onConnDownloadDone(SetupTools::Xcp::OpResult, XcpPtr, const std::vector<quint8> &);
-private:
     ConnectionFacade *mConn;
 };
 

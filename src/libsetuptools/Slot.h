@@ -26,9 +26,9 @@ public:
     int storageType() const;
     void setStorageType(int);
 
-    Q_INVOKABLE virtual double toFloat(QVariant raw) const = 0;
-    Q_INVOKABLE virtual QString toString(QVariant raw) const = 0;
-    Q_INVOKABLE virtual QVariant toRaw(QVariant engr) const = 0;
+    Q_INVOKABLE virtual double asFloat(QVariant raw) const = 0;
+    Q_INVOKABLE virtual QString asString(QVariant raw) const = 0;
+    Q_INVOKABLE virtual QVariant asRaw(QVariant engr) const = 0;
     Q_INVOKABLE virtual bool rawInRange(QVariant engr) const = 0;
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const = 0;
 signals:

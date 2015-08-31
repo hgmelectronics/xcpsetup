@@ -61,13 +61,15 @@ signals:
     void programChanged();
     void progressChanged();
     void intfcUriChanged();
-
     void programmingDone(bool ok);
+
 public slots:
-    void onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void startProgramming();
     void pollForSlaves();
     void abort();
+
+private:
+    void onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
     void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
     void onWatchdogExpired();
@@ -76,7 +78,7 @@ public slots:
     void onProgFileChanged();
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();
-private:
+
     enum class State
     {
         IntfcNotOk = 0,

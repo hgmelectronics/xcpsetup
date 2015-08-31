@@ -12,5 +12,7 @@
         <file>TableParamEdit.qml</file>
         <file>TableParamView.qml</file>
         <file>EncodingParamEdit.qml</file>
+        <file>Parameters.qml</file>
+        <file>TableParamView2.qml</file>
     </qresource>
 </RCC>

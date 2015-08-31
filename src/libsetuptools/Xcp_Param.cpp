@@ -4,16 +4,29 @@ namespace SetupTools {
 namespace Xcp {
 
 Param::Param(QObject *parent) :
-    Param(nullptr, parent)
-{}
-
-Param::Param(MemoryRange *baseRange, QObject *parent) :
     QObject(parent),
     saveable(false),
-    mBaseRange(baseRange)
+    mBaseRange(nullptr),
+    mSlot(nullptr)
+{
+
+}
+
+Param::Param(MemoryRange *baseRange, Slot* slot, QObject *parent) :
+    QObject(parent),
+    saveable(false),
+    mBaseRange(baseRange),
+    mSlot(slot)
+
 {
     connect(mBaseRange, &MemoryRange::validChanged, this, &Param::onRangeValidChanged);
     connect(mBaseRange, &MemoryRange::writeCacheDirtyChanged, this, &Param::onRangeWriteCacheDirtyChanged);
+}
+
+SetupTools::Slot *Param::slot() const
+{
+    Q_ASSERT(mSlot);
+    return mSlot;
 }
 
 bool Param::valid() const

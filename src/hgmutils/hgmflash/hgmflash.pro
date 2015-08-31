@@ -8,6 +8,7 @@ SOURCES += main.cpp \
 RESOURCES += qml.qrc \
     qmldirs.qrc
 
+
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 
 static {

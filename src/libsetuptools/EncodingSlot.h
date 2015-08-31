@@ -38,9 +38,9 @@ public:
     void setEncodingList(QVariant);
     QStringList encodingStringList();
 
-    Q_INVOKABLE virtual double toFloat(QVariant raw) const;
-    Q_INVOKABLE virtual QString toString(QVariant raw) const;
-    Q_INVOKABLE virtual QVariant toRaw(QVariant engr) const;
+    Q_INVOKABLE virtual double asFloat(QVariant raw) const;
+    Q_INVOKABLE virtual QString asString(QVariant raw) const;
+    Q_INVOKABLE virtual QVariant asRaw(QVariant engr) const;
     Q_INVOKABLE virtual bool rawInRange(QVariant raw) const;
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const;
     Q_INVOKABLE int engrToEncodingIndex(QVariant engr) const;
@@ -52,9 +52,9 @@ public:
 signals:
     void unencodedSlotChanged();
     void encodingListChanged();
-public slots:
-    void onUnencodedSlotUnitChanged();
+
 private:
+    void onUnencodedSlotUnitChanged();
     Slot *mUnencodedSlot;
     QList<EncodingPair> mList;
     QMap<double, QString> mRawToEngr;
