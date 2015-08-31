@@ -37,6 +37,7 @@ ColumnLayout {
     signal userNvWriteParam()
     signal userDisconnectParam()
     signal userShowParamEdit()
+    signal targetChanged()
 
     function selectProg() { progFileDialog.open() }
     function selectLoadParam() { paramLoadFileDialog.open() }
@@ -161,6 +162,10 @@ ColumnLayout {
                 validator: RegExpValidator {
                     regExp: /[0-9A-Fa-f]{1,8}/
                 }
+                onAccepted: {
+                    targetCmdId = text
+                    root.targetChanged()
+                }
             }
 
             Label {
@@ -171,6 +176,10 @@ ColumnLayout {
                 text: targetResId
                 validator: RegExpValidator {
                     regExp: /[0-9A-Fa-f]{1,8}/
+                }
+                onAccepted: {
+                    targetResId = text
+                    root.targetChanged()
                 }
             }
         }

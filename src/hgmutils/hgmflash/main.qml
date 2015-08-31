@@ -94,6 +94,11 @@ ApplicationWindow {
         onUserShowParamEdit: paramWindow.show()
         targetCmdId: cs2Tool.slaveCmdId
         targetResId: cs2Tool.slaveResId
+
+        onTargetChanged: {
+            cs2Tool.slaveCmdId = targetCmdId
+            cs2Tool.slaveResId = targetResId
+        }
     }
 
     Cs2Tool {
