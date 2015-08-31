@@ -7,50 +7,32 @@ import com.setuptools.xcp 1.0
 import com.setuptools 1.0
 
 Window {
-    property ParamRegistry registry
-
     id: paramWindow
-    title: "CS2 Parameter Editor"
 
-    width: 600
-    height: 400
-    SystemPalette { id: myPalette; colorGroup: SystemPalette.Active }
-    color: myPalette.window
+    property ParamRegistry registry
 
     function show() {
         visible = true
     }
 
-    Slots {
-        id: slots
+    title: "CS2 Parameter Editor"
+    width: 600
+    height: 400
+    SystemPalette { id: myPalette; colorGroup: SystemPalette.Active }
+    color: myPalette.window
+
+    Parameters
+    {
+        id: parameters
+        registry: paramWindow.registry
     }
 
-    Axes {
-        id: axes
-    }
-    
+
     TabView {
         id: paramTabView
         anchors.fill: parent
         Tab {
-            title: "System"
-            active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                ScalarParamEdit {
-                    name: "Display Brightness"
-                    param: registry.addScalarParam(MemoryRange.U32, 0x01020000, true, true, slots.percentage1)
-                }
-                ScalarParamEdit {   // duplicate to illustrate binding
-                    name: "Display Brightness"
-                    param: registry.addScalarParam(MemoryRange.U32, 0x01020000, true, true, slots.percentage1)
-                }
-            }
-        }
-        Tab {
-            title: "Ratios And More"
+            title: "Vehicle"
             active: true
             Flow {
                 anchors.fill: parent
@@ -58,53 +40,201 @@ Window {
                 spacing: 10
                 ScalarParamEdit {
                     name: "Final Drive Ratio"
-                    param: registry.addScalarParam(MemoryRange.U32, 0x0A000000, true, true, slots.ratio1)
+                    param: parameters.finalDriveRatio
                 }
                 ScalarParamEdit {
-                    name: "Max Engine Speed A"
-                    param: registry.addScalarParam(MemoryRange.U32, 0x04230000, true, true, slots.rpm1)
+                    name: "Tire Diameter"
+                    param: parameters.tireDiameter
                 }
             }
         }
+
         Tab {
-            title: "Tables"
+            title: "Engine"
             active: true
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
-                TableParamView {
-                    name: "Switch Monitor Input"
-                    param: registry.addTableParam(MemoryRange.U32, 0x80500000, false, false, slots.booleanOnOff1, axes.switchMonitorId);
-                    Component.onCompleted: {
-                        param.xLabel = "Switch #"
-                        param.valueLabel = "State"
+
+                ScalarParamEdit{
+                    name: "Engine Cylinders"
+                    param: parameters.engineCylinders
+                }
+
+                ScalarParamEdit {
+                    name: "Max Engine Speed A"
+                    param: parameters.maxEngineSpeedA
+                }
+                ScalarParamEdit {
+                    name: "Max Engine Speed B"
+                    param: parameters.maxEngineSpeedB
+                }
+
+            }
+        }
+
+        Tab {
+
+
+            title: "Shift Tables"
+            active: true
+            Flow {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
+
+                function bump(p)
+                {
+                    for(var i=0; i<p.count ; i++)
+                    {
+                        p.set(i,p.get(i)+1.0);
                     }
+                }
+
+                function zero(p)
+                {
+                    for(var i=0; i<p.count ; i++)
+                    {
+                        p.set(i,0.0);
+                    }
+                }
+
+
+                Button
+                {
+                    text: "Zero"
+                    onClicked: {
+                        zero(parameters.shiftTable12A);
+                        zero(parameters.shiftTable23A);
+                        zero(parameters.shiftTable34A);
+                        }
+                }
+
+
+
+                Button
+                {
+                    text: "Bump 1-2"
+                    onClicked: {
+                        bump(parameters.shiftTable12A)
+                    }
+                }
+
+                Button
+                {
+                    text: "Bump 2-3"
+                    onClicked: {
+                        bump(parameters.shiftTable23A)
+                    }
+                }
+
+                Button
+                {
+                    text: "Bump 3-4"
+                    onClicked: {
+                        bump(parameters.shiftTable34A)
+                    }
+                }
+
+                TableView
+                {
+                    width: 600;
+
+                    model:
+                        TableParamMapper {
+                        stringFormat: true
+                        mapping: { "shift12": parameters.shiftTable12A, "shift23": parameters.shiftTable23A,
+                                   "shift34": parameters.shiftTable34A
+                        }
+                    }
+
+                    TableViewColumn {
+                        role: "shift12"
+                        title: "Shift 1-2"
+                        width: 100
+                    }
+                    TableViewColumn {
+                        role: "shift23"
+                        title: "Shift 2-3"
+                        width: 100
+                    }
+
+                    TableViewColumn {
+                        role: "shift34"
+                        title: "Shift 3-4"
+                        width: 100
+                    }
+
+                }
+
+                TableParamEdit {
+                    id: shift12
+                    name: "Shift Speed 1-2 A"
+                    xLabel: "Throttle"
+                    yLabel: "Speed"
+                    param: parameters.shiftTable12A
+                }
+
+
+                TableParamEdit {
+                    name: "Shift Speed 2-3 A"
+                    xLabel: "Throttle"
+                    yLabel: "Speed"
+                    param: parameters.shiftTable23A
+                }
+
+                TableParamEdit {
+                    name: "Shift Speed 3-4 A"
+                    xLabel: "Throttle"
+                    yLabel: "Speed"
+                    param: parameters.shiftTable34A
                 }
                 TableParamEdit {
-                    name: "Shift Table 1-2 A"
-                    param: registry.addTableParam(MemoryRange.U32, 0x04240000, true, true, slots.rpm1, axes.percentage1);
-                    Component.onCompleted: {
-                        param.xLabel = "TPS"
-                        param.valueLabel = "TOSS"
-                    }
+                    name: "Shift Speed 4-5 A"
+                    xLabel: "Throttle"
+                    yLabel: "Speed"
+                    param: parameters.shiftTable45A
                 }
             }
         }
+
+
         Tab {
-            title: "Bar"
+            title: "Inputs"
             active: true
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
+                TableParamView2 {
+                    name: "Switch Monitor Input"
+                    param: parameters.switchMonitorInput
+                    xSlot: parameters.slots.switchId
+                    //                    Component.onCompleted: {
+                    //                        param.xLabel = "Switch #"
+                    //                        param.valueLabel = "State"
+                    //                    }
+                }
+            }
+        }
+
+        Tab {
+            title: "Accessories"
+            active: true
+            Flow {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
+
                 ScalarParamEdit {   // duplicate to illustrate binding
                     name: "Display Brightness"
-                    param: registry.addScalarParam(MemoryRange.U32, 0x01020000, true, true, slots.percentage1)
+                    param: parameters.displayBrightness
                 }
-                EncodingParamEdit {
-                    name: "Spaceball 1 Speed"
-                    param: registry.addScalarParam(MemoryRange.U32, 0xFEDC0000, true, true, slots.spaceball1)
+
+                ScalarParamEdit {   // duplicate to illustrate binding
+                    name: "Display Contrast"
+                    param: parameters.displayBrightness
                 }
             }
         }

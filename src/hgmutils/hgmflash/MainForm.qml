@@ -334,7 +334,7 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
                 id: paramDownloadButton
-                text: qsTr("Download")
+                text: qsTr("Read")
                 onClicked: root.userDownloadParam()
                 enabled: toolReadyParam
             }
@@ -342,7 +342,7 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
                 id: paramUploadButton
-                text: qsTr("Upload")
+                text: qsTr("Write")
                 onClicked: root.userUploadParam()
                 enabled: toolReadyParam
             }
@@ -350,7 +350,7 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
                 id: paramNvWriteButton
-                text: qsTr("NV Write")
+                text: qsTr("Save")
                 onClicked: root.userNvWriteParam()
                 enabled: toolReadyParam
             }

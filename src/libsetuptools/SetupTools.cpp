@@ -11,6 +11,7 @@
 #include "Xcp_ScalarMemoryRange.h"
 #include "Xcp_TableParam.h"
 #include "Xcp_TableMemoryRange.h"
+#include "Xcp_TableParamModel.h"
 #include "LinearSlot.h"
 #include "LinearTableAxis.h"
 #include "EncodingSlot.h"
@@ -47,6 +48,7 @@ void registerTypes()
     qmlRegisterUncreatableType<SetupTools::Xcp::TableMemoryRange>("com.setuptools.xcp", major, minor, "TableMemoryRange", "SetupTools::Xcp::TableMemoryRange is uncreatable from within QML");
     qmlRegisterUncreatableType<SetupTools::Xcp::TableParamListModel>("com.setuptools.xcp", major, minor, "TableParamListModel", "SetupTools::Xcp::TableParamListModel is uncreatable from within QML");
 
+    qmlRegisterType<SetupTools::Xcp::TableParamMapper>("com.setuptools.xcp", major, minor, "TableParamMapper");
 
     qmlRegisterUncreatableType<SetupTools::Slot>("com.setuptools", major, minor, "Slot", "SetupTools::Slot is uncreatable from within QML");
     qmlRegisterType<SetupTools::LinearSlot>("com.setuptools", major, minor, "LinearSlot");
