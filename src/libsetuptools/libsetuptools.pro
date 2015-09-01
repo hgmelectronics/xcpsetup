@@ -33,19 +33,19 @@ SOURCES += \
     Xcp_MemoryRangeList.cpp \
     Xcp_MemoryRange.cpp \
     Xcp_ScalarMemoryRange.cpp \
-    Xcp_TableMemoryRange.cpp \
-    LinearTableAxis.cpp \
     Slot.cpp \
     LinearSlot.cpp \
     Xcp_ParamRegistry.cpp \
     Xcp_ScalarParam.cpp \
     Xcp_Param.cpp \
-    Xcp_TableParam.cpp \
-    TableAxis.cpp \
     ParamFile.cpp \
     Xcp_ParamLayer.cpp \
     EncodingSlot.cpp \
-    Xcp_TableParamModel.cpp
+    Xcp_ArrayMemoryRange.cpp \
+    Xcp_ArrayParam.cpp \
+    SlotArrayModel.cpp \
+    TransposeProxyModel.cpp \
+    TableMapperModel.cpp
 
 HEADERS += \
     util.h \
@@ -66,19 +66,19 @@ HEADERS += \
     Xcp_MemoryRange.h \
     Xcp_MemoryRangeList.h \
     Xcp_ScalarMemoryRange.h \
-    Xcp_TableMemoryRange.h \
-    LinearTableAxis.h \
     Slot.h \
     LinearSlot.h \
     Xcp_ParamRegistry.h \
     Xcp_ScalarParam.h \
     Xcp_Param.h \
-    Xcp_TableParam.h \
-    TableAxis.h \
     ParamFile.h \
     Xcp_ParamLayer.h \
     EncodingSlot.h \
-    Xcp_TableParamModel.h
+    Xcp_ArrayMemoryRange.h \
+    Xcp_ArrayParam.h \
+    SlotArrayModel.h \
+    TransposeProxyModel.h \
+    TableMapperModel.h
 
 unix {
     target.path = /usr/lib

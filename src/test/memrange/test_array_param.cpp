@@ -1,8 +1,8 @@
 #include "test.h"
 #include <memory>
-#include "Xcp_TableMemoryRange.h"
+#include "Xcp_ArrayMemoryRange.h"
 #include "LinearSlot.h"
-#include "Xcp_TableParam.h"
+#include "Xcp_ArrayParam.h"
 #include "Xcp_ParamRegistry.h"
 
 #include <QPair>
@@ -13,7 +13,7 @@ namespace SetupTools
 namespace Xcp
 {
 
-void Test::tableParamDownloadUpload_data()
+void Test::arrayParamDownloadUpload_data()
 {
     QTest::addColumn<int>("ag");
 
@@ -22,7 +22,7 @@ void Test::tableParamDownloadUpload_data()
     QTest::newRow("ag==4") << 4;
 }
 
-void Test::tableParamDownloadUpload()
+void Test::arrayParamDownloadUpload()
 {
     QFETCH(int, ag);
 
@@ -48,14 +48,6 @@ void Test::tableParamDownloadUpload()
     slot.setRawB(64255);
     slot.setOorRaw(65535);
 
-    LinearTableAxis axis;
-    axis.setMin(0);
-    axis.setMax(10);
-    axis.setSize(FLOAT_ENGR.size());
-
-    for(int i = 0; i < axis.rowCount(); ++i)
-        QCOMPARE(axis.data(axis.index(i), TableAxisRole::XRole).toDouble(), 2.5 * i);
-
     QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::Closed));
 
     updateAg(ag);
@@ -71,9 +63,9 @@ void Test::tableParamDownloadUpload()
     for(int i = 0; i < RAW.size(); ++i)
         slaveMemRangeValue[i] = 0xFFFFFFFF;  // make initially read value be NAN
 
-    TableParam *param = qobject_cast<TableParam *>(registry->addTableParam(MemoryRange::MemoryRangeType::U32, {base,0}, true, false, &slot, &axis, KEY));
-    QCOMPARE(param, qobject_cast<TableParam *>(registry->getParam(KEY)));
-    QSignalSpy spy(param->range(), &TableMemoryRange::uploadDone);
+    ArrayParam *param = qobject_cast<ArrayParam *>(registry->addArrayParam(MemoryRange::MemoryRangeType::U32, {base,0}, RAW.size(), true, false, &slot, KEY));
+    QCOMPARE(param, qobject_cast<ArrayParam *>(registry->getParam(KEY)));
+    QSignalSpy spy(param->range(), &ArrayMemoryRange::uploadDone);
 
     {
         setWaitConnState(registry->table(), Xcp::Connection::State::CalMode);
@@ -81,9 +73,9 @@ void Test::tableParamDownloadUpload()
     }
     for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        QVERIFY(std::isnan(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble()));
-        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), QString("nan"));
-        QVERIFY(param->floatModel()->setData(param->floatModel()->index(i), QVariant(FLOAT_ENGR[i]), TableAxisRole::ValueRole));
+        QVERIFY(std::isnan(param->floatModel()->data(param->floatModel()->index(i), Qt::DisplayRole).toDouble()));
+        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), Qt::DisplayRole).toString(), QString("nan"));
+        QVERIFY(param->floatModel()->setData(param->floatModel()->index(i), QVariant(FLOAT_ENGR[i]), Qt::DisplayRole));
     }
     QVERIFY(spy.isEmpty());
     param->download();
@@ -93,10 +85,10 @@ void Test::tableParamDownloadUpload()
 
     for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        QCOMPARE(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble(), FLOAT_ENGR[i]);
-        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), STRING_ENGR[i]);
+        QCOMPARE(param->floatModel()->data(param->floatModel()->index(i), Qt::DisplayRole).toDouble(), FLOAT_ENGR[i]);
+        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), Qt::DisplayRole).toString(), STRING_ENGR[i]);
         QCOMPARE(slaveMemRangeValue[i], RAW[i]);
-        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant("nan"), TableAxisRole::ValueRole));
+        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant("nan"), Qt::DisplayRole));
     }
 
     param->download();
@@ -106,9 +98,9 @@ void Test::tableParamDownloadUpload()
 
     for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        QVERIFY(std::isnan(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble()));
-        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), QString("nan"));
-        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant(STRING_ENGR[i]), TableAxisRole::ValueRole));
+        QVERIFY(std::isnan(param->floatModel()->data(param->floatModel()->index(i), Qt::DisplayRole).toDouble()));
+        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), Qt::DisplayRole).toString(), QString("nan"));
+        QVERIFY(param->stringModel()->setData(param->stringModel()->index(i), QVariant(STRING_ENGR[i]), Qt::DisplayRole));
     }
 
     param->download();
@@ -118,8 +110,8 @@ void Test::tableParamDownloadUpload()
 
     for(int i = 0; i < param->stringModel()->rowCount(); ++i)
     {
-        QCOMPARE(param->floatModel()->data(param->floatModel()->index(i), TableAxisRole::ValueRole).toDouble(), FLOAT_ENGR[i]);
-        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), TableAxisRole::ValueRole).toString(), STRING_ENGR[i]);
+        QCOMPARE(param->floatModel()->data(param->floatModel()->index(i), Qt::DisplayRole).toDouble(), FLOAT_ENGR[i]);
+        QCOMPARE(param->stringModel()->data(param->stringModel()->index(i), Qt::DisplayRole).toString(), STRING_ENGR[i]);
         QCOMPARE(slaveMemRangeValue[i], RAW[i]);
     }
 }

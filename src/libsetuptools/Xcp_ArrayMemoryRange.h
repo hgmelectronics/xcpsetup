@@ -1,5 +1,5 @@
-#ifndef SETUPTOOLS_XCP_TABULARMEMORYRANGE_H
-#define SETUPTOOLS_XCP_TABULARMEMORYRANGE_H
+#ifndef SETUPTOOLS_XCP_ARRAYMEMORYRANGE_H
+#define SETUPTOOLS_XCP_ARRAYMEMORYRANGE_H
 
 #include "Xcp_MemoryRange.h"
 #include <boost/dynamic_bitset.hpp>
@@ -7,13 +7,13 @@
 namespace SetupTools {
 namespace Xcp {
 
-class TableMemoryRange: public MemoryRange
+class ArrayMemoryRange: public MemoryRange
 {
     Q_OBJECT
-    Q_PROPERTY(int count READ count)
+    Q_PROPERTY(int count READ count CONSTANT)
 
 public:
-    TableMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent);
+    ArrayMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent);
 
     Q_INVOKABLE QVariant get(int index) const
     {
@@ -74,4 +74,4 @@ private:
 } // namespace Xcp
 } // namespace SetupTools
 
-#endif // SETUPTOOLS_XCP_TABULARMEMORYRANGE_H
+#endif // SETUPTOOLS_XCP_ARRAYMEMORYRANGE_H

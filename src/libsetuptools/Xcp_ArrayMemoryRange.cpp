@@ -1,10 +1,10 @@
-#include "Xcp_TableMemoryRange.h"
+#include "Xcp_ArrayMemoryRange.h"
 #include <functional>
 
 namespace SetupTools {
 namespace Xcp {
 
-TableMemoryRange::TableMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent) :
+ArrayMemoryRange::ArrayMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPtr base, bool writable, quint8 addrGran, MemoryRangeList *parent) :
     MemoryRange(type, base, memoryRangeTypeSize(type) * dim, writable, addrGran, parent),
     mQtType(QVariant::Type(memoryRangeTypeQtCode(type))),
     mElemSize(memoryRangeTypeSize(type)),
@@ -23,12 +23,12 @@ TableMemoryRange::TableMemoryRange(MemoryRangeType type, quint32 dim, Xcp::XcpPt
     Q_ASSERT(quint64(dim) * memoryRangeTypeSize(type) < std::numeric_limits<quint32>::max());
 }
 
-bool TableMemoryRange::inRange(int index) const
+bool ArrayMemoryRange::inRange(int index) const
 {
     return 0 <= index && index<count();
 }
 
-bool TableMemoryRange::set(int index, const QVariant &value)
+bool ArrayMemoryRange::set(int index, const QVariant &value)
 {
     if(!inRange(index))
     {
@@ -50,7 +50,7 @@ bool TableMemoryRange::set(int index, const QVariant &value)
     return true;
 }
 
-bool TableMemoryRange::setDataRange(const QList<QVariant> &data, quint32 beginIndex)
+bool ArrayMemoryRange::setDataRange(const QList<QVariant> &data, quint32 beginIndex)
 {
     if((beginIndex + data.size()) > mDim)
         return false;
@@ -93,16 +93,16 @@ bool TableMemoryRange::setDataRange(const QList<QVariant> &data, quint32 beginIn
     return true;
 }
 
-void TableMemoryRange::resetCaches()
+void ArrayMemoryRange::resetCaches()
 {
     mReadCacheLoaded.reset();
     std::fill(mSlaveData.begin(), mSlaveData.end(), QVariant());
     setWriteCacheDirty(true);
 }
 
-bool TableMemoryRange::operator==(MemoryRange &other)
+bool ArrayMemoryRange::operator==(MemoryRange &other)
 {
-    TableMemoryRange *castOther = qobject_cast<TableMemoryRange *>(&other);
+    ArrayMemoryRange *castOther = qobject_cast<ArrayMemoryRange *>(&other);
 
     if(castOther == nullptr)
         return false;
@@ -115,7 +115,7 @@ bool TableMemoryRange::operator==(MemoryRange &other)
     return false;
 }
 
-void TableMemoryRange::download()
+void ArrayMemoryRange::download()
 {
     bool changed = false;
     quint32 beginChanged = 0;
@@ -136,7 +136,7 @@ void TableMemoryRange::download()
     download(beginChanged, mData.mid(beginChanged, endChanged - beginChanged));
 }
 
-void TableMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
+void ArrayMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
 {
     if(!data.empty())
     {
@@ -158,7 +158,7 @@ void TableMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
     }
 }
 
-void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr baseAddr, int len, std::vector<quint8> data)
+void ArrayMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr baseAddr, int len, std::vector<quint8> data)
 {
     Q_UNUSED(len);
 
@@ -242,7 +242,7 @@ void TableMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPt
     }
 }
 
-QVariant TableMemoryRange::partialUpload(quint32 offset, boost::iterator_range<quint8 *> data)
+QVariant ArrayMemoryRange::partialUpload(quint32 offset, boost::iterator_range<quint8 *> data)
 {
     QVariant newValue;
 

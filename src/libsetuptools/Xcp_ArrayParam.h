@@ -3,30 +3,28 @@
 
 #include <QObject>
 #include "Xcp_Param.h"
-#include "Xcp_TableMemoryRange.h"
-#include "LinearTableAxis.h"
+#include "Xcp_ArrayMemoryRange.h"
 #include "Slot.h"
 
 namespace SetupTools {
 namespace Xcp {
 
-class TableParamListModel;
+class ArrayParamModel;
 
-class TableParam : public SetupTools::Xcp::Param
+class ArrayParam : public SetupTools::Xcp::Param
 {
     Q_OBJECT
 
-    friend class TableParamListModel;
+    friend class ArrayParamModel;
 
-    Q_PROPERTY(TableParamListModel* stringModel READ stringModel NOTIFY modelDataChanged)
-    Q_PROPERTY(TableParamListModel* floatModel READ floatModel NOTIFY modelDataChanged)
+    Q_PROPERTY(ArrayParamModel* stringModel READ stringModel NOTIFY modelDataChanged)
+    Q_PROPERTY(ArrayParamModel* floatModel READ floatModel NOTIFY modelDataChanged)
     Q_PROPERTY(int count READ count CONSTANT)
-    Q_PROPERTY(TableMemoryRange* range READ range CONSTANT)
-    Q_PROPERTY(TableAxis* axis READ axis CONSTANT)
+    Q_PROPERTY(ArrayMemoryRange* range READ range CONSTANT)
 
 public:
-    TableParam(QObject *parent = nullptr);
-    TableParam(TableMemoryRange* range, Slot* slot, TableAxis* axis, QObject *parent = nullptr);
+    ArrayParam(QObject *parent = nullptr);
+    ArrayParam(ArrayMemoryRange* range, Slot* slot, QObject *parent = nullptr);
 
     // gets the value in enginering units
     Q_INVOKABLE QVariant get(int row) const;
@@ -36,24 +34,19 @@ public:
 
     int count() const;
 
-    TableParamListModel* stringModel() const
+    ArrayParamModel* stringModel() const
     {
         return mStringModel;
     }
 
-    TableParamListModel* floatModel() const
+    ArrayParamModel* floatModel() const
     {
         return mFloatModel;
     }
 
-    TableMemoryRange* range() const
+    ArrayMemoryRange* range() const
     {
         return mRange;
-    }
-
-    TableAxis* axis() const
-    {
-        return mAxis;
     }
 
     virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
@@ -72,32 +65,28 @@ private slots:
     void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
     void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
 private:
-    TableMemoryRange* const mRange;    // owned by the ParamRegistry
-    TableAxis* const mAxis;      // owned by QML
-    TableParamListModel* const mStringModel;  // owned by this
-    TableParamListModel* const mFloatModel;   // owned by this
+    ArrayMemoryRange* const mRange;    // owned by the ParamRegistry
+    ArrayParamModel* const mStringModel;  // owned by this
+    ArrayParamModel* const mFloatModel;   // owned by this
 };
 
 
-class TableParamListModel : public QAbstractListModel
+class ArrayParamModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    TableParamListModel(bool stringFormat, TableParam *parent);
+    ArrayParamModel(bool stringFormat, ArrayParam *parent);
 
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-    virtual QHash<int, QByteArray> roleNames() const;
 
 private:
     void onValueParamChanged();
     void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
-    TableParam* const mParam;
+    ArrayParam* const mParam;
     const bool mStringFormat;
-    QHash<int, QByteArray> mRoleNames;
 };
 
 } // namespace Xcp

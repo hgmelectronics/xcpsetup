@@ -1,6 +1,6 @@
 #include "Xcp_MemoryRangeTable.h"
 #include "Xcp_ScalarMemoryRange.h"
-#include "Xcp_TableMemoryRange.h"
+#include "Xcp_ArrayMemoryRange.h"
 
 namespace SetupTools
 {
@@ -70,7 +70,7 @@ MemoryRange *MemoryRangeTable::addTableRange(MemoryRange::MemoryRangeType type, 
     if(count < 1)
         return nullptr;
 
-    MemoryRange *newRange = new TableMemoryRange(type, count, base, writable, mAddrGran, nullptr);
+    MemoryRange *newRange = new ArrayMemoryRange(type, count, base, writable, mAddrGran, nullptr);
 
     if(newRange == nullptr)
         return nullptr;
