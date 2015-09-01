@@ -50,24 +50,63 @@ QtObject {
     readonly property ArrayParam shiftTable56B: registry.addArrayParam(MemoryRange.U32, 0x04480000, 101, true, true, rpmToKPH)
 
     property SlotArrayModel tps: SlotArrayModel {
-        slot: percentage1
+        slot: slots.percentage1
         count: 101
     }
 
-    property TableMapperModel shiftTableA: TableMapperModel {
+    property SlotArrayModel switchId: SlotArrayModel {
+        slot: slots.switchId
+        count: 22
+    }
+
+    property TableMapperModel shiftTableAModel: TableMapperModel {
         mapping: {
             "tps": tps,
-            "shift12": shiftTable12A,
-            "shift23": shiftTable23A,
-            "shift34": shiftTable34A,
-            "shift45": shiftTable45A,
-            "shift56": shiftTable56A
+            "shift12": shiftTable12A.stringModel,
+            "shift23": shiftTable23A.stringModel,
+            "shift34": shiftTable34A.stringModel,
+            "shift45": shiftTable45A.stringModel,
+            "shift56": shiftTable56A.stringModel
+        }
+    }
+
+    property TableMapperModel shiftTable12AModel: TableMapperModel {
+        mapping: {
+            "x": tps,
+            "value": shiftTable12A.stringModel
+        }
+    }
+
+    property TableMapperModel shiftTable23AModel: TableMapperModel {
+        mapping: {
+            "x": tps,
+            "value": shiftTable23A.stringModel
+        }
+    }
+
+    property TableMapperModel shiftTable34AModel: TableMapperModel {
+        mapping: {
+            "x": tps,
+            "value": shiftTable34A.stringModel
+        }
+    }
+
+    property TableMapperModel shiftTable45AModel: TableMapperModel {
+        mapping: {
+            "x": tps,
+            "value": shiftTable45A.stringModel
         }
     }
 
     readonly property ArrayParam switchMonitorInput: registry.addArrayParam(MemoryRange.U32, 0x80500000, 22, false, false, slots.booleanOnOff1)
 
 
+    property TableMapperModel switchMonitorModel: TableMapperModel {
+        mapping: {
+            "x": switchId,
+            "value": switchMonitorInput.stringModel
+        }
+    }
 }
 
 

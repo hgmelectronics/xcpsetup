@@ -6,7 +6,9 @@ import com.hgmelectronics.setuptools 1.0
 
 ColumnLayout {
     property string name
-    property TableParam param
+    property string xLabel
+    property string valueLabel
+    property TableMapperModel tableModel
     Label {
         text: name
     }
@@ -14,15 +16,15 @@ ColumnLayout {
         id: tableView
         TableViewColumn {
             role: "x"
-            title: param.xLabel + ((param.xUnit.length > 0) ? ", " : "") + param.xUnit
+            title: xLabel
             width: tableView.viewport.width / tableView.columnCount
         }
         TableViewColumn {
             role: "value"
-            title: param.valueLabel + ((param.valueUnit.length > 0) ? ", " : "") + param.valueUnit
+            title: valueLabel
             width: tableView.viewport.width / tableView.columnCount
         }
-        model: param.stringModel
+        model: tableModel
     }
 }
 

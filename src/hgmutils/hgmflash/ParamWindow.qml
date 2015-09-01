@@ -108,6 +108,7 @@ Window {
                         zero(parameters.shiftTable12A);
                         zero(parameters.shiftTable23A);
                         zero(parameters.shiftTable34A);
+                        zero(parameters.shiftTable45A);
                         }
                 }
 
@@ -137,12 +138,25 @@ Window {
                     }
                 }
 
+                Button
+                {
+                    text: "Bump 4-5"
+                    onClicked: {
+                        bump(parameters.shiftTable45A)
+                    }
+                }
+
                 TableView
                 {
                     width: 600;
 
-                    model: parameters.shiftTableA
+                    model: parameters.shiftTableAModel
 
+                    TableViewColumn {
+                        role: "tps"
+                        title: "TPS %"
+                        width: 100
+                    }
                     TableViewColumn {
                         role: "shift12"
                         title: "Shift 1-2"
@@ -158,6 +172,11 @@ Window {
                         title: "Shift 3-4"
                         width: 100
                     }
+                    TableViewColumn {
+                        role: "shift45"
+                        title: "Shift 4-5"
+                        width: 100
+                    }
 
                 }
 
@@ -165,29 +184,33 @@ Window {
                     id: shift12
                     name: "Shift Speed 1-2 A"
                     xLabel: "Throttle"
-                    yLabel: "Speed"
-                    param: parameters.shiftTable12A
+                    valueLabel: "Speed"
+                    tableModel: parameters.shiftTable12AModel
+                    enabled: parameters.shiftTable12A.valid
                 }
 
 
                 TableParamEdit {
                     name: "Shift Speed 2-3 A"
                     xLabel: "Throttle"
-                    yLabel: "Speed"
-                    param: parameters.shiftTable23A
+                    valueLabel: "Speed"
+                    tableModel: parameters.shiftTable23AModel
+                    enabled: parameters.shiftTable23A.valid
                 }
 
                 TableParamEdit {
                     name: "Shift Speed 3-4 A"
                     xLabel: "Throttle"
-                    yLabel: "Speed"
-                    param: parameters.shiftTable34A
+                    valueLabel: "Speed"
+                    tableModel: parameters.shiftTable34AModel
+                    enabled: parameters.shiftTable34A.valid
                 }
                 TableParamEdit {
                     name: "Shift Speed 4-5 A"
                     xLabel: "Throttle"
-                    yLabel: "Speed"
-                    param: parameters.shiftTable45A
+                    valueLabel: "Speed"
+                    tableModel: parameters.shiftTable45AModel
+                    enabled: parameters.shiftTable45A.valid
                 }
             }
         }
@@ -200,14 +223,12 @@ Window {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
-                TableParamView2 {
+                TableParamView {
                     name: "Switch Monitor Input"
-                    param: parameters.switchMonitorInput
-                    xSlot: parameters.slots.switchId
-                    //                    Component.onCompleted: {
-                    //                        param.xLabel = "Switch #"
-                    //                        param.valueLabel = "State"
-                    //                    }
+                    xLabel: "Switch #"
+                    valueLabel: "State"
+                    tableModel: parameters.switchMonitorModel
+                    enabled: parameters.switchMonitorInput.valid
                 }
             }
         }

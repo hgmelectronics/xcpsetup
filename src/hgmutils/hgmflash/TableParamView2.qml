@@ -6,10 +6,8 @@ import com.hgmelectronics.setuptools 1.0
 
 ColumnLayout {
     property string name
-    property TableParam param
+    property TableMapperModel param
     property EncodingSlot xSlot
-
-    enabled: param.valid
 
     Label {
         text: name

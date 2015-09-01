@@ -8,54 +8,52 @@ ColumnLayout {
 
     property string name
     property string xLabel
-    property string yLabel
-    property TableParam param
-
-    enabled: param.valid
+    property string valueLabel
+    property TableMapperModel tableModel
 
     Label {
         text: name
     }
 
-        Component {
-            id: valueEditDelegate
-            TextInput {
-                color: styleData.textColor
-                anchors.margins: 4
-                text: styleData.value !== undefined ? styleData.value : ""
-                onEditingFinished: model.value = text
-                focus: (styleData.row === tableView.currentRow)
-                onFocusChanged: {
-                    if(focus) {
-                        selectAll()
-                        forceActiveFocus()
-                    }
+    Component {
+        id: valueEditDelegate
+        TextInput {
+            color: styleData.textColor
+            anchors.margins: 4
+            text: styleData.value !== undefined ? styleData.value : ""
+            onEditingFinished: model.value = text
+            focus: (styleData.row === tableView.currentRow)
+            onFocusChanged: {
+                if(focus) {
+                    selectAll()
+                    forceActiveFocus()
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        tableView.currentRow = styleData.row
-                        tableView.selection.clear()
-                        tableView.selection.select(styleData.row)
-                    }
+            }
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    tableView.currentRow = styleData.row
+                    tableView.selection.clear()
+                    tableView.selection.select(styleData.row)
                 }
             }
         }
+    }
 
     TableView {
         id: tableView
         TableViewColumn {
             role: "x"
-            title: xLabel + ((param.axis.xUnit.length > 0) ? ", " : "") + param.axis.xUnit
+            title: xLabel
             width: tableView.viewport.width / tableView.columnCount
         }
         TableViewColumn {
             role: "value"
-            title: yLabel + ((param.slot.unit.length > 0) ? ", " : "") + param.slot.unit
+            title: valueLabel
             delegate: valueEditDelegate
             width: tableView.viewport.width / tableView.columnCount
         }
-        model: param.stringModel
+        model: tableModel
     }
 }
