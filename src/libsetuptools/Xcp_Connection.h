@@ -201,6 +201,7 @@ public:
     bool progResetIsAcked(void);
     void setProgResetIsAcked(bool val);
     double opProgress();
+    void forceSlaveSupportCalPage();
     State state();
     template <typename T>
     T fromSlaveEndian(const uchar *src)

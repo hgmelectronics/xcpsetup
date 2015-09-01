@@ -90,6 +90,11 @@ void ParamLayer::setOpProgressNotifyPeriod(int val)
     mOpProgressNotifyPeriod = val;
 }
 
+void ParamLayer::forceSlaveSupportCalPage()
+{
+    mConn->forceSlaveSupportCalPage();
+}
+
 double ParamLayer::opProgress()
 {
     if(mActiveKeys.empty() || mActiveKeyIdx < 0)
