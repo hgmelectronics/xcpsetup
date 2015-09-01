@@ -344,7 +344,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 id: paramUploadButton
                 text: qsTr("Read")
-                onClicked: root.userDownloadParam()
+                onClicked: root.userUploadParam()
                 enabled: toolReadyParam
             }
             Button {
@@ -352,7 +352,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 id: paramDownloadButton
                 text: qsTr("Write")
-                onClicked: root.userUploadParam()
+                onClicked: root.userDownloadParam()
                 enabled: toolReadyParam
             }
             Button {
