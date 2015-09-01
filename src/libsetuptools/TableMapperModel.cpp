@@ -73,6 +73,7 @@ void TableMapperModel::setMapping(const QVariantMap &mapping)
         Q_ASSERT(subModel->columnCount() == 1 || subModel->columnCount() == newColumnCount);
 
         mSubModels.append(subModel);
+        connect(subModel, &QAbstractItemModel::dataChanged, this, &TableMapperModel::onMappedDataChanged);
         mRoleNames[role] = roleName.toUtf8();
         ++role;
     }
