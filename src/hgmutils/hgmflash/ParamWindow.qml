@@ -3,8 +3,8 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
-import com.setuptools.xcp 1.0
-import com.setuptools 1.0
+import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
 
 Window {
     id: paramWindow
@@ -141,13 +141,7 @@ Window {
                 {
                     width: 600;
 
-                    model:
-                        TableParamMapper {
-                        stringFormat: true
-                        mapping: { "shift12": parameters.shiftTable12A, "shift23": parameters.shiftTable23A,
-                                   "shift34": parameters.shiftTable34A
-                        }
-                    }
+                    model: parameters.shiftTableA
 
                     TableViewColumn {
                         role: "shift12"
@@ -159,7 +153,6 @@ Window {
                         title: "Shift 2-3"
                         width: 100
                     }
-
                     TableViewColumn {
                         role: "shift34"
                         title: "Shift 3-4"

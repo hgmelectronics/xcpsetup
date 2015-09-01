@@ -3,8 +3,8 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
-import com.setuptools.xcp 1.0
-import com.setuptools 1.0
+import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
 
 ColumnLayout {
     id: root
@@ -342,7 +342,7 @@ ColumnLayout {
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
-                id: paramDownloadButton
+                id: paramUploadButton
                 text: qsTr("Read")
                 onClicked: root.userDownloadParam()
                 enabled: toolReadyParam
@@ -350,7 +350,7 @@ ColumnLayout {
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
-                id: paramUploadButton
+                id: paramDownloadButton
                 text: qsTr("Write")
                 onClicked: root.userUploadParam()
                 enabled: toolReadyParam

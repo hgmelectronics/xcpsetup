@@ -8,7 +8,6 @@
         <file>ParamWindow.qml</file>
         <file>Slots.qml</file>
         <file>ScalarParamEdit.qml</file>
-        <file>Axes.qml</file>
         <file>TableParamEdit.qml</file>
         <file>TableParamView.qml</file>
         <file>EncodingParamEdit.qml</file>

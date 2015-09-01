@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import com.hgmelectronics.utils.cs2tool 1.0
-import com.setuptools.xcp 1.0
-import com.setuptools 1.0
+import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
 
 ApplicationWindow {
     title: qsTr("HGM Flash Tool")

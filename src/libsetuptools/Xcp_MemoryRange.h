@@ -16,12 +16,12 @@ class MemoryRangeList;  // forward declare
 class MemoryRange: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(XcpPtr base READ base)
-    Q_PROPERTY(XcpPtr end READ end)
-    Q_PROPERTY(quint32 size READ size)
-    Q_PROPERTY(MemoryRangeType type READ type)
-    Q_PROPERTY(qint8 addrGran READ addrGran)
-    Q_PROPERTY(bool writable READ writable)
+    Q_PROPERTY(XcpPtr base READ base CONSTANT)
+    Q_PROPERTY(XcpPtr end READ end CONSTANT)
+    Q_PROPERTY(quint32 size READ size CONSTANT)
+    Q_PROPERTY(MemoryRangeType type READ type CONSTANT)
+    Q_PROPERTY(quint8 addrGran READ addrGran CONSTANT)
+    Q_PROPERTY(bool writable READ writable CONSTANT)
     Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
     Q_PROPERTY(bool fullReload READ fullReload WRITE setFullReload NOTIFY fullReloadChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
