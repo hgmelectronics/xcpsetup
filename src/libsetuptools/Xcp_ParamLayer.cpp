@@ -469,6 +469,7 @@ Param *ParamLayer::getNextParam()
 
 void ParamLayer::setState(State val)
 {
+    qDebug() << "Xcp::ParamLayer setState" << static_cast<int>(val);
     if(updateDelta<>(mState, val))
         emit stateChanged();
 }
