@@ -109,7 +109,7 @@ private:
     int mOpProgressNotifyPeriod;
 
     QStringList mActiveKeys;
-    QStringList::iterator mActiveKeyIt;
+    int mActiveKeyIdx;
     QMetaObject::Connection mActiveParamConnection;
     SetupTools::Xcp::OpResult mActiveResult;
 };

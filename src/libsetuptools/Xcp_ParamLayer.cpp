@@ -9,7 +9,7 @@ ParamLayer::ParamLayer(quint32 addrGran, QObject *parent) :
     mRegistry(new ParamRegistry(addrGran, this)),
     mState(State::IntfcNotOk),
     mOpProgressNotifyPeriod(1),
-    mActiveKeyIt(mActiveKeys.end())
+    mActiveKeyIdx(-1)
 {
     mRegistry->setConnectionFacade(mConn);
     connect(mConn, &ConnectionFacade::setStateDone, this, &ParamLayer::onConnSetStateDone);
@@ -92,10 +92,11 @@ void ParamLayer::setOpProgressNotifyPeriod(int val)
 
 double ParamLayer::opProgress()
 {
-    if(mActiveKeys.empty() || mActiveKeyIt == mActiveKeys.end())
+    if(mActiveKeys.empty() || mActiveKeyIdx < 0)
         return 0;
 
-    return std::distance(mActiveKeys.begin(), mActiveKeyIt) / double(mActiveKeys.size());
+    Q_ASSERT(mActiveKeyIdx <= mActiveKeys.size());
+    return mActiveKeyIdx / double(mActiveKeys.size());
 }
 
 ConnectionFacade *ParamLayer::conn()
@@ -182,7 +183,7 @@ void ParamLayer::download(QStringList keys)
     }
 
     mActiveKeys = keys;
-    mActiveKeyIt = mActiveKeys.begin();
+    mActiveKeyIdx = 0;
     mActiveResult = OpResult::Success;
     emit opProgressChanged();
 
@@ -210,7 +211,7 @@ void ParamLayer::upload(QStringList keys)
     }
 
     mActiveKeys = keys;
-    mActiveKeyIt = mActiveKeys.begin();
+    mActiveKeyIdx = 0;
     mActiveResult = OpResult::Success;
     emit opProgressChanged();
 
@@ -258,7 +259,7 @@ void ParamLayer::connectSlave()
 
     disconnect(mActiveParamConnection);
     mActiveKeys.clear();
-    mActiveKeyIt = mActiveKeys.end();
+    mActiveKeyIdx = -1;
 
     if(mConn->state() == Connection::State::CalMode)
     {
@@ -282,7 +283,7 @@ void ParamLayer::disconnectSlave()
 
     disconnect(mActiveParamConnection);
     mActiveKeys.clear();
-    mActiveKeyIt = mActiveKeys.end();
+    mActiveKeyIdx = -1;
 
     if(mConn->state() == Connection::State::IntfcInvalid)
     {
@@ -388,7 +389,7 @@ void ParamLayer::onParamDownloadDone(OpResult result)
 
     disconnect(mActiveParamConnection);
 
-    ++mActiveKeyIt;
+    ++mActiveKeyIdx;
     notifyProgress();
     downloadKey();
 }
@@ -401,7 +402,7 @@ void ParamLayer::onParamUploadDone(OpResult result)
 
     disconnect(mActiveParamConnection);
 
-    ++mActiveKeyIt;
+    ++mActiveKeyIdx;
     notifyProgress();
     uploadKey();
 }
@@ -414,12 +415,14 @@ void ParamLayer::onRegistryWriteCacheDirtyChanged()
 void ParamLayer::downloadKey()
 {
     Q_ASSERT(mState == State::Download);
-    Q_ASSERT(mActiveKeyIt >= mActiveKeys.begin() && mActiveKeyIt <= mActiveKeys.end());
+    Q_ASSERT(mActiveKeyIdx >= 0 && mActiveKeyIdx <= mActiveKeys.size());
 
     Param *param = getNextParam();
     if(param == nullptr)
     {
         setState(State::Connected);
+        mActiveKeyIdx = -1;
+        emit opProgressChanged();
         emit downloadDone(mActiveResult, mActiveKeys);
         return;
     }
@@ -430,12 +433,14 @@ void ParamLayer::downloadKey()
 void ParamLayer::uploadKey()
 {
     Q_ASSERT(mState == State::Upload);
-    Q_ASSERT(mActiveKeyIt >= mActiveKeys.begin() && mActiveKeyIt <= mActiveKeys.end());
+    Q_ASSERT(mActiveKeyIdx >= 0 && mActiveKeyIdx <= mActiveKeys.size());
 
     Param *param = getNextParam();
     if(param == nullptr)
     {
         setState(State::Connected);
+        mActiveKeyIdx = -1;
+        emit opProgressChanged();
         emit uploadDone(mActiveResult, mActiveKeys);
         return;
     }
@@ -448,9 +453,9 @@ Param *ParamLayer::getNextParam()
     Param *param = nullptr;
     while(1)
     {
-        if(mActiveKeyIt == mActiveKeys.end())
+        if(mActiveKeyIdx >= mActiveKeys.size())
             break;
-        param = mRegistry->getParam(*mActiveKeyIt);
+        param = mRegistry->getParam(mActiveKeys[mActiveKeyIdx]);
         if(param != nullptr)
         {
             break;
@@ -461,7 +466,7 @@ Param *ParamLayer::getNextParam()
                 mActiveResult = OpResult::InvalidArgument;
         }
 
-        ++mActiveKeyIt;
+        ++mActiveKeyIdx;
     }
 
     return param;
@@ -476,9 +481,8 @@ void ParamLayer::setState(State val)
 
 void ParamLayer::notifyProgress()
 {
-    int keyIdx = std::distance(mActiveKeys.begin(), mActiveKeyIt);
-    if((keyIdx % mOpProgressNotifyPeriod) == 0
-            || keyIdx == mActiveKeys.size())
+    if((mActiveKeyIdx % mOpProgressNotifyPeriod) == 0
+            || mActiveKeyIdx == mActiveKeys.size())
         emit opProgressChanged();
 }
 
