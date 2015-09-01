@@ -92,7 +92,7 @@ void ParamLayer::setOpProgressNotifyPeriod(int val)
 
 double ParamLayer::opProgress()
 {
-    if(mActiveKeys.empty())
+    if(mActiveKeys.empty() || mActiveKeyIt == mActiveKeys.end())
         return 0;
 
     return std::distance(mActiveKeys.begin(), mActiveKeyIt) / double(mActiveKeys.size());
@@ -476,7 +476,9 @@ void ParamLayer::setState(State val)
 
 void ParamLayer::notifyProgress()
 {
-    if((std::distance(mActiveKeys.begin(), mActiveKeyIt) % mOpProgressNotifyPeriod) == 0)
+    int keyIdx = std::distance(mActiveKeys.begin(), mActiveKeyIt);
+    if((keyIdx % mOpProgressNotifyPeriod) == 0
+            || keyIdx == mActiveKeys.size())
         emit opProgressChanged();
 }
 
