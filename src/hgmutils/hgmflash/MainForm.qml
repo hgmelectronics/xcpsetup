@@ -342,7 +342,7 @@ ColumnLayout {
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
-                id: paramDownloadButton
+                id: paramUploadButton
                 text: qsTr("Read")
                 onClicked: root.userDownloadParam()
                 enabled: toolReadyParam
@@ -350,7 +350,7 @@ ColumnLayout {
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
-                id: paramUploadButton
+                id: paramDownloadButton
                 text: qsTr("Write")
                 onClicked: root.userUploadParam()
                 enabled: toolReadyParam
