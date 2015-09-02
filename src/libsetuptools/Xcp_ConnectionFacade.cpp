@@ -184,6 +184,11 @@ double ConnectionFacade::opProgress()
     return mConn->opProgress();
 }
 
+void ConnectionFacade::forceSlaveSupportCalPage()
+{
+    mConn->forceSlaveSupportCalPage();
+}
+
 quint32 ConnectionFacade::computeCksum(CksumType type, const std::vector<quint8> &data)
 {
     return mConn->computeCksum(type, data);

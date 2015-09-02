@@ -55,6 +55,7 @@ public:
     void setSlaveNvWriteTimeout(int);
     int opProgressNotifyPeriod();
     void setOpProgressNotifyPeriod(int);
+    Q_INVOKABLE void forceSlaveSupportCalPage();    //!< Call after connecting for slaves that erroneously report they do not support calibration/paging
     double opProgress();
     bool writeCacheDirty();
 

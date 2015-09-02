@@ -46,6 +46,7 @@ public:
     bool progResetIsAcked(void);
     void setProgResetIsAcked(bool val);
     double opProgress();
+    void forceSlaveSupportCalPage();
     ::SetupTools::Xcp::Connection::State state();
     void setState(::SetupTools::Xcp::Connection::State val);
     quint32 computeCksum(CksumType type, const std::vector<quint8> &data);

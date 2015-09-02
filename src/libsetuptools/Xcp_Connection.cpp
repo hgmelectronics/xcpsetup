@@ -243,6 +243,11 @@ double Connection::opProgress()
     return mOpProgress;
 }
 
+void Connection::forceSlaveSupportCalPage()
+{
+    mSupportsCalPage = true;
+}
+
 Connection::State Connection::state()
 {
     QReadLocker lock(&mIntfcLock);

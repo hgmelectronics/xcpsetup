@@ -93,6 +93,7 @@ ApplicationWindow {
         addrGran: 4
         slaveTimeout: 100
         slaveNvWriteTimeout: 200
+        onConnectSlaveDone: forceSlaveSupportCalPage()
     }
 
     ParamFile {
