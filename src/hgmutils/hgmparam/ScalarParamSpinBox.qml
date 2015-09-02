@@ -1,8 +1,8 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
-import com.setuptools.xcp 1.0
-import com.setuptools 1.0
+import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
 
 GroupBox {
     id: groupBox
