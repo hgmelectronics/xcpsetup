@@ -5,18 +5,5 @@
         <file>AboutDialog.qml</file>
         <file>HelpDialog.qml</file>
         <file>hgmlogo-about.png</file>
-        <file>ParamWindow.qml</file>
-        <file>Slots.qml</file>
-        <file>ScalarParamEdit.qml</file>
-        <file>Axes.qml</file>
-        <file>TableParamEdit.qml</file>
-        <file>TableParamView.qml</file>
-        <file>EncodingParamEdit.qml</file>
-        <file>Parameters.qml</file>
-        <file>TableParamView2.qml</file>
-        <file>ScalarParamSlider.qml</file>
-        <file>ScalarParamSpinBox.qml</file>
-        <file>ShiftTableTab.qml</file>
-        <file>ColumnEditDelegate.qml</file>
     </qresource>
 </RCC>

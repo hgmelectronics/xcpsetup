@@ -1,0 +1,21 @@
+#include <QApplication>
+#include <QQmlApplicationEngine>
+#include <QtQml>
+#include <SetupTools.h>
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+
+    QQmlApplicationEngine engine;
+
+#ifdef STATICQT
+    engine.setImportPathList({"qrc:/", "qrc:/QtQuick/Dialogs/"});
+#endif
+
+    SetupTools::registerTypes();
+
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    return app.exec();
+}

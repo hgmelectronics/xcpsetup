@@ -21,10 +21,11 @@ SOURCES += main.cpp \
     testingslave.cpp \
     test_base.cpp \
     test_scalar_range.cpp \
-    test_table_range.cpp \
     test_slot.cpp \
     test_scalar_param.cpp \
-    test_table_param.cpp
+    test_array_param.cpp \
+    test_array_range.cpp \
+    test_slot_array_model.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libsetuptools/release/ -lsetuptools
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libsetuptools/debug/ -lsetuptools

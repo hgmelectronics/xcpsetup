@@ -1,8 +1,8 @@
 #include "Xcp_ParamRegistry.h"
 #include "Xcp_ScalarMemoryRange.h"
 #include "Xcp_ScalarParam.h"
-#include "Xcp_TableMemoryRange.h"
-#include "Xcp_TableParam.h"
+#include "Xcp_ArrayMemoryRange.h"
+#include "Xcp_ArrayParam.h"
 
 namespace SetupTools {
 namespace Xcp {
@@ -95,39 +95,38 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
     return param;
 }
 
-TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, bool saveable, Slot *slot, SetupTools::TableAxis *axis, QString key)
+ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool writable, bool saveable, Slot *slot, QString key)
 {
-    if(slot == nullptr || axis == nullptr)
+    if(slot == nullptr)
         return nullptr;
     if(mParams.count(key))
     {
-        TableParam *other = qobject_cast<TableParam *>(mParams[key]);
+        ArrayParam *other = qobject_cast<ArrayParam *>(mParams[key]);
         if(!other
                 || other->range()->base() != base
                 || other->range()->type() != type
                 || other->range()->writable() != writable
-                || other->range()->dim() != quint32(axis->rowCount())
                 || other->saveable != saveable
-                || other->slot() != slot
-                || other->axis() != axis)
+                || other->count() != count
+                || other->slot() != slot)
             return nullptr;
         else
             return other;
     }
 
-    if(axis->rowCount() < 1)
+    if(count < 1)
         return nullptr;
 
     if(!MemoryRange::isValidType(type))
         return nullptr;
 
-    MemoryRange *range = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, axis->rowCount(), writable);
+    MemoryRange *range = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
     if(range == nullptr)
         return nullptr;
 
-    TableMemoryRange *tableRange = qobject_cast<TableMemoryRange *>(range);
+    ArrayMemoryRange *tableRange = qobject_cast<ArrayMemoryRange *>(range);
     Q_ASSERT(tableRange != nullptr);
-    TableParam* param = new TableParam(tableRange, slot, axis, this);
+    ArrayParam* param = new ArrayParam(tableRange, slot, this);
     Q_ASSERT(param != nullptr);
     param->saveable = saveable;
     param->key = key;
@@ -144,9 +143,9 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
     return addScalarParam(type, base, writable, saveable, slot, base.toString());
 }
 
-TableParam *ParamRegistry::addTableParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, SetupTools::TableAxis *axis)
+ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot *slot)
 {
-    return addTableParam(type, base, writable, saveable, slot, axis, base.toString());
+    return addArrayParam(type, base, count, writable, saveable, slot, base.toString());
 }
 
 ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
@@ -155,10 +154,10 @@ ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable
     return addScalarParam(type, basePtr, writable, saveable, slot, key);
 }
 
-TableParam *ParamRegistry::addTableParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot *slot, SetupTools::TableAxis *axis, QString key)
+ArrayParam *ParamRegistry::addArrayParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
 {
     XcpPtr basePtr(base);
-    return addTableParam(type, basePtr, writable, saveable, slot, axis, key);
+    return addArrayParam(type, basePtr, count, writable, saveable, slot, key);
 }
 
 ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot *slot)
@@ -167,10 +166,10 @@ ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable
     return addScalarParam(type, basePtr, writable, saveable, slot, basePtr.toString());
 }
 
-TableParam *ParamRegistry::addTableParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot *slot, SetupTools::TableAxis *axis)
+ArrayParam *ParamRegistry::addArrayParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot *slot)
 {
     XcpPtr basePtr(base);
-    return addTableParam(type, basePtr, writable, saveable, slot, axis, basePtr.toString());
+    return addArrayParam(type, basePtr, count, writable, saveable, slot, basePtr.toString());
 }
 
 Param *ParamRegistry::getParam(QString key)
