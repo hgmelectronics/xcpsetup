@@ -18,21 +18,11 @@ ParamFile::ParamFile(QObject *parent) :
     mExists(false)
 {}
 
-QString ParamFile::name()
-{
-    return mName;
-}
-
 void ParamFile::setName(QString newName)
 {
     mName = newName;
     mExists = QFile::exists(newName);
     emit nameChanged();
-}
-
-ParamFile::Type ParamFile::type()
-{
-    return mType;
 }
 
 void ParamFile::setType(ParamFile::Type newType)
@@ -41,54 +31,60 @@ void ParamFile::setType(ParamFile::Type newType)
     emit typeChanged();
 }
 
-bool ParamFile::exists()
-{
-    return mExists;
-}
-
-ParamFile::Result ParamFile::read(QMap<QString, QVariant> &mapOut)
+QVariantMap ParamFile::read()
 {
     if(!isTypeOk())
-        return Result::InvalidType;
-
-    mapOut.clear();
+    {
+        setResult(Result::InvalidType);
+        return QVariantMap();
+    }
 
     QFile file(mName);
     if(!file.open(QFile::ReadOnly))
-        return Result::FileOpenFail;
+    {
+        setResult(Result::FileOpenFail);
+        return QVariantMap();
+    }
 
     switch(mType)
     {
     case Json:
-        return readJson(file, mapOut);
+        return readJson(file);
         break;
     default:
-        return Result::InvalidType;
+        setResult(Result::InvalidType);
+        return QVariantMap();
         break;
     }
 }
 
-ParamFile::Result ParamFile::write(const QMap<QString, QVariant> &map)
+void ParamFile::write(QVariantMap map)
 {
     if(!isTypeOk())
-        return Result::InvalidType;
+    {
+        setResult(Result::InvalidType);
+        return;
+    }
 
     QFile file(mName);
     if(!file.open(QFile::WriteOnly | QFile::Truncate))
-        return Result::FileOpenFail;
+    {
+        setResult(Result::FileOpenFail);
+        return;
+    }
 
     switch(mType)
     {
     case Json:
-        return writeJson(file, map);
+        writeJson(file, map);
         break;
     default:
-        return Result::InvalidType;
+        setResult(Result::InvalidType);
         break;
     }
 }
 
-ParamFile::Result ParamFile::readJson(QFile &file, QMap<QString, QVariant> &mapOut)
+QVariantMap ParamFile::readJson(QFile &file)
 {
     QJsonParseError parseErr;
     QByteArray bytes = file.readAll();
@@ -97,13 +93,13 @@ ParamFile::Result ParamFile::readJson(QFile &file, QMap<QString, QVariant> &mapO
     {
         int lineNum = bytes.left(parseErr.offset).count('\n') + 1;
         int colNum = parseErr.offset - bytes.lastIndexOf('\n', parseErr.offset);
-        emit parseError(parseErr.errorString() + QString(" at line %1 col %2").arg(lineNum).arg(colNum));
-        return Result::CorruptedFile;
+        setParseError(parseErr.errorString() + QString(" at line %1 col %2").arg(lineNum).arg(colNum));
+        return QVariantMap();
     }
     if(!doc.isObject())
     {
-        emit parseError("document root is not an object");
-        return Result::CorruptedFile;
+        setParseError("document root is not an object");
+        return QVariantMap();
     }
     QJsonObject object = doc.object();
 
@@ -114,16 +110,20 @@ ParamFile::Result ParamFile::readJson(QFile &file, QMap<QString, QVariant> &mapO
             for(auto elem : it.value().toArray())
             {
                 if(!elem.isString())
-                    return Result::CorruptedFile;
+                {
+                    setResult(Result::CorruptedFile);
+                    return QVariantMap();
+                }
             }
         }
         else if(!it.value().isString())
         {
-            return Result::CorruptedFile;
+            setResult(Result::CorruptedFile);
+            return QVariantMap();
         }
     }
 
-    mapOut.clear();
+    QVariantMap map;
 
     for(auto it = object.begin(), end = object.end(); it != end; ++it)
     {
@@ -134,18 +134,19 @@ ParamFile::Result ParamFile::readJson(QFile &file, QMap<QString, QVariant> &mapO
             stringList.reserve(array.size());
             for(QJsonValueRef elem : array)
                 stringList.push_back(elem.toString());
-            mapOut.insert(it.key(), stringList);
+            map.insert(it.key(), stringList);
         }
         else
         {
             Q_ASSERT(it.value().isString());
-            mapOut.insert(it.key(), it.value().toString());
+            map.insert(it.key(), it.value().toString());
         }
     }
-    return Result::Ok;
+    setResult(Result::Ok);
+    return map;
 }
 
-ParamFile::Result ParamFile::writeJson(QFile &file, const QMap<QString, QVariant> &map)
+void ParamFile::writeJson(QFile &file, QVariantMap map)
 {
     QJsonObject root;
     for(QMap<QString, QVariant>::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
@@ -169,9 +170,9 @@ ParamFile::Result ParamFile::writeJson(QFile &file, const QMap<QString, QVariant
     QByteArray text = doc.toJson();
 
     if(file.write(text) == text.size())
-        return Result::Ok;
+        setResult(Result::Ok);
     else
-        return Result::FileWriteFail;
+        setResult(Result::FileWriteFail);
 }
 
 bool ParamFile::isTypeOk() const
@@ -185,6 +186,24 @@ bool ParamFile::isTypeOk() const
         return false;
         break;
     }
+}
+
+void ParamFile::setResult(Result val)
+{
+    mLastResult = val;
+    mLastParseError = "";
+    mLastResultString = resultString(val);
+    emit resultChanged();
+    emit opComplete();
+}
+
+void ParamFile::setParseError(QString parseErrorString)
+{
+    mLastResult = Result::CorruptedFile;
+    mLastParseError = parseErrorString;
+    mLastResultString = "Parse error: " + parseErrorString;
+    emit resultChanged();
+    emit opComplete();
 }
 
 QString ParamFile::resultString(int result){

@@ -3,18 +3,23 @@
 namespace SetupTools {
 namespace Xcp {
 
-ParamLayer::ParamLayer(quint32 addrGran, QObject *parent) :
+ParamLayer::ParamLayer(QObject *parent) :
     QObject(parent),
     mConn(new ConnectionFacade(this)),
-    mRegistry(new ParamRegistry(addrGran, this)),
+    mRegistry(nullptr),
     mState(State::IntfcNotOk),
     mOpProgressNotifyPeriod(1),
     mActiveKeyIdx(-1)
 {
-    mRegistry->setConnectionFacade(mConn);
     connect(mConn, &ConnectionFacade::setStateDone, this, &ParamLayer::onConnSetStateDone);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
+}
+
+ParamLayer::ParamLayer(quint32 addrGran, QObject *parent) :
+    ParamLayer(parent)
+{
+    setAddrGran(addrGran);
 }
 
 QUrl ParamLayer::intfcUri()
@@ -47,6 +52,7 @@ QString ParamLayer::slaveId()
 void ParamLayer::setSlaveId(QString id)
 {
     mConn->setSlaveId(id);
+    emit slaveIdChanged();
 }
 
 bool ParamLayer::idle()
@@ -109,6 +115,25 @@ ParamRegistry *ParamLayer::registry()
     return mRegistry;
 }
 
+quint32 ParamLayer::addrGran()
+{
+    if(mRegistry)
+        return mRegistry->addrGran();
+    else
+        return 0;
+}
+
+void ParamLayer::setAddrGran(quint32 val)
+{
+    if(!mRegistry)
+    {
+        mRegistry = new ParamRegistry(val, this);
+        mRegistry->setConnectionFacade(mConn);
+    }
+
+    emit addrGranChanged();
+}
+
 bool ParamLayer::writeCacheDirty()
 {
     return mRegistry->writeCacheDirty();
@@ -142,7 +167,7 @@ QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
     return ret;
 }
 
-QStringList ParamLayer::setData(const QMap<QString, QVariant> &data)
+QStringList ParamLayer::setData(QVariantMap data)
 {
     QStringList failedKeys;
 

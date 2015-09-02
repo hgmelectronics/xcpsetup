@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<SetupTools::Cs2Tool>("com.hgmelectronics.utils.cs2tool", 1, 0, "Cs2Tool");
 
-
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();

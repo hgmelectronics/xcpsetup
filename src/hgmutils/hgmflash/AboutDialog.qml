@@ -30,7 +30,7 @@ Window {
                 Label {
                     font.pixelSize: 18
                     Layout.fillWidth: true
-                    text: "HGMFlash 1.0"
+                    text: "HGMFlash 1.1"
                 }
                 Label {
                     text: "Copyright \u00A9 2015<br>HGM Automotive Electronics Inc."

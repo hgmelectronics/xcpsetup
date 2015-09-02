@@ -18,29 +18,19 @@ ColumnLayout {
     property alias progBaseText: progBaseField.text
     property alias progSizeText: progSizeField.text
     property alias progCksumText: progCksumField.text
-    property string paramFilePath
     property string targetCmdId
     property string targetResId
     property string intfcUri: ""
     property alias progressValue: progressBar.value
     property bool toolReadyProg
     property bool toolReadyReset
-    property bool toolReadyParam
     property bool toolBusy
-    property bool paramWriteCacheDirty
     signal progFileAccepted()
     signal userStartProg()
     signal userResetProg()
-    signal userConnectParam()
-    signal userDownloadParam()
-    signal userUploadParam()
-    signal userNvWriteParam()
-    signal userDisconnectParam()
-    signal userShowParamEdit()
     signal targetChanged()
 
     function selectProg() { progFileDialog.open() }
-    function selectLoadParam() { paramLoadFileDialog.open() }
 
     ColumnLayout {
         anchors.left: parent.left
@@ -290,86 +280,6 @@ ColumnLayout {
                 text: qsTr("Reset Target")
                 onClicked: root.userResetProg()
                 enabled: toolReadyReset && !toolBusy
-            }
-        }
-    }
-
-    ColumnLayout {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        spacing: 5
-
-
-        Label {
-            font.pixelSize: 14
-            text: "Parameters"
-        }
-
-        RowLayout {
-            id: paramFileRow
-            spacing: 10
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            TextField {
-                id: paramFileNameField
-                text: paramFilePath
-                readOnly: true
-                anchors.left: parent.left
-                anchors.right: parent.right
-            }
-        }
-
-        RowLayout {
-            id: paramActionRow
-            anchors.left: parent.left
-            anchors.right: parent.right
-            Button {
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                Layout.fillWidth: true
-                id: paramEditButton
-                text: qsTr("Edit")
-                onClicked: root.userShowParamEdit()
-            }
-            Button {
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                Layout.fillWidth: true
-                id: paramConnectButton
-                text: qsTr("Connect")
-                onClicked: root.userConnectParam()
-                enabled: toolReadyParam && !toolBusy
-            }
-            Button {
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                Layout.fillWidth: true
-                id: paramUploadButton
-                text: qsTr("Read")
-                onClicked: root.userUploadParam()
-                enabled: toolReadyParam
-            }
-            Button {
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                Layout.fillWidth: true
-                id: paramDownloadButton
-                text: qsTr("Write")
-                onClicked: root.userDownloadParam()
-                enabled: toolReadyParam
-            }
-            Button {
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                Layout.fillWidth: true
-                id: paramNvWriteButton
-                text: qsTr("Save")
-                onClicked: root.userNvWriteParam()
-                enabled: toolReadyParam
-            }
-            Button {
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                Layout.fillWidth: true
-                id: paramDisconnectButton
-                text: qsTr("Disconnect")
-                onClicked: root.userDisconnectParam()
-                enabled: toolReadyParam && toolBusy
             }
         }
     }
