@@ -25,6 +25,7 @@ class ParamLayer : public QObject
     Q_PROPERTY(quint32 addrGran READ addrGran WRITE setAddrGran NOTIFY addrGranChanged)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
+    Q_PROPERTY(bool slaveConnected READ slaveConnected NOTIFY stateChanged)
     Q_PROPERTY(int slaveTimeout READ slaveTimeout WRITE setSlaveTimeout)
     Q_PROPERTY(int slaveNvWriteTimeout READ slaveNvWriteTimeout WRITE setSlaveNvWriteTimeout)
     Q_PROPERTY(int opProgressNotifyPeriod READ opProgressNotifyPeriod WRITE setOpProgressNotifyPeriod)
@@ -47,6 +48,7 @@ public:
     void setAddrGran(quint32);
     bool idle();
     bool intfcOk();
+    bool slaveConnected();
     int slaveTimeout();
     void setSlaveTimeout(int);
     int slaveNvWriteTimeout();

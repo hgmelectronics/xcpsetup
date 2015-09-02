@@ -68,8 +68,9 @@ ApplicationWindow {
     MainForm {
         id: mainForm
         anchors.fill: parent
-        toolReadyParam: paramLayer.intfcOk && !paramLayer.idle
-        toolBusy: !paramLayer.idle
+        intfcOpen: paramLayer.intfcOk
+        slaveConnected: paramLayer.slaveConnected
+        paramBusy: !paramLayer.idle
         paramWriteCacheDirty: paramLayer.writeCacheDirty
         progressValue: paramLayer.opProgress
         onUserConnectParam: {
@@ -92,10 +93,6 @@ ApplicationWindow {
         addrGran: 4
         slaveTimeout: 100
         slaveNvWriteTimeout: 200
-        onSlaveIdChanged: {
-            mainForm.targetCmdId = slaveId.split(":")[0].toUpperCase()
-            mainForm.targetResId = slaveId.split(":")[1].toUpperCase()
-        }
     }
 
     ParamFile {

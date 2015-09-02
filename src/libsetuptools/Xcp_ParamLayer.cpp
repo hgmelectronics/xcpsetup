@@ -57,12 +57,28 @@ void ParamLayer::setSlaveId(QString id)
 
 bool ParamLayer::idle()
 {
-    return (mState == State::Disconnected || mState == State::IntfcNotOk);
+    switch(mState)
+    {
+    case State::IntfcNotOk:     return true;    break;
+    case State::Disconnected:   return true;    break;
+    case State::Connect:        return false;   break;
+    case State::Connected:      return true;    break;
+    case State::Download:       return false;   break;
+    case State::Upload:         return false;   break;
+    case State::NvWrite:        return false;   break;
+    case State::Disconnect:     return false;   break;
+    default:                    return true;    break;
+    }
 }
 
 bool ParamLayer::intfcOk()
 {
     return (mState != State::IntfcNotOk);
+}
+
+bool ParamLayer::slaveConnected()
+{
+    return !(mState == State::Disconnected || mState == State::IntfcNotOk);
 }
 
 int ParamLayer::slaveTimeout()

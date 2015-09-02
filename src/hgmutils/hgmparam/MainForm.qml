@@ -19,8 +19,9 @@ ColumnLayout {
     property string intfcUri: ""
     property alias progressValue: progressBar.value
     property alias registry: paramTabView.registry
-    property bool toolReadyParam
-    property bool toolBusy
+    property bool intfcOpen
+    property bool slaveConnected
+    property bool paramBusy
     property bool paramWriteCacheDirty
     signal userConnectParam()
     signal userDownloadParam()
@@ -114,6 +115,36 @@ ColumnLayout {
                     text: qsTr("kbps")
                 }
             }
+            RowLayout {
+                id: intfcActionRow
+                anchors.left: parent.left
+                anchors.right: parent.right
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: intfcOpenButton
+                    text: qsTr("Open")
+                    onClicked: {
+                        if(intfcComboBox.selectedUri !== "")
+                            root.intfcUri = intfcComboBox.selectedUri.replace(/bitrate=[0-9]*/, "bitrate=" + bitrateComboBox.bps.toString())
+                    }
+                    enabled: !intfcOpen
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: intfcCloseButton
+                    text: qsTr("Close")
+                    onClicked: {
+                        root.intfcUri = ""
+                    }
+                    enabled: intfcOpen && !slaveConnected
+                }
+            }
+        }
+
+        ColumnLayout {
+            spacing: 5
 
             RowLayout {
                 id: targetConfigRow
@@ -126,15 +157,13 @@ ColumnLayout {
                 TextField {
                     id: targetCmdIdField
                     text: targetCmdId
-                    readOnly: toolBusy
+                    readOnly: slaveConnected
                     validator: RegExpValidator {
                         regExp: /[0-9A-Fa-f]{1,8}/
                     }
                     onAccepted: {
-                        if(!toolBusy) {
-                            targetCmdId = text
-                            root.targetChanged()
-                        }
+                        targetCmdId = text
+                        root.targetChanged()
                     }
                 }
 
@@ -144,60 +173,34 @@ ColumnLayout {
                 TextField {
                     id: targetResIdField
                     text: targetResId
-                    readOnly: toolBusy
+                    readOnly: slaveConnected
                     validator: RegExpValidator {
                         regExp: /[0-9A-Fa-f]{1,8}/
                     }
                     onAccepted: {
-                        if(!toolBusy) {
-                            targetResId = text
-                            root.targetChanged()
-                        }
+                        targetResId = text
+                        root.targetChanged()
                     }
                 }
             }
-        }
 
-        ColumnLayout {
-            spacing: 5
-
-            RowLayout {
-                id: intfcActionRow
-                anchors.left: parent.left
-                anchors.right: parent.right
-                Button {
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    id: intfcOpenButton
-                    text: qsTr("Open")
-                    onClicked: {
-                        if(intfcComboBox.selectedUri !== "") {
-                            root.intfcUri = intfcComboBox.selectedUri.replace(/bitrate=[0-9]*/, "bitrate=" + bitrateComboBox.bps.toString())
-                            intfcOpenButton.enabled = false
-                        }
-                    }
-                }
-                Button {
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    id: intfcCloseButton
-                    text: qsTr("Close")
-                    onClicked: {
-                        root.intfcUri = ""
-                        intfcOpenButton.enabled = true
-                    }
-                    enabled: !toolBusy && !intfcOpenButton.enabled
-                }
-            }
             RowLayout {
                 id: paramActionRow
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: paramConnectButton
+                    text: qsTr("Connect")
+                    onClicked: root.userConnectParam()
+                    enabled: intfcOpen && !slaveConnected
+                }
                 Button {
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                     Layout.fillWidth: true
                     id: paramUploadButton
                     text: qsTr("Read")
                     onClicked: root.userUploadParam()
-                    enabled: toolReadyParam
+                    enabled: slaveConnected && !paramBusy
                 }
                 Button {
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
@@ -205,7 +208,7 @@ ColumnLayout {
                     id: paramDownloadButton
                     text: qsTr("Write")
                     onClicked: root.userDownloadParam()
-                    enabled: toolReadyParam
+                    enabled: slaveConnected && !paramBusy
                 }
                 Button {
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
@@ -213,7 +216,15 @@ ColumnLayout {
                     id: paramNvWriteButton
                     text: qsTr("Save")
                     onClicked: root.userNvWriteParam()
-                    enabled: toolReadyParam
+                    enabled: slaveConnected && !paramBusy
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: paramDisconnectButton
+                    text: qsTr("Disconnect")
+                    onClicked: root.userDisconnectParam()
+                    enabled: slaveConnected
                 }
             }
         }
