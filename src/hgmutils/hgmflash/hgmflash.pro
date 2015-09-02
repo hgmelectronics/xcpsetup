@@ -6,7 +6,8 @@ SOURCES += main.cpp \
     Cs2Tool.cpp
 
 RESOURCES += qml.qrc \
-    qmldirs.qrc
+    qmldirs.qrc \
+    qchart.js/qchart.qrc
 
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
@@ -35,3 +36,5 @@ HEADERS += \
     Cs2Tool.h
 
 win32:RC_ICONS += hgmflash.ico
+
+DISTFILES +=

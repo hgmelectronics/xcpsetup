@@ -8,7 +8,7 @@ QtObject {
         max: 21
         size: 22
         xUnit: ""
-    };
+    }
 
     readonly property LinearTableAxis percentage1: LinearTableAxis {
         min: 0

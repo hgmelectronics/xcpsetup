@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
+import com.setuptools 1.0
 import com.setuptools.xcp 1.0
 
 ColumnLayout {
@@ -16,31 +17,10 @@ ColumnLayout {
         text: name
     }
 
-        Component {
-            id: valueEditDelegate
-            TextInput {
-                color: styleData.textColor
-                anchors.margins: 4
-                text: styleData.value !== undefined ? styleData.value : ""
-                onEditingFinished: model.value = text
-                focus: (styleData.row === tableView.currentRow)
-                onFocusChanged: {
-                    if(focus) {
-                        selectAll()
-                        forceActiveFocus()
-                    }
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        tableView.currentRow = styleData.row
-                        tableView.selection.clear()
-                        tableView.selection.select(styleData.row)
-                    }
-                }
-            }
-        }
+    ColumnEditDelegate
+    {
+        id: columnEditDelegate
+    }
 
     TableView {
         id: tableView
@@ -52,7 +32,7 @@ ColumnLayout {
         TableViewColumn {
             role: "value"
             title: yLabel + ((param.slot.unit.length > 0) ? ", " : "") + param.slot.unit
-            delegate: valueEditDelegate
+            delegate: columnEditDelegate
             width: tableView.viewport.width / tableView.columnCount
         }
         model: param.stringModel

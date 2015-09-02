@@ -14,5 +14,9 @@
         <file>EncodingParamEdit.qml</file>
         <file>Parameters.qml</file>
         <file>TableParamView2.qml</file>
+        <file>ScalarParamSlider.qml</file>
+        <file>ScalarParamSpinBox.qml</file>
+        <file>ShiftTableTab.qml</file>
+        <file>ColumnEditDelegate.qml</file>
     </qresource>
 </RCC>

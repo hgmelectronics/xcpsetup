@@ -38,11 +38,12 @@ Window {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
-                ScalarParamEdit {
+                ScalarParamSpinBox {
                     name: "Final Drive Ratio"
                     param: parameters.finalDriveRatio
                 }
-                ScalarParamEdit {
+
+                ScalarParamSpinBox {
                     name: "Tire Diameter"
                     param: parameters.tireDiameter
                 }
@@ -57,16 +58,16 @@ Window {
                 anchors.margins: 10
                 spacing: 10
 
-                ScalarParamEdit{
+                ScalarParamSpinBox{
                     name: "Engine Cylinders"
                     param: parameters.engineCylinders
                 }
 
-                ScalarParamEdit {
+                ScalarParamSpinBox {
                     name: "Max Engine Speed A"
                     param: parameters.maxEngineSpeedA
                 }
-                ScalarParamEdit {
+                ScalarParamSpinBox {
                     name: "Max Engine Speed B"
                     param: parameters.maxEngineSpeedB
                 }
@@ -74,129 +75,53 @@ Window {
             }
         }
 
-        Tab {
+
+        //        Tab
+        //        {
+        //            active:true
+        //            var chartLineData = {
+        //                labels: ["January","February","March","April","May","June","July"],
+        //                datasets: [{
+        //                        fillColor: "rgba(220,220,220,0.5)",
+        //                        strokeColor: "rgba(220,220,220,1)",
+        //                        pointColor: "rgba(220,220,220,1)",
+        //                        pointStrokeColor: "#ffffff",
+        //                        data: [65,59,90,81,56,55,40]
+        //                    }, {
+        //                        fillColor: "rgba(151,187,205,0.5)",
+        //                        strokeColor: "rgba(151,187,205,1)",
+        //                        pointColor: "rgba(151,187,205,1)",
+        //                        pointStrokeColor: "#ffffff",
+        //                        data: [28,48,40,19,96,27,100]
+        //                    }]
+        //            }
 
 
-            title: "Shift Tables"
+        //            QChart {
+        //                id: chart_line;
+        //                width: chart_width;
+        //                height: chart_height;
+        //                chartAnimated: true;
+        //                chartAnimationEasing: Easing.InOutElastic;
+        //                chartAnimationDuration: 2000;
+        //                chartData: chartsData.ChartLineData;
+        //                chartType: Charts.ChartType.LINE;
+        //            }
+        //        }
+
+
+        ShiftTableTab {
+            title: "A Shift Tables"
             active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
+            shiftTables: parameters.shiftTablesA
+            throttleSlot: parameters.slots.percentage1
+        }
 
-                function bump(p)
-                {
-                    for(var i=0; i<p.count ; i++)
-                    {
-                        p.set(i,p.get(i)+1.0);
-                    }
-                }
-
-                function zero(p)
-                {
-                    for(var i=0; i<p.count ; i++)
-                    {
-                        p.set(i,0.0);
-                    }
-                }
-
-
-                Button
-                {
-                    text: "Zero"
-                    onClicked: {
-                        zero(parameters.shiftTable12A);
-                        zero(parameters.shiftTable23A);
-                        zero(parameters.shiftTable34A);
-                        }
-                }
-
-
-
-                Button
-                {
-                    text: "Bump 1-2"
-                    onClicked: {
-                        bump(parameters.shiftTable12A)
-                    }
-                }
-
-                Button
-                {
-                    text: "Bump 2-3"
-                    onClicked: {
-                        bump(parameters.shiftTable23A)
-                    }
-                }
-
-                Button
-                {
-                    text: "Bump 3-4"
-                    onClicked: {
-                        bump(parameters.shiftTable34A)
-                    }
-                }
-
-                TableView
-                {
-                    width: 600;
-
-                    model:
-                        TableParamMapper {
-                        stringFormat: true
-                        mapping: { "shift12": parameters.shiftTable12A, "shift23": parameters.shiftTable23A,
-                                   "shift34": parameters.shiftTable34A
-                        }
-                    }
-
-                    TableViewColumn {
-                        role: "shift12"
-                        title: "Shift 1-2"
-                        width: 100
-                    }
-                    TableViewColumn {
-                        role: "shift23"
-                        title: "Shift 2-3"
-                        width: 100
-                    }
-
-                    TableViewColumn {
-                        role: "shift34"
-                        title: "Shift 3-4"
-                        width: 100
-                    }
-
-                }
-
-                TableParamEdit {
-                    id: shift12
-                    name: "Shift Speed 1-2 A"
-                    xLabel: "Throttle"
-                    yLabel: "Speed"
-                    param: parameters.shiftTable12A
-                }
-
-
-                TableParamEdit {
-                    name: "Shift Speed 2-3 A"
-                    xLabel: "Throttle"
-                    yLabel: "Speed"
-                    param: parameters.shiftTable23A
-                }
-
-                TableParamEdit {
-                    name: "Shift Speed 3-4 A"
-                    xLabel: "Throttle"
-                    yLabel: "Speed"
-                    param: parameters.shiftTable34A
-                }
-                TableParamEdit {
-                    name: "Shift Speed 4-5 A"
-                    xLabel: "Throttle"
-                    yLabel: "Speed"
-                    param: parameters.shiftTable45A
-                }
-            }
+        ShiftTableTab {
+            title: "B Shift Tables"
+            active: true
+            shiftTables: parameters.shiftTablesB
+            throttleSlot: parameters.slots.percentage1
         }
 
 
@@ -227,12 +152,12 @@ Window {
                 anchors.margins: 10
                 spacing: 10
 
-                ScalarParamEdit {   // duplicate to illustrate binding
+                ScalarParamSpinBox {   // duplicate to illustrate binding
                     name: "Display Brightness"
                     param: parameters.displayBrightness
                 }
 
-                ScalarParamEdit {   // duplicate to illustrate binding
+                ScalarParamSpinBox {   // duplicate to illustrate binding
                     name: "Display Contrast"
                     param: parameters.displayBrightness
                 }

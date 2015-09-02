@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.0
 import com.setuptools.xcp 1.0
 import com.setuptools 1.0
 
@@ -60,6 +60,14 @@ QtObject {
             {raw: 1, engr: "Yes"},
         ]
     }
+
+    readonly property EncodingSlot abMode: EncodingSlot {
+        encodingList [
+            { raw: 0, engr: "A"},
+            { raw: 1, engr: "B"}
+        ]
+    }
+
 
     readonly property EncodingSlot onOff: EncodingSlot {
         encodingList: [

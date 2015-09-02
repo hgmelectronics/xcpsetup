@@ -15,28 +15,25 @@ ColumnLayout {
         text: name
     }
 
-    Component
-    {
-        id: xModelDelegate
-        Text {
-            elide: styleData.elideMode
-            text: xSlot.asString(styleData.row)
-            color: styleData.textColor
-        }
-
-    }
-
     TableView {
         id: tableView
         TableViewColumn {
-//            title: param.xLabel + ((param.xUnit.length > 0) ? ", " : "") + param.xUnit
-            delegate: xModelDelegate
+            //            title: param.xLabel + ((param.xUnit.length > 0) ? ", " : "") + param.xUnit
+            delegate: Component        {
+                id: xModelDelegate
+                Text {
+                    elide: styleData.elideMode
+                    text: xSlot.asString(styleData.row)
+                    color: styleData.textColor
+                }
+
+            }
             width: tableView.viewport.width / tableView.columnCount
         }
 
         TableViewColumn {
             role: "value"
-//            title: param.valueLabel + ((param.valueUnit.length > 0) ? ", " : "") + param.valueUnit
+            //            title: param.valueLabel + ((param.valueUnit.length > 0) ? ", " : "") + param.valueUnit
             width: tableView.viewport.width / tableView.columnCount
         }
         model: param.stringModel
