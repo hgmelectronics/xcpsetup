@@ -6,31 +6,21 @@ import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
-Window {
-    id: paramWindow
-
+Item {
+    id: root
     property ParamRegistry registry
-
-    function show() {
-        visible = true
-    }
-
-    title: "CS2 Parameter Editor"
-    width: 600
-    height: 400
-    SystemPalette { id: myPalette; colorGroup: SystemPalette.Active }
-    color: myPalette.window
-
-    Parameters
-    {
-        id: parameters
-        registry: paramWindow.registry
-    }
-
-
+    anchors.left: parent.left
+    anchors.right: parent.right
     TabView {
-        id: paramTabView
+        id: tabView
         anchors.fill: parent
+
+        Parameters
+        {
+            id: parameters
+            registry: root.registry
+        }
+
         Tab {
             title: "Vehicle"
             active: true
