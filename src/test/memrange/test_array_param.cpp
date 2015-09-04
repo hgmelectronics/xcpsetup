@@ -63,7 +63,7 @@ void Test::arrayParamDownloadUpload()
     for(int i = 0; i < RAW.size(); ++i)
         slaveMemRangeValue[i] = 0xFFFFFFFF;  // make initially read value be NAN
 
-    ArrayParam *param = qobject_cast<ArrayParam *>(registry->addArrayParam(MemoryRange::MemoryRangeType::U32, {base,0}, RAW.size(), true, false, &slot, KEY));
+    ArrayParam *param = qobject_cast<ArrayParam *>(registry->addParam(MemoryRange::MemoryRangeType::U32, {base,0}, RAW.size(), true, false, &slot, KEY));
     QCOMPARE(param, qobject_cast<ArrayParam *>(registry->getParam(KEY)));
     QSignalSpy spy(param->range(), &ArrayMemoryRange::uploadDone);
 

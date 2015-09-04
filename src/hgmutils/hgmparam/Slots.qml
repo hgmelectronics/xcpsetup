@@ -101,4 +101,31 @@ QtObject {
             {raw: 21, engr: "SP7"},
         ]
     }
+
+    property LinearSlot nullSlot: LinearSlot {
+        rawA:0
+        engrA: 0
+        rawB: 1E10
+        engrB: 1E9
+    }
+
+    property LinearSlot frequency1: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1E10
+        engrB: 1E9
+    }
+
+
+    //    property var zeroIsDisabledEncoding: [
+    //        { raw: 0, engr: "Disabled"}
+    //    ]
+
+
+//    property Slot acceleration1: {
+
+//        rawA:
+//        unit: "m/s^2"
+//    }
+
 }

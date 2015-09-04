@@ -116,9 +116,11 @@ Item {
                     }
 
                     Row {
+                        visible: false
                         Layout.columnSpan: 3
                         Layout.margins: margins
                         spacing: 10
+                        id: buttonRow
 
                         function bump(p)
                         {
@@ -141,10 +143,10 @@ Item {
                         {
                             text: "Zero"
                             onClicked: {
-                                zero(parameters.shiftTable12A);
-                                zero(parameters.shiftTable23A);
-                                zero(parameters.shiftTable34A);
-                                zero(parameters.shiftTable45A);
+                                buttonRow.zero(parameters.shiftTable12A);
+                                buttonRow.zero(parameters.shiftTable23A);
+                                buttonRow.zero(parameters.shiftTable34A);
+                                buttonRow.zero(parameters.shiftTable45A);
                             }
                         }
 
@@ -154,7 +156,7 @@ Item {
                         {
                             text: "Bump 1-2"
                             onClicked: {
-                                bump(parameters.shiftTable12A)
+                                buttonRow.bump(parameters.shiftTable12A)
                             }
                         }
 
@@ -162,7 +164,7 @@ Item {
                         {
                             text: "Bump 2-3"
                             onClicked: {
-                                bump(parameters.shiftTable23A)
+                                buttonRow.bump(parameters.shiftTable23A)
                             }
                         }
 
@@ -170,7 +172,7 @@ Item {
                         {
                             text: "Bump 3-4"
                             onClicked: {
-                                bump(parameters.shiftTable34A)
+                                buttonRow.bump(parameters.shiftTable34A)
                             }
                         }
 
@@ -178,7 +180,7 @@ Item {
                         {
                             text: "Bump 4-5"
                             onClicked: {
-                                bump(parameters.shiftTable45A)
+                                buttonRow.bump(parameters.shiftTable45A)
                             }
                         }
                     }

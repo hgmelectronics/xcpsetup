@@ -14,5 +14,6 @@
         <file>Parameters.qml</file>
         <file>TableParamView2.qml</file>
         <file>ScalarParamSpinBox.qml</file>
+        <file>ParamId.qml</file>
     </qresource>
 </RCC>

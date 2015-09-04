@@ -4,9 +4,8 @@ import com.hgmelectronics.setuptools 1.0
 
 QtObject {
     property ParamRegistry registry;
+//    property ParamId paramId: ParamId{}
     property Slots slots: Slots{}
-
-    property LinearSlot nothing
 
     property LinearSlot rpmToKPH: LinearSlot {
         rawA: 0
@@ -28,26 +27,27 @@ QtObject {
 //SHIFT_MAX_ENGINE_SPEED_B = 0x0443,
 
 
-    readonly property ScalarParam engineCylinders: registry.addScalarParam(MemoryRange.U32, 0x0B000000, true, true, slots.cylinderCount)
+    readonly property ScalarParam engineCylinders: registry.addParam(MemoryRange.U32, 0x0B000000, true, true, slots.cylinderCount)
 
-    readonly property ScalarParam finalDriveRatio: registry.addScalarParam(MemoryRange.U32, 0x0A000000, true, true, slots.ratio1)
-    readonly property ScalarParam displayBrightness: registry.addScalarParam(MemoryRange.U32, 0x01020000, true, true, slots.percentage1)
-    readonly property ScalarParam tireDiameter: registry.addScalarParam(MemoryRange.U32, 0x02020000, true, true, slots.length)
+    readonly property ScalarParam finalDriveRatio: registry.addParam(MemoryRange.U32, 0x0A000000, true, true, slots.ratio1)
+    readonly property ScalarParam displayBrightness: registry.addParam(MemoryRange.U32, 0x01020000, true, true, slots.percentage1)
+    readonly property ScalarParam tireDiameter: registry.addParam(MemoryRange.U32, 0x02020000, true, true, slots.length)
 
-    readonly property ScalarParam maxEngineSpeedA: registry.addScalarParam(MemoryRange.U32, 0x04230000, true, true, slots.rpm1)
-    readonly property ScalarParam maxEngineSpeedB: registry.addScalarParam(MemoryRange.U32, 0x04430000, true, true, slots.rpm1)
+    readonly property ScalarParam maxEngineSpeedA: registry.addParam(MemoryRange.U32, 0x04230000, true, true, slots.rpm1)
+    readonly property ScalarParam maxEngineSpeedB: registry.addParam(MemoryRange.U32, 0x04430000, true, true, slots.rpm1)
 
-    readonly property ArrayParam shiftTable12A: registry.addArrayParam(MemoryRange.U32, 0x04240000, 101, true, true, rpmToKPH)
-    readonly property ArrayParam shiftTable23A: registry.addArrayParam(MemoryRange.U32, 0x04250000, 101, true, true, rpmToKPH)
-    readonly property ArrayParam shiftTable34A: registry.addArrayParam(MemoryRange.U32, 0x04260000, 101, true, true, rpmToKPH)
-    readonly property ArrayParam shiftTable45A: registry.addArrayParam(MemoryRange.U32, 0x04270000, 101, true, true, rpmToKPH)
-    readonly property ArrayParam shiftTable56A: registry.addArrayParam(MemoryRange.U32, 0x04280000, 101, true, true, rpmToKPH)
 
-    readonly property ArrayParam shiftTable12B: registry.addArrayParam(MemoryRange.U32, 0x04440000, 101, true, true, rpmToKPH)
-    readonly property ArrayParam shiftTable23B: registry.addArrayParam(MemoryRange.U32, 0x04450000, 101, true, true, rpmToKPH)
-    readonly property ArrayParam shiftTable34B: registry.addArrayParam(MemoryRange.U32, 0x04460000, 101, true, true, rpmToKPH)
-    readonly property ArrayParam shiftTable45B: registry.addArrayParam(MemoryRange.U32, 0x04470000, 101, true, true, rpmToKPH)
-    readonly property ArrayParam shiftTable56B: registry.addArrayParam(MemoryRange.U32, 0x04480000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable12A: registry.addParam(MemoryRange.U32, 0x04240000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable23A: registry.addParam(MemoryRange.U32, 0x04250000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable34A: registry.addParam(MemoryRange.U32, 0x04260000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable45A: registry.addParam(MemoryRange.U32, 0x04270000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable56A: registry.addParam(MemoryRange.U32, 0x04280000, 101, true, true, rpmToKPH)
+
+    readonly property ArrayParam shiftTable12B: registry.addParam(MemoryRange.U32, 0x04440000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable23B: registry.addParam(MemoryRange.U32, 0x04450000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable34B: registry.addParam(MemoryRange.U32, 0x04460000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable45B: registry.addParam(MemoryRange.U32, 0x04470000, 101, true, true, rpmToKPH)
+    readonly property ArrayParam shiftTable56B: registry.addParam(MemoryRange.U32, 0x04480000, 101, true, true, rpmToKPH)
 
     property SlotArrayModel tps: SlotArrayModel {
         slot: slots.percentage1
@@ -98,7 +98,7 @@ QtObject {
         }
     }
 
-    readonly property ArrayParam switchMonitorInput: registry.addArrayParam(MemoryRange.U32, 0x80500000, 22, false, false, slots.booleanOnOff1)
+    readonly property ArrayParam switchMonitorInput: registry.addParam(MemoryRange.U32, 0x80500000, 22, false, false, slots.booleanOnOff1)
 
 
     property TableMapperModel switchMonitorModel: TableMapperModel {
