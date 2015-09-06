@@ -5,8 +5,7 @@ QT += qml quick widgets serialport
 SOURCES += main.cpp \
     Cda2Tool.cpp
 
-RESOURCES += qml.qrc \
-    qmldirs.qrc
+RESOURCES += qml.qrc
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 
@@ -14,6 +13,7 @@ static {
     QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections
     QMAKE_LFLAGS += -static-libstdc++ -static-libgcc -Wl,--gc-sections
     win32: QMAKE_LFLAGS += -static -lwinpthread
+    RESOURCES += $$PWD/../../qml/qmldirs/qmldirs.qrc
     DEFINES += STATICQT
 }
 

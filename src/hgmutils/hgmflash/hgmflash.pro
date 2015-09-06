@@ -15,6 +15,7 @@ static {
 #    RESOURCES += qmldirs.qrc
     win32: QMAKE_LFLAGS += -static -lwinpthread
     DEFINES += STATICQT
+    RESOURCES += $$PWD/../../qml/qmldirs/qmldirs.qrc
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
