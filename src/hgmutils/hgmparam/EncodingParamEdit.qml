@@ -18,7 +18,7 @@ ColumnLayout {
             model: param.slot.encodingStringList
             editable: true
             onActivated: {
-                if(index == -1)
+                if (index == -1)
                     param.stringVal = editText
                 else
                     param.stringVal = model[index]
@@ -37,7 +37,7 @@ ColumnLayout {
         target: param
         onValChanged: {
             combo.currentIndex = param.slot.engrToEncodingIndex(param.stringVal)
-            if(combo.currentIndex == -1)
+            if (combo.currentIndex == -1)
                 combo.editText = param.stringVal
             console.log(combo.currentIndex)
             console.log(param.stringVal)

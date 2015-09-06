@@ -15,8 +15,7 @@ Item {
         id: tabView
         anchors.fill: parent
 
-        Parameters
-        {
+        Parameters {
             id: parameters
             registry: root.registry
         }
@@ -47,7 +46,7 @@ Item {
                 anchors.margins: 10
                 spacing: 10
 
-                ScalarParamSpinBox{
+                ScalarParamSpinBox {
                     name: "Engine Cylinders"
                     param: parameters.engineCylinders
                 }
@@ -60,7 +59,6 @@ Item {
                     name: "Max Engine Speed B"
                     param: parameters.maxEngineSpeedB
                 }
-
             }
         }
 
@@ -68,8 +66,8 @@ Item {
             id: shiftTableTab
             title: "Shift Tables"
             active: true
-            readonly property int spacing: 0
-            readonly property int margins: 10
+            property int spacing: 0
+            property int margins: 10
 
             ScrollView {
                 anchors.fill: parent
@@ -79,8 +77,7 @@ Item {
                     rowSpacing: spacing
                     columns: 3
 
-                    TableView
-                    {
+                    TableView {
                         Layout.columnSpan: 3
                         Layout.margins: margins
                         Layout.minimumWidth: 600
@@ -112,7 +109,6 @@ Item {
                             title: "Shift 4-5"
                             width: 100
                         }
-
                     }
 
                     Row {
@@ -122,69 +118,56 @@ Item {
                         spacing: 10
                         id: buttonRow
 
-                        function bump(p)
-                        {
-                            for(var i=0; i<p.count ; i++)
-                            {
-                                p.set(i,p.get(i)+1.0);
+                        function bump(p) {
+                            for (var i = 0; i < p.count; i++) {
+                                p.set(i, p.get(i) + 1.0)
                             }
                         }
 
-                        function zero(p)
-                        {
-                            for(var i=0; i<p.count ; i++)
-                            {
-                                p.set(i,0.0);
+                        function zero(p) {
+                            for (var i = 0; i < p.count; i++) {
+                                p.set(i, 0.0)
                             }
                         }
 
-
-                        Button
-                        {
+                        Button {
                             text: "Zero"
                             onClicked: {
-                                buttonRow.zero(parameters.shiftTable12A);
-                                buttonRow.zero(parameters.shiftTable23A);
-                                buttonRow.zero(parameters.shiftTable34A);
-                                buttonRow.zero(parameters.shiftTable45A);
+                                buttonRow.zero(parameters.shiftTable12A)
+                                buttonRow.zero(parameters.shiftTable23A)
+                                buttonRow.zero(parameters.shiftTable34A)
+                                buttonRow.zero(parameters.shiftTable45A)
                             }
                         }
 
-
-
-                        Button
-                        {
+                        Button {
                             text: "Bump 1-2"
                             onClicked: {
                                 buttonRow.bump(parameters.shiftTable12A)
                             }
                         }
 
-                        Button
-                        {
+                        Button {
                             text: "Bump 2-3"
                             onClicked: {
                                 buttonRow.bump(parameters.shiftTable23A)
                             }
                         }
 
-                        Button
-                        {
+                        Button {
                             text: "Bump 3-4"
                             onClicked: {
                                 buttonRow.bump(parameters.shiftTable34A)
                             }
                         }
 
-                        Button
-                        {
+                        Button {
                             text: "Bump 4-5"
                             onClicked: {
                                 buttonRow.bump(parameters.shiftTable45A)
                             }
                         }
                     }
-
 
                     TableParamEdit {
                         id: shift12
@@ -195,7 +178,6 @@ Item {
                         tableModel: parameters.shiftTable12AModel
                         enabled: parameters.shiftTable12A.valid
                     }
-
 
                     TableParamEdit {
                         name: "Shift Speed 2-3 A"
@@ -251,12 +233,14 @@ Item {
                 anchors.margins: 10
                 spacing: 10
 
-                ScalarParamSpinBox {   // duplicate to illustrate binding
+                ScalarParamSpinBox {
+                    // duplicate to illustrate binding
                     name: "Display Brightness"
                     param: parameters.displayBrightness
                 }
 
-                ScalarParamSpinBox {   // duplicate to illustrate binding
+                ScalarParamSpinBox {
+                    // duplicate to illustrate binding
                     name: "Display Contrast"
                     param: parameters.displayBrightness
                 }
