@@ -45,7 +45,8 @@ SOURCES += \
     Xcp_ArrayParam.cpp \
     SlotArrayModel.cpp \
     TransposeProxyModel.cpp \
-    TableMapperModel.cpp
+    TableMapperModel.cpp \
+    Xcp_Interface_Can_Socket_Interface.cpp
 
 HEADERS += \
     util.h \
@@ -78,11 +79,13 @@ HEADERS += \
     Xcp_ArrayParam.h \
     SlotArrayModel.h \
     TransposeProxyModel.h \
-    TableMapperModel.h
+    TableMapperModel.h \
+    Xcp_Interface_Can_Socket_Interface.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
+    DEFINES += SOCKETCAN
 }
 
 win32 {
