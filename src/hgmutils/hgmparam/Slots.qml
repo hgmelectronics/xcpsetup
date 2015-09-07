@@ -18,7 +18,7 @@ QtObject {
         ]
     }
 
-    property Slot acceleration1: LinearSlot {
+    property LinearSlot acceleration1: LinearSlot {
         rawA: -1E9
         engrA: -1E7
         rawB: 1E9
