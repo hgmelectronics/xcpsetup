@@ -168,8 +168,8 @@ QtObject {
     property LinearSlot oneDigitOffsetBy1: LinearSlot {
         rawA: 0
         engrA: 1
-        rawB: 8
-        engrB: 9
+        rawB: 9
+        engrB: 10
     }
 
     property LinearSlot hex8bit: LinearSlot {
@@ -205,8 +205,8 @@ QtObject {
         unencodedSlot: LinearSlot {
             rawA: 3
             engrA: 1
-            rawB: 11
-            engrB: 9
+            rawB: 10
+            engrB: 8
         }
     }
 
