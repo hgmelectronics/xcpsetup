@@ -4,15 +4,13 @@ import QtQuick.Layouts 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
-ColumnLayout {
-    property string name
+GroupBox {
+    id: groupBox
+    property alias name: groupBox.title
     property ScalarParam param
 
-    Label {
-        text: name
-    }
-
     RowLayout {
+        id: row
         ComboBox {
             id: combo
             model: param.slot.encodingStringList
