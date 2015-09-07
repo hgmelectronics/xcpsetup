@@ -72,6 +72,7 @@ ApplicationWindow {
         slaveConnected: paramLayer.slaveConnected
         paramBusy: !paramLayer.idle
         paramWriteCacheDirty: paramLayer.writeCacheDirty
+        paramFilePath: paramFileIo.name
         progressValue: paramLayer.opProgress
         onUserConnectParam: {
             paramLayer.slaveId = targetCmdId + ":" + targetResId
