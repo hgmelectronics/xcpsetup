@@ -66,145 +66,68 @@ Item {
             id: shiftTableTab
             title: "Shift Tables"
             active: true
-            property int spacing: 0
-            property int margins: 10
 
-            ScrollView {
+            Flow {
                 anchors.fill: parent
-                verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
-                GridLayout {
-                    columnSpacing: spacing
-                    rowSpacing: spacing
-                    columns: 3
+                anchors.margins: 10
+                spacing: 10
 
-                    TableView {
-                        Layout.columnSpan: 3
-                        Layout.margins: margins
-                        Layout.minimumWidth: 600
-
-                        model: parameters.shiftTablesAModel
-
-                        TableViewColumn {
-                            role: "tps"
-                            title: "TPS %"
-                            width: 100
-                        }
-                        TableViewColumn {
-                            role: "shift12"
-                            title: "Shift 1-2"
-                            width: 100
-                        }
-                        TableViewColumn {
-                            role: "shift23"
-                            title: "Shift 2-3"
-                            width: 100
-                        }
-                        TableViewColumn {
-                            role: "shift34"
-                            title: "Shift 3-4"
-                            width: 100
-                        }
-                        TableViewColumn {
-                            role: "shift45"
-                            title: "Shift 4-5"
-                            width: 100
-                        }
-                    }
-
-                    Row {
-                        visible: false
-                        Layout.columnSpan: 3
-                        Layout.margins: margins
-                        spacing: 10
-                        id: buttonRow
-
-                        function bump(p) {
-                            for (var i = 0; i < p.count; i++) {
-                                p.set(i, p.get(i) + 1.0)
-                            }
-                        }
-
-                        function zero(p) {
-                            for (var i = 0; i < p.count; i++) {
-                                p.set(i, 0.0)
-                            }
-                        }
-
-                        Button {
-                            text: "Zero"
-                            onClicked: {
-                                buttonRow.zero(parameters.shiftTablesAArray[0])
-                                buttonRow.zero(parameters.shiftTablesAArray[1])
-                                buttonRow.zero(parameters.shiftTablesAArray[2])
-                                buttonRow.zero(parameters.shiftTablesAArray[3])
-                            }
-                        }
-
-                        Button {
-                            text: "Bump 1-2"
-                            onClicked: {
-                                buttonRow.bump(parameters.shiftTablesAArray[0])
-                            }
-                        }
-
-                        Button {
-                            text: "Bump 2-3"
-                            onClicked: {
-                                buttonRow.bump(parameters.shiftTablesAArray[1])
-                            }
-                        }
-
-                        Button {
-                            text: "Bump 3-4"
-                            onClicked: {
-                                buttonRow.bump(parameters.shiftTablesAArray[2])
-                            }
-                        }
-
-                        Button {
-                            text: "Bump 4-5"
-                            onClicked: {
-                                buttonRow.bump(parameters.shiftTablesAArray[3])
-                            }
-                        }
-                    }
-
-                    TableParamEdit {
-                        id: shift12
-                        Layout.margins: margins
-                        name: "Shift Speed 1-2 A"
-                        xLabel: "Throttle"
-                        valueLabel: "Speed"
-                        tableModel: parameters.shiftTablesA[0]
-                        enabled: parameters.shiftTablesAArray[0].valid
-                    }
-
-                    TableParamEdit {
-                        name: "Shift Speed 2-3 A"
-                        Layout.margins: margins
-                        xLabel: "Throttle"
-                        valueLabel: "Speed"
-                        tableModel: parameters.shiftTablesA[1]
-                        enabled: parameters.shiftTablesAArray[1].valid
-                    }
-
-                    TableParamEdit {
-                        name: "Shift Speed 3-4 A"
-                        Layout.margins: margins
-                        xLabel: "Throttle"
-                        valueLabel: "Speed"
-                        tableModel: parameters.shiftTablesA[2]
-                        enabled: parameters.shiftTablesAArray[2].valid
-                    }
-                    TableParamEdit {
-                        name: "Shift Speed 4-5 A"
-                        Layout.margins: margins
-                        xLabel: "Throttle"
-                        valueLabel: "Speed"
-                        tableModel: parameters.shiftTablesA[3]
-                        enabled: parameters.shiftTablesAArray[3].valid
-                    }
+                TableParamEditDialog {
+                    id: shiftTable12Edit
+                    name: "Shift Speed 1-2 A"
+                    xLabel: "Throttle"
+                    valueLabel: "Speed"
+                    valueArray: parameters.shiftTablesAArray[0]
+                    tableModel: parameters.shiftTablesA[0]
                 }
+
+                Button {
+                    text: "Shift Speed 1-2 A"
+                    onClicked: shiftTable12Edit.visible = true
+                }
+
+                TableParamEditDialog {
+                    id: shiftTable23Edit
+                    name: "Shift Speed 2-3 A"
+                    xLabel: "Throttle"
+                    valueLabel: "Speed"
+                    valueArray: parameters.shiftTablesAArray[1]
+                    tableModel: parameters.shiftTablesA[1]
+                }
+
+                Button {
+                    text: "Shift Speed 2-3 A"
+                    onClicked: shiftTable23Edit.visible = true
+                }
+
+                TableParamEditDialog {
+                    id: shiftTable34Edit
+                    name: "Shift Speed 3-4 A"
+                    xLabel: "Throttle"
+                    valueLabel: "Speed"
+                    valueArray: parameters.shiftTablesAArray[2]
+                    tableModel: parameters.shiftTablesA[2]
+                }
+
+                Button {
+                    text: "Shift Speed 3-4 A"
+                    onClicked: shiftTable34Edit.visible = true
+                }
+
+                TableParamEditDialog {
+                    id: shiftTable45Edit
+                    name: "Shift Speed 4-5 A"
+                    xLabel: "Throttle"
+                    valueLabel: "Speed"
+                    valueArray: parameters.shiftTablesAArray[3]
+                    tableModel: parameters.shiftTablesA[3]
+                }
+
+                Button {
+                    text: "Shift Speed 4-5 A"
+                    onClicked: shiftTable45Edit.visible = true
+                }
+
             }
         }
 

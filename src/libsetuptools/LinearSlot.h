@@ -37,6 +37,10 @@ public:
     Q_INVOKABLE virtual QVariant asRaw(QVariant engr) const;
     Q_INVOKABLE virtual bool rawInRange(QVariant raw) const;
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const;
+    virtual QVariant rawMin() const;
+    virtual QVariant rawMax() const;
+    virtual QVariant engrMin() const;
+    virtual QVariant engrMax() const;
 signals:
     void linearValueParamChanged();
 private:
