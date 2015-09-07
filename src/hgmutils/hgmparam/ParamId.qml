@@ -83,8 +83,8 @@ QtObject {
     readonly property double vehicle_mass: 0x02010000
     readonly property double tire_diameter: 0x02020000
     readonly property double speedometer_calibration: 0x02030000
-    readonly property double start_inhibit_relay_type: 0x204
-    readonly property double vehicle_speed_sensor_pulse_count: 0x205
+    readonly property double start_inhibit_relay_type: 0x02040000
+    readonly property double vehicle_speed_sensor_pulse_count: 0x02050000
 
     // 8200 vehicle data
     readonly property double vehicle_speed: 0x82000000
@@ -99,129 +99,129 @@ QtObject {
     // 0300 transmission settings
     readonly property double transmission_type: 0x03000000
     readonly property double transmission_temp_bias_enable: 0x03010000
-    readonly property double transmission_main_pressure_sensor_present: 0x302
-    readonly property double transmission_has_line_pressure_control: 0x303
-    readonly property double transmission_has_accumulator_control: 0x304
-    readonly property double transmission_has_pwm_tcc: 0x305
+    readonly property double transmission_main_pressure_sensor_present: 0x03020000
+    readonly property double transmission_has_line_pressure_control: 0x03030000
+    readonly property double transmission_has_accumulator_control: 0x03040000
+    readonly property double transmission_has_pwm_tcc: 0x03050000
 
-    readonly property double transmission_turbine_shaft_speed_sensor_pulse_count: 0x308
-    readonly property double transmission_input_shaft_speed_sensor_pulse_count: 0x309
+    readonly property double transmission_turbine_shaft_speed_sensor_pulse_count: 0x03080000
+    readonly property double transmission_input_shaft_speed_sensor_pulse_count: 0x03090000
 
-    readonly property double transmission_shaft_1_speed_sensor_pulse_count: 0x30a
-    readonly property double transmission_shaft_2_speed_sensor_pulse_count: 0x30b
-    readonly property double transmission_shaft_3_speed_sensor_pulse_count: 0x30c
-    readonly property double transmission_shaft_4_speed_sensor_pulse_count: 0x30d
-    readonly property double transmission_shaft_5_speed_sensor_pulse_count: 0x30e
-    readonly property double transmission_shaft_6_speed_sensor_pulse_count: 0x30f
+    readonly property double transmission_shaft_1_speed_sensor_pulse_count: 0x30a0000
+    readonly property double transmission_shaft_2_speed_sensor_pulse_count: 0x30b0000
+    readonly property double transmission_shaft_3_speed_sensor_pulse_count: 0x30c0000
+    readonly property double transmission_shaft_4_speed_sensor_pulse_count: 0x30d0000
+    readonly property double transmission_shaft_5_speed_sensor_pulse_count: 0x30e0000
+    readonly property double transmission_shaft_6_speed_sensor_pulse_count: 0x30f0000
 
-    readonly property double transmission_clutch_1_fill_time: 0x310
-    readonly property double transmission_clutch_2_fill_time: 0x311
-    readonly property double transmission_clutch_3_fill_time: 0x312
-    readonly property double transmission_clutch_4_fill_time: 0x313
-    readonly property double transmission_clutch_5_fill_time: 0x314
-    readonly property double transmission_clutch_6_fill_time: 0x315
-    readonly property double transmission_clutch_7_fill_time: 0x316
-    readonly property double transmission_clutch_8_fill_time: 0x317
+    readonly property double transmission_clutch_1_fill_time: 0x03100000
+    readonly property double transmission_clutch_2_fill_time: 0x03110000
+    readonly property double transmission_clutch_3_fill_time: 0x03120000
+    readonly property double transmission_clutch_4_fill_time: 0x03130000
+    readonly property double transmission_clutch_5_fill_time: 0x03140000
+    readonly property double transmission_clutch_6_fill_time: 0x03150000
+    readonly property double transmission_clutch_7_fill_time: 0x03160000
+    readonly property double transmission_clutch_8_fill_time: 0x03170000
 
-    readonly property double transmission_clutch_1_empty_time: 0x320
-    readonly property double transmission_clutch_2_empty_time: 0x321
-    readonly property double transmission_clutch_3_empty_time: 0x322
-    readonly property double transmission_clutch_4_empty_time: 0x323
-    readonly property double transmission_clutch_5_empty_time: 0x324
-    readonly property double transmission_clutch_6_empty_time: 0x325
-    readonly property double transmission_clutch_7_empty_time: 0x326
-    readonly property double transmission_clutch_8_empty_time: 0x327
+    readonly property double transmission_clutch_1_empty_time: 0x03200000
+    readonly property double transmission_clutch_2_empty_time: 0x03210000
+    readonly property double transmission_clutch_3_empty_time: 0x03220000
+    readonly property double transmission_clutch_4_empty_time: 0x03230000
+    readonly property double transmission_clutch_5_empty_time: 0x03240000
+    readonly property double transmission_clutch_6_empty_time: 0x03250000
+    readonly property double transmission_clutch_7_empty_time: 0x03260000
+    readonly property double transmission_clutch_8_empty_time: 0x03270000
 
-    readonly property double transmission_gear_1_main_pressure: 0x331
-    readonly property double transmission_gear_2_main_pressure: 0x332
-    readonly property double transmission_gear_3_main_pressure: 0x333
-    readonly property double transmission_gear_4_main_pressure: 0x334
-    readonly property double transmission_gear_5_main_pressure: 0x335
-    readonly property double transmission_gear_6_main_pressure: 0x336
-    readonly property double transmission_gear_7_main_pressure: 0x337
-    readonly property double transmission_gear_8_main_pressure: 0x338
+    readonly property double transmission_gear_1_main_pressure: 0x03310000
+    readonly property double transmission_gear_2_main_pressure: 0x03320000
+    readonly property double transmission_gear_3_main_pressure: 0x03330000
+    readonly property double transmission_gear_4_main_pressure: 0x03340000
+    readonly property double transmission_gear_5_main_pressure: 0x03350000
+    readonly property double transmission_gear_6_main_pressure: 0x03360000
+    readonly property double transmission_gear_7_main_pressure: 0x03370000
+    readonly property double transmission_gear_8_main_pressure: 0x03380000
 
-    readonly property double transmission_shift_n_1_apply_pressure: 0x340
-    readonly property double transmission_shift_1_2_apply_pressure: 0x341
-    readonly property double transmission_shift_2_3_apply_pressure: 0x342
-    readonly property double transmission_shift_3_4_apply_pressure: 0x343
-    readonly property double transmission_shift_4_5_apply_pressure: 0x344
-    readonly property double transmission_shift_5_6_apply_pressure: 0x345
-    readonly property double transmission_shift_6_7_apply_pressure: 0x346
-    readonly property double transmission_shift_7_8_apply_pressure: 0x347
+    readonly property double transmission_shift_n_1_apply_pressure: 0x03400000
+    readonly property double transmission_shift_1_2_apply_pressure: 0x03410000
+    readonly property double transmission_shift_2_3_apply_pressure: 0x03420000
+    readonly property double transmission_shift_3_4_apply_pressure: 0x03430000
+    readonly property double transmission_shift_4_5_apply_pressure: 0x03440000
+    readonly property double transmission_shift_5_6_apply_pressure: 0x03450000
+    readonly property double transmission_shift_6_7_apply_pressure: 0x03460000
+    readonly property double transmission_shift_7_8_apply_pressure: 0x03470000
 
-    readonly property double transmission_shift_2_1_apply_pressure: 0x348
-    readonly property double transmission_shift_3_2_apply_pressure: 0x349
-    readonly property double transmission_shift_4_3_apply_pressure: 0x34a
-    readonly property double transmission_shift_5_4_apply_pressure: 0x34b
-    readonly property double transmission_shift_6_5_apply_pressure: 0x34c
-    readonly property double transmission_shift_7_6_apply_pressure: 0x34d
-    readonly property double transmission_shift_8_7_apply_pressure: 0x34e
+    readonly property double transmission_shift_2_1_apply_pressure: 0x03480000
+    readonly property double transmission_shift_3_2_apply_pressure: 0x03490000
+    readonly property double transmission_shift_4_3_apply_pressure: 0x34a0000
+    readonly property double transmission_shift_5_4_apply_pressure: 0x34b0000
+    readonly property double transmission_shift_6_5_apply_pressure: 0x34c0000
+    readonly property double transmission_shift_7_6_apply_pressure: 0x34d0000
+    readonly property double transmission_shift_8_7_apply_pressure: 0x34e0000
 
-    readonly property double transmission_shift_1_2_release_pressure: 0x351
-    readonly property double transmission_shift_2_3_release_pressure: 0x352
-    readonly property double transmission_shift_3_4_release_pressure: 0x353
-    readonly property double transmission_shift_4_5_release_pressure: 0x354
-    readonly property double transmission_shift_5_6_release_pressure: 0x355
-    readonly property double transmission_shift_6_7_release_pressure: 0x356
-    readonly property double transmission_shift_7_8_release_pressure: 0x357
+    readonly property double transmission_shift_1_2_release_pressure: 0x03510000
+    readonly property double transmission_shift_2_3_release_pressure: 0x03520000
+    readonly property double transmission_shift_3_4_release_pressure: 0x03530000
+    readonly property double transmission_shift_4_5_release_pressure: 0x03540000
+    readonly property double transmission_shift_5_6_release_pressure: 0x03550000
+    readonly property double transmission_shift_6_7_release_pressure: 0x03560000
+    readonly property double transmission_shift_7_8_release_pressure: 0x03570000
 
-    readonly property double transmission_shift_2_1_release_pressure: 0x358
-    readonly property double transmission_shift_3_2_release_pressure: 0x359
-    readonly property double transmission_shift_4_3_release_pressure: 0x35a
-    readonly property double transmission_shift_5_4_release_pressure: 0x35b
-    readonly property double transmission_shift_6_5_release_pressure: 0x35c
-    readonly property double transmission_shift_7_6_release_pressure: 0x35d
-    readonly property double transmission_shift_8_7_release_pressure: 0x35e
+    readonly property double transmission_shift_2_1_release_pressure: 0x03580000
+    readonly property double transmission_shift_3_2_release_pressure: 0x03590000
+    readonly property double transmission_shift_4_3_release_pressure: 0x35a0000
+    readonly property double transmission_shift_5_4_release_pressure: 0x35b0000
+    readonly property double transmission_shift_6_5_release_pressure: 0x35c0000
+    readonly property double transmission_shift_7_6_release_pressure: 0x35d0000
+    readonly property double transmission_shift_8_7_release_pressure: 0x35e0000
 
-    readonly property double transmission_gear_1_main_percentage: 0x361
-    readonly property double transmission_gear_2_main_percentage: 0x362
-    readonly property double transmission_gear_3_main_percentage: 0x363
-    readonly property double transmission_gear_4_main_percentage: 0x364
-    readonly property double transmission_gear_5_main_percentage: 0x365
-    readonly property double transmission_gear_6_main_percentage: 0x366
-    readonly property double transmission_gear_7_main_percentage: 0x367
-    readonly property double transmission_gear_8_main_percentage: 0x368
+    readonly property double transmission_gear_1_main_percentage: 0x03610000
+    readonly property double transmission_gear_2_main_percentage: 0x03620000
+    readonly property double transmission_gear_3_main_percentage: 0x03630000
+    readonly property double transmission_gear_4_main_percentage: 0x03640000
+    readonly property double transmission_gear_5_main_percentage: 0x03650000
+    readonly property double transmission_gear_6_main_percentage: 0x03660000
+    readonly property double transmission_gear_7_main_percentage: 0x03670000
+    readonly property double transmission_gear_8_main_percentage: 0x03680000
 
-    readonly property double transmission_shift_n_1_apply_percentage: 0x370
-    readonly property double transmission_shift_1_2_apply_percentage: 0x371
-    readonly property double transmission_shift_2_3_apply_percentage: 0x372
-    readonly property double transmission_shift_3_4_apply_percentage: 0x373
-    readonly property double transmission_shift_4_5_apply_percentage: 0x374
-    readonly property double transmission_shift_5_6_apply_percentage: 0x375
-    readonly property double transmission_shift_6_7_apply_percentage: 0x376
-    readonly property double transmission_shift_7_8_apply_percentage: 0x377
+    readonly property double transmission_shift_n_1_apply_percentage: 0x03700000
+    readonly property double transmission_shift_1_2_apply_percentage: 0x03710000
+    readonly property double transmission_shift_2_3_apply_percentage: 0x03720000
+    readonly property double transmission_shift_3_4_apply_percentage: 0x03730000
+    readonly property double transmission_shift_4_5_apply_percentage: 0x03740000
+    readonly property double transmission_shift_5_6_apply_percentage: 0x03750000
+    readonly property double transmission_shift_6_7_apply_percentage: 0x03760000
+    readonly property double transmission_shift_7_8_apply_percentage: 0x03770000
 
-    readonly property double transmission_shift_2_1_apply_percentage: 0x378
-    readonly property double transmission_shift_3_2_apply_percentage: 0x379
-    readonly property double transmission_shift_4_3_apply_percentage: 0x37a
-    readonly property double transmission_shift_5_4_apply_percentage: 0x37b
-    readonly property double transmission_shift_6_5_apply_percentage: 0x37c
-    readonly property double transmission_shift_7_6_apply_percentage: 0x37d
-    readonly property double transmission_shift_8_7_apply_percentage: 0x37e
+    readonly property double transmission_shift_2_1_apply_percentage: 0x03780000
+    readonly property double transmission_shift_3_2_apply_percentage: 0x03790000
+    readonly property double transmission_shift_4_3_apply_percentage: 0x37a0000
+    readonly property double transmission_shift_5_4_apply_percentage: 0x37b0000
+    readonly property double transmission_shift_6_5_apply_percentage: 0x37c0000
+    readonly property double transmission_shift_7_6_apply_percentage: 0x37d0000
+    readonly property double transmission_shift_8_7_apply_percentage: 0x37e0000
 
-    readonly property double transmission_shift_1_2_release_percentage: 0x381
-    readonly property double transmission_shift_2_3_release_percentage: 0x382
-    readonly property double transmission_shift_3_4_release_percentage: 0x383
-    readonly property double transmission_shift_4_5_release_percentage: 0x384
-    readonly property double transmission_shift_5_6_release_percentage: 0x385
-    readonly property double transmission_shift_6_7_release_percentage: 0x386
-    readonly property double transmission_shift_7_8_release_percentage: 0x387
+    readonly property double transmission_shift_1_2_release_percentage: 0x03810000
+    readonly property double transmission_shift_2_3_release_percentage: 0x03820000
+    readonly property double transmission_shift_3_4_release_percentage: 0x03830000
+    readonly property double transmission_shift_4_5_release_percentage: 0x03840000
+    readonly property double transmission_shift_5_6_release_percentage: 0x03850000
+    readonly property double transmission_shift_6_7_release_percentage: 0x03860000
+    readonly property double transmission_shift_7_8_release_percentage: 0x03870000
 
-    readonly property double transmission_shift_2_1_release_percentage: 0x388
-    readonly property double transmission_shift_3_2_release_percentage: 0x389
-    readonly property double transmission_shift_4_3_release_percentage: 0x38a
-    readonly property double transmission_shift_5_4_release_percentage: 0x38b
-    readonly property double transmission_shift_6_5_release_percentage: 0x38c
-    readonly property double transmission_shift_7_6_release_percentage: 0x38d
-    readonly property double transmission_shift_8_7_release_percentage: 0x38e
+    readonly property double transmission_shift_2_1_release_percentage: 0x03880000
+    readonly property double transmission_shift_3_2_release_percentage: 0x03890000
+    readonly property double transmission_shift_4_3_release_percentage: 0x38a0000
+    readonly property double transmission_shift_5_4_release_percentage: 0x38b0000
+    readonly property double transmission_shift_6_5_release_percentage: 0x38c0000
+    readonly property double transmission_shift_7_6_release_percentage: 0x38d0000
+    readonly property double transmission_shift_8_7_release_percentage: 0x38e0000
 
-    readonly property double transmission_shift_prefill_time: 0x3b0
-    readonly property double transmission_shift_prefill_pressure: 0x3c0
-    readonly property double transmission_shift_prefill_percentage: 0x3d0
-    readonly property double transmission_shift_overlap_pressure: 0x3e0
+    readonly property double transmission_shift_prefill_time: 0x3b00000
+    readonly property double transmission_shift_prefill_pressure: 0x3c00000
+    readonly property double transmission_shift_prefill_percentage: 0x3d00000
+    readonly property double transmission_shift_overlap_pressure: 0x3e00000
 
-    readonly property double transmission_pressure_temperature_compensation: 0x3a0
+    readonly property double transmission_pressure_temperature_compensation: 0x3a00000
 
     // 8300 transmission data
     readonly property double transmission_gears: 0x83000000
@@ -393,7 +393,7 @@ QtObject {
     readonly property double voltage_map_sensor_low_calibration: 0x07220000
     readonly property double voltage_map_sensor_high_calibration: 0x07230000
 
-    readonly property double cs2_engine_temp_bias_enable: 0x7300000
+    readonly property double cs2_engine_temp_bias_enable: 0x07300000
 
     readonly property double engine_idle_shutdown_time: 0x07400000
 
@@ -421,9 +421,9 @@ QtObject {
     readonly property double engine_idle_shutdown_timer_active: 0x87410000
 
     // 0800 transfer case settings
-    readonly property double transfer_case_ratios: 0x8000000
-    readonly property double transfer_case_ratio: 0x8010000
-    readonly property double transfer_case_gear: 0x8020000
+    readonly property double transfer_case_ratios: 0x08000000
+    readonly property double transfer_case_ratio: 0x08010000
+    readonly property double transfer_case_gear: 0x08020000
     // 8800 transfer case data
     readonly property double transfer_case_input_speed: 0x88000000
     readonly property double transfer_case_output_speed: 0x88010000
