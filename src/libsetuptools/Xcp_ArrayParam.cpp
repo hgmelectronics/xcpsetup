@@ -121,7 +121,7 @@ QVariant ArrayParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
 bool ArrayParam::setSerializableRawValue(const QVariant &val)
 {
     Q_ASSERT(mRange && slot());
-    if(val.type() != QVariant::List)
+    if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     if(val.toList().size() != mRange->count())
         return false;
