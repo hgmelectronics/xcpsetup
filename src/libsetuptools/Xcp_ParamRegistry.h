@@ -38,15 +38,15 @@ public:
     const QList<QString> &saveableParamKeys() const;
     bool writeCacheDirty() const;
 
-    SetupTools::Xcp::ScalarParam *addParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot);
-    SetupTools::Xcp::ScalarParam *addParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
-    SetupTools::Xcp::ArrayParam *addParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot* slot);
-    SetupTools::Xcp::ArrayParam *addParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
+    SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot);
+    SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
+    SetupTools::Xcp::ArrayParam *addArrayParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot* slot);
+    SetupTools::Xcp::ArrayParam *addArrayParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
 
-    Q_INVOKABLE SetupTools::Xcp::ScalarParam *addParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot* slot);
-    Q_INVOKABLE SetupTools::Xcp::ScalarParam *addParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
-    Q_INVOKABLE SetupTools::Xcp::ArrayParam *addParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot* slot);
-    Q_INVOKABLE SetupTools::Xcp::ArrayParam *addParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
+    Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot* slot);
+    Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
+    Q_INVOKABLE SetupTools::Xcp::ArrayParam *addArrayParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot* slot);
+    Q_INVOKABLE SetupTools::Xcp::ArrayParam *addArrayParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
     Q_INVOKABLE SetupTools::Xcp::Param *getParam(QString key);
     Q_INVOKABLE void resetCaches();
 signals:

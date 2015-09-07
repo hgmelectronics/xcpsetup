@@ -58,7 +58,7 @@ bool ParamRegistry::writeCacheDirty() const
     return !mWriteCacheDirtyKeys.empty();
 }
 
-ScalarParam *ParamRegistry::addParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
+ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
 {
     if(mParams.count(key))
     {
@@ -95,7 +95,7 @@ ScalarParam *ParamRegistry::addParam(int type, XcpPtr base, bool writable, bool 
     return param;
 }
 
-ArrayParam *ParamRegistry::addParam(int type, XcpPtr base, int count, bool writable, bool saveable, Slot *slot, QString key)
+ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool writable, bool saveable, Slot *slot, QString key)
 {
     if(slot == nullptr)
         return nullptr;
@@ -138,38 +138,38 @@ ArrayParam *ParamRegistry::addParam(int type, XcpPtr base, int count, bool writa
     return param;
 }
 
-ScalarParam *ParamRegistry::addParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot)
+ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot)
 {
-    return addParam(type, base, writable, saveable, slot, base.toString());
+    return addScalarParam(type, base, writable, saveable, slot, base.toString());
 }
 
-ArrayParam *ParamRegistry::addParam(int type, XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot *slot)
+ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot *slot)
 {
-    return addParam(type, base, count, writable, saveable, slot, base.toString());
+    return addArrayParam(type, base, count, writable, saveable, slot, base.toString());
 }
 
-ScalarParam *ParamRegistry::addParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
+ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
 {
     XcpPtr basePtr(base);
-    return addParam(type, basePtr, writable, saveable, slot, key);
+    return addScalarParam(type, basePtr, writable, saveable, slot, key);
 }
 
-ArrayParam *ParamRegistry::addParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
+ArrayParam *ParamRegistry::addArrayParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot *slot, QString key)
 {
     XcpPtr basePtr(base);
-    return addParam(type, basePtr, count, writable, saveable, slot, key);
+    return addArrayParam(type, basePtr, count, writable, saveable, slot, key);
 }
 
-ScalarParam *ParamRegistry::addParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot *slot)
+ScalarParam *ParamRegistry::addScalarParam(int type, quint32 base, bool writable, bool saveable, SetupTools::Slot *slot)
 {
     XcpPtr basePtr(base);
-    return addParam(type, basePtr, writable, saveable, slot, basePtr.toString());
+    return addScalarParam(type, basePtr, writable, saveable, slot, basePtr.toString());
 }
 
-ArrayParam *ParamRegistry::addParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot *slot)
+ArrayParam *ParamRegistry::addArrayParam(int type, quint32 base, int count, bool writable, bool saveable, SetupTools::Slot *slot)
 {
     XcpPtr basePtr(base);
-    return addParam(type, basePtr, count, writable, saveable, slot, basePtr.toString());
+    return addArrayParam(type, basePtr, count, writable, saveable, slot, basePtr.toString());
 }
 
 Param *ParamRegistry::getParam(QString key)
