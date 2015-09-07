@@ -26,7 +26,9 @@ QtObject {
     }
     property SlotArrayModel upshiftDownshiftAxisModel: SlotArrayModel {
         slot: slots.upshiftDownShiftTableIndex
-        count: 14
+//        count: 14
+//  temporary fix for NAG1.
+        count: 12
     }
     property SlotArrayModel tempAxisModel: SlotArrayModel {
         slot: slots.tempTableIndex1

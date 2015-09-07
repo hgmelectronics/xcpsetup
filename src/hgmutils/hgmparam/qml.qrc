@@ -16,5 +16,6 @@
         <file>ScalarParamSpinBox.qml</file>
         <file>ParamId.qml</file>
         <file>TableParamEditDialog.qml</file>
+        <file>TableParamEditButton.qml</file>
     </qresource>
 </RCC>
