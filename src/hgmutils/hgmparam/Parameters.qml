@@ -458,6 +458,16 @@ QtObject {
         TableMapperModel { mapping: { "x": percentage1AxisModel, "value": shiftTablesAArray[3].stringModel } },
         TableMapperModel { mapping: { "x": percentage1AxisModel, "value": shiftTablesAArray[4].stringModel } }
     ]
+    property TableMapperModel shiftTablesAModel: TableMapperModel {
+        mapping: {
+            "tps": percentage1AxisModel,
+            "shift12": shiftTablesAArray[0].stringModel,
+            "shift23": shiftTablesAArray[1].stringModel,
+            "shift34": shiftTablesAArray[2].stringModel,
+            "shift45": shiftTablesAArray[3].stringModel,
+            "shift56": shiftTablesAArray[4].stringModel
+        }
+    }
 
     readonly property
     var shiftTablesBArray: [
@@ -475,6 +485,16 @@ QtObject {
         TableMapperModel { mapping: { "x": percentage1AxisModel, "value": shiftTablesBArray[3].stringModel } },
         TableMapperModel { mapping: { "x": percentage1AxisModel, "value": shiftTablesBArray[4].stringModel } }
     ]
+    property TableMapperModel shiftTablesBModel: TableMapperModel {
+        mapping: {
+            "tps": percentage1AxisModel,
+            "shift12": shiftTablesBArray[0].stringModel,
+            "shift23": shiftTablesBArray[1].stringModel,
+            "shift34": shiftTablesBArray[2].stringModel,
+            "shift45": shiftTablesBArray[3].stringModel,
+            "shift56": shiftTablesBArray[4].stringModel
+        }
+    }
 
     readonly property ScalarParam tccDisableTOSSPercentA: registry.addScalarParam(MemoryRange.S32, paramId.tcc_disable_toss_percent_a, true, true, slots.percentage1)
 

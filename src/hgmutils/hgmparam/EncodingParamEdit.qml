@@ -29,7 +29,7 @@ ColumnLayout {
         }
 
         Label {
-            text: param.unit
+            text: param.slot.unit
         }
     }
 
