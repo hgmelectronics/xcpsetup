@@ -4,7 +4,8 @@ QT += qml quick widgets serialport
 
 SOURCES += main.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    $$PWD/../../qml/jbQuick/Charts/qchart.qrc
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 

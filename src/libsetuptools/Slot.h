@@ -14,6 +14,10 @@ class Slot : public QObject
     Q_PROPERTY(int base READ base WRITE setBase NOTIFY valueParamChanged)                       //!< Base to print - if != 10 then precision is ignored
     Q_PROPERTY(int precision READ precision WRITE setPrecision NOTIFY valueParamChanged)        //!< Number of digits to print after decimal point when rendering to a string
     Q_PROPERTY(int storageType READ storageType WRITE setStorageType NOTIFY valueParamChanged)  //!< Qt metatype code for the QVariant format for raw storage, e.g. QMetaType::UInt or QMetaType::Float
+    Q_PROPERTY(QVariant rawMin READ rawMin NOTIFY valueParamChanged)
+    Q_PROPERTY(QVariant rawMax READ rawMax NOTIFY valueParamChanged)
+    Q_PROPERTY(QVariant engrMin READ engrMin NOTIFY valueParamChanged)
+    Q_PROPERTY(QVariant engrMax READ engrMax NOTIFY valueParamChanged)
 public:
     Slot(QObject *parent = nullptr);
 
@@ -31,6 +35,10 @@ public:
     Q_INVOKABLE virtual QVariant asRaw(QVariant engr) const = 0;
     Q_INVOKABLE virtual bool rawInRange(QVariant engr) const = 0;
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const = 0;
+    virtual QVariant rawMin() const;
+    virtual QVariant rawMax() const;
+    virtual QVariant engrMin() const;
+    virtual QVariant engrMax() const;
 signals:
     void unitChanged();
     void valueParamChanged();

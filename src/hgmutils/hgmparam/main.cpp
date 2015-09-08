@@ -11,6 +11,8 @@ int main(int argc, char *argv[])
 
 #ifdef STATICQT
     engine.setImportPathList({"qrc:/", "qrc:/QtQuick/Dialogs/"});
+#else
+    engine.addImportPath("qrc:/");
 #endif
 
     SetupTools::registerTypes();

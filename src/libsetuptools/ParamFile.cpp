@@ -157,7 +157,7 @@ void ParamFile::writeJson(QFile &file, QVariantMap map)
             if(list.size() > 0)
                 root.insert(it.key(), QJsonArray::fromStringList(list));
         }
-        else if(it.value().type() == QVariant::String)
+        else if(it.value().canConvert(QVariant::String))
         {
             QString str = it.value().toString();
             if(str.size() > 0)

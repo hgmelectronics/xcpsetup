@@ -60,9 +60,13 @@ public:
     bool writeCacheDirty();
 
     Q_INVOKABLE QMap<QString, QVariant> data();
+    Q_INVOKABLE QMap<QString, QVariant> rawData();
     Q_INVOKABLE QMap<QString, QVariant> saveableData();
+    Q_INVOKABLE QMap<QString, QVariant> saveableRawData();
     Q_INVOKABLE QMap<QString, QVariant> data(const QStringList &keys);
     Q_INVOKABLE QStringList setData(QVariantMap data);   //!< Returns keys that did not set successfully
+    Q_INVOKABLE QMap<QString, QVariant> rawData(const QStringList &keys);
+    Q_INVOKABLE QStringList setRawData(QVariantMap data);   //!< Returns keys that did not set successfully
 signals:
     void downloadDone(SetupTools::Xcp::OpResult result, QStringList keys);
     void uploadDone(SetupTools::Xcp::OpResult result, QStringList keys);

@@ -7,12 +7,12 @@ SOURCES += main.cpp \
 
 RESOURCES += qml.qrc
 
-
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 
 static {
     QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections
     QMAKE_LFLAGS += -static-libstdc++ -static-libgcc -Wl,--gc-sections
+#    RESOURCES += qmldirs.qrc
     win32: QMAKE_LFLAGS += -static -lwinpthread
     DEFINES += STATICQT
     RESOURCES += $$PWD/../../qml/qmldirs/qmldirs.qrc
@@ -35,3 +35,5 @@ HEADERS += \
     Cs2Tool.h
 
 win32:RC_ICONS += hgmflash.ico
+
+DISTFILES +=

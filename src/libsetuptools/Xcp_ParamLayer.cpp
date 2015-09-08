@@ -165,9 +165,19 @@ QMap<QString, QVariant> ParamLayer::data()
     return data(mRegistry->paramKeys());
 }
 
+QMap<QString, QVariant> ParamLayer::rawData()
+{
+    return rawData(mRegistry->paramKeys());
+}
+
 QMap<QString, QVariant> ParamLayer::saveableData()
 {
     return data(mRegistry->saveableParamKeys());
+}
+
+QMap<QString, QVariant> ParamLayer::saveableRawData()
+{
+    return rawData(mRegistry->saveableParamKeys());
 }
 
 QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
@@ -201,6 +211,45 @@ QStringList ParamLayer::setData(QVariantMap data)
         Param *param = mRegistry->getParam(key);
         if(param != nullptr)
             ok = param->setSerializableValue(data[key]);
+
+        if(!ok)
+            failedKeys.push_back(key);
+    }
+
+    return failedKeys;
+}
+
+QMap<QString, QVariant> ParamLayer::rawData(const QStringList &keys)
+{
+    QMap<QString, QVariant> ret;
+    for(QString key : keys)
+    {
+        Param *param = mRegistry->getParam(key);
+        Q_ASSERT(param != nullptr);
+        if(param->valid())
+        {
+            bool anyInRange = false;
+            QVariant value = param->getSerializableRawValue(nullptr, &anyInRange);
+            if(anyInRange)
+                ret[key] = value;
+        }
+    }
+    return ret;
+}
+
+QStringList ParamLayer::setRawData(QVariantMap data)
+{
+    QStringList failedKeys;
+
+    QStringList keys = data.keys();
+
+    for(QString key : keys)
+    {
+        bool ok = false;
+
+        Param *param = mRegistry->getParam(key);
+        if(param != nullptr)
+            ok = param->setSerializableRawValue(data[key]);
 
         if(!ok)
             failedKeys.push_back(key);

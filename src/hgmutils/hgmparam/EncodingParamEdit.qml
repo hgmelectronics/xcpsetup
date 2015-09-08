@@ -4,21 +4,19 @@ import QtQuick.Layouts 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
-ColumnLayout {
-    property string name
+GroupBox {
+    id: groupBox
+    property alias name: groupBox.title
     property ScalarParam param
 
-    Label {
-        text: name
-    }
-
     RowLayout {
+        id: row
         ComboBox {
             id: combo
             model: param.slot.encodingStringList
             editable: true
             onActivated: {
-                if(index == -1)
+                if (index == -1)
                     param.stringVal = editText
                 else
                     param.stringVal = model[index]
@@ -29,7 +27,7 @@ ColumnLayout {
         }
 
         Label {
-            text: param.unit
+            text: param.slot.unit
         }
     }
 
@@ -37,7 +35,7 @@ ColumnLayout {
         target: param
         onValChanged: {
             combo.currentIndex = param.slot.engrToEncodingIndex(param.stringVal)
-            if(combo.currentIndex == -1)
+            if (combo.currentIndex == -1)
                 combo.editText = param.stringVal
             console.log(combo.currentIndex)
             console.log(param.stringVal)
