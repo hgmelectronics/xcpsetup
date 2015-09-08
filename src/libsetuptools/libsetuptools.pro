@@ -45,7 +45,8 @@ SOURCES += \
     Xcp_ArrayParam.cpp \
     SlotArrayModel.cpp \
     TransposeProxyModel.cpp \
-    TableMapperModel.cpp
+    TableMapperModel.cpp \
+    ModelListProxy.cpp
 
 HEADERS += \
     util.h \
@@ -78,7 +79,8 @@ HEADERS += \
     Xcp_ArrayParam.h \
     SlotArrayModel.h \
     TransposeProxyModel.h \
-    TableMapperModel.h
+    TableMapperModel.h \
+    ModelListProxy.h
 
 unix {
     target.path = /usr/lib
