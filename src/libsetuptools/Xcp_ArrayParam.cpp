@@ -221,12 +221,12 @@ Qt::ItemFlags ArrayParamModel::flags(const QModelIndex &index) const
 
 void ArrayParamModel::onValueParamChanged()
 {
-    onRangeDataChanged(0, mParam->mRange->count() - 1);
+    emit dataChanged(index(0), index(mParam->mRange->count() - 1));
 }
 
 void ArrayParamModel::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)
 {
-    emit dataChanged(index(beginChanged), index(endChanged - 1));
+    emit dataChanged(index(beginChanged), index(endChanged - 1));   // convert from STL style (end = past-the-end) to Qt model style (end = last one)
 }
 
 } // namespace Xcp
