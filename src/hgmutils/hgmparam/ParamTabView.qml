@@ -83,53 +83,24 @@ Item {
                 anchors.margins: 10
                 spacing: 10
 
-                GroupBox {
+                TableByShiftEditButtonGroup {
                     title: "Shift Tables A"
-                    Row {
-                        spacing: 10
-                        Repeater {
-                            model: 5
-
-                            TableParamEditButton {
-                                function getTitle(i) {
-                                    var first = i + 1
-                                    var second = i + 2
-                                    return "Shift " + first + "-" + second
-                                }
-
-                                name: getTitle(index)
-                                xLabel: "Throttle"
-                                valueLabel: "Speed"
-                                valueArray: parameters.shiftTablesAArray[index]
-                                tableModel: parameters.shiftTablesA[index]
-                            }
-                        }
-                    }
+                    count: 5
+                    valueArray: parameters.shiftTablesAArray
+                    tableModel: parameters.shiftTablesA
+                    xLabel: "Throttle"
+                    valueLabel: "Speed"
                 }
 
-                GroupBox {
+                TableByShiftEditButtonGroup {
                     title: "Shift Tables B"
-                    Row {
-                        spacing: 10
-                        Repeater {
-                            model: 5
-
-                            TableParamEditButton {
-                                function getTitle(i) {
-                                    var first = i + 1
-                                    var second = i + 2
-                                    return "Shift " + first + "-" + second
-                                }
-
-                                name: getTitle(index)
-                                xLabel: "Throttle"
-                                valueLabel: "Speed"
-                                valueArray: parameters.shiftTablesBArray[index]
-                                tableModel: parameters.shiftTablesB[index]
-                            }
-                        }
-                    }
+                    count: 5
+                    valueArray: parameters.shiftTablesBArray
+                    tableModel: parameters.shiftTablesB
+                    xLabel: "Throttle"
+                    valueLabel: "Speed"
                 }
+
                 Row {
                     spacing: 10
                     ScalarParamEdit {
@@ -154,101 +125,42 @@ Item {
                 anchors.margins: 10
                 spacing: 10
 
-                //                GroupBox {
-                //                    id: shiftPressureGroupA
-                //                    title: "Shift Pressure A"
-                //                    Row {
-                //                        spacing: 10
-
-                //                        Repeater {
-                //                            model: 4
-
-                //                            TableParamEditButton {
-                //                                function createTitle(index) {
-                //                                    var first = index + 1
-                //                                    var second = index + 2
-                //                                    return shiftPressureGroupA.title + first + "-" + second
-                //                                }
-                //                                name: createTitle(index)
-                //                                xLabel: "Torque"
-                //                                valueLabel: "Pressure"
-                //                                valueArray: parameters.pressureTablesAArray[index]
-                //                                tableModel: parameters.pressureTablesA[index]
-                //                            }
-                //                        }
-                //                    }
-                //                }
-
-                //                GroupBox {
-                //                    id: shiftPressureGroupB
-                //                    title: "Shift Pressure B"
-                //                    Row {
-                //                        spacing: 10
-
-                //                        Repeater {
-                //                            model: 4
-
-                //                            TableParamEditButton {
-                //                                function createTitle(index) {
-                //                                    var first = index + 1
-                //                                    var second = index + 2
-                //                                    return "Shift Pressure " + first + "-" + second + "A"
-                //                                }
-                //                                name: createTitle(index)
-                //                                xLabel: "Torque"
-                //                                valueLabel: "Pressure"
-                //                                valueArray: parameters.pressureTablesAArray[index]
-                //                                tableModel: parameters.pressureTablesA[index]
-                //                            }
-                //                        }
-                //                    }
-                //                }
-                GroupBox {
-                    title: "Upshift Apply Pressure"
-                    Row {
-                        spacing: 10
-
-                        Repeater {
-                            model: 5
-
-                            TableParamEditButton {
-                                function getTitle(i) {
-                                    var first = i
-                                    var second = i + 1
-                                    return "Shift " + first + "-" + second
-                                }
-                                name: getTitle(index)
-                                xLabel: "Torque"
-                                valueLabel: "Pressure"
-                                valueArray: parameters.transmissionUpshiftApplyPressureArray[index]
-                                tableModel: parameters.transmissionUpshiftApplyPressure[index]
-                            }
-                        }
-                    }
+                TableByGearEditButtonGroup {
+                    title: "Shift Pressure A"
+                    count: 6
+                    valueArray: parameters.pressureTablesAArray
+                    tableModel: parameters.pressureTablesA
+                    xLabel: "Torque"
+                    valueLabel: "%"
                 }
 
-                GroupBox {
+                TableByGearEditButtonGroup {
+                    title: "Shift Pressure B"
+                    count: 6
+                    valueArray: parameters.pressureTablesBArray
+                    tableModel: parameters.pressureTablesB
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                }
+
+                TableByShiftEditButtonGroup {
+                    title: "Upshift Apply Pressure"
+                    count: 5
+                    xLabel: "Torque"
+                    valueLabel: "Pressure"
+                    valueArray: parameters.transmissionUpshiftApplyPressureArray
+                    tableModel: parameters.transmissionUpshiftApplyPressure
+                }
+
+                TableByShiftEditButtonGroup {
                     title: "Downshift Apply Pressure"
-                    Row {
-                        spacing: 10
+                    count: 4
+                    isDownshift: true
 
-                        Repeater {
-                            model: 4
-
-                            TableParamEditButton {
-                                function getTitle(i) {
-                                    var first = i + 2
-                                    var second = i + 1
-                                    return "Shift " + first + "-" + second
-                                }
-                                name: getTitle(index)
-                                xLabel: "Torque"
-                                valueLabel: "Pressure"
-                                valueArray: parameters.transmissionDownshiftApplyPressureArray[index]
-                                tableModel: parameters.transmissionDownshiftApplyPressure[index]
-                            }
-                        }
-                    }
+                    xLabel: "Torque"
+                    valueLabel: "Pressure"
+                    valueArray: parameters.transmissionDownshiftApplyPressureArray
+                    tableModel: parameters.transmissionDownshiftApplyPressure
                 }
 
                 GroupBox {
@@ -273,31 +185,18 @@ Item {
                     }
                 }
 
-                GroupBox {
+                TableByGearEditButtonGroup {
                     title: "Line Pressure"
-                    Row {
-                        spacing: 10
-
-                        Repeater {
-                            model: 5
-
-                            TableParamEditButton {
-                                function getTitle() {
-                                    var first = index + 1
-                                    return "Gear " + first
-                                }
-                                name: getTitle()
-                                xLabel: "Torque"
-                                valueLabel: "Pressure"
-                                valueArray: parameters.transmissionMainPressureArray[index]
-                                tableModel: parameters.transmissionMainPressure[index]
-                            }
-                        }
-                    }
+                    count: 6
+                    xLabel: "Torque"
+                    valueLabel: "Pressure"
+                    valueArray: parameters.transmissionMainPressureArray
+                    tableModel: parameters.transmissionMainPressure
                 }
             }
         }
     }
+}
 
     //        Tab {
     //            title: "Inputs"
@@ -315,4 +214,3 @@ Item {
     //                }
     //            }
     //        }
-}
