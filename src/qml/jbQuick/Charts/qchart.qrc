@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource prefix="/jbQuick/Charts">
         <file>QChart.js</file>
         <file>QChart.qml</file>
         <file>QChartGallery.js</file>
