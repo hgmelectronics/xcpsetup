@@ -45,7 +45,7 @@ Item {
                 }
                 ScalarParamSpinBox {
                     name: "Display Contrast"
-                    param: parameters.displayBrightness
+                    param: parameters.displayContrast
                 }
             }
         }
@@ -87,45 +87,22 @@ Item {
                     title: "Shift Tables A"
                     Row {
                         spacing: 10
+                        Repeater {
+                            model: 5
 
-                        TableParamEditButton {
-                            name: "Shift Speed 1-2 A"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesAArray[0]
-                            tableModel: parameters.shiftTablesA[0]
-                        }
+                            TableParamEditButton {
+                                function getTitle(i) {
+                                    var first = i + 1
+                                    var second = i + 2
+                                    return "Shift " + first + "-" + second
+                                }
 
-                        TableParamEditButton {
-                            name: "Shift Speed 2-3 A"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesAArray[1]
-                            tableModel: parameters.shiftTablesA[1]
-                        }
-
-                        TableParamEditButton {
-                            name: "Shift Speed 3-4 A"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesAArray[2]
-                            tableModel: parameters.shiftTablesA[2]
-                        }
-
-                        TableParamEditButton {
-                            name: "Shift Speed 4-5 A"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesAArray[3]
-                            tableModel: parameters.shiftTablesA[3]
-                        }
-
-                        TableParamEditButton {
-                            name: "Shift Speed 5-6 A"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesAArray[4]
-                            tableModel: parameters.shiftTablesA[4]
+                                name: getTitle(index)
+                                xLabel: "Throttle"
+                                valueLabel: "Speed"
+                                valueArray: parameters.shiftTablesAArray[index]
+                                tableModel: parameters.shiftTablesA[index]
+                            }
                         }
                     }
                 }
@@ -134,45 +111,34 @@ Item {
                     title: "Shift Tables B"
                     Row {
                         spacing: 10
-                        TableParamEditButton {
-                            name: "Shift Speed 1-2 B"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesBArray[0]
-                            tableModel: parameters.shiftTablesB[0]
-                        }
+                        Repeater {
+                            model: 5
 
-                        TableParamEditButton {
-                            name: "Shift Speed 2-3 B"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesBArray[1]
-                            tableModel: parameters.shiftTablesB[1]
-                        }
+                            TableParamEditButton {
+                                function getTitle(i) {
+                                    var first = i + 1
+                                    var second = i + 2
+                                    return "Shift " + first + "-" + second
+                                }
 
-                        TableParamEditButton {
-                            name: "Shift Speed 3-4 B"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesBArray[2]
-                            tableModel: parameters.shiftTablesB[2]
+                                name: getTitle(index)
+                                xLabel: "Throttle"
+                                valueLabel: "Speed"
+                                valueArray: parameters.shiftTablesBArray[index]
+                                tableModel: parameters.shiftTablesB[index]
+                            }
                         }
-
-                        TableParamEditButton {
-                            name: "Shift Speed 4-5 B"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesBArray[3]
-                            tableModel: parameters.shiftTablesB[3]
-                        }
-
-                        TableParamEditButton {
-                            name: "Shift Speed 5-6 B"
-                            xLabel: "Throttle"
-                            valueLabel: "Speed"
-                            valueArray: parameters.shiftTablesBArray[4]
-                            tableModel: parameters.shiftTablesB[4]
-                        }
+                    }
+                }
+                Row {
+                    spacing: 10
+                    ScalarParamEdit {
+                        name: "Downshift Offset A"
+                        param: parameters.shiftDownshiftOffsetA
+                    }
+                    ScalarParamEdit {
+                        name: "Downshift Offset A"
+                        param: parameters.shiftDownshiftOffsetA
                     }
                 }
             }
@@ -187,7 +153,6 @@ Item {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
-
 
                 //                GroupBox {
                 //                    id: shiftPressureGroupA
@@ -247,12 +212,12 @@ Item {
                             model: 5
 
                             TableParamEditButton {
-                                function createTitle(index) {
-                                    var first = index
-                                    var second = index + 1
+                                function getTitle(i) {
+                                    var first = i
+                                    var second = i + 1
                                     return "Shift " + first + "-" + second
                                 }
-                                name: createTitle(index)
+                                name: getTitle(index)
                                 xLabel: "Torque"
                                 valueLabel: "Pressure"
                                 valueArray: parameters.transmissionUpshiftApplyPressureArray[index]
@@ -271,12 +236,12 @@ Item {
                             model: 4
 
                             TableParamEditButton {
-                                function createTitle(index) {
-                                    var first = index + 2
-                                    var second = index + 1
+                                function getTitle(i) {
+                                    var first = i + 2
+                                    var second = i + 1
                                     return "Shift " + first + "-" + second
                                 }
-                                name: createTitle(index)
+                                name: getTitle(index)
                                 xLabel: "Torque"
                                 valueLabel: "Pressure"
                                 valueArray: parameters.transmissionDownshiftApplyPressureArray[index]
@@ -317,11 +282,11 @@ Item {
                             model: 5
 
                             TableParamEditButton {
-                                function createTitle(index) {
+                                function getTitle() {
                                     var first = index + 1
                                     return "Gear " + first
                                 }
-                                name: createTitle(index)
+                                name: getTitle()
                                 xLabel: "Torque"
                                 valueLabel: "Pressure"
                                 valueArray: parameters.transmissionMainPressureArray[index]
