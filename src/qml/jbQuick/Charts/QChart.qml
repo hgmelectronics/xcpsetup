@@ -37,7 +37,6 @@ Canvas {
 
   onPaint: {
       if(!chart) {
-
           switch(chartType) {
           case Charts.ChartType.BAR:
               chart = new Charts.Chart(canvas, canvas.getContext("2d")).Bar(chartData, chartOptions);
@@ -56,6 +55,9 @@ Canvas {
               break;
           case Charts.ChartType.RADAR:
               chart = new Charts.Chart(canvas, canvas.getContext("2d")).Radar(chartData, chartOptions);
+              break;
+          case Charts.ChartType.SCATTER:
+              chart = new Charts.Chart(canvas, canvas.getContext("2d")).Scatter(chartData, chartOptions);
               break;
           default:
               console.log('Chart type should be specified.');
@@ -82,6 +84,11 @@ Canvas {
 
   onChartAnimationProgressChanged: {
       requestPaint();
+  }
+
+  onChartDataChanged: {
+      chart = false
+      requestPaint()
   }
 
 // /////////////////////////////////////////////////////////////////
