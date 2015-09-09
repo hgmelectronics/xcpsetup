@@ -185,11 +185,12 @@ ColumnLayout {
         }
 
         FileDialog {
-            property string filePath
             id: progFileDialog
             title: qsTr("Select program file")
             modality: Qt.NonModal
             nameFilters: [ "S-record files (*.srec)", "All files (*)" ]
+            folder: shortcuts.home
+            property string filePath
             onAccepted: {
                 filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
                 if(selectedNameFilter == "S-record files (*.srec)")

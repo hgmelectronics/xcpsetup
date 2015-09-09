@@ -16,7 +16,6 @@ ApplicationWindow {
     property string programName: qsTr("CS2 Parameter Editor")
     property string targetCmdId: "18FCD403"
     property string targetResId: "18FCD4F9"
-
     signal connect
 
     onConnect: {
@@ -337,11 +336,12 @@ ApplicationWindow {
     }
 
     FileDialog {
-        property string filePath
         id: paramLoadFileDialog
         title: qsTr("Load Parameter File")
         modality: Qt.NonModal
         nameFilters: ["JSON files (*.json)", "All files (*)"]
+        folder: shortcuts.home
+        property string filePath
         onAccepted: {
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramLayer.setRawData(paramFileIo.read())
@@ -350,11 +350,12 @@ ApplicationWindow {
     }
 
     FileDialog {
-        property string filePath
         id: paramSaveFileDialog
         title: qsTr("Save Parameter File")
         modality: Qt.NonModal
         nameFilters: ["JSON files (*.json)", "All files (*)"]
+        folder: shortcuts.home
+        property string filePath
         onAccepted: {
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramFileIo.write(paramLayer.saveableRawData())
