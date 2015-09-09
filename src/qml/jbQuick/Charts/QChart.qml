@@ -56,6 +56,9 @@ Canvas {
           case Charts.ChartType.RADAR:
               chart = new Charts.Chart(canvas, canvas.getContext("2d")).Radar(chartData, chartOptions);
               break;
+          case Charts.ChartType.SCATTER:
+              chart = new Charts.Chart(canvas, canvas.getContext("2d")).Scatter(chartData, chartOptions);
+              break;
           default:
               console.log('Chart type should be specified.');
           }

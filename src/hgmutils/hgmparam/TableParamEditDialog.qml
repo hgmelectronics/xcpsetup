@@ -72,7 +72,7 @@ Window {
                                    pointDot: false,
                                    bezierCurve: false,
                               })
-                chartType: Charts.ChartType.LINE
+                chartType: Charts.ChartType.SCATTER
 
                 property ModelListProxy xProxy: ModelListProxy {
                     source: tableModel
@@ -86,7 +86,7 @@ Window {
                 }
 
                 chartData: ({
-                                labels: xProxy.list,
+                                x: xProxy.list,
                                 datasets: [
                                     {
                                         fillColor: "rgba(151,187,205,0.5)",
