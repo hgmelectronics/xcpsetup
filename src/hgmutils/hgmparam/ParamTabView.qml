@@ -116,7 +116,7 @@ Item {
         }
 
         Tab {
-            title: "Shift Pressure Tables"
+            title: "Shift Pressure % Tables"
 
             active: true
 
@@ -141,6 +141,76 @@ Item {
                     tableModel: parameters.pressureTablesB
                     xLabel: "Torque"
                     valueLabel: "%"
+                }
+
+                TableByShiftEditButtonGroup {
+                    title: "Upshift Apply Pressure %"
+                    count: 5
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                    valueArray: parameters.transmissionUpshiftApplyPercentageArray
+                    tableModel: parameters.transmissionUpshiftApplyPercentage
+                }
+
+                TableByShiftEditButtonGroup {
+                    title: "Downshift Apply Pressure %"
+                    count: 4
+                    isDownshift: true
+
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                    valueArray: parameters.transmissionDownshiftApplyPercentageArray
+                    tableModel: parameters.transmissionDownshiftApplyPercentage
+                }
+
+                GroupBox {
+                    title: "Shift Prefill"
+                    Row {
+                        spacing: 10
+                        TableParamEditButton {
+                            name: "Pressure"
+                            xLabel: "Shift"
+                            valueLabel: "%"
+                            valueArray: parameters.transmissionShiftPrefillPercentageArray
+                            tableModel: parameters.transmissionShiftPrefillPercentage
+                        }
+
+                        TableParamEditButton {
+                            name: "Time"
+                            xLabel: "Shift"
+                            valueLabel: "ms"
+                            valueArray: parameters.transmissionShiftPrefillTimeArray
+                            tableModel: parameters.transmissionShiftPrefillTime
+                        }
+                    }
+                }
+
+                TableByGearEditButtonGroup {
+                    title: "Main Pressure %"
+                    count: 6
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                    valueArray: parameters.transmissionMainPercentageArray
+                    tableModel: parameters.transmissionMainPercentage
+                }
+            }
+        }
+
+        Tab {
+            title: "Shift Pressure Tables"
+            active: true
+            Flow {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
+
+                TableByShiftEditButtonGroup {
+                    title: "Upshift Apply Pressure"
+                    count: 5
+                    xLabel: "Torque"
+                    valueLabel: "Pressure"
+                    valueArray: parameters.transmissionUpshiftApplyPressureArray
+                    tableModel: parameters.transmissionUpshiftApplyPressure
                 }
 
                 TableByShiftEditButtonGroup {
@@ -186,7 +256,7 @@ Item {
                 }
 
                 TableByGearEditButtonGroup {
-                    title: "Line Pressure"
+                    title: "Main Pressure"
                     count: 6
                     xLabel: "Torque"
                     valueLabel: "Pressure"
@@ -197,20 +267,20 @@ Item {
         }
     }
 }
+//        Tab {
+//            title: "Inputs"
+//            active: true
+//            Flow {
+//                anchors.fill: parent
+//                anchors.margins: 10
+//                spacing: 10
+//                TableParamView {
+//                    name: "Switch Monitor Input"
+//                    xLabel: "Switch #"
+//                    valueLabel: "State"
+//                    tableModel: parameters.switchMonitorModel
+//                    enabled: parameters.switchMonitorInput.valid
+//                }
+//            }
+//        }
 
-    //        Tab {
-    //            title: "Inputs"
-    //            active: true
-    //            Flow {
-    //                anchors.fill: parent
-    //                anchors.margins: 10
-    //                spacing: 10
-    //                TableParamView {
-    //                    name: "Switch Monitor Input"
-    //                    xLabel: "Switch #"
-    //                    valueLabel: "State"
-    //                    tableModel: parameters.switchMonitorModel
-    //                    enabled: parameters.switchMonitorInput.valid
-    //                }
-    //            }
-    //        }
