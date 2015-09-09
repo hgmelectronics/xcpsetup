@@ -369,4 +369,7 @@ ApplicationWindow {
     HelpDialog {
         id: helpDialog
     }
+
+    Splash {
+    }
 }
