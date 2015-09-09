@@ -5,7 +5,7 @@ import QtQuick.Window 2.2
 
 Window {
     id: aboutDialog
-    title: "About HGMFlash"
+    title: "About HGMParam"
 
     width: aboutForm.implicitWidth + 20
     height: aboutForm.implicitHeight + 20
