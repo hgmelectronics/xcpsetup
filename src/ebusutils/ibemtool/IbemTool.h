@@ -27,12 +27,12 @@ class IbemTool : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(MultiselectListModel *slaveListModel READ slaveListModel NOTIFY slaveListModelChanged)
-    Q_PROPERTY(QString programFilePath READ programFilePath WRITE setProgramFilePath NOTIFY programChanged)
-    Q_PROPERTY(int programFileType READ programFileType WRITE setProgramFileType NOTIFY programChanged)
+    Q_PROPERTY(FlashProg *programData READ programData WRITE setProgramData NOTIFY programChanged)
     Q_PROPERTY(int programSize READ programSize NOTIFY programChanged)
     Q_PROPERTY(qlonglong programBase READ programBase NOTIFY programChanged)
     Q_PROPERTY(qlonglong programCksum READ programCksum NOTIFY programChanged)
     Q_PROPERTY(bool programOk READ programOk NOTIFY programChanged)
+    Q_PROPERTY(bool progReady READ progReady NOTIFY stateChanged)
     Q_PROPERTY(double progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcUriChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
@@ -42,14 +42,13 @@ public:
     ~IbemTool();
 
     MultiselectListModel *slaveListModel();
-    QString programFilePath();
-    void setProgramFilePath(QString path);
-    int programFileType();
-    void setProgramFileType(int type);
+    FlashProg *programData();
+    void setProgramData(FlashProg *prog);
     int programSize();
     qlonglong programBase();
     qlonglong programCksum();
     bool programOk();
+    bool progReady();
     double progress();
     QUrl intfcUri();
     void setIntfcUri(QUrl uri);
@@ -91,29 +90,31 @@ private:
         ProgramReset2,
         _N_STATES
     };
-    constexpr static const int N_STATES = static_cast<int>(State::_N_STATES);
+    static constexpr int N_STATES = static_cast<int>(State::_N_STATES);
     static const QString BCAST_ID_STR;
     static const Xcp::Interface::Can::Filter SLAVE_FILTER;
     static const QString SLAVE_FILTER_STR;
-    constexpr static const int RECOVERY_IBEMID_OFFSET = 0x08;
-    constexpr static const int REGULAR_IBEMID_OFFSET = 0x80;
-    constexpr static const int TIMEOUT_MSEC = 100;
-    constexpr static const int WATCHDOG_MSEC = 2000;
-    constexpr static const int RESET_TIMEOUT_MSEC = 2000;
-    constexpr static const int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
-    constexpr static const int PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC = 40;
-    constexpr static const int PAGE_SIZE = 2048;
-    constexpr static const Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::ST_CRC_32;
-    constexpr static const int N_POLL_ITER = 20;
-    constexpr static const int N_PROGRAMMODE_TRIES = 25;
-    constexpr static const int N_PROGRAM_STATES = static_cast<int>(State::ProgramReset2) - static_cast<int>(State::Program) + 1;
-    constexpr static const double PROGRAM_STATE_PROGRESS_CREDIT = 0.0625;
-    constexpr static const double PROGRAM_PROGRESS_MULT = 1 - PROGRAM_STATE_PROGRESS_CREDIT * (N_PROGRAM_STATES - 1);
-
-    void rereadProgFile();
+    static constexpr int RECOVERY_IBEMID_OFFSET = 0x08;
+    static constexpr int REGULAR_IBEMID_OFFSET = 0x80;
+    static constexpr int TIMEOUT_MSEC = 100;
+    static constexpr int WATCHDOG_MSEC = 2000;
+    static constexpr int RESET_TIMEOUT_MSEC = 2000;
+    static constexpr int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
+    static constexpr int PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC = 40;
+    static constexpr int PAGE_SIZE = 2048;
+    static constexpr Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::ST_CRC_32;
+    static constexpr int N_POLL_ITER = 20;
+    static constexpr int N_PROGRAMMODE_TRIES = 25;
+    static constexpr int N_PROGRAM_STATES = static_cast<int>(State::ProgramReset2) - static_cast<int>(State::Program) + 1;
+    static constexpr double PROGRAM_STATE_PROGRESS_CREDIT = 0.0625;
+    static constexpr double PROGRAM_PROGRESS_MULT = 1 - PROGRAM_STATE_PROGRESS_CREDIT * (N_PROGRAM_STATES - 1);
+    static constexpr uint32_t PROG_BASE = 0x08004000;
+    static constexpr uint32_t PROG_TOP = 0x087EFFF;
 
     Xcp::ProgramLayer *mProgLayer;
-    ProgFile *mProgFile;
+    FlashProg *mProgData;
+    FlashProg mInfilledProgData;
+    bool mProgFileOkToFlash;
     MultiselectListModel *mSlaveListModel;
     int mActiveSlave;
     int mRemainingPollIter;
