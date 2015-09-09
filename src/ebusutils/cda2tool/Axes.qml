@@ -1,6 +1,6 @@
 import QtQuick 2.0
-import com.setuptools.xcp 1.0
-import com.setuptools 1.0
+import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
 
 Item {
     property LinearTableAxis cellV: LinearTableAxis {

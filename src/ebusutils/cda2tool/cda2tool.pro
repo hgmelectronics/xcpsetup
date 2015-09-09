@@ -2,8 +2,7 @@ TEMPLATE = app
 
 QT += qml quick widgets serialport
 
-SOURCES += main.cpp \
-    Cda2Tool.cpp
+SOURCES += main.cpp
 
 RESOURCES += qml.qrc
 
@@ -30,7 +29,4 @@ else:unix: LIBS += -L$$OUT_PWD/../../libsetuptools/ -lsetuptools
 INCLUDEPATH += $$PWD/../../libsetuptools
 DEPENDPATH += $$PWD/../../libsetuptools
 
-HEADERS += \
-    Cda2Tool.h
-
-win32:RC_ICONS += hgmflash.ico
+HEADERS +=
