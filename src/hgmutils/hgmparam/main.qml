@@ -9,7 +9,7 @@ import com.hgmelectronics.setuptools 1.0
 ApplicationWindow {
     title: qsTr("CS2 Parameter Editor")
     width: 800
-    height: 500
+    height: 600
     visible: true
 
     menuBar: MenuBar {
