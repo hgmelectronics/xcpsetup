@@ -103,11 +103,11 @@ Item {
 
                 Row {
                     spacing: 10
-                    ScalarParamEdit {
+                    ScalarParamSpinBox {
                         name: "Downshift Offset A"
                         param: parameters.shiftDownshiftOffsetA
                     }
-                    ScalarParamEdit {
+                    ScalarParamSpinBox {
                         name: "Downshift Offset A"
                         param: parameters.shiftDownshiftOffsetA
                     }

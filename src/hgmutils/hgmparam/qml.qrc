@@ -11,7 +11,6 @@
         <file>TableParamView.qml</file>
         <file>EncodingParamEdit.qml</file>
         <file>Parameters.qml</file>
-        <file>TableParamView2.qml</file>
         <file>ScalarParamSpinBox.qml</file>
         <file>ParamId.qml</file>
         <file>TableParamEditDialog.qml</file>
