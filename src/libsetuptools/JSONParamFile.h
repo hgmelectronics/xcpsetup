@@ -9,37 +9,27 @@
 namespace SetupTools
 {
 
-class ParamFile : public QObject
+class JSONParamFile : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(Type)
     Q_ENUMS(Result)
     Q_PROPERTY(QString name MEMBER mName WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(Type type MEMBER mType WRITE setType NOTIFY typeChanged)
-    Q_PROPERTY(bool exists MEMBER mExists NOTIFY nameChanged)
+    Q_PROPERTY(bool exists MEMBER mExists NOTIFY existsChanged)
     Q_PROPERTY(QString parseError READ parseError NOTIFY resultChanged)
     Q_PROPERTY(int result READ result NOTIFY resultChanged)
     Q_PROPERTY(QString resultString READ resultString NOTIFY resultChanged)
 public:
-    enum Type
-    {
-        Invalid = 0,
-        Json
-    };
-
     enum Result
     {
         Ok,
         CorruptedFile,
         FileOpenFail,
         FileReadFail,
-        InvalidType,
         FileWriteFail
     };
 
-    ParamFile(QObject *parent = 0);
+    JSONParamFile(QObject *parent = 0);
     void setName(QString newName);
-    void setType(Type newType);
     QString parseError() { return mLastParseError; }
     Result result() { return mLastResult; }
     QString resultString() { return mLastResultString; }
@@ -50,18 +40,17 @@ public:
 public slots:
 signals:
     void nameChanged();
-    void typeChanged();
+    void existsChanged();
     void resultChanged();
     void opComplete();
 private:
     QVariantMap readJson(QFile &file);
     void writeJson(QFile &file, QVariantMap map);
-    bool isTypeOk() const;
+    void setExists(bool exists);
     void setResult(Result val);
     void setParseError(QString parseErrorString);
 
     QString mName;
-    Type mType;
     bool mExists;
     Result mLastResult;
     QString mLastParseError;

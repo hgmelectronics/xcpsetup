@@ -6,39 +6,36 @@
 #include <QJsonValue>
 #include <QJsonArray>
 #include <algorithm>
-#include "ParamFile.h"
+#include "JSONParamFile.h"
 #include <QDebug>
 
 namespace SetupTools
 {
 
-ParamFile::ParamFile(QObject *parent) :
+JSONParamFile::JSONParamFile(QObject *parent) :
     QObject(parent),
-    mType(Invalid),
     mExists(false)
 {}
 
-void ParamFile::setName(QString newName)
+void JSONParamFile::setName(QString newName)
 {
     mName = newName;
-    mExists = QFile::exists(newName);
     emit nameChanged();
+    setExists(QFile::exists(mName));
 }
 
-void ParamFile::setType(ParamFile::Type newType)
+void JSONParamFile::setExists(bool exists)
 {
-    mType = newType;
-    emit typeChanged();
-}
-
-QVariantMap ParamFile::read()
-{
-    if(!isTypeOk())
+    if(exists!=mExists)
     {
-        setResult(Result::InvalidType);
-        return QVariantMap();
-    }
+        mExists = exists;
+        emit existsChanged();
 
+    }
+}
+
+QVariantMap JSONParamFile::read()
+{
     QFile file(mName);
     if(!file.open(QFile::ReadOnly))
     {
@@ -46,26 +43,11 @@ QVariantMap ParamFile::read()
         return QVariantMap();
     }
 
-    switch(mType)
-    {
-    case Json:
-        return readJson(file);
-        break;
-    default:
-        setResult(Result::InvalidType);
-        return QVariantMap();
-        break;
-    }
+    return readJson(file);
 }
 
-void ParamFile::write(QVariantMap map)
+void JSONParamFile::write(QVariantMap map)
 {
-    if(!isTypeOk())
-    {
-        setResult(Result::InvalidType);
-        return;
-    }
-
     QFile file(mName);
     if(!file.open(QFile::WriteOnly | QFile::Truncate))
     {
@@ -73,18 +55,10 @@ void ParamFile::write(QVariantMap map)
         return;
     }
 
-    switch(mType)
-    {
-    case Json:
-        writeJson(file, map);
-        break;
-    default:
-        setResult(Result::InvalidType);
-        break;
-    }
+    writeJson(file, map);
 }
 
-QVariantMap ParamFile::readJson(QFile &file)
+QVariantMap JSONParamFile::readJson(QFile &file)
 {
     QJsonParseError parseErr;
     QByteArray bytes = file.readAll();
@@ -146,7 +120,7 @@ QVariantMap ParamFile::readJson(QFile &file)
     return map;
 }
 
-void ParamFile::writeJson(QFile &file, QVariantMap map)
+void JSONParamFile::writeJson(QFile &file, QVariantMap map)
 {
     QJsonObject root;
     for(QMap<QString, QVariant>::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
@@ -169,26 +143,12 @@ void ParamFile::writeJson(QFile &file, QVariantMap map)
 
     QByteArray text = doc.toJson();
 
-    if(file.write(text) == text.size())
-        setResult(Result::Ok);
-    else
-        setResult(Result::FileWriteFail);
+    bool success =  (file.write(text) == text.size());
+    setResult(success ? Result::Ok : Result::FileWriteFail);
+    setExists(success);
 }
 
-bool ParamFile::isTypeOk() const
-{
-    switch(mType)
-    {
-    case Json:
-        return true;
-        break;
-    default:
-        return false;
-        break;
-    }
-}
-
-void ParamFile::setResult(Result val)
+void JSONParamFile::setResult(Result val)
 {
     mLastResult = val;
     mLastParseError = "";
@@ -197,7 +157,7 @@ void ParamFile::setResult(Result val)
     emit opComplete();
 }
 
-void ParamFile::setParseError(QString parseErrorString)
+void JSONParamFile::setParseError(QString parseErrorString)
 {
     mLastResult = Result::CorruptedFile;
     mLastParseError = parseErrorString;
@@ -206,12 +166,11 @@ void ParamFile::setParseError(QString parseErrorString)
     emit opComplete();
 }
 
-QString ParamFile::resultString(int result){
+QString JSONParamFile::resultString(int result){
     switch(result) {
     case Ok:                        return "OK";
     case CorruptedFile:             return "File corrupted";
     case FileOpenFail:              return "Unable to open file";
-    case InvalidType:               return "Invalid file type set";
     case FileWriteFail:             return "Unable to write file";
     default:                        return "Undefined error";
     }

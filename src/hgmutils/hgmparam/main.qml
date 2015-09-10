@@ -31,11 +31,10 @@ ApplicationWindow {
         onConnectSlaveDone: forceSlaveSupportCalPage()
     }
 
-    ParamFile {
+    JSONParamFile {
         id: paramFileIo
-        type: ParamFile.Json
         onOpComplete: {
-            if (result !== ParamFile.Ok)
+            if (result !== JSONParamFile.Ok)
                 errorDialog.show(resultString)
         }
     }
@@ -159,11 +158,9 @@ ApplicationWindow {
                     onCurrentIndexChanged: {
                         if (currentIndex >= 0)
                             bps = bitrateItems.get(currentIndex).bps
-                        console.log("onCurrentIndexChanged, bps=", bps)
                     }
                     onAccepted: {
                         bps = parseFloat(editText) * 1000
-                        console.log("onAccepted, bps=", bps)
                     }
                     Component.onCompleted: {
                         currentIndex = find("500")
