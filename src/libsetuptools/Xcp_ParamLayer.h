@@ -20,8 +20,8 @@ class ParamLayer : public QObject
     Q_OBJECT
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcChanged)
     Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId NOTIFY slaveIdChanged)
-    Q_PROPERTY(ConnectionFacade *conn READ conn NOTIFY never)
-    Q_PROPERTY(ParamRegistry *registry READ registry NOTIFY never)
+    Q_PROPERTY(ConnectionFacade *conn READ conn CONSTANT)
+    Q_PROPERTY(ParamRegistry *registry READ registry CONSTANT)
     Q_PROPERTY(quint32 addrGran READ addrGran WRITE setAddrGran NOTIFY addrGranChanged)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
@@ -80,7 +80,6 @@ signals:
     void addrGranChanged();
     void slaveIdChanged();
 
-    void never();
 public slots:
     void download();
     void upload();

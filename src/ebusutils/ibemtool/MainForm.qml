@@ -2,7 +2,8 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
-import com.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
 
 ColumnLayout {
     id: root
@@ -12,7 +13,7 @@ ColumnLayout {
     anchors.margins: 10
 
     property string progFilePath: progFileDialog.filePath
-    property int progFileType: progFileDialog.fileType
+    property FlashProg progFileData
     property alias targetsModel: targetsView.model
     property alias progBaseText: progBaseField.text
     property alias progSizeText: progSizeField.text
@@ -39,17 +40,16 @@ ColumnLayout {
 
         FileDialog {
             property string filePath
-            property int fileType: ProgFile.Invalid
             id: progFileDialog
             title: qsTr("Select program file")
             modality: Qt.NonModal
-            nameFilters: [ "S-record files (*.srec)", "Foobar (*)" ]
+            nameFilters: [ "S-record files (*.srec)", "All files (*)" ]
             onAccepted: {
                 filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
                 if(selectedNameFilter == "S-record files (*.srec)")
-                    fileType = ProgFile.Srec;
+                    root.progFileData = ProgFile.readSrec(filePath)
                 else
-                    fileType = ProgFile.Invalid;
+                    root.progFileData = ProgFile.readSrec(filePath) // default to S-record
                 root.progFileAccepted()
             }
         }
