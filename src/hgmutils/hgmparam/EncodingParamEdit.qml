@@ -37,8 +37,6 @@ GroupBox {
             combo.currentIndex = param.slot.engrToEncodingIndex(param.stringVal)
             if (combo.currentIndex == -1)
                 combo.editText = param.stringVal
-            console.log(combo.currentIndex)
-            console.log(param.stringVal)
         }
     }
 }
