@@ -71,14 +71,26 @@ ApplicationWindow {
                     paramSaveFileDialog.open()
                 }
             }
+
             MenuSeparator {
             }
+
+            MenuItem {
+                id: saveReadOnly
+                text: "Save read-only data"
+                checkable: true
+            }
+
+            MenuSeparator {
+            }
+
             MenuItem {
                 text: qsTr("E&xit")
                 shortcut: StandardKey.Quit
                 onTriggered: Qt.quit()
             }
         }
+
         Menu {
             id: helpMenu
             title: qsTr("&Help")
@@ -363,7 +375,10 @@ ApplicationWindow {
         onAccepted: {
             paramLoadFileDialog.folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            paramFileIo.write(paramLayer.saveableRawData())
+            paramFileIo.write(
+                        saveReadOnly.checked ? paramLayer.rawData(
+                                                   ) : paramLayer.saveableRawData(
+                                                   ))
         }
     }
 
