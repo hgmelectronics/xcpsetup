@@ -13,6 +13,7 @@ ApplicationWindow {
     height: 500
     visible: true
 
+    property var parameterFilenameFilters: ["HGM parameter files (*.hgp)", "All files (*)"]
     property string programName: qsTr("CS2 Parameter Editor")
     property string targetCmdId: "18FCD403"
     property string targetResId: "18FCD4F9"
@@ -336,28 +337,34 @@ ApplicationWindow {
         id: paramLoadFileDialog
         title: qsTr("Load Parameter File")
         modality: Qt.NonModal
-        nameFilters: ["JSON files (*.json)", "All files (*)"]
+        nameFilters: parameterFilenameFilters
         folder: shortcuts.home
+        selectExisting: true
+
         property string filePath
+
         onAccepted: {
+            paramSaveFileDialog.folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramLayer.setRawData(paramFileIo.read())
         }
-        selectExisting: true
     }
 
     FileDialog {
         id: paramSaveFileDialog
         title: qsTr("Save Parameter File")
         modality: Qt.NonModal
-        nameFilters: ["JSON files (*.json)", "All files (*)"]
+        nameFilters: parameterFilenameFilters
         folder: shortcuts.home
+        selectExisting: false
+
         property string filePath
+
         onAccepted: {
+            paramLoadFileDialog.folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramFileIo.write(paramLayer.saveableRawData())
         }
-        selectExisting: false
     }
 
     AboutDialog {
