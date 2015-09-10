@@ -96,11 +96,10 @@ ApplicationWindow {
         slaveNvWriteTimeout: 200
     }
 
-    ParamFile {
+    JSONParamFile {
         id: paramFileIo
-        type: ParamFile.Json
         onOpComplete: {
-            if(result !== ParamFile.Ok)
+            if(result !== JSONParamFile.Ok)
                 errorDialog.show(resultString)
         }
     }
