@@ -38,7 +38,6 @@ SOURCES += \
     Xcp_ParamRegistry.cpp \
     Xcp_ScalarParam.cpp \
     Xcp_Param.cpp \
-    ParamFile.cpp \
     Xcp_ParamLayer.cpp \
     EncodingSlot.cpp \
     Xcp_ArrayMemoryRange.cpp \
@@ -46,7 +45,8 @@ SOURCES += \
     SlotArrayModel.cpp \
     TransposeProxyModel.cpp \
     TableMapperModel.cpp \
-    ModelListProxy.cpp
+    ModelListProxy.cpp \
+    JSONParamFile.cpp
 
 HEADERS += \
     util.h \
@@ -72,7 +72,6 @@ HEADERS += \
     Xcp_ParamRegistry.h \
     Xcp_ScalarParam.h \
     Xcp_Param.h \
-    ParamFile.h \
     Xcp_ParamLayer.h \
     EncodingSlot.h \
     Xcp_ArrayMemoryRange.h \
@@ -80,7 +79,8 @@ HEADERS += \
     SlotArrayModel.h \
     TransposeProxyModel.h \
     TableMapperModel.h \
-    ModelListProxy.h
+    ModelListProxy.h \
+    JSONParamFile.h
 
 unix {
     target.path = /usr/lib

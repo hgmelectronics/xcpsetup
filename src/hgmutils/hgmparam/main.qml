@@ -13,10 +13,10 @@ ApplicationWindow {
     height: 500
     visible: true
 
+    property var parameterFilenameFilters: ["HGM parameter files (*.hgp)", "All files (*)"]
     property string programName: qsTr("CS2 Parameter Editor")
     property string targetCmdId: "18FCD403"
     property string targetResId: "18FCD4F9"
-
     signal connect
 
     onConnect: {
@@ -32,11 +32,10 @@ ApplicationWindow {
         onConnectSlaveDone: forceSlaveSupportCalPage()
     }
 
-    ParamFile {
+    JSONParamFile {
         id: paramFileIo
-        type: ParamFile.Json
         onOpComplete: {
-            if (result !== ParamFile.Ok)
+            if (result !== JSONParamFile.Ok)
                 errorDialog.show(resultString)
         }
     }
@@ -160,11 +159,9 @@ ApplicationWindow {
                     onCurrentIndexChanged: {
                         if (currentIndex >= 0)
                             bps = bitrateItems.get(currentIndex).bps
-                        console.log("onCurrentIndexChanged, bps=", bps)
                     }
                     onAccepted: {
                         bps = parseFloat(editText) * 1000
-                        console.log("onAccepted, bps=", bps)
                     }
                     Component.onCompleted: {
                         currentIndex = find("500")
@@ -337,29 +334,37 @@ ApplicationWindow {
     }
 
     FileDialog {
-        property string filePath
         id: paramLoadFileDialog
         title: qsTr("Load Parameter File")
         modality: Qt.NonModal
-        nameFilters: ["JSON files (*.json)", "All files (*)"]
+        nameFilters: parameterFilenameFilters
+        folder: shortcuts.home
+        selectExisting: true
+
+        property string filePath
+
         onAccepted: {
+            paramSaveFileDialog.folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramLayer.setRawData(paramFileIo.read())
         }
-        selectExisting: true
     }
 
     FileDialog {
-        property string filePath
         id: paramSaveFileDialog
         title: qsTr("Save Parameter File")
         modality: Qt.NonModal
-        nameFilters: ["JSON files (*.json)", "All files (*)"]
+        nameFilters: parameterFilenameFilters
+        folder: shortcuts.home
+        selectExisting: false
+
+        property string filePath
+
         onAccepted: {
+            paramLoadFileDialog.folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramFileIo.write(paramLayer.saveableRawData())
         }
-        selectExisting: false
     }
 
     AboutDialog {
