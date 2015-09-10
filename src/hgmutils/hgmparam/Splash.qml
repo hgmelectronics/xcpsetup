@@ -49,7 +49,7 @@ Window {
     modality: Qt.ApplicationModal
     flags: Qt.SplashScreen
     visible: true
-    property int timeoutInterval: 1200
+    property int timeoutInterval: 500
     signal timeout
     x: (Screen.width - splashImage.width) / 2
     y: (Screen.height - splashImage.height) / 2
