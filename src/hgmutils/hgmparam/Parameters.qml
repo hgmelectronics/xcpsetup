@@ -4,10 +4,11 @@ import com.hgmelectronics.setuptools 1.0
 
 QtObject {
     id: parameters
-    property ParamRegistry registry;
+    property bool useMetricUnits
+    property ParamRegistry registry
     property ParamId paramId: ParamId {}
     property Slots slots: Slots {
-        useMetricUnits: parameters.useMetricUnits.floatVal !== 0 ? true : false
+        useMetricUnits: parameters.useMetricUnits
         tireDiameter: parameters.tireDiameter.floatVal
         finalDriveRatio: parameters.finalDriveRatio.floatVal
     }
@@ -566,7 +567,7 @@ QtObject {
 
     readonly property ScalarParam shiftSelectorODCancelAtStartup: registry.addScalarParam(MemoryRange.S32, paramId.shift_selector_overdrive_cancel_at_startup, true, true, slots.booleanOnOff1)
 
-    readonly property ScalarParam useMetricUnits: registry.addScalarParam(MemoryRange.S32, paramId.use_metric_units, true, true, slots.measurementSystem)
+    readonly property ScalarParam displayUnits: registry.addScalarParam(MemoryRange.S32, paramId.use_metric_units, true, true, slots.measurementSystem)
 
     readonly property ScalarParam speedometerCalibration: registry.addScalarParam(MemoryRange.S32, paramId.speedometer_calibration, true, true, slots.speedoCalibration)
 

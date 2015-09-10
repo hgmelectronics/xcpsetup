@@ -13,10 +13,15 @@ ApplicationWindow {
     height: 500
     visible: true
 
-    property var parameterFilenameFilters: ["HGM parameter files (*.hgp)", "All files (*)"]
+    property var parameterFilenameFilters: [
+        qsTr("HGM parameter files (*.hgp)"),
+        qsTr("All files (*)")
+    ]
+
     property string programName: qsTr("CS2 Parameter Editor")
     property string targetCmdId: "18FCD403"
     property string targetResId: "18FCD4F9"
+
     signal connect
 
     onConnect: {
@@ -77,7 +82,7 @@ ApplicationWindow {
 
             MenuItem {
                 id: saveReadOnly
-                text: "Save read-only data"
+                text: qsTr("Save read-only data")
                 checkable: true
             }
 
@@ -88,6 +93,16 @@ ApplicationWindow {
                 text: qsTr("E&xit")
                 shortcut: StandardKey.Quit
                 onTriggered: Qt.quit()
+            }
+        }
+
+        Menu {
+            title: qsTr("Edit")
+
+            MenuItem {
+                id: unitsMenu
+                text: qsTr("Use Metric Units")
+                checkable: true
             }
         }
 
@@ -138,7 +153,7 @@ ApplicationWindow {
 
             GroupBox {
                 Layout.fillWidth: true
-                title: "Speed (kbps)"
+                title: qsTr("Speed (kbps)")
                 ComboBox {
                     id: bitrateComboBox
                     property int bps
@@ -303,6 +318,7 @@ ApplicationWindow {
         id: paramTabView
         anchors.fill: parent
         registry: paramLayer.registry
+        useMetricUnits: unitsMenu.checked
     }
 
     MessageDialog {
@@ -329,7 +345,7 @@ ApplicationWindow {
         id: paramOverwriteDialog
         title: qsTr("Message")
         standardButtons: StandardButton.Yes | StandardButton.Cancel
-        text: "Some parameters have not yet been downloaded to the device. Are you sure you want to load new ones?"
+        text: qsTr("Some parameters have not yet been downloaded to the device. Are you sure you want to load new ones?")
 
         function show() {
             visible = true
@@ -375,10 +391,14 @@ ApplicationWindow {
         onAccepted: {
             paramLoadFileDialog.folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            paramFileIo.write(
-                        saveReadOnly.checked ? paramLayer.rawData(
-                                                   ) : paramLayer.saveableRawData(
-                                                   ))
+            if(saveReadOnly)
+            {
+                paramFileIo.write(paramLayer.saveableRawData())
+            }
+            else
+            {
+                paramFileIo.write(paramLayer.rawData())
+            }
         }
     }
 
