@@ -13,19 +13,15 @@ ApplicationWindow {
     height: 500
     visible: true
 
-    property var parameterFilenameFilters: [
-        qsTr("HGM parameter files (*.hgp)"),
-        qsTr("All files (*)")
-    ]
+    readonly property string programName: qsTr("CS2 Parameter Editor")
+    property CS2Defaults defaults: CS2Defaults {
+    }
 
-    property string programName: qsTr("CS2 Parameter Editor")
-    property string targetCmdId: "18FCD403"
-    property string targetResId: "18FCD4F9"
 
     signal connect
 
     onConnect: {
-        paramLayer.slaveId = targetCmdId + ":" + targetResId
+        paramLayer.slaveId = targetCmdId.value + ":" + targetResId.value
         paramLayer.connectSlave()
     }
 
@@ -127,109 +123,39 @@ ApplicationWindow {
 
     toolBar: ColumnLayout {
         anchors.fill: parent
-        InterfaceRegistry {
-            id: registry
-        }
 
         RowLayout {
             Layout.topMargin: 5
             anchors.left: parent.left
             anchors.right: parent.right
             spacing: 0
-            GroupBox {
+
+            InterfaceChooser {
+                id: interfaceChooser
                 Layout.fillWidth: true
-                title: qsTr("Interface")
-                ComboBox {
-                    id: intfcComboBox
-                    anchors.fill: parent
-                    model: registry.avail
-                    textRole: "text"
-                    visible: true
-                    property string selectedUri
-                    selectedUri: (count > 0
-                                  && currentIndex < count) ? model[currentIndex].uri : ""
-                }
+                enabled: !paramLayer.intfcOk
             }
 
-            GroupBox {
+            BitRateChooser {
+                id: bitRateChooser
                 Layout.fillWidth: true
-                title: qsTr("Speed (kbps)")
-                ComboBox {
-                    id: bitrateComboBox
-                    property int bps
-                    anchors.fill: parent
-                    editable: true
-                    implicitWidth: 80
-                    model: ListModel {
-                        id: bitrateItems
-                        ListElement {
-                            text: "125"
-                            bps: 125000
-                        }
-                        ListElement {
-                            text: "250"
-                            bps: 250000
-                        }
-                        ListElement {
-                            text: "500"
-                            bps: 500000
-                        }
-                        ListElement {
-                            text: "1000"
-                            bps: 1000000
-                        }
-                    }
-                    validator: DoubleValidator {
-                        bottom: 10
-                        top: 1000
-                    }
-                    onCurrentIndexChanged: {
-                        if (currentIndex >= 0)
-                            bps = bitrateItems.get(currentIndex).bps
-                    }
-                    onAccepted: {
-                        bps = parseFloat(editText) * 1000
-                    }
-                    Component.onCompleted: {
-                        currentIndex = find("500")
-                    }
-                }
+                enabled: !paramLayer.intfcOk
             }
 
-            GroupBox {
+            HexEntryField {
+                id: targetCmdId
                 Layout.fillWidth: true
                 title: qsTr("Target Command ID")
-                TextField {
-                    id: targetCmdIdField
-                    anchors.fill: parent
-                    horizontalAlignment: TextInput.AlignRight
-                    text: targetCmdId
-                    readOnly: paramLayer.slaveConnected
-                    validator: RegExpValidator {
-                        regExp: /[0-9A-Fa-f]{1,8}/
-                    }
-                    onAccepted: {
-                        targetCmdId = text
-                    }
-                }
+                value: defaults.targetCmdId
+                enabled: !paramLayer.slaveConnected
             }
 
-            GroupBox {
+            HexEntryField {
+                id: targetResId
                 Layout.fillWidth: true
                 title: qsTr("Target Response ID")
-                TextField {
-                    id: targetResIdField
-                    anchors.fill: parent
-                    horizontalAlignment: TextInput.AlignRight
-                    text: targetResId
-                    readOnly: paramLayer.slaveConnected
-                    validator: RegExpValidator {
-                        regExp: /[0-9A-Fa-f]{1,8}/
-                    }
-                    onAccepted: {
-                        targetResId = text
-                    }
-                }
+                value: defaults.targetResId
+                enabled: !paramLayer.slaveConnected
             }
         }
 
@@ -245,14 +171,14 @@ ApplicationWindow {
                     id: intfcOpenButton
                     text: qsTr("Open")
                     onClicked: {
-                        if (intfcComboBox.selectedUri !== "")
-                            paramLayer.intfcUri = intfcComboBox.selectedUri.replace(
+                        if (interfaceChooser.uri !== "")
+                            paramLayer.intfcUri = interfaceChooser.uri.replace(
                                         /bitrate=[0-9]*/,
-                                        "bitrate=" + bitrateComboBox.bps.toString(
+                                        "bitrate=" + bitRateChooser.bps.toString(
                                             ))
                     }
                     enabled: !paramLayer.intfcOk
-                             && intfcComboBox.selectedUri !== ""
+                             && interfaceChooser.uri !== ""
                 }
                 Button {
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
@@ -345,7 +271,7 @@ ApplicationWindow {
         id: paramOverwriteDialog
         title: qsTr("Message")
         standardButtons: StandardButton.Yes | StandardButton.Cancel
-        text: qsTr("Some parameters have not yet been downloaded to the device. Are you sure you want to load new ones?")
+        text: qsTr("Some parameters have not yet been saved. Are you sure you want to load new ones?")
 
         function show() {
             visible = true
@@ -365,7 +291,7 @@ ApplicationWindow {
         id: paramLoadFileDialog
         title: qsTr("Load Parameter File")
         modality: Qt.NonModal
-        nameFilters: parameterFilenameFilters
+        nameFilters: defaults.parameterFilenameFilters
         folder: shortcuts.home
         selectExisting: true
 
@@ -382,7 +308,7 @@ ApplicationWindow {
         id: paramSaveFileDialog
         title: qsTr("Save Parameter File")
         modality: Qt.NonModal
-        nameFilters: parameterFilenameFilters
+        nameFilters: defaults.parameterFilenameFilters
         folder: shortcuts.home
         selectExisting: false
 

@@ -19,5 +19,9 @@
         <file>TableByShiftEditButtonGroup.qml</file>
         <file>COMPUSHIFT logo.svg</file>
         <file>Splash.qml</file>
+        <file>HexEntryField.qml</file>
+        <file>InterfaceChooser.qml</file>
+        <file>BitRateChooser.qml</file>
+        <file>CS2Defaults.qml</file>
     </qresource>
 </RCC>
