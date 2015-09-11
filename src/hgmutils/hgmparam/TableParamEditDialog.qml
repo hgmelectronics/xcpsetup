@@ -157,27 +157,27 @@ Window {
                 spacing: 10
                 Button {
                     Layout.fillWidth: true
-                    text: "Steeper"
+                    text: qsTr("Steeper")
                     onClicked: scaleAbout(steeperFlatterRatio, arrayAverage())
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: "Flatter"
+                    text: qsTr("Flatter")
                     onClicked: scaleAbout(1 / steeperFlatterRatio, arrayAverage())
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: "Increase All"
+                    text: qsTr("Increase All")
                     onClicked: offset(increaseDecreaseDelta, arrayAverage())
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: "Decrease All"
+                    text: qsTr("Decrease All")
                     onClicked: offset(-increaseDecreaseDelta, arrayAverage())
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: "Increase Selected"
+                    text: qsTr("Increase Selected")
                     enabled: tableView.selection.count > 0
                     onClicked: tableView.selection.forEach(
                                    function(rowIndex) {
@@ -187,7 +187,7 @@ Window {
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: "Decrease Selected"
+                    text: qsTr("Decrease Selected")
                     enabled: tableView.selection.count > 0
                     onClicked: tableView.selection.forEach(
                                    function(rowIndex) {
