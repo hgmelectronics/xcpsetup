@@ -41,6 +41,12 @@ bool Param::writeCacheDirty() const
     return mBaseRange->writeCacheDirty();
 }
 
+void Param::resetCaches()
+{
+    Q_ASSERT(mBaseRange);
+    mBaseRange->resetCaches();
+}
+
 void Param::onRangeValidChanged()
 {
     emit validChanged();
