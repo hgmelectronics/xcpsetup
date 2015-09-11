@@ -155,4 +155,24 @@ bool LinearSlot::engrInRange(QVariant engr) const
     return (convertedOk && inRange(engrConv, mEngrA, mEngrB));
 }
 
+QVariant LinearSlot::rawMin() const
+{
+    return std::min(mRawA, mRawB);
+}
+
+QVariant LinearSlot::rawMax() const
+{
+    return std::max(mRawA, mRawB);
+}
+
+QVariant LinearSlot::engrMin() const
+{
+    return std::min(mEngrA, mEngrB);
+}
+
+QVariant LinearSlot::engrMax() const
+{
+    return std::max(mEngrA, mEngrB);
+}
+
 } // namespace SetupTools

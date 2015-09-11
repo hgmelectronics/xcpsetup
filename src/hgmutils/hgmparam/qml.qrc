@@ -13,5 +13,11 @@
         <file>EncodingParamEdit.qml</file>
         <file>Parameters.qml</file>
         <file>TableParamView2.qml</file>
+        <file>ScalarParamSpinBox.qml</file>
+        <file>ParamId.qml</file>
+        <file>TableParamEditDialog.qml</file>
+        <file>TableParamEditButton.qml</file>
+        <file>TableByGearEditButtonGroup.qml</file>
+        <file>TableByShiftEditButtonGroup.qml</file>
     </qresource>
 </RCC>

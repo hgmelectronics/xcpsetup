@@ -72,6 +72,7 @@ ApplicationWindow {
         slaveConnected: paramLayer.slaveConnected
         paramBusy: !paramLayer.idle
         paramWriteCacheDirty: paramLayer.writeCacheDirty
+        paramFilePath: paramFileIo.name
         progressValue: paramLayer.opProgress
         onUserConnectParam: {
             paramLayer.slaveId = targetCmdId + ":" + targetResId
@@ -100,7 +101,7 @@ ApplicationWindow {
         id: paramFileIo
         type: ParamFile.Json
         onOpComplete: {
-            if(result != ParamFile.Ok)
+            if(result !== ParamFile.Ok)
                 errorDialog.show(resultString)
         }
     }
@@ -153,7 +154,7 @@ ApplicationWindow {
         nameFilters: [ "JSON files (*.json)", "All files (*)" ]
         onAccepted: {
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            paramLayer.setData(paramFileIo.read())
+            paramLayer.setRawData(paramFileIo.read())
         }
         selectExisting: true
     }
@@ -166,7 +167,7 @@ ApplicationWindow {
         nameFilters: [ "JSON files (*.json)", "All files (*)" ]
         onAccepted: {
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            paramFileIo.write(paramLayer.saveableData())
+            paramFileIo.write(paramLayer.saveableRawData())
         }
         selectExisting: false
     }

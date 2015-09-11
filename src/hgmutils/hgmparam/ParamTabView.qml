@@ -15,8 +15,7 @@ Item {
         id: tabView
         anchors.fill: parent
 
-        Parameters
-        {
+        Parameters {
             id: parameters
             registry: root.registry
         }
@@ -28,13 +27,25 @@ Item {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
-                ScalarParamEdit {
+                ScalarParamSpinBox {
                     name: "Final Drive Ratio"
                     param: parameters.finalDriveRatio
                 }
-                ScalarParamEdit {
+                ScalarParamSpinBox {
                     name: "Tire Diameter"
                     param: parameters.tireDiameter
+                }
+                EncodingParamEdit {
+                    name: "Display Units"
+                    param: parameters.useMetricUnits
+                }
+                ScalarParamSpinBox {
+                    name: "Display Brightness"
+                    param: parameters.displayBrightness
+                }
+                ScalarParamSpinBox {
+                    name: "Display Contrast"
+                    param: parameters.displayContrast
                 }
             }
         }
@@ -47,200 +58,229 @@ Item {
                 anchors.margins: 10
                 spacing: 10
 
-                ScalarParamEdit{
+                ScalarParamSpinBox {
                     name: "Engine Cylinders"
                     param: parameters.engineCylinders
                 }
 
-                ScalarParamEdit {
+                ScalarParamSpinBox {
                     name: "Max Engine Speed A"
-                    param: parameters.maxEngineSpeedA
+                    param: parameters.shiftMaxEngineSpeedA
                 }
-                ScalarParamEdit {
+                ScalarParamSpinBox {
                     name: "Max Engine Speed B"
-                    param: parameters.maxEngineSpeedB
+                    param: parameters.shiftMaxEngineSpeedB
                 }
-
             }
         }
 
         Tab {
-
-
             title: "Shift Tables"
             active: true
+
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
 
-                function bump(p)
-                {
-                    for(var i=0; i<p.count ; i++)
-                    {
-                        p.set(i,p.get(i)+1.0);
-                    }
+                TableByShiftEditButtonGroup {
+                    title: "Shift Tables A"
+                    count: 5
+                    valueArray: parameters.shiftTablesAArray
+                    tableModel: parameters.shiftTablesA
+                    xLabel: "Throttle"
+                    valueLabel: "Speed"
                 }
 
-                function zero(p)
-                {
-                    for(var i=0; i<p.count ; i++)
-                    {
-                        p.set(i,0.0);
-                    }
+                TableByShiftEditButtonGroup {
+                    title: "Shift Tables B"
+                    count: 5
+                    valueArray: parameters.shiftTablesBArray
+                    tableModel: parameters.shiftTablesB
+                    xLabel: "Throttle"
+                    valueLabel: "Speed"
                 }
 
+                Row {
+                    spacing: 10
+                    ScalarParamEdit {
+                        name: "Downshift Offset A"
+                        param: parameters.shiftDownshiftOffsetA
+                    }
+                    ScalarParamEdit {
+                        name: "Downshift Offset A"
+                        param: parameters.shiftDownshiftOffsetA
+                    }
+                }
+            }
+        }
 
-                Button
-                {
-                    text: "Zero"
-                    onClicked: {
-                        zero(parameters.shiftTable12A);
-                        zero(parameters.shiftTable23A);
-                        zero(parameters.shiftTable34A);
-                        zero(parameters.shiftTable45A);
+        Tab {
+            title: "Shift Pressure % Tables"
+
+            active: true
+
+            Flow {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
+
+                TableByGearEditButtonGroup {
+                    title: "Shift Pressure A"
+                    count: 6
+                    valueArray: parameters.pressureTablesAArray
+                    tableModel: parameters.pressureTablesA
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                }
+
+                TableByGearEditButtonGroup {
+                    title: "Shift Pressure B"
+                    count: 6
+                    valueArray: parameters.pressureTablesBArray
+                    tableModel: parameters.pressureTablesB
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                }
+
+                TableByShiftEditButtonGroup {
+                    title: "Upshift Apply Pressure %"
+                    count: 5
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                    valueArray: parameters.transmissionUpshiftApplyPercentageArray
+                    tableModel: parameters.transmissionUpshiftApplyPercentage
+                }
+
+                TableByShiftEditButtonGroup {
+                    title: "Downshift Apply Pressure %"
+                    count: 4
+                    isDownshift: true
+
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                    valueArray: parameters.transmissionDownshiftApplyPercentageArray
+                    tableModel: parameters.transmissionDownshiftApplyPercentage
+                }
+
+                GroupBox {
+                    title: "Shift Prefill"
+                    Row {
+                        spacing: 10
+                        TableParamEditButton {
+                            name: "Pressure"
+                            xLabel: "Shift"
+                            valueLabel: "%"
+                            valueArray: parameters.transmissionShiftPrefillPercentageArray
+                            tableModel: parameters.transmissionShiftPrefillPercentage
                         }
-                }
 
-
-
-                Button
-                {
-                    text: "Bump 1-2"
-                    onClicked: {
-                        bump(parameters.shiftTable12A)
+                        TableParamEditButton {
+                            name: "Time"
+                            xLabel: "Shift"
+                            valueLabel: "ms"
+                            valueArray: parameters.transmissionShiftPrefillTimeArray
+                            tableModel: parameters.transmissionShiftPrefillTime
+                        }
                     }
                 }
 
-                Button
-                {
-                    text: "Bump 2-3"
-                    onClicked: {
-                        bump(parameters.shiftTable23A)
-                    }
-                }
-
-                Button
-                {
-                    text: "Bump 3-4"
-                    onClicked: {
-                        bump(parameters.shiftTable34A)
-                    }
-                }
-
-                Button
-                {
-                    text: "Bump 4-5"
-                    onClicked: {
-                        bump(parameters.shiftTable45A)
-                    }
-                }
-
-                TableView
-                {
-                    width: 600;
-
-                    model: parameters.shiftTableAModel
-
-                    TableViewColumn {
-                        role: "tps"
-                        title: "TPS %"
-                        width: 100
-                    }
-                    TableViewColumn {
-                        role: "shift12"
-                        title: "Shift 1-2"
-                        width: 100
-                    }
-                    TableViewColumn {
-                        role: "shift23"
-                        title: "Shift 2-3"
-                        width: 100
-                    }
-                    TableViewColumn {
-                        role: "shift34"
-                        title: "Shift 3-4"
-                        width: 100
-                    }
-                    TableViewColumn {
-                        role: "shift45"
-                        title: "Shift 4-5"
-                        width: 100
-                    }
-
-                }
-
-                TableParamEdit {
-                    id: shift12
-                    name: "Shift Speed 1-2 A"
-                    xLabel: "Throttle"
-                    valueLabel: "Speed"
-                    tableModel: parameters.shiftTable12AModel
-                    enabled: parameters.shiftTable12A.valid
-                }
-
-
-                TableParamEdit {
-                    name: "Shift Speed 2-3 A"
-                    xLabel: "Throttle"
-                    valueLabel: "Speed"
-                    tableModel: parameters.shiftTable23AModel
-                    enabled: parameters.shiftTable23A.valid
-                }
-
-                TableParamEdit {
-                    name: "Shift Speed 3-4 A"
-                    xLabel: "Throttle"
-                    valueLabel: "Speed"
-                    tableModel: parameters.shiftTable34AModel
-                    enabled: parameters.shiftTable34A.valid
-                }
-                TableParamEdit {
-                    name: "Shift Speed 4-5 A"
-                    xLabel: "Throttle"
-                    valueLabel: "Speed"
-                    tableModel: parameters.shiftTable45AModel
-                    enabled: parameters.shiftTable45A.valid
-                }
-            }
-        }
-
-
-        Tab {
-            title: "Inputs"
-            active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                TableParamView {
-                    name: "Switch Monitor Input"
-                    xLabel: "Switch #"
-                    valueLabel: "State"
-                    tableModel: parameters.switchMonitorModel
-                    enabled: parameters.switchMonitorInput.valid
+                TableByGearEditButtonGroup {
+                    title: "Main Pressure %"
+                    count: 6
+                    xLabel: "Torque"
+                    valueLabel: "%"
+                    valueArray: parameters.transmissionMainPercentageArray
+                    tableModel: parameters.transmissionMainPercentage
                 }
             }
         }
 
         Tab {
-            title: "Accessories"
+            title: "Shift Pressure Tables"
             active: true
             Flow {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
 
-                ScalarParamEdit {   // duplicate to illustrate binding
-                    name: "Display Brightness"
-                    param: parameters.displayBrightness
+                TableByShiftEditButtonGroup {
+                    title: "Upshift Apply Pressure"
+                    count: 5
+                    xLabel: "Torque"
+                    valueLabel: "Pressure"
+                    valueArray: parameters.transmissionUpshiftApplyPressureArray
+                    tableModel: parameters.transmissionUpshiftApplyPressure
                 }
 
-                ScalarParamEdit {   // duplicate to illustrate binding
-                    name: "Display Contrast"
-                    param: parameters.displayBrightness
+                TableByShiftEditButtonGroup {
+                    title: "Upshift Apply Pressure"
+                    count: 5
+                    xLabel: "Torque"
+                    valueLabel: "Pressure"
+                    valueArray: parameters.transmissionUpshiftApplyPressureArray
+                    tableModel: parameters.transmissionUpshiftApplyPressure
+                }
+
+                TableByShiftEditButtonGroup {
+                    title: "Downshift Apply Pressure"
+                    count: 4
+                    isDownshift: true
+
+                    xLabel: "Torque"
+                    valueLabel: "Pressure"
+                    valueArray: parameters.transmissionDownshiftApplyPressureArray
+                    tableModel: parameters.transmissionDownshiftApplyPressure
+                }
+
+                GroupBox {
+                    title: "Shift Prefill"
+                    Row {
+                        spacing: 10
+                        TableParamEditButton {
+                            name: "Pressure"
+                            xLabel: "Shift"
+                            valueLabel: "Pressure"
+                            valueArray: parameters.transmissionShiftPrefillPressureArray
+                            tableModel: parameters.transmissionShiftPrefillPressure
+                        }
+
+                        TableParamEditButton {
+                            name: "Time"
+                            xLabel: "Shift"
+                            valueLabel: "ms"
+                            valueArray: parameters.transmissionShiftPrefillTimeArray
+                            tableModel: parameters.transmissionShiftPrefillTime
+                        }
+                    }
+                }
+
+                TableByGearEditButtonGroup {
+                    title: "Main Pressure"
+                    count: 6
+                    xLabel: "Torque"
+                    valueLabel: "Pressure"
+                    valueArray: parameters.transmissionMainPressureArray
+                    tableModel: parameters.transmissionMainPressure
                 }
             }
         }
     }
 }
+//        Tab {
+//            title: "Inputs"
+//            active: true
+//            Flow {
+//                anchors.fill: parent
+//                anchors.margins: 10
+//                spacing: 10
+//                TableParamView {
+//                    name: "Switch Monitor Input"
+//                    xLabel: "Switch #"
+//                    valueLabel: "State"
+//                    tableModel: parameters.switchMonitorModel
+//                    enabled: parameters.switchMonitorInput.valid
+//                }
+//            }
+//        }
+

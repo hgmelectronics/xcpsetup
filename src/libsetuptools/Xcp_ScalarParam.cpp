@@ -58,6 +58,16 @@ QVariant ScalarParam::getSerializableValue(bool *allInRange, bool *anyInRange)
     return stringVal();
 }
 
+QVariant ScalarParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
+{
+    bool inRange = slot()->rawInRange(mRange->value());
+    if(allInRange)
+        *allInRange = inRange;
+    if(anyInRange)
+        *anyInRange = inRange;
+    return mRange->value();
+}
+
 bool ScalarParam::setSerializableValue(const QVariant &val)
 {
     Q_ASSERT(mRange);
@@ -66,6 +76,16 @@ bool ScalarParam::setSerializableValue(const QVariant &val)
         return false;
 
     setStringVal(str);
+    return true;
+}
+
+bool ScalarParam::setSerializableRawValue(const QVariant &val)
+{
+    Q_ASSERT(mRange);
+    if(!slot()->rawInRange(val))
+        return false;
+
+    mRange->setValue(val);
     return true;
 }
 

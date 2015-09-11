@@ -4,7 +4,8 @@ QT += qml quick widgets serialport
 
 SOURCES += main.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    $$PWD/../../qml/jbQuick/Charts/qchart.qrc
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 
@@ -22,9 +23,18 @@ QML_IMPORT_PATH =
 # Default rules for deployment.
 include(deployment.pri)
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libsetuptools/release/ -lsetuptools
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libsetuptools/debug/ -lsetuptools
-else:unix: LIBS += -L$$OUT_PWD/../../libsetuptools/ -lsetuptools
+win32:CONFIG(release, debug|release): {
+    LIBS += -L$$OUT_PWD/../../libsetuptools/release/ -lsetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../../libsetuptools/release/libsetuptools.a
+}
+else:win32:CONFIG(debug, debug|release): {
+    LIBS += -L$$OUT_PWD/../../libsetuptools/debug/ -lsetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../../libsetuptools/debug/libsetuptools.a
+}
+else:unix: {
+    LIBS += -L$$OUT_PWD/../../libsetuptools/ -lsetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../../libsetuptools/libsetuptools.a
+}
 
 INCLUDEPATH += $$PWD/../../libsetuptools
 DEPENDPATH += $$PWD/../../libsetuptools

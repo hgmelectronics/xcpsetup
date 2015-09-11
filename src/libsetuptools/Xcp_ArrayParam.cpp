@@ -91,6 +91,50 @@ bool ArrayParam::setSerializableValue(const QVariant &val)
     return mRange->setDataRange(rawList, 0);
 }
 
+QVariant ArrayParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
+{
+    Q_ASSERT(mRange && slot());
+
+    QVariantList ret;
+    ret.reserve(mRange->count());
+
+    bool allInRangeAccum = true;
+    bool anyInRangeAccum = false;
+
+    for(QVariant elem : mRange->data())
+    {
+        bool inRange = slot()->rawInRange(elem);
+        allInRangeAccum &= inRange;
+        anyInRangeAccum |= inRange;
+        ret.append(elem);
+    }
+
+    if(allInRange)
+        *allInRange = allInRangeAccum;
+
+    if(anyInRange)
+        *anyInRange = anyInRangeAccum;
+
+    return ret;
+}
+
+bool ArrayParam::setSerializableRawValue(const QVariant &val)
+{
+    Q_ASSERT(mRange && slot());
+    if(val.type() != QVariant::StringList && val.type() != QVariant::List)
+        return false;
+    if(val.toList().size() != mRange->count())
+        return false;
+
+    for(QVariant elem : val.toList())
+    {
+        if(!slot()->rawInRange(elem))
+            return false;
+    }
+
+    return mRange->setDataRange(val.toList(), 0);
+}
+
 void ArrayParam::resetCaches()
 {
     Q_ASSERT(mRange && slot());
@@ -177,12 +221,12 @@ Qt::ItemFlags ArrayParamModel::flags(const QModelIndex &index) const
 
 void ArrayParamModel::onValueParamChanged()
 {
-    onRangeDataChanged(0, mParam->mRange->count() - 1);
+    emit dataChanged(index(0), index(mParam->mRange->count() - 1));
 }
 
 void ArrayParamModel::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)
 {
-    emit dataChanged(index(beginChanged), index(endChanged - 1));
+    emit dataChanged(index(beginChanged), index(endChanged - 1));   // convert from STL style (end = past-the-end) to Qt model style (end = last one)
 }
 
 } // namespace Xcp

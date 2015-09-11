@@ -23,15 +23,17 @@ ColumnLayout {
     property bool slaveConnected
     property bool paramBusy
     property bool paramWriteCacheDirty
-    signal userConnectParam()
-    signal userDownloadParam()
-    signal userUploadParam()
-    signal userNvWriteParam()
-    signal userDisconnectParam()
-    signal userShowParamEdit()
-    signal targetChanged()
+    signal userConnectParam
+    signal userDownloadParam
+    signal userUploadParam
+    signal userNvWriteParam
+    signal userDisconnectParam
+    signal userShowParamEdit
+    signal targetChanged
 
-    function selectLoadParam() { paramLoadFileDialog.open() }
+    function selectLoadParam() {
+        paramLoadFileDialog.open()
+    }
 
     TextField {
         id: paramFileNameField
@@ -78,7 +80,8 @@ ColumnLayout {
                     Layout.fillWidth: true
 
                     property string selectedUri
-                    selectedUri: (count > 0 && currentIndex < count) ? model[currentIndex].uri : ""
+                    selectedUri: (count > 0
+                                  && currentIndex < count) ? model[currentIndex].uri : ""
                 }
 
                 ComboBox {
@@ -88,25 +91,34 @@ ColumnLayout {
                     implicitWidth: 80
                     model: ListModel {
                         id: bitrateItems
-                        ListElement { text: "125" }
-                        ListElement { text: "250" }
-                        ListElement { text: "500" }
-                        ListElement { text: "1000" }
+                        ListElement {
+                            text: "125"
+                        }
+                        ListElement {
+                            text: "250"
+                        }
+                        ListElement {
+                            text: "500"
+                        }
+                        ListElement {
+                            text: "1000"
+                        }
                     }
                     validator: DoubleValidator {
                         bottom: 10
                         top: 1000
                     }
                     onCurrentIndexChanged: {
-                        if(currentIndex >= 0)
-                            bps = parseFloat(bitrateItems.get(currentIndex).text) * 1000
-                        console.log("onCurrentIndexChanged, bps=", bps);
+                        if (currentIndex >= 0)
+                            bps = parseFloat(bitrateItems.get(
+                                                 currentIndex).text) * 1000
+                        console.log("onCurrentIndexChanged, bps=", bps)
                     }
                     onAccepted: {
                         bps = parseFloat(editText) * 1000
-                        console.log("onAccepted, bps=", bps);
+                        console.log("onAccepted, bps=", bps)
                     }
-                    Component.onCompleted:  {
+                    Component.onCompleted: {
                         currentIndex = find("500")
                     }
                 }
@@ -125,8 +137,11 @@ ColumnLayout {
                     id: intfcOpenButton
                     text: qsTr("Open")
                     onClicked: {
-                        if(intfcComboBox.selectedUri !== "")
-                            root.intfcUri = intfcComboBox.selectedUri.replace(/bitrate=[0-9]*/, "bitrate=" + bitrateComboBox.bps.toString())
+                        if (intfcComboBox.selectedUri !== "")
+                            root.intfcUri = intfcComboBox.selectedUri.replace(
+                                        /bitrate=[0-9]*/,
+                                        "bitrate=" + bitrateComboBox.bps.toString(
+                                            ))
                     }
                     enabled: !intfcOpen
                 }
@@ -228,7 +243,6 @@ ColumnLayout {
                 }
             }
         }
-
     }
 
     ProgressBar {
