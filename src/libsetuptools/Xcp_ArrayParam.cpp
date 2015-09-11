@@ -135,12 +135,6 @@ bool ArrayParam::setSerializableRawValue(const QVariant &val)
     return mRange->setDataRange(val.toList(), 0);
 }
 
-void ArrayParam::resetCaches()
-{
-    Q_ASSERT(mRange && slot());
-    mRange->resetCaches();
-}
-
 void ArrayParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
 {
     emit uploadDone(result);

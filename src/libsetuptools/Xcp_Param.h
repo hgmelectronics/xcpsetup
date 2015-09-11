@@ -27,11 +27,12 @@ public:
     bool writeCacheDirty() const;
     Slot *slot() const;
 
+    Q_INVOKABLE void resetCaches();  //!< Set all write cache dirty and clear all read cache
+
     virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr) = 0;
     virtual bool setSerializableValue(const QVariant &val) = 0;
     virtual QVariant getSerializableRawValue(bool *allInRange = nullptr, bool *anyInRange = nullptr) = 0;
     virtual bool setSerializableRawValue(const QVariant &val) = 0;
-    virtual void resetCaches() = 0;  //!< Set all write cache dirty and clear all read cache
 
     bool saveable;
     QString key;
