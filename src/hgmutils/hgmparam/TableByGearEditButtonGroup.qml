@@ -23,8 +23,7 @@ GroupBox {
             TableParamEditButton {
                 id: tableButton
                 function getTitle(i) {
-                    var first = i + 1
-                    return "Gear " + first
+                    return qsTr("Gear %1").arg(i+1)
                 }
                 name: getTitle(index)
                 valueArray: groupBox.valueArray[index]

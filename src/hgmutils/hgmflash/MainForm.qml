@@ -81,11 +81,9 @@ ColumnLayout {
                 onCurrentIndexChanged: {
                     if(currentIndex >= 0)
                         bps = parseFloat(bitrateItems.get(currentIndex).text) * 1000
-                    console.log("onCurrentIndexChanged, bps=", bps);
                 }
                 onAccepted: {
                     bps = parseFloat(editText) * 1000
-                    console.log("onAccepted, bps=", bps);
                 }
                 Component.onCompleted:  {
                     currentIndex = find("500")
@@ -185,11 +183,12 @@ ColumnLayout {
         }
 
         FileDialog {
-            property string filePath
             id: progFileDialog
             title: qsTr("Select program file")
             modality: Qt.NonModal
             nameFilters: [ "S-record files (*.srec)", "All files (*)" ]
+            folder: shortcuts.home
+            property string filePath
             onAccepted: {
                 filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
                 if(selectedNameFilter == "S-record files (*.srec)")

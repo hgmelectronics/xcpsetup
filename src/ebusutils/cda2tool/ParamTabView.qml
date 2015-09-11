@@ -15,6 +15,11 @@ Item {
         id: tabView
         anchors.fill: parent
 
+        Parameters {
+            id: parameters
+            registry: root.registry
+        }
+
 //        Tab {
 //            title: "Analog I/O"
 //            active: true
@@ -42,35 +47,27 @@ Item {
                 spacing: 10
                 TableParamEdit {
                     name: "Cell Voltage"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00031000*4, false, false, slots.ltcCellv, axes.cellV);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "V"
-                    }
+                    xLabel: "Cell #"
+                    valueLabel: "V"
+                    tableModel: parameters.cbtmCellVolt
                 }
                 TableParamEdit {
                     name: "Tab Temp"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00032000*4, false, false, slots.ltcTemp, axes.cellV);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "degC"
-                    }
+                    xLabel: "Tab #"
+                    valueLabel: "degC"
+                    tableModel: parameters.cbtmTabTemp
                 }
                 TableParamEdit {
                     name: "Discharge"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00033000*4, true, false, slots.raw32, axes.cbtmId);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "8bit"
-                    }
+                    xLabel: "Board #"
+                    valueLabel: "Bitfield"
+                    tableModel: parameters.cbtmDisch
                 }
                 TableParamEdit {
                     name: "Status"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00033100*4, false, false, slots.raw32, axes.cbtmId);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "8bit"
-                    }
+                    xLabel: "Board #"
+                    valueLabel: "Bitfield"
+                    tableModel: parameters.cbtmStatus
                 }
             }
         }
@@ -84,47 +81,37 @@ Item {
                 spacing: 10
                 ScalarParamEdit {
                     name: "Max Simul Pickups"
-                    param: registry.addScalarParam(MemoryRange.U32, 0x00040000*4, true, true, slots.raw32)
+                    param: parameters.ctcMaxSimulPickup
                 }
                 TableParamEdit {
                     name: "Has B input"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00040010*4, true, true, slots.raw32, axes.ctcNum);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "Bool"
-                    }
+                    xLabel: "Ctc #"
+                    valueLabel: "Bool"
+                    tableModel: parameters.ctcHasBInput
                 }
                 TableParamEdit {
                     name: "On"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00041000*4, true, false, slots.raw32, axes.ctcNum);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "Bool"
-                    }
+                    xLabel: "Ctc #"
+                    valueLabel: "Bool"
+                    tableModel: parameters.ctcOn
                 }
                 TableParamEdit {
                     name: "OK"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00041010*4, false, false, slots.raw32, axes.ctcNum);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "Bool"
-                    }
+                    xLabel: "Ctc #"
+                    valueLabel: "Bool"
+                    tableModel: parameters.ctcOk
                 }
                 TableParamEdit {
                     name: "A Closed"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00041020*4, false, false, slots.raw32, axes.ctcNum);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "Bool"
-                    }
+                    xLabel: "Ctc #"
+                    valueLabel: "Bool"
+                    tableModel: parameters.ctcAClosed
                 }
                 TableParamEdit {
                     name: "B Closed"
-                    param: registry.addTableParam(MemoryRange.U32, 0x00041030*4, false, false, slots.raw32, axes.ctcNum);
-                    Component.onCompleted: {
-                        param.xLabel = "Num"
-                        param.valueLabel = "Bool"
-                    }
+                    xLabel: "Ctc #"
+                    valueLabel: "Bool"
+                    tableModel: parameters.ctcBClosed
                 }
             }
         }

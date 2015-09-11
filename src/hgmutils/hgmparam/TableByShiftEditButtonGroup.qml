@@ -26,9 +26,9 @@ GroupBox {
                     var first = i + 1
                     var second = i + 2
                     if (!isDownshift) {
-                        return "Shift " + first + "-" + second
+                        return qsTr("Shift %1-%2").arg(first).arg(second)
                     } else {
-                        return "Shift " + second + "-" + first
+                        return qsTr("Shift %1-%2").arg(second).arg(first)
                     }
                 }
                 name: getTitle(index)

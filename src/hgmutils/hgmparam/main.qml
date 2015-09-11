@@ -7,10 +7,39 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
 ApplicationWindow {
-    title: qsTr("CS2 Parameter Editor")
+    id: app
+    title: paramFileIo.name.length === 0 ? programName : paramFileIo.name + " - " + programName
     width: 800
     height: 500
     visible: true
+
+    readonly property string programName: qsTr("CS2 Parameter Editor")
+    property CS2Defaults defaults: CS2Defaults {
+    }
+
+
+    signal connect
+
+    onConnect: {
+        paramLayer.slaveId = targetCmdId.value + ":" + targetResId.value
+        paramLayer.connectSlave()
+    }
+
+    ParamLayer {
+        id: paramLayer
+        addrGran: 4
+        slaveTimeout: 100
+        slaveNvWriteTimeout: 200
+        onConnectSlaveDone: forceSlaveSupportCalPage()
+    }
+
+    JSONParamFile {
+        id: paramFileIo
+        onOpComplete: {
+            if (result !== JSONParamFile.Ok)
+                errorDialog.show(resultString)
+        }
+    }
 
     menuBar: MenuBar {
         property alias fileMenu: fileMenu
@@ -21,7 +50,7 @@ ApplicationWindow {
                 text: qsTr("&Open Parameter File")
                 shortcut: StandardKey.Open
                 onTriggered: {
-                    if(paramLayer.writeCacheDirty)
+                    if (paramLayer.writeCacheDirty)
                         paramOverwriteDialog.show()
                     else
                         paramLoadFileDialog.open()
@@ -31,7 +60,7 @@ ApplicationWindow {
                 text: qsTr("&Save Parameter File")
                 shortcut: StandardKey.Save
                 onTriggered: {
-                    if(paramFileIo.exists)
+                    if (paramFileIo.exists)
                         paramFileIo.write(paramLayer.saveableData())
                     else
                         paramSaveFileDialog.open()
@@ -43,67 +72,179 @@ ApplicationWindow {
                     paramSaveFileDialog.open()
                 }
             }
-            MenuSeparator { }
+
+            MenuSeparator {
+            }
+
+            MenuItem {
+                id: saveReadOnly
+                text: qsTr("Save read-only data")
+                checkable: true
+            }
+
+            MenuSeparator {
+            }
+
             MenuItem {
                 text: qsTr("E&xit")
                 shortcut: StandardKey.Quit
                 onTriggered: Qt.quit()
             }
         }
+
+        Menu {
+            title: qsTr("Edit")
+
+            MenuItem {
+                id: unitsMenu
+                text: qsTr("Use Metric Units")
+                checkable: true
+            }
+        }
+
         Menu {
             id: helpMenu
             title: qsTr("&Help")
             MenuItem {
                 text: qsTr("&Contents")
-                onTriggered: { helpDialog.show() }
+                onTriggered: {
+                    helpDialog.show()
+                }
                 shortcut: StandardKey.HelpContents
             }
             MenuItem {
                 text: qsTr("&About")
-                onTriggered: { aboutDialog.show() }
+                onTriggered: {
+                    aboutDialog.show()
+                }
             }
         }
     }
 
-    MainForm {
-        id: mainForm
+    toolBar: ColumnLayout {
         anchors.fill: parent
-        intfcOpen: paramLayer.intfcOk
-        slaveConnected: paramLayer.slaveConnected
-        paramBusy: !paramLayer.idle
-        paramWriteCacheDirty: paramLayer.writeCacheDirty
-        paramFilePath: paramFileIo.name
-        progressValue: paramLayer.opProgress
-        onUserConnectParam: {
-            paramLayer.slaveId = targetCmdId + ":" + targetResId
-            paramLayer.connectSlave()
+
+        RowLayout {
+            Layout.topMargin: 5
+            anchors.left: parent.left
+            anchors.right: parent.right
+            spacing: 0
+
+            InterfaceChooser {
+                id: interfaceChooser
+                Layout.fillWidth: true
+                enabled: !paramLayer.intfcOk
+            }
+
+            BitRateChooser {
+                id: bitRateChooser
+                Layout.fillWidth: true
+                enabled: !paramLayer.intfcOk
+            }
+
+            HexEntryField {
+                id: targetCmdId
+                Layout.fillWidth: true
+                title: qsTr("Target Command ID")
+                value: defaults.targetCmdId
+                enabled: !paramLayer.slaveConnected
+            }
+
+            HexEntryField {
+                id: targetResId
+                Layout.fillWidth: true
+                title: qsTr("Target Response ID")
+                value: defaults.targetResId
+                enabled: !paramLayer.slaveConnected
+            }
         }
-        onUserDownloadParam: paramLayer.download()
-        onUserUploadParam: paramLayer.upload()
-        onUserNvWriteParam: paramLayer.nvWrite()
-        onUserDisconnectParam: paramLayer.disconnectSlave()
-        onUserShowParamEdit: paramWindow.show()
-        targetCmdId: "18FCD403"
-        targetResId: "18FCD4F9"
+
+        GroupBox {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            RowLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: intfcOpenButton
+                    text: qsTr("Open")
+                    onClicked: {
+                        if (interfaceChooser.uri !== "")
+                            paramLayer.intfcUri = interfaceChooser.uri.replace(
+                                        /bitrate=[0-9]*/,
+                                        "bitrate=" + bitRateChooser.bps.toString(
+                                            ))
+                    }
+                    enabled: !paramLayer.intfcOk
+                             && interfaceChooser.uri !== ""
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: intfcCloseButton
+                    text: qsTr("Close")
+                    onClicked: {
+                        paramLayer.intfcUri = ""
+                    }
+                    enabled: paramLayer.intfcOk && !paramLayer.slaveConnected
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: paramConnectButton
+                    text: qsTr("Connect")
+                    onClicked: app.connect()
+                    enabled: paramLayer.intfcOk && !paramLayer.slaveConnected
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: paramUploadButton
+                    text: qsTr("Read")
+                    onClicked: paramLayer.upload()
+                    enabled: paramLayer.slaveConnected && paramLayer.idle
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: paramDownloadButton
+                    text: qsTr("Write")
+                    onClicked: paramLayer.download()
+                    enabled: paramLayer.slaveConnected && paramLayer.idle
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: paramNvWriteButton
+                    text: qsTr("Save")
+                    onClicked: paramLayer.nvWrite()
+                    enabled: paramLayer.slaveConnected && paramLayer.idle
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    id: paramDisconnectButton
+                    text: qsTr("Disconnect")
+                    onClicked: paramLayer.disconnectSlave()
+                    enabled: paramLayer.slaveConnected
+                }
+            }
+        }
+    }
+
+    statusBar: ProgressBar {
+        id: progressBar
+        anchors.fill: parent
+        value: paramLayer.opProgress
+    }
+
+    ParamTabView {
+        id: paramTabView
+        anchors.fill: parent
         registry: paramLayer.registry
-    }
-
-    ParamLayer {
-        id: paramLayer
-        intfcUri: mainForm.intfcUri
-        addrGran: 4
-        slaveTimeout: 100
-        slaveNvWriteTimeout: 200
-        onConnectSlaveDone: forceSlaveSupportCalPage()
-    }
-
-    ParamFile {
-        id: paramFileIo
-        type: ParamFile.Json
-        onOpComplete: {
-            if(result !== ParamFile.Ok)
-                errorDialog.show(resultString)
-        }
+        useMetricUnits: unitsMenu.checked
     }
 
     MessageDialog {
@@ -130,7 +271,7 @@ ApplicationWindow {
         id: paramOverwriteDialog
         title: qsTr("Message")
         standardButtons: StandardButton.Yes | StandardButton.Cancel
-        text: "Some parameters have not yet been downloaded to the device. Are you sure you want to load new ones?"
+        text: qsTr("Some parameters have not yet been saved. Are you sure you want to load new ones?")
 
         function show() {
             visible = true
@@ -147,29 +288,44 @@ ApplicationWindow {
     }
 
     FileDialog {
-        property string filePath
         id: paramLoadFileDialog
         title: qsTr("Load Parameter File")
         modality: Qt.NonModal
-        nameFilters: [ "JSON files (*.json)", "All files (*)" ]
+        nameFilters: defaults.parameterFilenameFilters
+        folder: shortcuts.home
+        selectExisting: true
+
+        property string filePath
+
         onAccepted: {
+            paramSaveFileDialog.folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramLayer.setRawData(paramFileIo.read())
         }
-        selectExisting: true
     }
 
     FileDialog {
-        property string filePath
         id: paramSaveFileDialog
         title: qsTr("Save Parameter File")
         modality: Qt.NonModal
-        nameFilters: [ "JSON files (*.json)", "All files (*)" ]
-        onAccepted: {
-            paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            paramFileIo.write(paramLayer.saveableRawData())
-        }
+        nameFilters: defaults.parameterFilenameFilters
+        folder: shortcuts.home
         selectExisting: false
+
+        property string filePath
+
+        onAccepted: {
+            paramLoadFileDialog.folder = folder
+            paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
+            if(saveReadOnly)
+            {
+                paramFileIo.write(paramLayer.saveableRawData())
+            }
+            else
+            {
+                paramFileIo.write(paramLayer.rawData())
+            }
+        }
     }
 
     AboutDialog {
@@ -178,5 +334,8 @@ ApplicationWindow {
 
     HelpDialog {
         id: helpDialog
+    }
+
+    Splash {
     }
 }

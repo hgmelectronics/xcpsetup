@@ -2,6 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
+import jbQuick.Charts 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
@@ -10,6 +11,8 @@ Window {
     title: name
     width: 400
     height: 400
+    minimumWidth: 400
+    minimumHeight: 220 + chartBox.height
 
     property string name
     property string xLabel
@@ -49,98 +52,149 @@ Window {
         }
     }
 
-    RowLayout {
+    SplitView {
         anchors.fill: parent
         anchors.margins: 10
-        spacing: 10
-        Component {
-            id: valueEditDelegate
-            TextInput {
-                color: styleData.textColor
-                anchors.margins: 4
-                text: styleData.value !== undefined ? styleData.value : ""
-                onEditingFinished: model.value = text
-                focus: (styleData.row === tableView.currentRow)
-                onFocusChanged: {
-                    if(focus) {
-                        selectAll()
-                        forceActiveFocus()
-                    }
+        orientation: Qt.Vertical
+        Rectangle {
+            id: chartBox
+            Layout.fillWidth: true
+            Layout.fillHeight: false
+            Layout.minimumWidth: 300
+            Layout.minimumHeight: 150
+            height: 150
+            Chart {
+                id: chart
+                anchors.fill: parent
+                anchors.margins: 10
+                chartAnimated: false
+                chartOptions: ({
+                                   pointDot: false,
+                                   bezierCurve: false,
+                              })
+                chartType: Charts.ChartType.SCATTER
+
+                property ModelListProxy xProxy: ModelListProxy {
+                    source: tableModel
+                    roleName: "x"
+                    onListChanged: chart.chartDataChanged()
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        tableView.currentRow = styleData.row
-                        tableView.selection.clear()
-                        tableView.selection.select(styleData.row)
-                    }
+                property ModelListProxy valueProxy: ModelListProxy {
+                    source: tableModel
+                    roleName: "value"
+                    onListChanged: chart.chartDataChanged()
                 }
+
+                chartData: ({
+                                x: xProxy.list,
+                                datasets: [
+                                    {
+                                        fillColor: "rgba(151,187,205,0.5)",
+                                        strokeColor: "rgba(151,187,205,1)",
+                                        pointColor: "rgba(151,187,205,1)",
+                                        pointStrokeColor: "#ffffff",
+                                        data: valueProxy.list
+                                    }
+                                ]
+                            })
             }
         }
 
-        TableView {
-            id: tableView
-            TableViewColumn {
-                role: "x"
-                title: root.xLabel
-                width: tableView.viewport.width / tableView.columnCount
-            }
-            TableViewColumn {
-                role: "value"
-                title: root.valueLabel
-                delegate: valueEditDelegate
-                width: tableView.viewport.width / tableView.columnCount
-            }
-            model: root.tableModel
-            selectionMode: SelectionMode.ExtendedSelection
-            Layout.margins: 10
+        RowLayout {
+            Layout.fillWidth: true
             Layout.fillHeight: true
-        }
-
-        ColumnLayout {
-            Layout.margins: 10
-            Layout.fillHeight: true
+            Layout.minimumWidth: 300
+            Layout.minimumHeight: 200
             spacing: 10
-            Button {
-                Layout.fillWidth: true
-                text: "Steeper"
-                onClicked: scaleAbout(steeperFlatterRatio, arrayAverage())
+            Component {
+                id: valueEditDelegate
+                TextInput {
+                    color: styleData.textColor
+                    anchors.margins: 4
+                    text: styleData.value !== undefined ? styleData.value : ""
+                    onEditingFinished: model.value = text
+                    focus: (styleData.row === tableView.currentRow)
+                    onFocusChanged: {
+                        if(focus) {
+                            selectAll()
+                            forceActiveFocus()
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: {
+                            tableView.currentRow = styleData.row
+                            tableView.selection.clear()
+                            tableView.selection.select(styleData.row)
+                        }
+                    }
+                }
             }
-            Button {
-                Layout.fillWidth: true
-                text: "Flatter"
-                onClicked: scaleAbout(1 / steeperFlatterRatio, arrayAverage())
+
+            TableView {
+                id: tableView
+                TableViewColumn {
+                    role: "x"
+                    title: root.xLabel
+                    width: tableView.viewport.width / tableView.columnCount
+                }
+                TableViewColumn {
+                    role: "value"
+                    title: root.valueLabel
+                    delegate: valueEditDelegate
+                    width: tableView.viewport.width / tableView.columnCount
+                }
+                model: root.tableModel
+                selectionMode: SelectionMode.ExtendedSelection
+                Layout.margins: 10
+                Layout.fillHeight: true
             }
-            Button {
-                Layout.fillWidth: true
-                text: "Increase All"
-                onClicked: offset(increaseDecreaseDelta, arrayAverage())
-            }
-            Button {
-                Layout.fillWidth: true
-                text: "Decrease All"
-                onClicked: offset(-increaseDecreaseDelta, arrayAverage())
-            }
-            Button {
-                Layout.fillWidth: true
-                text: "Increase Selected"
-                enabled: tableView.selection.count > 0
-                onClicked: tableView.selection.forEach(
-                               function(rowIndex) {
-                                   valueArray.set(rowIndex, clampValue(valueArray.get(rowIndex) + increaseDecreaseDelta))
-                               }
-                           )
-            }
-            Button {
-                Layout.fillWidth: true
-                text: "Decrease Selected"
-                enabled: tableView.selection.count > 0
-                onClicked: tableView.selection.forEach(
-                               function(rowIndex) {
-                                   valueArray.set(rowIndex, clampValue(valueArray.get(rowIndex) - increaseDecreaseDelta))
-                               }
-                           )
+
+            ColumnLayout {
+                Layout.margins: 10
+                Layout.fillHeight: true
+                spacing: 10
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Steeper")
+                    onClicked: scaleAbout(steeperFlatterRatio, arrayAverage())
+                }
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Flatter")
+                    onClicked: scaleAbout(1 / steeperFlatterRatio, arrayAverage())
+                }
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Increase All")
+                    onClicked: offset(increaseDecreaseDelta, arrayAverage())
+                }
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Decrease All")
+                    onClicked: offset(-increaseDecreaseDelta, arrayAverage())
+                }
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Increase Selected")
+                    enabled: tableView.selection.count > 0
+                    onClicked: tableView.selection.forEach(
+                                   function(rowIndex) {
+                                       valueArray.set(rowIndex, clampValue(valueArray.get(rowIndex) + increaseDecreaseDelta))
+                                   }
+                               )
+                }
+                Button {
+                    Layout.fillWidth: true
+                    text: qsTr("Decrease Selected")
+                    enabled: tableView.selection.count > 0
+                    onClicked: tableView.selection.forEach(
+                                   function(rowIndex) {
+                                       valueArray.set(rowIndex, clampValue(valueArray.get(rowIndex) - increaseDecreaseDelta))
+                                   }
+                               )
+                }
             }
         }
     }

@@ -56,7 +56,6 @@ signals:
     void programmingDone(int result);
     void resetDone(int result);
 
-    void never();
 public slots:
     void startProgramming();
 

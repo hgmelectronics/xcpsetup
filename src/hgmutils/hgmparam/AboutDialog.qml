@@ -5,7 +5,7 @@ import QtQuick.Window 2.2
 
 Window {
     id: aboutDialog
-    title: "About HGMFlash"
+    title: qsTr("About HGMParam")
 
     width: aboutForm.implicitWidth + 20
     height: aboutForm.implicitHeight + 20
@@ -30,10 +30,10 @@ Window {
                 Label {
                     font.pixelSize: 18
                     Layout.fillWidth: true
-                    text: "HGMFlash 1.0"
+                    text: qsTr("HGMFlash 1.0")
                 }
                 Label {
-                    text: "Copyright \u00A9 2015<br>HGM Automotive Electronics Inc."
+                    text: qsTr("Copyright \u00A9 2015<br>HGM Automotive Electronics Inc.")
                 }
             }
             Image {
@@ -57,7 +57,7 @@ Window {
         }
         Button {
             anchors.right: parent.right
-            text: "Close"
+            text: qsTr("Close")
             isDefault: true
             onClicked: aboutDialog.visible = false
         }

@@ -6,10 +6,11 @@
         <file>HelpDialog.qml</file>
         <file>Slots.qml</file>
         <file>ScalarParamEdit.qml</file>
-        <file>Axes.qml</file>
         <file>TableParamEdit.qml</file>
         <file>TableParamView.qml</file>
         <file>EncodingParamEdit.qml</file>
         <file>ParamTabView.qml</file>
+        <file>Parameters.qml</file>
+        <file>ParamId.qml</file>
     </qresource>
 </RCC>
