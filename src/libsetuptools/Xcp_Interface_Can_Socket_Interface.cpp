@@ -285,7 +285,7 @@ OpResult Interface::setRxTimeout(quint32 usec)
         if(setsockopt(mSocket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)))
             return OpResult::IntfcConfigError;
     }
-    if(fcntl(mSocket, F_SETFL, O_NONBLOCK))
+    if(fcntl(mSocket, F_SETFL, opts))
         return OpResult::IntfcConfigError;
     return OpResult::Success;
 }
