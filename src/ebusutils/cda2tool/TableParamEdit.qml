@@ -2,19 +2,25 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
 
 ColumnLayout {
+
     property string name
-    property TableParam param
+    property string xLabel
+    property string valueLabel
+    property TableMapperModel tableModel
+
     Label {
         text: name
     }
 
     Component {
         id: valueEditDelegate
-        TextField {
+        TextInput {
+            color: styleData.textColor
             anchors.margins: 4
-            text: styleData.value
+            text: styleData.value !== undefined ? styleData.value : ""
             onEditingFinished: model.value = text
             focus: (styleData.row === tableView.currentRow)
             onFocusChanged: {
@@ -39,15 +45,15 @@ ColumnLayout {
         id: tableView
         TableViewColumn {
             role: "x"
-            title: param.xLabel + ((param.xUnit.length > 0) ? ", " : "") + param.xUnit
-            width: tableView.viewport.width / 2
+            title: xLabel
+            width: tableView.viewport.width / tableView.columnCount
         }
         TableViewColumn {
             role: "value"
-            title: param.valueLabel + ((param.valueUnit.length > 0) ? ", " : "") + param.valueUnit
+            title: valueLabel
             delegate: valueEditDelegate
-            width: tableView.viewport.width / 2
+            width: tableView.viewport.width / tableView.columnCount
         }
-        model: param.stringModel
+        model: tableModel
     }
 }

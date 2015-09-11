@@ -46,7 +46,8 @@ SOURCES += \
     TransposeProxyModel.cpp \
     TableMapperModel.cpp \
     ModelListProxy.cpp \
-    JSONParamFile.cpp
+    JSONParamFile.cpp \
+    Xcp_Interface_Can_Socket_Interface.cpp
 
 HEADERS += \
     util.h \
@@ -80,11 +81,13 @@ HEADERS += \
     TransposeProxyModel.h \
     TableMapperModel.h \
     ModelListProxy.h \
-    JSONParamFile.h
+    JSONParamFile.h \
+    Xcp_Interface_Can_Socket_Interface.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
+    DEFINES += SOCKETCAN
 }
 
 win32 {
