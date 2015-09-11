@@ -53,6 +53,12 @@ void Param::setWriteCacheDirty(bool dirty)
     return mBaseRange->setWriteCacheDirty(dirty);
 }
 
+void Param::resetCaches()
+{
+    Q_ASSERT(mBaseRange);
+    mBaseRange->resetCaches();
+}
+
 void Param::onRangeValidChanged()
 {
     emit validChanged();
