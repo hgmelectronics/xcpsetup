@@ -54,7 +54,6 @@ public:
     virtual OpResult clearReceived();
     virtual OpResult setBitrate(int bps);                           //!< Set the bitrate used on the interface
     virtual OpResult setFilter(Filter filt);                     //!< Set the CAN filter used on the interface
-    virtual OpResult setPacketLog(bool enable);
     virtual bool hasReliableTx();
 private:
     OpResult doSetFilter(const Filter & filt);
@@ -65,9 +64,7 @@ private:
     static constexpr quint32 MAX_RECV_FRAMES = 1024;
 
     int mSocket;
-    boost::optional<SlaveId> mSlaveAddr;
     Filter mFilter;
-    bool mPacketLog;
 };
 
 QList<QSerialPortInfo> getPortsAvail();

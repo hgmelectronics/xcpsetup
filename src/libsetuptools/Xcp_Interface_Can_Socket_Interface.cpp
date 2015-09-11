@@ -19,14 +19,12 @@ namespace Socket {
 
 Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mSocket(-1),
-    mPacketLog(false)
+    mSocket(-1)
 {}
 
 Interface::Interface(QString ifName, QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mSocket(-1),
-    mPacketLog(false)
+    mSocket(-1)
 {
     setup(ifName);
 }
@@ -90,6 +88,7 @@ OpResult Interface::connect(SlaveId addr)
 {
     if(mSocket < 0)
         return OpResult::InvalidOperation;
+
     OpResult res = doSetFilter(ExactFilter(addr.res));
     if(res == OpResult::Success)
     {
@@ -244,12 +243,6 @@ OpResult Interface::setFilter(Filter filt)
     return doSetFilter(filt);
 }
 
-OpResult Interface::setPacketLog(bool enable)
-{
-    mPacketLogEnabled = enable;
-    return OpResult::Success;
-}
-
 bool Interface::hasReliableTx()
 {
     return true;
@@ -370,14 +363,12 @@ namespace Socket {
 
 Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mSocket(-1),
-    mPacketLog(false)
+    mSocket(-1)
 {}
 
 Interface::Interface(QString ifName, QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mSocket(-1),
-    mPacketLog(false)
+    mSocket(-1)
 {}
 
 Interface::~Interface() {
