@@ -15,8 +15,8 @@ class Param : public QObject
 
     Q_PROPERTY(bool saveable MEMBER saveable)
     Q_PROPERTY(QString key MEMBER key)
-    Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
-    Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
+    Q_PROPERTY(bool valid READ valid WRITE setValid NOTIFY validChanged)
+    Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty WRITE setWriteCacheDirty NOTIFY writeCacheDirtyChanged)
     Q_PROPERTY(Slot* slot READ slot CONSTANT)
 
 public:
@@ -24,7 +24,11 @@ public:
     explicit Param(MemoryRange *baseRange, Slot* slot, QObject *parent = nullptr);
 
     bool valid() const;
+    void setValid(bool valid);
+
     bool writeCacheDirty() const;
+    void setWriteCacheDirty(bool dirty);
+
     Slot *slot() const;
 
     virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr) = 0;

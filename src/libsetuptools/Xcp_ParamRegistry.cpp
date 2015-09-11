@@ -187,6 +187,18 @@ void ParamRegistry::resetCaches()
         param->resetCaches();
 }
 
+void ParamRegistry::setValidAll(bool valid)
+{
+    for(Param *param : mParams)
+        param->setValid(valid);
+}
+
+void ParamRegistry::setWriteCacheDirtyAll(bool dirty)
+{
+    for(Param *param : mParams)
+        param->setWriteCacheDirty(dirty);
+}
+
 void ParamRegistry::onTableConnectionChanged()
 {
     emit connectionChanged();
