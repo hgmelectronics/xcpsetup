@@ -4,6 +4,8 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
 #include <linux/can.h>
 #include <linux/can/raw.h>
 #include <unistd.h>
@@ -36,21 +38,25 @@ Interface::~Interface() {
 
 OpResult Interface::setup(QString ifName)
 {
-    struct sockaddr_can intfcSockaddr;
-    memset(&intfcSockaddr, 0, sizeof(intfcSockaddr));
-    {
-        static const QString PREFIX = "can";
-        if(!ifName.startsWith(PREFIX))
-            return OpResult::InvalidArgument;
-        bool indexOk = false;
-        intfcSockaddr.can_ifindex = ifName.right(ifName.length() - PREFIX.length()).toInt(&indexOk);
-        if(!indexOk)
-            return OpResult::InvalidArgument;
-    }
+    QByteArray ifNameArray = ifName.toLocal8Bit();
+    struct ifreq ifr;
+    if(size_t(ifNameArray.size()) >= sizeof(ifr.ifr_name))
+        return OpResult::InvalidArgument;
+    std::copy(ifNameArray.data(), ifNameArray.data() + ifNameArray.size() + 1, ifr.ifr_name);
 
     mSocket = socket(AF_CAN, SOCK_RAW, CAN_RAW);
     if(mSocket < 0)
         return OpResult::IntfcConfigError;
+
+    if(ioctl(mSocket, SIOCGIFINDEX, &ifr))
+    {
+        teardown();
+        return OpResult::IntfcConfigError;
+    }
+
+    struct sockaddr_can intfcSockaddr = {0, 0, 0, 0};
+    intfcSockaddr.can_family = AF_CAN;
+    intfcSockaddr.can_ifindex = ifr.ifr_ifindex;
 
     struct timeval timeout;
     timeout.tv_sec = 0;
@@ -145,6 +151,7 @@ OpResult Interface::transmitTo(const std::vector<quint8> & data, Id id, bool rep
         }
         else if(errno != ENOBUFS)
         {
+            qDebug() << "Error" << errno;
             return OpResult::IntfcIoError;
         }
         else
@@ -298,16 +305,16 @@ QStringList getIntfcsAvail()
     if(ipLinkProc.exitStatus() != QProcess::NormalExit || ipLinkProc.exitCode() != 0)
         return QStringList();
 
-    QRegularExpression canIntfcRegex("[0-9]+: (can[0-9]+):.*");
+    QRegularExpression canIntfcRegex("[0-9]+: (can[0-9]+)[@:].*");
     QList<QString> ifNames;
 
     while(ipLinkProc.bytesAvailable())
     {
         QString line = QString::fromLocal8Bit(ipLinkProc.readLine(1024));
         QRegularExpressionMatch match = canIntfcRegex.match(line);
-        if(match.hasMatch())
+        if(match.hasMatch() && match.lastCapturedIndex() >= 1)
         {
-            QStringRef ifNameRef = match.capturedRef(0);
+            QStringRef ifNameRef = match.capturedRef(1);
             if(!ifNameRef.isNull() && ifNameRef.size() >= 4)
                 ifNames.append(ifNameRef.toString());
         }

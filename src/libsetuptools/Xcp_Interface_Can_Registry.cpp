@@ -15,6 +15,7 @@ QList<QUrl> Registry::avail()
 {
     QList<QUrl> ret;
     ret.append(Elm327::Registry::avail());
+    ret.append(Socket::Registry::avail());
     return ret;
 }
 
