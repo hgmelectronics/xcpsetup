@@ -369,11 +369,11 @@ Interface::Interface(QObject *parent) :
 Interface::Interface(QString ifName, QObject *parent) :
     ::SetupTools::Xcp::Interface::Can::Interface(parent),
     mSocket(-1)
-{}
+{
+    Q_UNUSED(ifName);
+}
 
 Interface::~Interface() {
-    if(mSocket >= 0)
-        close(mSocket);
 }
 
 OpResult Interface::setup(QString ifName)
@@ -429,18 +429,13 @@ OpResult Interface::clearReceived()
 
 OpResult Interface::setBitrate(int bps)
 {
+    Q_UNUSED(bps);
     return OpResult::InvalidOperation;
 }
 
 OpResult Interface::setFilter(Filter filt)
 {
     Q_UNUSED(filt);
-    return OpResult::InvalidOperation;
-}
-
-OpResult Interface::setPacketLog(bool enable)
-{
-    Q_UNUSED(enable);
     return OpResult::InvalidOperation;
 }
 
@@ -462,11 +457,13 @@ QList<QUrl> Registry::avail()
 
 Interface *Registry::make(QUrl uri)
 {
+    Q_UNUSED(uri);
     return nullptr;
 }
 
 QString Registry::desc(QUrl uri)
 {
+    Q_UNUSED(uri);
     return QString("");
 }
 
