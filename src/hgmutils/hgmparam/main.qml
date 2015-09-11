@@ -229,6 +229,19 @@ ApplicationWindow {
         enabled: paramLayer.slaveConnected
     }
 
+    Action {
+        id: enableAllParametersAction
+        text: qsTr("Enable all parameters")
+        onTriggered: paramLayer.registry.setValidAll(true)
+    }
+
+    Action {
+        id: disableAllParametersAction
+        text: qsTr("Disable all parameters")
+        onTriggered: paramLayer.registry.setValidAll(false)
+    }
+
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -245,6 +258,16 @@ ApplicationWindow {
             }
             MenuItem {
                 action: quitAction
+            }
+        }
+
+        Menu {
+            title: qsTr("Edit")
+            MenuItem {
+                action: enableAllParametersAction
+            }
+            MenuItem {
+                action: disableAllParametersAction
             }
         }
 

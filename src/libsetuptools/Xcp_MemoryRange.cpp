@@ -14,7 +14,7 @@ MemoryRange::MemoryRange(MemoryRangeType type, Xcp::XcpPtr base, quint32 size, b
     mAddrGran(addrGran),
     mWritable(writable),
     mType(type),
-    mValid(true),
+    mValid(false),
     mFullReload(true),
     mWriteCacheDirty(false)
 {}
