@@ -58,7 +58,7 @@ ApplicationWindow {
         }
         onDownloadUint32Done: {
             if(result !== OpResult.Success) {
-                messageDialog.show("Download failed: " + OpResult.asString(result))
+                messageDialog.show("Download failed: %1".arg(OpResult.asString(result)))
             }
         }
     }

@@ -71,15 +71,15 @@ ApplicationWindow {
         intfcUri: mainForm.intfcUri
         onProgrammingDone: {
             if(result === OpResult.Success)
-                messageDialog.show("Programming complete")
+                messageDialog.show(qsTr("Programming complete"))
             else
-                errorDialog.show("Programming failed: " + OpResult.asString(result))
+                errorDialog.show(qsTr("Programming failed: %1").arg(OpResult.asString(result)))
         }
         onResetDone: {
             if(result === OpResult.Success)
-                messageDialog.show("Reset complete")
+                messageDialog.show(qsTr("Reset complete"))
             else
-                errorDialog.show("Reset failed: " + OpResult.asString(result))
+                errorDialog.show(qsTr("Reset failed: %1").arg(OpResult.asString(result)))
         }
     }
 
