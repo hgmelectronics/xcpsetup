@@ -31,10 +31,10 @@ QtObject {
     readonly property ArrayParam cbtmTabTempArray: registry.addArrayParam(MemoryRange.S32, paramId.cbtmTabTemp, cbtmTabAxisModel.count, false, false, slots.ltcTemp)
     property TableMapperModel cbtmTabTemp: TableMapperModel { mapping: { "x" : cbtmTabAxisModel, "value": cbtmTabTempArray.stringModel } }
 
-    readonly property ArrayParam cbtmDischArray: registry.addArrayParam(MemoryRange.S32, paramId.cbtmDisch, cbtmBoardAxisModel.count, true, false, slots.raw32)
+    readonly property ArrayParam cbtmDischArray: registry.addArrayParam(MemoryRange.S32, paramId.cbtmDisch, cbtmBoardAxisModel.count, true, false, slots.raw32hex)
     property TableMapperModel cbtmDisch: TableMapperModel { mapping: { "x" : cbtmBoardAxisModel, "value": cbtmDischArray.stringModel } }
 
-    readonly property ArrayParam cbtmStatusArray: registry.addArrayParam(MemoryRange.S32, paramId.cbtmStatus, cbtmBoardAxisModel.count, false, false, slots.raw32)
+    readonly property ArrayParam cbtmStatusArray: registry.addArrayParam(MemoryRange.S32, paramId.cbtmStatus, cbtmBoardAxisModel.count, false, false, slots.raw32hex)
     property TableMapperModel cbtmStatus: TableMapperModel { mapping: { "x" : cbtmBoardAxisModel, "value": cbtmStatusArray.stringModel } }
 
     readonly property ScalarParam ctcMaxSimulPickup: registry.addScalarParam(MemoryRange.S32, paramId.ctcMaxSimulPickup, true, true, slots.raw32)

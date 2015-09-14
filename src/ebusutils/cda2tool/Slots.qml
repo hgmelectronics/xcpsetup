@@ -11,6 +11,15 @@ Item {
         unit: ""
         precision: 0
     }
+    property LinearSlot raw32hex: LinearSlot {
+        rawA: -0x7FFFFFFF
+        engrA: -0x7FFFFFFF
+        rawB: 0x7FFFFFFF
+        engrB: 0x7FFFFFFF
+        unit: ""
+        precision: 0
+        base: 16
+    }
     property LinearSlot ltcCellv: LinearSlot {
         rawA: 0
         engrA: 0
