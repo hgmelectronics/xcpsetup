@@ -4,7 +4,9 @@ QT += qml quick widgets serialport
 
 SOURCES += main.cpp
 
+
 RESOURCES += qml.qrc \
+    $$PWD/../qml/com/hgmelectronics/utils/hgmutils.qrc \
     $$PWD/../../qml/jbQuick/Charts/qchart.qrc
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
@@ -18,7 +20,9 @@ static {
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+QML_IMPORT_PATH += \
+$$PWD/../../qml \
+$$PWD/../qml
 
 # Default rules for deployment.
 include(deployment.pri)
@@ -41,4 +45,6 @@ DEPENDPATH += $$PWD/../../libsetuptools
 
 HEADERS +=
 
-win32:RC_ICONS += hgmflash.ico
+
+win32:RC_ICONS += ../qml/com/hgmelectronics/utils/hgmutils.ico
+

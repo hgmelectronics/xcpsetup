@@ -11,34 +11,16 @@ GroupBox {
         anchors.fill: parent
         editable: true
         implicitWidth: 80
-        model: ListModel {
-            id: bitrateItems
-            ListElement {
-                text: "125"
-                bps: 125000
-            }
-            ListElement {
-                text: "250"
-                bps: 250000
-            }
-            ListElement {
-                text: "500"
-                bps: 500000
-            }
-            ListElement {
-                text: "1000"
-                bps: 1000000
-            }
-        }
+        model: ["125", "250", "500", "1000"]
 
-        validator: DoubleValidator {
+        validator: IntValidator {
             bottom: 10
             top: 1000
         }
 
         onCurrentIndexChanged: {
             if (currentIndex >= 0)
-                box.bps = bitrateItems.get(currentIndex).bps
+                box.bps = model[currentIndex] * 1000
         }
 
         onAccepted: {

@@ -5,7 +5,10 @@ import QtQuick.Window 2.2
 
 Window {
     id: aboutDialog
-    title: qsTr("About HGMParam")
+    property string programName;
+    property string programVersion;
+
+    title: "About %1".arg(programName)
 
     width: aboutForm.implicitWidth + 20
     height: aboutForm.implicitHeight + 20
@@ -30,7 +33,7 @@ Window {
                 Label {
                     font.pixelSize: 18
                     Layout.fillWidth: true
-                    text: qsTr("HGMFlash 1.0")
+                    text: "%1 %2".arg(programName).arg(programVersion)
                 }
                 Label {
                     text: qsTr("Copyright \u00A9 2015<br>HGM Automotive Electronics Inc.")

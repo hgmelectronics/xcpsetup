@@ -2,8 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MainForm.qml</file>
-        <file>AboutDialog.qml</file>
         <file>HelpDialog.qml</file>
-        <file>hgmlogo-about.png</file>
     </qresource>
 </RCC>

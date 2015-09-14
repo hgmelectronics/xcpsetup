@@ -1,0 +1,9 @@
+module com.hgmelectronics.utils
+
+AboutDialog         1.0 AboutDialog.qml
+BitRateChooser      1.0 BitRateChooser.qml
+CS2Defaults         1.0 CS2Defaults.qml
+HexEntryField       1.0 HexEntryField.qml
+InterfaceChooser    1.0 InterfaceChooser.qml
+Splash              1.0 Splash.qml
+

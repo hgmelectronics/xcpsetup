@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/com/hgmelectronics/utils">
+        <file>hgm logo.svg</file>
+        <file>hgmlogo-about.png</file>
+        <file>AboutDialog.qml</file>
+        <file>COMPUSHIFT logo.svg</file>
+        <file>hgmutils.ico</file>
+        <file>Splash.qml</file>
+        <file>qmldir</file>
+        <file>BitRateChooser.qml</file>
+        <file>HexEntryField.qml</file>
+        <file>InterfaceChooser.qml</file>
+        <file>CS2Defaults.qml</file>
+    </qresource>
+</RCC>

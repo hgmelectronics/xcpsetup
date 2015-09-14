@@ -5,20 +5,21 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.utils 1.0
 
 ApplicationWindow {
-    id: app
+    id: application
+
+    readonly property string programName: qsTr("COMPUSHIFT Parameter Editor")
+    readonly property string programVersion: "1.1"
+    property alias useMetricUnits: paramTabView.useMetricUnits
+    property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
+    property CS2Defaults cs2Defaults: CS2Defaults {
+                                      }
     title: paramFileIo.name.length === 0 ? programName : "%1 - %2".arg(paramFileIo.name).arg(programName)
     width: 800
     height: 500
     visible: true
-
-    readonly property string programName: qsTr("COMPUSHIFT Parameter Editor")
-
-    property CS2Defaults cs2Defaults: CS2Defaults {
-                                      }
-    property alias useMetricUnits: paramTabView.useMetricUnits
-    property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
 
     signal connect
 
@@ -193,7 +194,7 @@ ApplicationWindow {
         id: paramConnectAction
         text: qsTr("Connect")
         tooltip: qsTr("Connects to the COMPUSHIFT")
-        onTriggered: app.connect()
+        onTriggered: application.connect()
         enabled: paramLayer.intfcOk && !paramLayer.slaveConnected
     }
 
@@ -408,6 +409,8 @@ ApplicationWindow {
 
     AboutDialog {
         id: aboutDialog
+        programName: application.programName
+        programVersion: application.programVersion
     }
 
     HelpDialog {
