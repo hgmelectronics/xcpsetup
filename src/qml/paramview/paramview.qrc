@@ -5,5 +5,6 @@
         <file>TablePlot.qml</file>
         <file>XYTrace.qml</file>
         <file>qmldir</file>
+        <file>TableParam.qml</file>
     </qresource>
 </RCC>

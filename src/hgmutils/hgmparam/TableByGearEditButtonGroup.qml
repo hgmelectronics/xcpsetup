@@ -12,8 +12,7 @@ GroupBox {
     property alias count: repeater.model
     property string xLabel
     property string valueLabel
-    property var valueArray
-    property var tableModel
+    property var tableParam
 
     id: groupBox
     Row {
@@ -26,8 +25,7 @@ GroupBox {
                     return qsTr("Gear %1").arg(i+1)
                 }
                 name: getTitle(index)
-                valueArray: groupBox.valueArray[index]
-                tableModel: groupBox.tableModel[index]
+                tableParam: groupBox.tableParam[index]
                 xLabel: groupBox.xLabel
                 valueLabel: groupBox.valueLabel
             }
