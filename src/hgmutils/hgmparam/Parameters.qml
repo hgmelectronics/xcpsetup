@@ -1,7 +1,7 @@
 import QtQuick 2.5
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
-import paramview 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 QtObject {
     id: parameters

@@ -6,7 +6,7 @@ SOURCES += main.cpp
 
 RESOURCES += qml.qrc \
     $$PWD/../qml/com/hgmelectronics/utils/hgmutils.qrc \
-    $$PWD/../../qml/paramview/paramview.qrc
+    $$PWD/../../qml/com/hgmelectronics/setuptools/setuptools.qrc
 
 QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 

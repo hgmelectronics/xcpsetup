@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/com/hgmelectronics/setuptools">
+        <file>ui/QChart.js</file>
+        <file>ui/QChart.qml</file>
+        <file>ui/TablePlot.qml</file>
+        <file>ui/XYTrace.qml</file>
+        <file>ui/qmldir</file>
+        <file>qmldir</file>
+        <file>TableParam.qml</file>
+    </qresource>
+</RCC>

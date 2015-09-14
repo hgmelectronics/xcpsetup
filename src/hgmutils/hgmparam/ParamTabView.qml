@@ -5,6 +5,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 Item {
     id: root
@@ -83,6 +84,13 @@ Item {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
+
+                TablePlot {
+                    width: 400
+                    height: 200
+                    plots: [
+                    ]
+                }
 
                 TableByShiftEditButtonGroup {
                     title: qsTr("Shift Tables A")
