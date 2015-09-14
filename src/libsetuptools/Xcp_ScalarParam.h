@@ -34,7 +34,6 @@ public:
     virtual bool setSerializableValue(const QVariant &val);
     virtual QVariant getSerializableRawValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
     virtual bool setSerializableRawValue(const QVariant &val);
-    virtual void resetCaches();
 
 signals:
     void valChanged();

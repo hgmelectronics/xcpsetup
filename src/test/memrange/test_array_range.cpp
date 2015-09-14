@@ -179,7 +179,7 @@ void Test::uploadTableSub()
     QCOMPARE(int(mConnFacade->state()), int(Xcp::Connection::State::CalMode));
 
     ArrayMemoryRange *range = qobject_cast<ArrayMemoryRange *>(table->addTableRange(MemoryRange::U32, {base, 0}, value.size(), false));
-    ArrayMemoryRange *subRange = qobject_cast<ArrayMemoryRange *>(table->addTableRange(MemoryRange::U32, {base + sizeof(quint32) / ag, 0}, value.size() - 2, false));
+    ArrayMemoryRange *subRange = qobject_cast<ArrayMemoryRange *>(table->addTableRange(MemoryRange::U32, {base + quint32(sizeof(quint32)) / ag, 0}, value.size() - 2, false));
     QVERIFY(range != nullptr);
     QVERIFY(subRange != nullptr);
     QSignalSpy rangeSpy(range, &ArrayMemoryRange::dataChanged);
