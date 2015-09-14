@@ -18,7 +18,7 @@ ApplicationWindow {
                                       }
     title: paramFileIo.name.length === 0 ? programName : "%1 - %2".arg(paramFileIo.name).arg(programName)
     width: 800
-    height: 500
+    height: 600
     visible: true
 
     signal connect
