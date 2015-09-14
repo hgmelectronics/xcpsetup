@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
-import jbQuick.Charts 1.0
+import paramview 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
@@ -63,40 +63,16 @@ Window {
             Layout.minimumWidth: 300
             Layout.minimumHeight: 150
             height: 150
-            Chart {
-                id: chart
+
+            TablePlot {
+                id: plot
                 anchors.fill: parent
                 anchors.margins: 10
-                chartAnimated: false
-                chartOptions: ({
-                                   pointDot: false,
-                                   bezierCurve: false,
-                              })
-                chartType: Charts.ChartType.SCATTER
-
-                property ModelListProxy xProxy: ModelListProxy {
-                    source: tableModel
-                    roleName: "x"
-                    onListChanged: chart.chartDataChanged()
-                }
-                property ModelListProxy valueProxy: ModelListProxy {
-                    source: tableModel
-                    roleName: "value"
-                    onListChanged: chart.chartDataChanged()
-                }
-
-                chartData: ({
-                                x: xProxy.list,
-                                datasets: [
-                                    {
-                                        fillColor: "rgba(151,187,205,0.5)",
-                                        strokeColor: "rgba(151,187,205,1)",
-                                        pointColor: "rgba(151,187,205,1)",
-                                        pointStrokeColor: "#ffffff",
-                                        data: valueProxy.list
-                                    }
-                                ]
-                            })
+                plots: [
+                    XYTrace {
+                        tableModel: root.tableModel
+                    }
+                ]
             }
         }
 

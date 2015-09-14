@@ -1410,20 +1410,20 @@ var Chart = function(canvas, context) {
             var iRow, iDataset;
 
             function xPos(dataSet,iteration) {
-                return yAxisPosX + calculateOffset(data.datasets[dataSet].xData[iteration], calculatedXScale, xScaleHop)
+                return yAxisPosX + calculateOffset(data[dataSet].xData[iteration], calculatedXScale, xScaleHop)
             }
 
             function yPos(dataSet,iteration) {
-                return xAxisPosY - animPc * calculateOffset(data.datasets[dataSet].yData[iteration], calculatedYScale, yScaleHop);
+                return xAxisPosY - animPc * calculateOffset(data[dataSet].yData[iteration], calculatedYScale, yScaleHop);
             }
 
-            for (iDataset = 0; iDataset < data.datasets.length; iDataset++) {
-                ctx.strokeStyle = data.datasets[iDataset].strokeColor;
+            for (iDataset = 0; iDataset < data.length; iDataset++) {
+                ctx.strokeStyle = data[iDataset].strokeColor;
                 ctx.lineWidth = config.datasetStrokeWidth;
                 ctx.beginPath();
-                ctx.moveTo(yAxisPosX, xAxisPosY - animPc * calculateOffset(data.datasets[iDataset].yData[0],calculatedYScale,yScaleHop))
+                ctx.moveTo(yAxisPosX, xAxisPosY - animPc * calculateOffset(data[iDataset].yData[0],calculatedYScale,yScaleHop))
 
-                for (iRow = 1; iRow < data.datasets[iDataset].yData.length; iRow++) {
+                for (iRow = 1; iRow < data[iDataset].yData.length; iRow++) {
                     if (config.bezierCurve)
                         ctx.bezierCurveTo(xPos(iDataset, iRow-0.5), yPos(iDataset, iRow-1), xPos(iDataset, iRow-0.5), yPos(iDataset, iRow),xPos(iDataset, iRow), yPos(iDataset, iRow));
                     else
@@ -1433,22 +1433,22 @@ var Chart = function(canvas, context) {
                 ctx.stroke();
 
                 if (config.datasetFill) {
-                    ctx.lineTo(xPos(iDataset, data.datasets[iDataset].yData.length-1), xAxisPosY);
+                    ctx.lineTo(xPos(iDataset, data[iDataset].yData.length-1), xAxisPosY);
                     ctx.lineTo(yAxisPosX, xAxisPosY);
                     ctx.closePath();
-                    ctx.fillStyle = data.datasets[iDataset].fillColor;
+                    ctx.fillStyle = data[iDataset].fillColor;
                     ctx.fill();
                 } else {
                     ctx.closePath();
                 }
 
                 if (config.pointDot) {
-                    ctx.fillStyle = data.datasets[iDataset].pointColor;
-                    ctx.strokeStyle = data.datasets[iDataset].pointStrokeColor;
+                    ctx.fillStyle = data[iDataset].pointColor;
+                    ctx.strokeStyle = data[iDataset].pointStrokeColor;
                     ctx.lineWidth = config.pointDotStrokeWidth;
-                    for (iRow = 0; iRow < data.datasets[iDataset].yData.length; iRow++) {
+                    for (iRow = 0; iRow < data[iDataset].yData.length; iRow++) {
                         ctx.beginPath();
-                        ctx.arc(xPos(iDataset, iRow),xAxisPosY - animPc * calculateOffset(data.datasets[iDataset].yData[iRow], calculatedYScale, yScaleHop), config.pointDotRadius, 0, Math.PI*2, true);
+                        ctx.arc(xPos(iDataset, iRow),xAxisPosY - animPc * calculateOffset(data[iDataset].yData[iRow], calculatedYScale, yScaleHop), config.pointDotRadius, 0, Math.PI*2, true);
                         ctx.fill();
                         ctx.stroke();
                     }
@@ -1563,10 +1563,10 @@ var Chart = function(canvas, context) {
             var upperValue = Number.MIN_VALUE;
             var lowerValue = Number.MAX_VALUE;
 
-            for (var i=0; i<data.datasets.length; i++) {
-                for (var j=0; j<data.datasets[i].yData.length; j++) {
-                    if ( data.datasets[i].yData[j] > upperValue) { upperValue = data.datasets[i].yData[j] };
-                    if ( data.datasets[i].yData[j] < lowerValue) { lowerValue = data.datasets[i].yData[j] };
+            for (var i=0; i<data.length; i++) {
+                for (var j=0; j<data[i].yData.length; j++) {
+                    if ( data[i].yData[j] > upperValue) { upperValue = data[i].yData[j] };
+                    if ( data[i].yData[j] < lowerValue) { lowerValue = data[i].yData[j] };
                 }
             };
 
@@ -1586,15 +1586,15 @@ var Chart = function(canvas, context) {
             var upperValue = Number.MIN_VALUE;
             var lowerValue = Number.MAX_VALUE;
 
-            for (var i=0; i<data.datasets.length; i++) {
-                for (var j=0; j<data.datasets[i].xData.length; j++) {
-                    if ( data.datasets[i].xData[j] > upperValue) { upperValue = data.datasets[i].xData[j] };
-                    if ( data.datasets[i].xData[j] < lowerValue) { lowerValue = data.datasets[i].xData[j] };
+            for (var i=0; i<data.length; i++) {
+                for (var j=0; j<data[i].xData.length; j++) {
+                    if ( data[i].xData[j] > upperValue) { upperValue = data[i].xData[j] };
+                    if ( data[i].xData[j] < lowerValue) { lowerValue = data[i].xData[j] };
                 }
             };
 
-            var maxSteps = Math.floor(((width - config.scaleFontSize * 5) / approxLabelWidth * 1.5));
-            var minSteps = Math.floor(((width - config.scaleFontSize * 5) / approxLabelWidth * 0.5));
+            var maxSteps = Math.floor(((width - config.scaleFontSize * 5) / widestXLabel * 1.5));
+            var minSteps = Math.floor(((width - config.scaleFontSize * 5) / widestXLabel * 0.5));
 
             return {
                 maxValue: upperValue,

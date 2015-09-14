@@ -43,7 +43,7 @@ public:
     void setRoleName(QString roleName);
     void setShape(int shape);
 signals:
-    listChanged();
+    void listChanged();
 public slots:
     void onSourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
     void onSourceLayoutChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint);
