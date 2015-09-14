@@ -8,10 +8,9 @@ import com.hgmelectronics.setuptools 1.0
 
 Button {
     id: button
-    enabled: table.valueArray.range.valid
+    enabled: table.tableParam.value.range.valid
     property alias name: button.text
-    property alias valueArray: table.valueArray
-    property alias tableModel: table.tableModel
+    property alias tableParam: table.tableParam
     property alias valueLabel: table.valueLabel
     property alias xLabel: table.xLabel
 
