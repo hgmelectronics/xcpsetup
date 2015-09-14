@@ -6,9 +6,16 @@ import QtQuick.Dialogs 1.2
 import com.hgmelectronics.utils.cs2tool 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.utils 1.0
+
 
 ApplicationWindow {
-    title: qsTr("HGM Flash Tool")
+    id: application
+
+    readonly property string programName: qsTr("HGM Flash Tool")
+    readonly property string programVersion: "1.1"
+
+    title: programName
     width: 400
     height: 300
     visible: true
@@ -20,6 +27,7 @@ ApplicationWindow {
             title: qsTr("&File")
             MenuItem {
                 text: qsTr("Open &Program")
+                shortcut: StandardKey.Open
                 onTriggered: mainForm.selectProg()
             }
             MenuSeparator { }
@@ -34,9 +42,8 @@ ApplicationWindow {
             title: qsTr("&Help")
             MenuItem {
                 text: qsTr("&Contents")
-                onTriggered: { helpDialog.show() }
                 shortcut: StandardKey.HelpContents
-            }
+                onTriggered: helpDialog.show()             }
             MenuItem {
                 text: qsTr("&About")
                 onTriggered: { aboutDialog.show() }
@@ -105,9 +112,15 @@ ApplicationWindow {
 
     AboutDialog {
         id: aboutDialog
+        programName: application.programName
+        programVersion: application.programVersion
     }
 
     HelpDialog {
         id: helpDialog
     }
+
+    Splash {
+    }
+
 }

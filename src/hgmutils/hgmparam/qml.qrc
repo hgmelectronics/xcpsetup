@@ -1,9 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>AboutDialog.qml</file>
         <file>HelpDialog.qml</file>
-        <file>hgmlogo-about.png</file>
         <file>ParamTabView.qml</file>
         <file>Slots.qml</file>
         <file>ScalarParamEdit.qml</file>
@@ -17,11 +15,5 @@
         <file>TableParamEditButton.qml</file>
         <file>TableByGearEditButtonGroup.qml</file>
         <file>TableByShiftEditButtonGroup.qml</file>
-        <file>COMPUSHIFT logo.svg</file>
-        <file>Splash.qml</file>
-        <file>HexEntryField.qml</file>
-        <file>InterfaceChooser.qml</file>
-        <file>BitRateChooser.qml</file>
-        <file>CS2Defaults.qml</file>
     </qresource>
 </RCC>

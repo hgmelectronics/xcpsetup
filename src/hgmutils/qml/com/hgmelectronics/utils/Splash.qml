@@ -44,12 +44,13 @@ import QtQuick.Window 2.1
 //! [splash-properties]
 Window {
     id: splash
+    property int timeoutInterval: 500
+
     color: "transparent"
     title: "Splash Window"
     modality: Qt.ApplicationModal
     flags: Qt.SplashScreen
     visible: true
-    property int timeoutInterval: 500
     signal timeout
     x: (Screen.width - splashImage.width) / 2
     y: (Screen.height - splashImage.height) / 2
