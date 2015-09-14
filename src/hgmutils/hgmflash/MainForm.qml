@@ -43,7 +43,7 @@ ColumnLayout {
 
         Label {
             font.pixelSize: 14
-            text: "Interface"
+            text: qsTr("Interface")
         }
 
         RowLayout {
@@ -53,12 +53,11 @@ ColumnLayout {
             spacing: 5
             ComboBox {
                 id: intfcComboBox
+                property string selectedUri
                 model: registry.avail
                 textRole: "text"
                 visible: true
                 Layout.fillWidth: true
-
-                property string selectedUri
                 selectedUri: (count > 0 && currentIndex < count) ? model[currentIndex].uri : ""
             }
 
@@ -106,7 +105,7 @@ ColumnLayout {
                 text: qsTr("Open")
                 onClicked: {
                     if(intfcComboBox.selectedUri !== "") {
-                        root.intfcUri = intfcComboBox.selectedUri.replace(/bitrate=[0-9]*/, "bitrate=" + bitrateComboBox.bps.toString())
+                        root.intfcUri = intfcComboBox.selectedUri.replace(/bitrate=[0-9]*/, "bitrate=%1".arg(bitrateComboBox.bps))
                         intfcOpenButton.enabled = false
                     }
                 }
@@ -179,7 +178,7 @@ ColumnLayout {
         spacing: 5
         Label {
             font.pixelSize: 14
-            text: "Program"
+            text: qsTr("Program")
         }
 
         FileDialog {

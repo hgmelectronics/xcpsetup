@@ -21,7 +21,7 @@ GroupBox {
         minimumValue: param.slot.engrA
         maximumValue: param.slot.engrB
         decimals: param.slot.precision
-        suffix: param.slot.unit.length != 0 ? " " + param.slot.unit : ""
+        suffix: param.slot.unit.length != 0 ? " %1".arg(param.slot.unit) : ""
         value: param.floatVal
         onEditingFinished: param.floatVal = value
     }
