@@ -3,7 +3,7 @@ import QtQuick.Controls 1.4
 import com.hgmelectronics.setuptools.xcp 1.0
 
 GroupBox {
-    title: "Inteface"
+    title: "Interface"
     property alias uri: comboBox.selectedUri
 
     InterfaceRegistry {
