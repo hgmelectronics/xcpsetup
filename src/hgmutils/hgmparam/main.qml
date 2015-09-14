@@ -8,7 +8,7 @@ import com.hgmelectronics.setuptools 1.0
 
 ApplicationWindow {
     id: app
-    title: paramFileIo.name.length === 0 ? programName : paramFileIo.name + " - " + programName
+    title: paramFileIo.name.length === 0 ? programName : "%1 - %2".arg(paramFileIo.name).arg(programName)
     width: 800
     height: 500
     visible: true
@@ -23,7 +23,7 @@ ApplicationWindow {
     signal connect
 
     onConnect: {
-        paramLayer.slaveId = targetCmdId.value + ":" + targetResId.value
+        paramLayer.slaveId = "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
         paramLayer.connectSlave()
     }
 
@@ -174,7 +174,7 @@ ApplicationWindow {
             if (interfaceChooser.uri !== "")
                 paramLayer.intfcUri = interfaceChooser.uri.replace(
                             /bitrate=[0-9]*/,
-                            "bitrate=" + bitRateChooser.bps.toString())
+                            "bitrate=%1".arg(bitRateChooser.bps))
         }
         enabled: !paramLayer.intfcOk && interfaceChooser.uri !== ""
     }
