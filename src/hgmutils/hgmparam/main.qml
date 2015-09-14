@@ -85,7 +85,7 @@ ApplicationWindow {
         shortcut: StandardKey.Open
         onTriggered: {
             if (paramLayer.writeCacheDirty) {
-                paramOverwriteDialog.show()
+                paramOverwriteDialog.open()
             } else {
                 paramFileDialog.load()
             }
