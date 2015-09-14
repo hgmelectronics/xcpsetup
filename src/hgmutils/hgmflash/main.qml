@@ -8,92 +8,380 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.utils 1.0
 
-
 ApplicationWindow {
     id: application
 
-    readonly property string programName: qsTr("HGM Flash Tool")
-    readonly property string programVersion: "1.1"
+    property string programName: qsTr("HGM Flash Tool")
+    property string programVersion: "1.1"
+
+    property FlashProg progFileData
+
+    property alias targetCmdId: cs2Tool.slaveCmdId
+    property alias targetResId: cs2Tool.slaveResId
+    property string intfcUri: ""
 
     title: programName
-    width: 400
-    height: 300
     visible: true
-
-    menuBar: MenuBar {
-        property alias fileMenu: fileMenu
-        Menu {
-            id: fileMenu
-            title: qsTr("&File")
-            MenuItem {
-                text: qsTr("Open &Program")
-                shortcut: StandardKey.Open
-                onTriggered: mainForm.selectProg()
-            }
-            MenuSeparator { }
-            MenuItem {
-                text: qsTr("E&xit")
-                shortcut: StandardKey.Quit
-                onTriggered: Qt.quit()
-            }
-        }
-        Menu {
-            id: helpMenu
-            title: qsTr("&Help")
-            MenuItem {
-                text: qsTr("&Contents")
-                shortcut: StandardKey.HelpContents
-                onTriggered: helpDialog.show()             }
-            MenuItem {
-                text: qsTr("&About")
-                onTriggered: { aboutDialog.show() }
-            }
-        }
-    }
-
-    MainForm {
-        id: mainForm
-        anchors.fill: parent
-        toolReadyProg: cs2Tool.programOk && cs2Tool.intfcOk && cs2Tool.progReady
-        toolReadyReset: cs2Tool.intfcOk && cs2Tool.progReady
-        toolBusy: !cs2Tool.idle
-        progBaseText: cs2Tool.programData ? "0x00000000".substr(0, 10 - cs2Tool.programBase.toString(16).length) + cs2Tool.programBase.toString(16).toUpperCase() : ""
-        progSizeText: cs2Tool.programData ? cs2Tool.programSize.toString(10) : ""
-        progCksumText: cs2Tool.programData ? "0x00000000".substr(0, 10 - cs2Tool.programCksum.toString(16).length) + cs2Tool.programCksum.toString(16).toUpperCase() : ""
-        progressValue: cs2Tool.progress
-        onUserStartProg: cs2Tool.startProgramming()
-        onUserResetProg: cs2Tool.startReset()
-        targetCmdId: cs2Tool.slaveCmdId
-        targetResId: cs2Tool.slaveResId
-
-        onTargetChanged: {
-            cs2Tool.slaveCmdId = targetCmdId
-            cs2Tool.slaveResId = targetResId
-        }
-    }
 
     Cs2Tool {
         id: cs2Tool
-        programData: mainForm.progFileData
-        intfcUri: mainForm.intfcUri
+        programData: application.progFileData
+        intfcUri: application.intfcUri
         onProgrammingDone: {
-            if(result === OpResult.Success)
+            if (result === OpResult.Success)
                 messageDialog.show(qsTr("Programming complete"))
             else
-                errorDialog.show(qsTr("Programming failed: %1").arg(OpResult.asString(result)))
+                errorDialog.show(qsTr("Programming failed: %1").arg(
+                                     OpResult.asString(result)))
         }
         onResetDone: {
-            if(result === OpResult.Success)
+            if (result === OpResult.Success)
                 messageDialog.show(qsTr("Reset complete"))
             else
-                errorDialog.show(qsTr("Reset failed: %1").arg(OpResult.asString(result)))
+                errorDialog.show(qsTr("Reset failed: %1").arg(
+                                     OpResult.asString(result)))
+        }
+    }
+
+    FileDialog {
+        id: progFileDialog
+        property string filePath
+
+        title: qsTr("Select program file")
+        modality: Qt.NonModal
+        nameFilters: ["S-record files (*.srec)", "All files (*)"]
+        folder: shortcuts.home
+        onAccepted: {
+            filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
+            if (selectedNameFilter == "S-record files (*.srec)")
+                application.progFileData = ProgFile.readSrec(filePath)
+            else
+                application.progFileData = ProgFile.readSrec(
+                            filePath) // default to S-record
+        }
+    }
+
+    Action {
+        id: openProgramAction
+        text: qsTr("Open &Program")
+        shortcut: StandardKey.Open
+        onTriggered: progFileDialog.open()
+    }
+
+    Action {
+        id: exitAction
+        text: qsTr("E&xit")
+        shortcut: StandardKey.Quit
+        onTriggered: Qt.quit()
+    }
+
+    Action {
+        id: helpContentsAction
+        text: qsTr("&Contents")
+        shortcut: StandardKey.HelpContents
+        onTriggered: helpDialog.show()
+    }
+
+    Action {
+        id: helpAboutAction
+        text: qsTr("&About")
+        onTriggered: aboutDialog.show()
+    }
+
+    Action {
+        id: intfcOpenAction
+        text: qsTr("Open")
+        enabled: !cs2Tool.intfcOk
+        onTriggered: {
+            if (intfcComboBox.selectedUri !== "") {
+                application.intfcUri = intfcComboBox.selectedUri.replace(
+                            /bitrate=[0-9]*/,
+                            "bitrate=%1".arg(bitrateComboBox.bps))
+            }
+        }
+    }
+
+    Action {
+        id: intfcCloseAction
+        text: qsTr("Close")
+        onTriggered: {
+            application.intfcUri = ""
+        }
+        enabled: cs2Tool.intfcOk && cs2Tool.idle
+    }
+
+    Action {
+        id: progStartAction
+        text: qsTr("Start")
+        onTriggered: cs2Tool.startProgramming()
+        enabled: cs2Tool.programOk && cs2Tool.intfcOk && cs2Tool.progReady
+                 && cs2Tool.idle
+    }
+
+    Action {
+        id: progResetAction
+        text: qsTr("Reset Target")
+        onTriggered: cs2Tool.startReset()
+        enabled: cs2Tool.intfcOk && cs2Tool.progReady && cs2Tool.idle
+    }
+
+    menuBar: MenuBar {
+        Menu {
+            title: qsTr("&File")
+            MenuItem {
+                action: openProgramAction
+            }
+            MenuSeparator {
+            }
+            MenuItem {
+                action: exitAction
+            }
+        }
+        Menu {
+            title: qsTr("&Help")
+            MenuItem {
+                action: helpContentsAction
+            }
+            MenuItem {
+                action: helpAboutAction
+            }
+        }
+    }
+
+    ColumnLayout {
+        id: root
+        anchors.fill: parent
+        anchors.margins: 5
+        spacing: 0
+
+        InterfaceRegistry {
+            id: registry
+        }
+
+        GroupBox {
+            title: qsTr("Interface")
+            anchors.left: parent.left
+            anchors.right: parent.right
+            ColumnLayout {
+                anchors.fill: parent
+
+                RowLayout {
+                    id: intfcConfigRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: 5
+                    ComboBox {
+                        id: intfcComboBox
+                        property string selectedUri
+                        model: registry.avail
+                        textRole: "text"
+                        visible: true
+                        Layout.fillWidth: true
+                        selectedUri: (count > 0
+                                      && currentIndex < count) ? model[currentIndex].uri : ""
+                    }
+
+                    ComboBox {
+                        property int bps
+                        id: bitrateComboBox
+                        editable: true
+                        implicitWidth: 80
+                        model: ["125", "250", "500", "1000"]
+                        validator: IntValidator {
+                            bottom: 10
+                            top: 1000
+                        }
+                        onCurrentIndexChanged: {
+                            if (currentIndex >= 0)
+                                bps = parseFloat(model[currentIndex]) * 1000
+                        }
+                        onAccepted: {
+                            bps = parseFloat(editText) * 1000
+                        }
+                        Component.onCompleted: {
+                            currentIndex = find("500")
+                        }
+                    }
+
+                    Label {
+                        text: qsTr("kbps")
+                    }
+                }
+
+                RowLayout {
+                    id: intfcActionRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        action: intfcOpenAction
+                    }
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        action: intfcCloseAction
+                    }
+                }
+            }
+        }
+        GroupBox {
+            title: qsTr("Target")
+            anchors.left: parent.left
+            anchors.right: parent.right
+            ColumnLayout {
+                anchors.fill: parent
+
+                RowLayout {
+                    id: targetConfigRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    Label {
+                        text: qsTr("Command ID")
+                    }
+                    TextField {
+                        id: targetCmdIdField
+                        text: targetCmdId
+                        validator: RegExpValidator {
+                            regExp: /[0-9A-Fa-f]{1,8}/
+                        }
+                        onAccepted: {
+                            targetCmdId = text
+                            application.targetChanged()
+                        }
+                    }
+
+                    Label {
+                        text: qsTr("Response ID")
+                    }
+                    TextField {
+                        id: targetResIdField
+                        text: targetResId
+                        validator: RegExpValidator {
+                            regExp: /[0-9A-Fa-f]{1,8}/
+                        }
+                        onAccepted: {
+                            targetResId = text
+                            application.targetChanged()
+                        }
+                    }
+                }
+            }
+        }
+        GroupBox {
+            title: qsTr("Program")
+            anchors.left: parent.left
+            anchors.right: parent.right
+            ColumnLayout {
+                anchors.fill: parent
+                RowLayout {
+                    id: progRow1
+                    spacing: 10
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    TextField {
+                        id: progFileNameField
+                        text: progFileDialog.filePath
+                        readOnly: true
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                    }
+                }
+
+                RowLayout {
+                    id: progRow2
+                    spacing: 10
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    RowLayout {
+                        spacing: 5
+
+                        Label {
+                            text: qsTr("Base")
+                        }
+                        TextField {
+                            id: progBaseField
+                            readOnly: true
+                            implicitWidth: 90
+                            text: cs2Tool.programData ? "0x00000000".substr(
+                                                            0,
+                                                            10 - cs2Tool.programBase.toString(
+                                                                16).length)
+                                                        + cs2Tool.programBase.toString(
+                                                            16).toUpperCase(
+                                                            ) : ""
+                        }
+                    }
+
+                    RowLayout {
+                        spacing: 5
+
+                        Label {
+                            text: qsTr("Size")
+                        }
+                        TextField {
+                            id: progSizeField
+                            readOnly: true
+                            implicitWidth: 70
+                            text: cs2Tool.programData ? cs2Tool.programSize.toString(
+                                                            10) : ""
+                        }
+                    }
+
+                    RowLayout {
+                        spacing: 5
+
+                        Label {
+                            text: qsTr("CRC")
+                        }
+                        TextField {
+                            id: progCksumField
+                            readOnly: true
+                            implicitWidth: 90
+                            text: cs2Tool.programData ? "0x00000000".substr(
+                                                            0,
+                                                            10 - cs2Tool.programCksum.toString(
+                                                                16).length)
+                                                        + cs2Tool.programCksum.toString(
+                                                            16).toUpperCase(
+                                                            ) : ""
+                        }
+                    }
+                }
+
+                RowLayout {
+                    id: progActionRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        action: progStartAction
+                    }
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        action: progResetAction
+                    }
+                }
+            }
+        }
+    }
+    statusBar: StatusBar {
+        ProgressBar {
+            id: progressBar
+            anchors.fill: parent
+            value: cs2Tool.progress
         }
     }
 
     MessageDialog {
         id: errorDialog
         title: qsTr("Error")
-
+        icon: StandardIcon.Warning
         function show(caption) {
             errorDialog.text = caption
             errorDialog.open()
@@ -103,7 +391,7 @@ ApplicationWindow {
     MessageDialog {
         id: messageDialog
         title: qsTr("Message")
-
+        icon: StandardIcon.Information
         function show(caption) {
             messageDialog.text = caption
             messageDialog.open()
@@ -122,5 +410,4 @@ ApplicationWindow {
 
     Splash {
     }
-
 }

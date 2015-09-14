@@ -20,7 +20,7 @@ GroupBox {
 
         onCurrentIndexChanged: {
             if (currentIndex >= 0)
-                box.bps = model[currentIndex] * 1000
+                box.bps = parseFloat(model[currentIndex]) * 1000
         }
 
         onAccepted: {
