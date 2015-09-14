@@ -20,24 +20,12 @@ QChart {
     function replot() {
         var newChartData = []
         for(var i = 0; i < plots.length; ++i) {
+            var baseColor = plots[i].baseColor
             newChartData.push({
-                               fillColor: Qt.rgba(plots[i].baseColor[0]/255,
-                                               plots[i].baseColor[1]/255,
-                                               plots[i].baseColor[2]/255,
-                                               0.5),
-                               strokeColor: Qt.rgba(plots[i].baseColor[0]/255,
-                                               plots[i].baseColor[1]/255,
-                                               plots[i].baseColor[2]/255,
-                                               1.0),
-                               pointColor: Qt.rgba(plots[i].baseColor[0]/255,
-                                               plots[i].baseColor[1]/255,
-                                               plots[i].baseColor[2]/255,
-                                               1.0),
-                               pointStrokeColor: Qt.lighter(
-                                                     Qt.rgba(plots[i].baseColor[0]/255,
-                                                         plots[i].baseColor[1]/255,
-                                                         plots[i].baseColor[2]/255,
-                                                         1.0)),
+                               fillColor: Qt.rgba(baseColor.r, baseColor.g, baseColor.b, baseColor.a * 0.5),
+                               strokeColor: baseColor,
+                               pointColor: baseColor,
+                               pointStrokeColor: Qt.lighter(baseColor),
                                xData: plots[i].xList,
                                yData: plots[i].valueList
                            })

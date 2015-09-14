@@ -13,7 +13,7 @@ QtObject {
     }
     property var xList: tableXProxy.list
     property var valueList: tableValueProxy.list
-    property var baseColor: [151,187,205]
+    property color baseColor: Qt.rgba(0.6, 0.7, 0.8, 1.0)
     property bool fade: false
     property string text: ""
 
