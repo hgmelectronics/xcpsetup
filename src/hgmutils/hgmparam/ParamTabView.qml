@@ -89,8 +89,7 @@ Item {
                 TableByShiftEditButtonGroup {
                     title: qsTr("Shift Tables A")
                     count: 5
-                    valueArray: parameters.shiftTablesAArray
-                    tableModel: parameters.shiftTablesA
+                    tableParam: parameters.shiftTablesA
                     xLabel: qsTr("Throttle")
                     valueLabel: qsTr("Speed")
                 }
@@ -98,8 +97,7 @@ Item {
                 TableByShiftEditButtonGroup {
                     title: qsTr("Shift Tables B")
                     count: 5
-                    valueArray: parameters.shiftTablesBArray
-                    tableModel: parameters.shiftTablesB
+                    tableParam: parameters.shiftTablesB
                     xLabel: qsTr("Throttle")
                     valueLabel: qsTr("Speed")
                 }
@@ -131,8 +129,7 @@ Item {
                 TableByGearEditButtonGroup {
                     title: qsTr("Shift Pressure A")
                     count: 6
-                    valueArray: parameters.pressureTablesAArray
-                    tableModel: parameters.pressureTablesA
+                    tableParam: parameters.pressureTablesA
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("%")
                 }
@@ -140,8 +137,7 @@ Item {
                 TableByGearEditButtonGroup {
                     title: qsTr("Shift Pressure B")
                     count: 6
-                    valueArray: parameters.pressureTablesBArray
-                    tableModel: parameters.pressureTablesB
+                    tableParam: parameters.pressureTablesB
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("%")
                 }
@@ -151,8 +147,7 @@ Item {
                     count: 5
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("%")
-                    valueArray: parameters.transmissionUpshiftApplyPercentageArray
-                    tableModel: parameters.transmissionUpshiftApplyPercentage
+                    tableParam: parameters.transmissionUpshiftApplyPercentage
                 }
 
                 TableByShiftEditButtonGroup {
@@ -162,8 +157,7 @@ Item {
 
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("%")
-                    valueArray: parameters.transmissionDownshiftApplyPercentageArray
-                    tableModel: parameters.transmissionDownshiftApplyPercentage
+                    tableParam: parameters.transmissionDownshiftApplyPercentage
                 }
 
                 GroupBox {
@@ -174,16 +168,14 @@ Item {
                             name: qsTr("Pressure")
                             xLabel: qsTr("Shift")
                             valueLabel: qsTr("%")
-                            valueArray: parameters.transmissionShiftPrefillPercentageArray
-                            tableModel: parameters.transmissionShiftPrefillPercentage
+                            tableParam: parameters.transmissionShiftPrefillPercentage
                         }
 
                         TableParamEditButton {
                             name: qsTr("Time")
                             xLabel: qsTr("Shift")
                             valueLabel: qsTr("ms")
-                            valueArray: parameters.transmissionShiftPrefillTimeArray
-                            tableModel: parameters.transmissionShiftPrefillTime
+                            tableParam: parameters.transmissionShiftPrefillTime
                         }
                     }
                 }
@@ -193,8 +185,7 @@ Item {
                     count: 6
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("%")
-                    valueArray: parameters.transmissionMainPercentageArray
-                    tableModel: parameters.transmissionMainPercentage
+                    tableParam: parameters.transmissionMainPercentage
                 }
             }
         }
@@ -212,8 +203,7 @@ Item {
                     count: 5
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("Pressure")
-                    valueArray: parameters.transmissionUpshiftApplyPressureArray
-                    tableModel: parameters.transmissionUpshiftApplyPressure
+                    tableParam: parameters.transmissionUpshiftApplyPressure
                 }
 
                 TableByShiftEditButtonGroup {
@@ -221,8 +211,7 @@ Item {
                     count: 5
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("Pressure")
-                    valueArray: parameters.transmissionUpshiftApplyPressureArray
-                    tableModel: parameters.transmissionUpshiftApplyPressure
+                    tableParam: parameters.transmissionUpshiftApplyPressure
                 }
 
                 TableByShiftEditButtonGroup {
@@ -232,8 +221,7 @@ Item {
 
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("Pressure")
-                    valueArray: parameters.transmissionDownshiftApplyPressureArray
-                    tableModel: parameters.transmissionDownshiftApplyPressure
+                    tableParam: parameters.transmissionDownshiftApplyPressure
                 }
 
                 GroupBox {
@@ -244,16 +232,14 @@ Item {
                             name: qsTr("Pressure")
                             xLabel: qsTr("Shift")
                             valueLabel: qsTr("Pressure")
-                            valueArray: parameters.transmissionShiftPrefillPressureArray
-                            tableModel: parameters.transmissionShiftPrefillPressure
+                            tableParam: parameters.transmissionShiftPrefillPressure
                         }
 
                         TableParamEditButton {
                             name: qsTr("Time")
                             xLabel: qsTr("Shift")
                             valueLabel: qsTr("ms")
-                            valueArray: parameters.transmissionShiftPrefillTimeArray
-                            tableModel: parameters.transmissionShiftPrefillTime
+                            tableParam: parameters.transmissionShiftPrefillTime
                         }
                     }
                 }
@@ -263,8 +249,7 @@ Item {
                     count: 6
                     xLabel: qsTr("Torque")
                     valueLabel: qsTr("Pressure")
-                    valueArray: parameters.transmissionMainPressureArray
-                    tableModel: parameters.transmissionMainPressure
+                    tableParam: parameters.transmissionMainPressure
                 }
             }
         }
@@ -277,6 +262,7 @@ Item {
                 spacing: 10
                 Button {
                     text: "PWM Drivers"
+                    enabled: parameters.controllerPWMDriverFrequency.range.valid
                     onClicked: {
                         pwmDriversWindow.visible = true
                     }
@@ -300,7 +286,7 @@ Item {
 //                    name: qsTr("Switch Monitor Input")
 //                    xLabel: qsTr("Switch #")
 //                    valueLabel: qsTr("State")
-//                    tableModel: parameters.switchMonitorModel
+//                    tableParam: parameters.switchMonitorModel
 //                    enabled: parameters.switchMonitorInput.valid
 //                }
 //            }

@@ -22,7 +22,7 @@ ColumnLayout {
             text: styleData.value !== undefined ? styleData.value : ""
 
             onEditingFinished: {
-                model[getColumn(styleData.column).role] = text
+                model[styleData.role] = text
             }
 
             onFocusChanged: {
@@ -31,6 +31,7 @@ ColumnLayout {
                     forceActiveFocus()
                 }
             }
+
             onAccepted: {
                 if (focus)
                     selectAll()

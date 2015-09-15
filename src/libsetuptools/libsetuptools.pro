@@ -77,12 +77,12 @@ HEADERS += \
     EncodingSlot.h \
     Xcp_ArrayMemoryRange.h \
     Xcp_ArrayParam.h \
-    SlotArrayModel.h \
     TransposeProxyModel.h \
     TableMapperModel.h \
     ModelListProxy.h \
     JSONParamFile.h \
-    Xcp_Interface_Can_Socket_Interface.h
+    Xcp_Interface_Can_Socket_Interface.h \
+    SlotArrayModel.h
 
 unix {
     target.path = /usr/lib

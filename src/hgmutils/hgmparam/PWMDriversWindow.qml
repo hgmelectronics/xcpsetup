@@ -18,8 +18,9 @@ Window {
             color: styleData.textColor
             anchors.margins: 4
             text: styleData.value !== undefined ? styleData.value : ""
+
             onEditingFinished: {
-                model[getColumn(styleData.column).role] = text
+                model[styleData.role] = text
             }
 
             onFocusChanged: {
@@ -28,6 +29,7 @@ Window {
                     forceActiveFocus()
                 }
             }
+
             onAccepted: {
                 if (focus)
                     selectAll()

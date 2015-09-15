@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/paramview">
+        <file>QChart.js</file>
+        <file>QChart.qml</file>
+        <file>TablePlot.qml</file>
+        <file>XYTrace.qml</file>
+        <file>qmldir</file>
+        <file>TableParam.qml</file>
+    </qresource>
+</RCC>

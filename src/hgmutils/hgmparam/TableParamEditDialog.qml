@@ -2,16 +2,16 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
-import jbQuick.Charts 1.0
+import paramview 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
 Window {
     id: root
+
     property alias xLabel: xColumn.title
     property alias valueLabel: valueColumn.title
-    property TableMapperModel tableModel
-    property ArrayParam valueArray
+    property TableParam tableParam
     property double steeperFlatterRatio: 1.1
     property double increaseDecreaseDelta: 1.0
 
@@ -23,31 +23,31 @@ Window {
 
     function arrayAverage() {
         var sum = 0.0;
-        for(var i = 0; i < valueArray.count; ++i) {
-            sum += valueArray.get(i);
+        for(var i = 0; i < tableParam.value.count; ++i) {
+            sum += tableParam.value.get(i);
         }
-        return sum / valueArray.count;
+        return sum / tableParam.value.count;
     }
 
     function clampValue(val) {
-        if(val < valueArray.slot.engrMin)
-            return valueArray.slot.engrMin
-        else if(val > valueArray.slot.engrMax)
-            return valueArray.slot.engrMax
+        if(val < tableParam.value.slot.engrMin)
+            return tableParam.value.slot.engrMin
+        else if(val > tableParam.value.slot.engrMax)
+            return tableParam.value.slot.engrMax
         else
             return val
     }
 
     function scaleAbout(scale, zero) {
-        for(var i = 0; i < valueArray.count; ++i) {
-            var oldDelta = valueArray.get(i) - zero
-            valueArray.set(i, clampValue(oldDelta * scale + zero))
+        for(var i = 0; i < tableParam.value.count; ++i) {
+            var oldDelta = tableParam.value.get(i) - zero
+            tableParam.value.set(i, clampValue(oldDelta * scale + zero))
         }
     }
 
     function offset(delta) {
-        for(var i = 0; i < valueArray.count; ++i) {
-            valueArray.set(i, clampValue(valueArray.get(i) + delta))
+        for(var i = 0; i < tableParam.value.count; ++i) {
+            tableParam.value.set(i, clampValue(tableParam.value.get(i) + delta))
         }
     }
 
@@ -62,40 +62,16 @@ Window {
             Layout.minimumWidth: 300
             Layout.minimumHeight: 150
             height: 150
-            Chart {
-                id: chart
+
+            TablePlot {
+                id: plot
                 anchors.fill: parent
                 anchors.margins: 10
-                chartAnimated: false
-                chartOptions: ({
-                                   pointDot: false,
-                                   bezierCurve: false,
-                              })
-                chartType: Charts.ChartType.SCATTER
-
-                property ModelListProxy xProxy: ModelListProxy {
-                    source: tableModel
-                    roleName: "x"
-                    onListChanged: chart.chartDataChanged()
-                }
-                property ModelListProxy valueProxy: ModelListProxy {
-                    source: tableModel
-                    roleName: "value"
-                    onListChanged: chart.chartDataChanged()
-                }
-
-                chartData: ({
-                                x: xProxy.list,
-                                datasets: [
-                                    {
-                                        fillColor: "rgba(151,187,205,0.5)",
-                                        strokeColor: "rgba(151,187,205,1)",
-                                        pointColor: "rgba(151,187,205,1)",
-                                        pointStrokeColor: "#ffffff",
-                                        data: valueProxy.list
-                                    }
-                                ]
-                            })
+                plots: [
+                    XYTrace {
+                        tableModel: root.tableParam.stringModel
+                    }
+                ]
             }
         }
 
@@ -105,20 +81,31 @@ Window {
             Layout.minimumWidth: 300
             Layout.minimumHeight: 200
             spacing: 10
+
             Component {
                 id: valueEditDelegate
                 TextInput {
+                    id: input
                     color: styleData.textColor
                     anchors.margins: 4
                     text: styleData.value !== undefined ? styleData.value : ""
-                    onEditingFinished: model.value = text
-                    focus: (styleData.row === tableView.currentRow)
+
+                    onEditingFinished: {
+                        model[styleData.role] = text
+                    }
+
                     onFocusChanged: {
-                        if(focus) {
+                        if (focus) {
                             selectAll()
                             forceActiveFocus()
                         }
                     }
+
+                    onAccepted: {
+                        if (focus)
+                            selectAll()
+                    }
+
                     MouseArea {
                         anchors.fill: parent
                         hoverEnabled: true
@@ -126,6 +113,8 @@ Window {
                             tableView.currentRow = styleData.row
                             tableView.selection.clear()
                             tableView.selection.select(styleData.row)
+                            input.selectAll()
+                            input.forceActiveFocus()
                         }
                     }
                 }
@@ -133,8 +122,10 @@ Window {
 
             TableView {
                 id: tableView
+
                 property real columnWidth: viewport.width / columnCount
-                model: root.tableModel
+
+                model: root.tableParam.stringModel
                 selectionMode: SelectionMode.ExtendedSelection
                 Layout.margins: 10
                 Layout.fillHeight: true
@@ -182,7 +173,7 @@ Window {
                     enabled: tableView.selection.count > 0
                     onClicked: tableView.selection.forEach(
                                    function(rowIndex) {
-                                       valueArray.set(rowIndex, clampValue(valueArray.get(rowIndex) + increaseDecreaseDelta))
+                                       tableParam.value.set(rowIndex, clampValue(tableParam.value.get(rowIndex) + increaseDecreaseDelta))
                                    }
                                )
                 }
@@ -192,7 +183,7 @@ Window {
                     enabled: tableView.selection.count > 0
                     onClicked: tableView.selection.forEach(
                                    function(rowIndex) {
-                                       valueArray.set(rowIndex, clampValue(valueArray.get(rowIndex) - increaseDecreaseDelta))
+                                       tableParam.value.set(rowIndex, clampValue(tableParam.value.get(rowIndex) - increaseDecreaseDelta))
                                    }
                                )
                 }
