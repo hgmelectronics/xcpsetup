@@ -7,6 +7,9 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setOrganizationName("HGM Automotive Electronics");
+    app.setOrganizationDomain("hgmelectronics.com");
+    app.setApplicationName("HGM Flash Tool");
 
     QQmlApplicationEngine engine;
 
