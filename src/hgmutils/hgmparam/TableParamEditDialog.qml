@@ -70,6 +70,7 @@ Window {
                 plots: [
                     XYTrace {
                         tableModel: root.tableParam.stringModel
+                        valid: root.tableParam.value.valid
                     }
                 ]
             }

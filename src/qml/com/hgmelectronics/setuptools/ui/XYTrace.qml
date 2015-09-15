@@ -15,6 +15,8 @@ QtObject {
     property var valueList: tableValueProxy.list
     property color baseColor: Qt.rgba(0.6, 0.7, 0.8, 1.0)
     property bool fade: false
+    property bool fill: true
+    property bool valid: true
     property string text: ""
 
     signal plotChanged

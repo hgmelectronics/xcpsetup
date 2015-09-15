@@ -20,21 +20,26 @@ QChart {
     function replot() {
         var newChartData = []
         for(var i = 0; i < plots.length; ++i) {
-            var baseColor = plots[i].baseColor
-            newChartData.push({
-                               fillColor: Qt.rgba(baseColor.r, baseColor.g, baseColor.b, baseColor.a * 0.5),
-                               strokeColor: baseColor,
-                               pointColor: baseColor,
-                               pointStrokeColor: Qt.lighter(baseColor),
-                               xData: plots[i].xList,
-                               yData: plots[i].valueList
-                           })
+            if(plots[i].valid) {
+                var baseColor = plots[i].baseColor
+                var alphaMult = plots[i].fade ? 0.5 : 1
+                var fillAlphaMult = plots[i].fill ? 0.5 : 0
+                newChartData.push({
+                                   fillColor: Qt.rgba(baseColor.r, baseColor.g, baseColor.b, alphaMult * fillAlphaMult * baseColor.a),
+                                   strokeColor: Qt.rgba(baseColor.r, baseColor.g, baseColor.b, alphaMult * baseColor.a),
+                                   pointColor: Qt.rgba(1, 1, 1, alphaMult * baseColor.a),
+                                   pointStrokeColor: Qt.lighter(Qt.rgba(baseColor.r, baseColor.g, baseColor.b, alphaMult * baseColor.a)),
+                                   xData: plots[i].xList,
+                                   yData: plots[i].valueList
+                               })
+            }
         }
         chartData = newChartData
     }
     onPlotsChanged: {
         replot()
         for(var i = 0; i < plots.length; ++i) {
+            plots[i].plotChanged.disconnect(replot)
             plots[i].plotChanged.connect(replot)
         }
     }

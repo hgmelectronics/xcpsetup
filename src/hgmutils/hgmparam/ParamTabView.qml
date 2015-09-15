@@ -89,6 +89,36 @@ Item {
                     width: 400
                     height: 200
                     plots: [
+                        XYTrace {
+                            tableModel: parameters.shiftTablesA[0].stringModel
+                            valid: parameters.shiftTablesA[0].value.valid
+                            baseColor: cs2Defaults.preferredPlotColors[0]
+                            fill: false
+                        },
+                        XYTrace {
+                            tableModel: parameters.shiftTablesA[1].stringModel
+                            valid: parameters.shiftTablesA[1].value.valid
+                            baseColor: cs2Defaults.preferredPlotColors[1]
+                            fill: false
+                        },
+                        XYTrace {
+                            tableModel: parameters.shiftTablesA[2].stringModel
+                            valid: parameters.shiftTablesA[2].value.valid
+                            baseColor: cs2Defaults.preferredPlotColors[2]
+                            fill: false
+                        },
+                        XYTrace {
+                            tableModel: parameters.shiftTablesA[3].stringModel
+                            valid: parameters.shiftTablesA[3].value.valid
+                            baseColor: cs2Defaults.preferredPlotColors[3]
+                            fill: false
+                        },
+                        XYTrace {
+                            tableModel: parameters.shiftTablesA[4].stringModel
+                            valid: parameters.shiftTablesA[4].value.valid
+                            baseColor: cs2Defaults.preferredPlotColors[4]
+                            fill: false
+                        }
                     ]
                 }
 
