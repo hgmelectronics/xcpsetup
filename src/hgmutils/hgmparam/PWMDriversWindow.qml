@@ -43,7 +43,7 @@ Window {
                     tableView.selection.clear()
                     tableView.selection.select(styleData.row)
                     input.selectAll()
-                    input.forceActiveFocus()
+                    input.forceActiveFocus(Qt.MouseFocusReason)
                 }
             }
         }
