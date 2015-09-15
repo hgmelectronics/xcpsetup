@@ -1,0 +1,5 @@
+module paramview
+
+XYTrace 1.0 XYTrace.qml
+TablePlot 1.0 TablePlot.qml
+TableParam 1.0 TableParam.qml

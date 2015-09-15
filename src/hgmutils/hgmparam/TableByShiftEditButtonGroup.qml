@@ -11,8 +11,7 @@ GroupBox {
     property alias count: repeater.model
     property string xLabel
     property string valueLabel
-    property var valueArray
-    property var tableModel
+    property var tableParam
 
     property bool isDownshift: false
 
@@ -32,8 +31,7 @@ GroupBox {
                     }
                 }
                 name: getTitle(index)
-                valueArray: groupBox.valueArray[index]
-                tableModel: groupBox.tableModel[index]
+                tableParam: groupBox.tableParam[index]
                 xLabel: groupBox.xLabel
                 valueLabel: groupBox.valueLabel
             }
