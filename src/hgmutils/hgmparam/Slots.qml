@@ -150,6 +150,8 @@ QtObject {
         ]
     }
 
+
+
     property EncodingSlot gear1: EncodingSlot {
         encodingList: [
             { raw: 0xFF, engr: "I"},
@@ -293,7 +295,8 @@ QtObject {
     property EncodingSlot pwmDriverMode: EncodingSlot {
         encodingList: [
             { raw: 0, engr: "Low side"},
-            { raw: 1, engr: "High side"}
+            { raw: 1, engr: "High side"},
+            { raw: 2, engr: "Both"}
         ]
     }
 
@@ -346,6 +349,18 @@ QtObject {
         engrB: 1E7
         precision: 2
     }
+
+    property LinearSlot frequency: LinearSlot {
+        rawA:0
+        engrA: 0
+        rawB: 1E9
+        engrB: 1E8
+        precision: 1
+        unit: "Hz"
+    }
+
+
+
 
     property EncodingSlot resetDefaults: EncodingSlot {
         encodingList: [

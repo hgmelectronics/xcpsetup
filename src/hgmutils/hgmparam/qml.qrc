@@ -15,5 +15,6 @@
         <file>TableParamEditButton.qml</file>
         <file>TableByGearEditButtonGroup.qml</file>
         <file>TableByShiftEditButtonGroup.qml</file>
+        <file>PWMDriversWindow.qml</file>
     </qresource>
 </RCC>

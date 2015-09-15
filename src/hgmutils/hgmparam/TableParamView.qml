@@ -1,31 +1,31 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
-import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
 ColumnLayout {
-    property string name
-    property string xLabel
-    property string valueLabel
-    property TableMapperModel tableModel
+    property alias name: label.name
+    property alias xLabel: xColumn.title
+    property alias valueLabel: valueColumn.title
+    property alias model: tableView.model
+
     Label {
-        text: name
+        id: label
     }
+
     TableView {
         id: tableView
+        property real columnWidth: viewport.width / columnCount
+
         TableViewColumn {
+            id: xColumn
             role: "x"
-            title: xLabel
-            width: tableView.viewport.width / tableView.columnCount
+            width: tableView.columnWidth
         }
         TableViewColumn {
+            id: valueColumn
             role: "value"
-            title: valueLabel
-            width: tableView.viewport.width / tableView.columnCount
+            width: tableView.columnWidth
         }
-        model: tableModel
     }
 }
-
-

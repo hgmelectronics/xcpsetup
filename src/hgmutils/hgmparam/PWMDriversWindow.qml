@@ -1,17 +1,15 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
-import com.hgmelectronics.setuptools 1.0
+import QtQuick.Window 2.0
 
-ColumnLayout {
-    property alias name: label.name
-    property alias xLabel: xColumn.title
-    property alias valueLabel: valueColumn.title
+Window {
+    id: root
     property alias model: tableView.model
 
-    Label {
-        id: label
-    }
+    title: qsTr("PWM Drivers")
+    width: 400
+    height: 400
 
     Component {
         id: valueEditDelegate
@@ -20,7 +18,6 @@ ColumnLayout {
             color: styleData.textColor
             anchors.margins: 4
             text: styleData.value !== undefined ? styleData.value : ""
-
             onEditingFinished: {
                 model[getColumn(styleData.column).role] = text
             }
@@ -50,20 +47,36 @@ ColumnLayout {
         }
     }
 
+
     TableView {
         id: tableView
-        property real columnWidth: viewport.width / columnCount
+        property real columnWidth: viewport.width / tableView.columnCount
+
+        anchors.fill: parent
+        anchors.margins: 10
 
         TableViewColumn {
-            id: xColumn
             role: "x"
+            title: "Driver"
             width: tableView.columnWidth
         }
         TableViewColumn {
-            id: valueColumn
-            role: "value"
-            delegate: valueEditDelegate
+            role: "frequency"
+            title: "Frequency"
             width: tableView.columnWidth
+            delegate: valueEditDelegate
+        }
+        TableViewColumn {
+            role: "dutyCycle"
+            title: "Duty Cycle"
+            width: tableView.columnWidth
+            delegate: valueEditDelegate
+        }
+        TableViewColumn {
+            role: "mode"
+            title: "Mode"
+            width: tableView.columnWidth
+            delegate: valueEditDelegate
         }
     }
 }

@@ -8,19 +8,18 @@ import com.hgmelectronics.setuptools 1.0
 
 Window {
     id: root
-    title: name
+    property alias xLabel: xColumn.title
+    property alias valueLabel: valueColumn.title
+    property TableMapperModel tableModel
+    property ArrayParam valueArray
+    property double steeperFlatterRatio: 1.1
+    property double increaseDecreaseDelta: 1.0
+
     width: 400
     height: 400
     minimumWidth: 400
     minimumHeight: 220 + chartBox.height
 
-    property string name
-    property string xLabel
-    property string valueLabel
-    property TableMapperModel tableModel
-    property ArrayParam valueArray
-    property double steeperFlatterRatio: 1.1
-    property double increaseDecreaseDelta: 1.0
 
     function arrayAverage() {
         var sum = 0.0;
@@ -134,21 +133,23 @@ Window {
 
             TableView {
                 id: tableView
-                TableViewColumn {
-                    role: "x"
-                    title: root.xLabel
-                    width: tableView.viewport.width / tableView.columnCount
-                }
-                TableViewColumn {
-                    role: "value"
-                    title: root.valueLabel
-                    delegate: valueEditDelegate
-                    width: tableView.viewport.width / tableView.columnCount
-                }
+                property real columnWidth: viewport.width / columnCount
                 model: root.tableModel
                 selectionMode: SelectionMode.ExtendedSelection
                 Layout.margins: 10
                 Layout.fillHeight: true
+
+                TableViewColumn {
+                    id: xColumn
+                    role: "x"
+                    width: tableView.columnWidth
+                }
+                TableViewColumn {
+                    id: valueColumn
+                    role: "value"
+                    delegate: valueEditDelegate
+                    width: tableView.columnWidth
+                }
             }
 
             ColumnLayout {

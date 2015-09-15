@@ -12,14 +12,16 @@ Item {
     property ParamRegistry registry
     anchors.left: parent.left
     anchors.right: parent.right
+
+    Parameters {
+        id: parameters
+        registry: root.registry
+    }
+
     TabView {
         id: tabView
         anchors.fill: parent
 
-        Parameters {
-            id: parameters
-            registry: root.registry
-        }
 
         Tab {
             title: qsTr("Vehicle")
@@ -76,7 +78,7 @@ Item {
         }
 
         Tab {
-            title: qsTr("Shift Tables")
+            title: qsTr("Shift Speeds")
             active: true
 
             Flow {
@@ -117,7 +119,7 @@ Item {
         }
 
         Tab {
-            title: qsTr("Shift Pressure % Tables")
+            title: qsTr("Shift Pressures %")
 
             active: true
 
@@ -198,7 +200,7 @@ Item {
         }
 
         Tab {
-            title: qsTr("Shift Pressure Tables")
+            title: qsTr("Shift Pressures")
             active: true
             Flow {
                 anchors.fill: parent
@@ -263,6 +265,25 @@ Item {
                     valueLabel: qsTr("Pressure")
                     valueArray: parameters.transmissionMainPressureArray
                     tableModel: parameters.transmissionMainPressure
+                }
+            }
+        }
+        Tab {
+            title: qsTr("Internals")
+            enabled: true
+            Flow {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
+                Button {
+                    text: "PWM Drivers"
+                    onClicked: {
+                        pwmDriversWindow.visible = true
+                    }
+                    PWMDriversWindow {
+                        id: pwmDriversWindow
+                        model: parameters.controllerPWMDriverModel
+                    }
                 }
             }
         }
