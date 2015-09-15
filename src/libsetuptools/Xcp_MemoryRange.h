@@ -66,6 +66,8 @@ public:
         return mValid;
     }
 
+    void setValid(bool newValid);
+
     bool fullReload() const
     {
         return mFullReload;
@@ -92,6 +94,8 @@ public:
     {
         return mWriteCacheDirty;
     }
+
+    void setWriteCacheDirty(bool newWriteCacheDirty);
 
     XcpPtr end() const;
 
@@ -124,9 +128,6 @@ protected:
 
     void convertToSlave(QVariant value, quint8 *buf);
     QVariant convertFromSlave(const quint8 *buf);
-
-    void setValid(bool newValid);
-    void setWriteCacheDirty(bool newWriteCacheDirty);
 
 private:
     const Xcp::XcpPtr mBase;

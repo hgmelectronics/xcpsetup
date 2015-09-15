@@ -35,10 +35,22 @@ bool Param::valid() const
     return mBaseRange->valid();
 }
 
+void Param::setValid(bool valid)
+{
+    Q_ASSERT(mBaseRange);
+    mBaseRange->setValid(valid);
+}
+
 bool Param::writeCacheDirty() const
 {
     Q_ASSERT(mBaseRange);
     return mBaseRange->writeCacheDirty();
+}
+
+void Param::setWriteCacheDirty(bool dirty)
+{
+    Q_ASSERT(mBaseRange);
+    return mBaseRange->setWriteCacheDirty(dirty);
 }
 
 void Param::resetCaches()
