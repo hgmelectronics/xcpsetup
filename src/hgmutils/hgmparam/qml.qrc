@@ -15,5 +15,8 @@
         <file>TableParamEditButton.qml</file>
         <file>TableByGearEditButtonGroup.qml</file>
         <file>TableByShiftEditButtonGroup.qml</file>
+        <file>ShiftTableParamEditDialog.qml</file>
+        <file>ShiftTableByShiftEditButtonGroup.qml</file>
+        <file>ShiftTableParamEditButton.qml</file>
     </qresource>
 </RCC>

@@ -47,7 +47,8 @@ SOURCES += \
     TableMapperModel.cpp \
     ModelListProxy.cpp \
     JSONParamFile.cpp \
-    Xcp_Interface_Can_Socket_Interface.cpp
+    Xcp_Interface_Can_Socket_Interface.cpp \
+    ScaleOffsetProxyModel.cpp
 
 HEADERS += \
     util.h \
@@ -82,7 +83,8 @@ HEADERS += \
     ModelListProxy.h \
     JSONParamFile.h \
     Xcp_Interface_Can_Socket_Interface.h \
-    SlotArrayModel.h
+    SlotArrayModel.h \
+    ScaleOffsetProxyModel.h
 
 unix {
     target.path = /usr/lib

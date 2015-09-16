@@ -17,6 +17,7 @@
 #include "TransposeProxyModel.h"
 #include "TableMapperModel.h"
 #include "SlotArrayModel.h"
+#include "ScaleOffsetProxyModel.h"
 #include "ModelListProxy.h"
 
 namespace SetupTools
@@ -56,6 +57,7 @@ void registerTypes()
 
     qmlRegisterType<SetupTools::SlotArrayModel>("com.hgmelectronics.setuptools", major, minor, "SlotArrayModel");
     qmlRegisterType<SetupTools::TransposeProxyModel>("com.hgmelectronics.setuptools", major, minor, "TransposeProxyModel");
+    qmlRegisterType<SetupTools::ScaleOffsetProxyModel>("com.hgmelectronics.setuptools", major, minor, "ScaleOffsetProxyModel");
     qmlRegisterType<SetupTools::TableMapperModel>("com.hgmelectronics.setuptools", major, minor, "TableMapperModel");
     qmlRegisterType<SetupTools::ModelListProxy>("com.hgmelectronics.setuptools", major, minor, "ModelListProxy");
 }

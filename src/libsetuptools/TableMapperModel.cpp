@@ -33,9 +33,11 @@ void TableMapperModel::setMapping(const QVariantMap &mapping)
     int newRowCount = 0;
     int newColumnCount = 0;
 
-    for(const QVariant &subModelVar : mapping)
+    for(const QString &roleName : mapping.keys())
     {
-        QAbstractItemModel *subModel = subModelVar.value<QAbstractItemModel *>();
+        QAbstractItemModel *subModel = mapping[roleName].value<QAbstractItemModel *>();
+        if(subModel == nullptr)
+            qWarning("TableMapperModel submodel \"%s\" not convertible to QAbstractItemModel, instead type %d", roleName.toLocal8Bit().data(), mapping[roleName].type());
         Q_ASSERT(subModel != nullptr);
 
         newRowCount = std::max(newRowCount, subModel->rowCount());
@@ -69,6 +71,8 @@ void TableMapperModel::setMapping(const QVariantMap &mapping)
     {
         QAbstractItemModel *subModel = mapping[roleName].value<QAbstractItemModel *>();
 
+        if(!(subModel->rowCount() == 1 || subModel->rowCount() == newRowCount))
+            qDebug() << roleName << subModel->rowCount();
         Q_ASSERT(subModel->rowCount() == 1 || subModel->rowCount() == newRowCount);
         Q_ASSERT(subModel->columnCount() == 1 || subModel->columnCount() == newColumnCount);
 

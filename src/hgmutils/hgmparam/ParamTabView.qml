@@ -122,20 +122,18 @@ Item {
                     ]
                 }
 
-                TableByShiftEditButtonGroup {
+                ShiftTableByShiftEditButtonGroup {
                     title: qsTr("Shift Tables A")
-                    count: 5
-                    tableParam: parameters.shiftTablesA
-                    xLabel: qsTr("Throttle")
-                    valueLabel: qsTr("Speed")
+                    tableParams: parameters.shiftTablesA
+                    gearRatioParams: parameters.transmissionGearRatios
+                    rpmSlot: parameters.slots.rpm1
                 }
 
-                TableByShiftEditButtonGroup {
+                ShiftTableByShiftEditButtonGroup {
                     title: qsTr("Shift Tables B")
-                    count: 5
-                    tableParam: parameters.shiftTablesB
-                    xLabel: qsTr("Throttle")
-                    valueLabel: qsTr("Speed")
+                    tableParams: parameters.shiftTablesB
+                    gearRatioParams: parameters.transmissionGearRatios
+                    rpmSlot: parameters.slots.rpm1
                 }
 
                 Row {
