@@ -435,7 +435,7 @@ ApplicationWindow {
 
         onYes: {
             visible = false
-            paramFileDialog.save()
+            paramFileDialog.load()
         }
 
         onRejected: {
