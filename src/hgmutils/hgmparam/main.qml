@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
+import Qt.labs.settings 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.utils 1.0
@@ -26,6 +27,12 @@ ApplicationWindow {
     onConnect: {
         paramLayer.slaveId = "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
         paramLayer.connectSlave()
+    }
+
+    Settings {
+        category: "application"
+        property alias saveReadOnlyParameters: application.saveReadOnlyParameters
+        property alias useMetricUnits: application.useMetricUnits
     }
 
     ParamLayer {
@@ -82,6 +89,7 @@ ApplicationWindow {
     Action {
         id: fileOpenAction
         text: qsTr("&Open Parameter File")
+        iconName: "document-open"
         shortcut: StandardKey.Open
         onTriggered: {
             if (paramLayer.writeCacheDirty) {
@@ -95,6 +103,7 @@ ApplicationWindow {
     Action {
         id: fileSaveAction
         text: qsTr("&Save Parameter File")
+        iconName: "document-save"
         shortcut: StandardKey.Save
         onTriggered: {
             if (paramFileIo.exists) {
@@ -108,6 +117,7 @@ ApplicationWindow {
     Action {
         id: fileSaveAsAction
         text: qsTr("Save Parameter File &As")
+        iconName: "document-save-as"
         onTriggered: {
             paramFileDialog.save()
         }
@@ -116,6 +126,7 @@ ApplicationWindow {
     Action {
         id: quitAction
         text: qsTr("E&xit")
+        iconName: "application-exit"
         shortcut: StandardKey.Quit
         // change to prompt to save file if dirty..
         onTriggered: Qt.quit()
@@ -124,6 +135,7 @@ ApplicationWindow {
     Action {
         id: helpContentsAction
         text: qsTr("&Contents")
+        iconName: "help-contents"
         shortcut: StandardKey.HelpContents
         onTriggered: {
             helpDialog.show()
@@ -133,6 +145,7 @@ ApplicationWindow {
     Action {
         id: helpAboutAction
         text: qsTr("&About")
+        iconName: "help-about"
         onTriggered: {
             aboutDialog.show()
         }
@@ -230,6 +243,19 @@ ApplicationWindow {
         enabled: paramLayer.slaveConnected
     }
 
+    Action {
+        id: enableAllParametersAction
+        text: qsTr("Enable all parameters")
+        onTriggered: paramLayer.registry.setValidAll(true)
+    }
+
+    Action {
+        id: disableAllParametersAction
+        text: qsTr("Disable all parameters")
+        onTriggered: paramLayer.registry.setValidAll(false)
+    }
+
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -246,6 +272,16 @@ ApplicationWindow {
             }
             MenuItem {
                 action: quitAction
+            }
+        }
+
+        Menu {
+            title: qsTr("Edit")
+            MenuItem {
+                action: enableAllParametersAction
+            }
+            MenuItem {
+                action: disableAllParametersAction
             }
         }
 

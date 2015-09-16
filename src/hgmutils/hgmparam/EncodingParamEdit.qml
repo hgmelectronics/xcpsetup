@@ -6,8 +6,12 @@ import com.hgmelectronics.setuptools 1.0
 
 GroupBox {
     id: groupBox
+
     property alias name: groupBox.title
     property ScalarParam param
+
+    enabled: param.valid
+
 
     RowLayout {
         id: row

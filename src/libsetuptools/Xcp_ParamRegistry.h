@@ -49,6 +49,10 @@ public:
     Q_INVOKABLE SetupTools::Xcp::ArrayParam *addArrayParam(int type, double base, int count, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
     Q_INVOKABLE SetupTools::Xcp::Param *getParam(QString key);
     Q_INVOKABLE void resetCaches();
+    Q_INVOKABLE void setValidAll(bool valid);
+    Q_INVOKABLE void setWriteCacheDirtyAll(bool dirty);
+
+
 signals:
     void connectionChanged();
     void paramsChanged();

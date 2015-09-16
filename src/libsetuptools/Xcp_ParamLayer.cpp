@@ -206,14 +206,20 @@ QStringList ParamLayer::setData(QVariantMap data)
 
     for(QString key : keys)
     {
-        bool ok = false;
-
         Param *param = mRegistry->getParam(key);
-        if(param != nullptr)
-            ok = param->setSerializableValue(data[key]);
+        if(param == nullptr)
+        {
+            continue;
+        }
 
-        if(!ok)
+        if(param->setSerializableValue(data[key]))
+        {
+            param->setValid(true);
+        }
+        else
+        {
             failedKeys.push_back(key);
+        }
     }
 
     return failedKeys;
@@ -245,14 +251,19 @@ QStringList ParamLayer::setRawData(QVariantMap data)
 
     for(QString key : keys)
     {
-        bool ok = false;
-
         Param *param = mRegistry->getParam(key);
-        if(param != nullptr)
-            ok = param->setSerializableRawValue(data[key]);
-
-        if(!ok)
+        if(param == nullptr)
+        {
+            continue;
+        }
+        if (param->setSerializableRawValue(data[key]))
+        {
+            param->setValid(true);
+        }
+        else
+        {
             failedKeys.push_back(key);
+        }
     }
 
     return failedKeys;
