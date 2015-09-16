@@ -1,42 +1,23 @@
-#include "ScaleOffsetProxyModel.h"
+#include "SlotProxyModel.h"
 #include "util.h"
 
 namespace SetupTools {
 
-ScaleOffsetProxyModel::ScaleOffsetProxyModel(QObject *parent) :
+SlotProxyModel::SlotProxyModel(QObject *parent) :
     QAbstractProxyModel(parent),
-    mScale(1),
-    mOffset(0),
-    mTargetAllRoles(true)
+    mTargetAllRoles(true),
+    mStringFormat(true)
 {
-    connect(this, &QAbstractProxyModel::sourceModelChanged, this, &ScaleOffsetProxyModel::onSourceModelChanged);
+    connect(this, &QAbstractProxyModel::sourceModelChanged, this, &SlotProxyModel::onSourceModelChanged);
     updateTargetRoles();
 }
 
-void ScaleOffsetProxyModel::setScale(double val)
-{
-    if(updateDelta<>(mScale, val))
-    {
-        emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1));
-        emit scaleChanged();
-    }
-}
-
-void ScaleOffsetProxyModel::setOffset(double val)
-{
-    if(updateDelta<>(mOffset, val))
-    {
-        emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1));
-        emit offsetChanged();
-    }
-}
-
-QStringList ScaleOffsetProxyModel::targetRoleNames() const
+QStringList SlotProxyModel::targetRoleNames() const
 {
     return mTargetRoleNames;
 }
 
-void ScaleOffsetProxyModel::setTargetRoleNames(QStringList val)
+void SlotProxyModel::setTargetRoleNames(QStringList val)
 {
     if(updateDelta<>(mTargetRoleNames, val))
         emit targetRoleNamesChanged();
@@ -44,7 +25,16 @@ void ScaleOffsetProxyModel::setTargetRoleNames(QStringList val)
     updateTargetRoles();
 }
 
-void ScaleOffsetProxyModel::setTargetAllRoles(bool val)
+void SlotProxyModel::setStringFormat(bool val)
+{
+    if(updateDelta<>(mStringFormat, val))
+    {
+        emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1));
+        emit stringFormatChanged();
+    }
+}
+
+void SlotProxyModel::setTargetAllRoles(bool val)
 {
     if(updateDelta<>(mTargetAllRoles, val))
         emit targetAllRolesChanged();
@@ -52,16 +42,16 @@ void ScaleOffsetProxyModel::setTargetAllRoles(bool val)
     updateTargetRoles();
 }
 
-void ScaleOffsetProxyModel::setFormatSlot(Slot *formatSlot)
+void SlotProxyModel::setSlot(Slot *slot)
 {
-    if(updateDelta<>(mFormatSlot, formatSlot))
+    if(updateDelta<>(mSlot, slot))
     {
         emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1));
-        emit formatSlotChanged();
+        emit slotChanged();
     }
 }
 
-void ScaleOffsetProxyModel::updateTargetRoles()
+void SlotProxyModel::updateTargetRoles()
 {
     QSet<int> oldRoles = mTargetRoles;
     mTargetRoles.clear();
@@ -87,7 +77,7 @@ void ScaleOffsetProxyModel::updateTargetRoles()
         emit dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1), changedRoles.toList().toVector());
 }
 
-QModelIndex ScaleOffsetProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
+QModelIndex SlotProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
     if(!sourceIndex.isValid() || sourceIndex.parent().isValid())
         return QModelIndex();
@@ -95,7 +85,7 @@ QModelIndex ScaleOffsetProxyModel::mapFromSource(const QModelIndex &sourceIndex)
     return index(sourceIndex.row(), sourceIndex.column());
 }
 
-QModelIndex ScaleOffsetProxyModel::mapToSource(const QModelIndex &proxyIndex) const
+QModelIndex SlotProxyModel::mapToSource(const QModelIndex &proxyIndex) const
 {
     if(!proxyIndex.isValid() || proxyIndex.parent().isValid())
         return QModelIndex();
@@ -103,7 +93,7 @@ QModelIndex ScaleOffsetProxyModel::mapToSource(const QModelIndex &proxyIndex) co
     return index(proxyIndex.row(), proxyIndex.column());
 }
 
-int ScaleOffsetProxyModel::rowCount(const QModelIndex &parent) const
+int SlotProxyModel::rowCount(const QModelIndex &parent) const
 {
     QAbstractItemModel *source = sourceModel();
     if(source)
@@ -112,7 +102,7 @@ int ScaleOffsetProxyModel::rowCount(const QModelIndex &parent) const
         return 0;
 }
 
-int ScaleOffsetProxyModel::columnCount(const QModelIndex &parent) const
+int SlotProxyModel::columnCount(const QModelIndex &parent) const
 {
     QAbstractItemModel *source = sourceModel();
     if(source)
@@ -121,13 +111,13 @@ int ScaleOffsetProxyModel::columnCount(const QModelIndex &parent) const
         return 0;
 }
 
-QModelIndex ScaleOffsetProxyModel::parent(const QModelIndex &child) const
+QModelIndex SlotProxyModel::parent(const QModelIndex &child) const
 {
     Q_UNUSED(child);
     return QModelIndex();
 }
 
-QModelIndex ScaleOffsetProxyModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex SlotProxyModel::index(int row, int column, const QModelIndex &parent) const
 {
     if(parent.isValid())
         return QModelIndex();
@@ -135,7 +125,7 @@ QModelIndex ScaleOffsetProxyModel::index(int row, int column, const QModelIndex 
     return createIndex(row, column, nullptr);
 }
 
-QVariant ScaleOffsetProxyModel::data(const QModelIndex &proxyIndex, int role) const
+QVariant SlotProxyModel::data(const QModelIndex &proxyIndex, int role) const
 {
     if(!sourceModel())
     {
@@ -143,11 +133,18 @@ QVariant ScaleOffsetProxyModel::data(const QModelIndex &proxyIndex, int role) co
     }
     else if(mTargetRoles.contains(role))
     {
-        double scaled = sourceModel()->data(mapToSource(proxyIndex), role).toDouble() * mScale + mOffset;
-        if(mFormatSlot)
-            return mFormatSlot->stringRoundtrip(scaled);
+        QVariant sourceData = sourceModel()->data(mapToSource(proxyIndex), role);
+        if(mSlot)
+        {
+            if(mStringFormat)
+                return mSlot->asString(sourceData);
+            else
+                return mSlot->asFloat(sourceData);
+        }
         else
-            return scaled;
+        {
+            return sourceData;
+        }
     }
     else
     {
@@ -155,17 +152,16 @@ QVariant ScaleOffsetProxyModel::data(const QModelIndex &proxyIndex, int role) co
     }
 }
 
-bool ScaleOffsetProxyModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool SlotProxyModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if(!sourceModel())
         return false;
     else if(mTargetRoles.contains(role))
     {
-        bool convOk;
-        double floatValue = value.toDouble(&convOk);
-        if(!convOk)
-            return false;
-        return sourceModel()->setData(mapToSource(index), (floatValue - mOffset) / mScale, role);
+        if(mSlot)
+            return sourceModel()->setData(mapToSource(index), mSlot->asRaw(value), role);
+        else
+            return sourceModel()->setData(mapToSource(index), value, role);
     }
     else
     {
@@ -173,7 +169,7 @@ bool ScaleOffsetProxyModel::setData(const QModelIndex &index, const QVariant &va
     }
 }
 
-void ScaleOffsetProxyModel::onSourceModelChanged()
+void SlotProxyModel::onSourceModelChanged()
 {
     disconnect(mDataChangedConnection);
 
@@ -181,7 +177,7 @@ void ScaleOffsetProxyModel::onSourceModelChanged()
     mSourceRoleNumbers.clear();
     if(source)
     {
-        mDataChangedConnection = connect(source, &QAbstractItemModel::dataChanged, this, &ScaleOffsetProxyModel::onSourceDataChanged);
+        mDataChangedConnection = connect(source, &QAbstractItemModel::dataChanged, this, &SlotProxyModel::onSourceDataChanged);
         auto sourceRoleNames = source->roleNames();
         for(int role : sourceRoleNames.keys())
         {
@@ -192,7 +188,7 @@ void ScaleOffsetProxyModel::onSourceModelChanged()
     updateTargetRoles();
 }
 
-void ScaleOffsetProxyModel::onSourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+void SlotProxyModel::onSourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
     emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight), roles);
 }

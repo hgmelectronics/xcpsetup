@@ -9,9 +9,9 @@ import com.hgmelectronics.setuptools.ui 1.0
 Window {
     id: root
     title: name
-    width: 400
+    width: 500
     height: 400
-    minimumWidth: 400
+    minimumWidth: 500
     minimumHeight: 220 + chartBox.height
 
     function isDefined(val) {
@@ -23,76 +23,67 @@ Window {
     }
 
     property string name
-    property TableParam tableParam
-    property TableParam scaleParam
+    property TableParam speedTableParam
+    property TableParam rpmTableParam
     property ScalarParam thisGearRatio
     property ScalarParam nextGearRatio
-    property var rpmSlot
 
-    property var speedSlot: tableParam.value.slot
-    property var tpsSlot: tableParam.x.slot
-
-    property TableParam scaledTableParam: TableParam {
-        x: tableParam.x
-        value: ScaleOffsetProxyModel {
-            sourceModel: tableParam.value.stringModel
-            scale: isDefined(scaleParam) ? scaleParam.floatVal / 100 : 1
-            formatSlot: tableParam.value.slot
-        }
-    }
+    property var speedSlot: speedTableParam.value.slot
+    property var tpsSlot: speedTableParam.x.slot
+    property var rpmSlot: rpmTableParam.value.slot
 
     property double steeperFlatterRatio: 1.1
     property double increaseDecreaseDelta: 1.0
 
 
     property ScaleOffsetProxyModel beforeRpmModel: ScaleOffsetProxyModel {
-        sourceModel: stringModelIfDefined(tableParam.value)  // FIXME needs to use rpm slot
+        sourceModel: stringModelIfDefined(rpmTableParam.value)
         scale: thisGearRatio.floatVal
         formatSlot: rpmSlot
     }
 
     property ScaleOffsetProxyModel afterRpmModel: ScaleOffsetProxyModel {
-        sourceModel: stringModelIfDefined(tableParam.value)
+        sourceModel: stringModelIfDefined(rpmTableParam.value)
         scale: nextGearRatio.floatVal
         formatSlot: rpmSlot
     }
 
     property TableMapperModel tableDisplayModel: TableMapperModel {
         mapping: {
-            "tps": stringModelIfDefined(tableParam.x),
-            "speed": stringModelIfDefined(tableParam.value)//,
-//            "beforeRpm": beforeRpmModel,
-//            "afterRpm": afterRpmModel
+            "tps": stringModelIfDefined(speedTableParam.x),
+            "speed": stringModelIfDefined(speedTableParam.value),
+            "beforeRpm": beforeRpmModel,
+            "afterRpm": afterRpmModel
         }
     }
 
     function arrayAverage() {
         var sum = 0.0;
-        for(var i = 0; i < tableParam.value.count; ++i) {
-            sum += tableParam.value.get(i);
+        for(var i = 0; i < speedTableParam.value.count; ++i) {
+            sum += speedTableParam.value.get(i);
         }
-        return sum / tableParam.value.count;
+        return sum / speedTableParam.value.count;
     }
 
     function clampValue(val) {
-        if(val < tableParam.value.slot.engrMin)
-            return tableParam.value.slot.engrMin
-        else if(val > tableParam.value.slot.engrMax)
-            return tableParam.value.slot.engrMax
+        if(val < speedTableParam.value.slot.engrMin)
+            return speedTableParam.value.slot.engrMin
+        else if(val > speedTableParam.value.slot.engrMax)
+            return speedTableParam.value.slot.engrMax
         else
             return val
     }
 
     function scaleAbout(scale, zero) {
-        for(var i = 0; i < tableParam.value.count; ++i) {
-            var oldDelta = tableParam.value.get(i) - zero
-            tableParam.value.set(i, clampValue(oldDelta * scale + zero))
+        for(var i = 0; i < speedTableParam.value.count; ++i) {
+            var oldDelta = speedTableParam.value.get(i) - zero
+            speedTableParam.value.set(i, clampValue(oldDelta * scale + zero))
         }
     }
 
     function offset(delta) {
-        for(var i = 0; i < tableParam.value.count; ++i) {
-            tableParam.value.set(i, clampValue(tableParam.value.get(i) + delta))
+        for(var i = 0; i < speedTableParam.value.count; ++i) {
+            speedTableParam.value.set(i, clampValue(speedTableParam.value.get(i) + delta))
         }
     }
 
@@ -114,8 +105,8 @@ Window {
                 anchors.margins: 10
                 plots: [
                     XYTrace {
-                        tableModel: root.tableParam.stringModel
-                        valid: root.tableParam.value.valid
+                        tableModel: root.speedTableParam.stringModel
+                        valid: root.speedTableParam.value.valid
                     }
                 ]
             }
@@ -124,7 +115,7 @@ Window {
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.minimumWidth: 300
+            Layout.minimumWidth: 450
             Layout.minimumHeight: 200
             spacing: 10
             Component {
@@ -133,7 +124,7 @@ Window {
                     color: styleData.textColor
                     anchors.margins: 4
                     text: styleData.value !== undefined ? styleData.value : ""
-                    onEditingFinished: model[getColumn(styleData.column).role] = text
+                    onEditingFinished: model[styleData.role] = text
                     Connections {
                         target: styleData
                         onSelectedChanged: {
@@ -143,47 +134,44 @@ Window {
                             }
                         }
                     }
-
-//                    MouseArea {
-//                        anchors.fill: parent
-//                        hoverEnabled: true
-//                        onClicked: {
-//                            tableView.currentRow = styleData.row
-//                            tableView.selection.clear()
-//                            tableView.selection.select(styleData.row)
-//                        }
-//                    }
                 }
             }
 
             TableView {
                 id: tableView
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.margins: 10
                 TableViewColumn {
                     role: "tps"
                     title: qsTr("Throttle %1").arg(tpsSlot.unit)
-                    width: parent.width / parent.columnCount
+                    width: tableView.viewport.width / tableView.columnCount
                 }
                 TableViewColumn {
                     role: "speed"
                     title: speedSlot.unit
                     delegate: valueEditDelegate
-                    width: parent.width / parent.columnCount
+                    width: tableView.viewport.width / tableView.columnCount
                 }
-//                TableViewColumn {
-//                    role: "beforeRpm"
-//                    title: rpmSlot.unit
-//                    delegate: valueEditDelegate
-//                    width: parent.width / parent.columnCount
-//                }
+                TableViewColumn {
+                    role: "beforeRpm"
+                    title: qsTr("Before %1").arg(rpmSlot.unit)
+                    width: tableView.viewport.width / tableView.columnCount
+                }
+                TableViewColumn {
+                    role: "beforeRpm"
+                    title: qsTr("After %1").arg(rpmSlot.unit)
+                    width: tableView.viewport.width / tableView.columnCount
+                }
                 model: root.tableDisplayModel
                 selectionMode: SelectionMode.ExtendedSelection
-                Layout.margins: 10
-                Layout.fillHeight: true
             }
 
             ColumnLayout {
                 Layout.margins: 10
                 Layout.fillHeight: true
+                Layout.minimumWidth: 150
+                Layout.maximumWidth: 150
                 spacing: 10
                 Button {
                     Layout.fillWidth: true
@@ -211,7 +199,7 @@ Window {
                     enabled: tableView.selection.count > 0
                     onClicked: tableView.selection.forEach(
                                    function(rowIndex) {
-                                       tableParam.value.set(rowIndex, clampValue(tableParam.value.get(rowIndex) + increaseDecreaseDelta))
+                                       speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) + increaseDecreaseDelta))
                                    }
                                )
                 }
@@ -221,7 +209,7 @@ Window {
                     enabled: tableView.selection.count > 0
                     onClicked: tableView.selection.forEach(
                                    function(rowIndex) {
-                                       tableParam.value.set(rowIndex, clampValue(tableParam.value.get(rowIndex) - increaseDecreaseDelta))
+                                       speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) - increaseDecreaseDelta))
                                    }
                                )
                 }

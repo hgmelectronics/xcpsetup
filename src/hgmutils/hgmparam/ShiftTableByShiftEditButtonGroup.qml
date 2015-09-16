@@ -9,10 +9,9 @@ import com.hgmelectronics.setuptools 1.0
 GroupBox {
     id: groupBox
     property int count: repeater.model
-    property var tableParams
+    property var speedTableParams
+    property var rpmTableParams
     property var gearRatioParams
-    property ScalarParam scaleParam    // used for downshift offset in single table systems, expects 100 = 1:1
-    property var rpmSlot
     property int firstGearTableOffset: 2
     property bool isDownshift
 
@@ -34,14 +33,13 @@ GroupBox {
                     }
                 }
                 name: getTitle(index)
-                tableParam: groupBox.tableParams[index]
-                scaleParam: groupBox.scaleParam
+                speedTableParam: groupBox.speedTableParams[index]
+                rpmTableParam: groupBox.rpmTableParams[index]
                 thisGearRatio: gearRatioParams[index + firstGearTableOffset]
                 property ScalarParam dummyScalar: ScalarParam {}
                 nextGearRatio: isDownshift ?
                                    ((index > 0) ? gearRatioParams[index - 1 + firstGearTableOffset] : dummyScalar) :
                                    ((index < (count - 1)) ? gearRatioParams[index + 1 + firstGearTableOffset] : dummyScalar)
-                rpmSlot: groupBox.rpmSlot
             }
         }
     }

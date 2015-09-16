@@ -124,16 +124,16 @@ Item {
 
                 ShiftTableByShiftEditButtonGroup {
                     title: qsTr("Shift Tables A")
-                    tableParams: parameters.shiftTablesA
+                    speedTableParams: parameters.shiftTablesA
+                    rpmTableParams: parameters.rpmShiftTablesA
                     gearRatioParams: parameters.transmissionGearRatios
-                    rpmSlot: parameters.slots.rpm1
                 }
 
                 ShiftTableByShiftEditButtonGroup {
                     title: qsTr("Shift Tables B")
-                    tableParams: parameters.shiftTablesB
+                    speedTableParams: parameters.shiftTablesB
+                    rpmTableParams: parameters.rpmShiftTablesB
                     gearRatioParams: parameters.transmissionGearRatios
-                    rpmSlot: parameters.slots.rpm1
                 }
 
                 Row {

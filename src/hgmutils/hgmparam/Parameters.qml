@@ -650,6 +650,44 @@ QtObject {
             value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
         }
     ]
+    property
+    list<TableParam> rpmShiftTablesA: [
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[0].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[1].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[2].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[3].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[4].value.rawModel
+                slot: slots.rpm1
+            }
+        }
+    ]
     property TableMapperModel shiftTablesAModel: TableMapperModel {
         mapping: {
             "tps": percentage1AxisModel,
@@ -682,6 +720,44 @@ QtObject {
         TableParam {
             x: percentage1AxisModel
             value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
+        }
+    ]
+    property
+    list<TableParam> rpmShiftTablesB: [
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[0].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[1].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[2].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[3].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[4].value.rawModel
+                slot: slots.rpm1
+            }
         }
     ]
     property TableMapperModel shiftTablesBModel: TableMapperModel {

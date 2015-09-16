@@ -8,13 +8,12 @@ import com.hgmelectronics.setuptools 1.0
 
 Button {
     id: button
-    enabled: table.tableParam.value.range.valid
+    enabled: table.speedTableParam.value.range.valid
     property alias name: button.text
-    property alias tableParam: table.tableParam
-    property alias scaleParam: table.scaleParam
+    property alias speedTableParam: table.speedTableParam
+    property alias rpmTableParam: table.rpmTableParam
     property alias thisGearRatio: table.thisGearRatio
     property alias nextGearRatio: table.nextGearRatio
-    property alias rpmSlot: table.rpmSlot
 
     onClicked: table.visible = true
 
