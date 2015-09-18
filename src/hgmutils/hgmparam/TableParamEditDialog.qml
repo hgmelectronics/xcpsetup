@@ -2,9 +2,9 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
-import paramview 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 Window {
     id: root
