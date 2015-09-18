@@ -15,6 +15,7 @@ ApplicationWindow {
     readonly property string programVersion: "1.1"
     property alias useMetricUnits: paramTabView.useMetricUnits
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
+    property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property CS2Defaults cs2Defaults: CS2Defaults {
                                       }
     title: paramFileIo.name.length === 0 ? programName : "%1 - %2".arg(paramFileIo.name).arg(programName)
@@ -33,6 +34,7 @@ ApplicationWindow {
         category: "application"
         property alias saveReadOnlyParameters: application.saveReadOnlyParameters
         property alias useMetricUnits: application.useMetricUnits
+        property alias saveOnWrite: application.saveParametersOnWrite
     }
 
     ParamLayer {
@@ -174,10 +176,18 @@ ApplicationWindow {
 
     Action {
         id: saveReadOnlyParametersAction
-        text: qsTr("Save read-only data")
+        text: qsTr("Save read-only parameters")
         tooltip: qsTr("Saves read only data to the parameter file for review later.")
         checkable: true
         checked: false
+    }
+
+    Action {
+        id: saveParametersOnWriteAction
+        text: qsTr("Save parameters after write")
+        tooltip: qsTr("Automatically saves parameters when they are written to the controller.")
+        checkable: true
+        checked: true
     }
 
     Action {
@@ -223,7 +233,12 @@ ApplicationWindow {
         id: paramDownloadAction
         text: qsTr("Write")
         tooltip: qsTr("Writes modified parameters to the COMPUSHIFT")
-        onTriggered: paramLayer.download()
+        onTriggered: {
+            paramLayer.download()
+            if(saveParametersOnWrite) {
+                paramLayer.nvWrite()
+            }
+        }
         enabled: paramLayer.slaveConnected && paramLayer.idle
     }
 
@@ -286,7 +301,7 @@ ApplicationWindow {
         }
 
         Menu {
-            title: qsTr("Options")
+            title: qsTr("Settings")
             Menu {
                 title: qsTr("Units")
                 MenuItem {
@@ -298,6 +313,9 @@ ApplicationWindow {
             }
             MenuItem {
                 action: saveReadOnlyParametersAction
+            }
+            MenuItem {
+                action: saveParametersOnWriteAction
             }
         }
 
