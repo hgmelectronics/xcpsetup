@@ -15,6 +15,9 @@ GroupBox {
         id: text
         text: param.stringVal
         readOnly: param.range.writable
-        onEditingFinished: param.stringVal = text
+        onEditingFinished: {
+            if(param.stringVal != text)
+                param.stringVal = text
+        }
     }
 }

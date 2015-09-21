@@ -124,7 +124,11 @@ Window {
                     color: styleData.textColor
                     anchors.margins: 4
                     text: styleData.value !== undefined ? styleData.value : ""
-                    onEditingFinished: model[styleData.role] = text
+                    onEditingFinished: {
+                        if(model[styleData.role] != text)
+                            model[styleData.role] = text
+                    }
+
                     Connections {
                         target: styleData
                         onSelectedChanged: {

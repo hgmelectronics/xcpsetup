@@ -91,7 +91,8 @@ Window {
                     text: styleData.value !== undefined ? styleData.value : ""
 
                     onEditingFinished: {
-                        model[styleData.role] = text
+                        if(model[styleData.role] != text)
+                            model[styleData.role] = text
                     }
 
                     onFocusChanged: {

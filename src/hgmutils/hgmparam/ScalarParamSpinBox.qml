@@ -23,7 +23,10 @@ GroupBox {
         decimals: param.slot.precision
         suffix: param.slot.unit.length != 0 ? " %1".arg(param.slot.unit) : ""
         value: param.floatVal
-        onEditingFinished: param.floatVal = value
+        onEditingFinished: {
+            if(param.stringVal != text)
+                param.stringVal = text
+        }
     }
 
 }
