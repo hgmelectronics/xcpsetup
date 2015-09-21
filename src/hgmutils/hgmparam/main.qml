@@ -177,7 +177,7 @@ ApplicationWindow {
         text: qsTr("Save read-only data")
         tooltip: qsTr("Saves read only data to the parameter file for review later.")
         checkable: true
-        checked: false
+        checked: true
     }
 
     Action {

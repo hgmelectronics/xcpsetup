@@ -6,8 +6,9 @@ namespace Xcp {
 ArrayParam::ArrayParam(QObject *parent) :
     Param(parent),
     mRange(nullptr),
-    mStringModel(new ArrayParamModel(true, this)),
-    mFloatModel(new ArrayParamModel(false, this))
+    mStringModel(new ArrayParamModel(true, false, this)),
+    mFloatModel(new ArrayParamModel(false, false, this)),
+    mRawModel(new ArrayParamModel(false, true, this))
 {
 
 }
@@ -15,8 +16,9 @@ ArrayParam::ArrayParam(QObject *parent) :
 ArrayParam::ArrayParam(ArrayMemoryRange* range, Slot* slot, QObject* parent) :
     Param(range, slot, parent),
     mRange(range),
-    mStringModel(new ArrayParamModel(true, this)),
-    mFloatModel(new ArrayParamModel(false, this))
+    mStringModel(new ArrayParamModel(true, false, this)),
+    mFloatModel(new ArrayParamModel(false, false, this)),
+    mRawModel(new ArrayParamModel(false, true, this))
 {
     Q_ASSERT(mRange && slot);
 
@@ -164,10 +166,11 @@ void ArrayParam::download()
     mRange->download();
 }
 
-ArrayParamModel::ArrayParamModel(bool stringFormat, ArrayParam *parent) :
+ArrayParamModel::ArrayParamModel(bool stringFormat, bool raw, ArrayParam *parent) :
     QAbstractListModel(parent),
     mParam(parent),
-    mStringFormat(stringFormat)
+    mStringFormat(stringFormat),
+    mRaw(raw)
 {
 
     connect(mParam->slot(), &Slot::valueParamChanged, this, &ArrayParamModel::onValueParamChanged);
@@ -189,7 +192,9 @@ QVariant ArrayParamModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     QVariant rawData = mParam->range()->get(index.row());
-    if(mStringFormat)
+    if(mRaw)
+        return rawData;
+    else if(mStringFormat)
         return mParam->slot()->asString(rawData);
     else
         return mParam->slot()->asFloat(rawData);
@@ -204,7 +209,10 @@ bool ArrayParamModel::setData(const QModelIndex &index, const QVariant &value, i
             || role != Qt::DisplayRole)
         return false;
 
-    return mParam->range()->set(index.row(), mParam->slot()->asRaw(value));
+    if(mRaw)
+        return mParam->range()->set(index.row(), value);
+    else
+        return mParam->range()->set(index.row(), mParam->slot()->asRaw(value));
 }
 
 Qt::ItemFlags ArrayParamModel::flags(const QModelIndex &index) const

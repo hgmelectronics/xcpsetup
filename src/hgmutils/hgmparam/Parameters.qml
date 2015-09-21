@@ -650,6 +650,44 @@ QtObject {
             value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
         }
     ]
+    property
+    list<TableParam> rpmShiftTablesA: [
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[0].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[1].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[2].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[3].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesA[4].value.rawModel
+                slot: slots.rpm1
+            }
+        }
+    ]
     property TableMapperModel shiftTablesAModel: TableMapperModel {
         mapping: {
             "tps": percentage1AxisModel,
@@ -682,6 +720,44 @@ QtObject {
         TableParam {
             x: percentage1AxisModel
             value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
+        }
+    ]
+    property
+    list<TableParam> rpmShiftTablesB: [
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[0].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[1].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[2].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[3].value.rawModel
+                slot: slots.rpm1
+            }
+        },
+        TableParam {
+            x: percentage1AxisModel
+            value: SlotProxyModel {
+                sourceModel: shiftTablesB[4].value.rawModel
+                slot: slots.rpm1
+            }
         }
     ]
     property TableMapperModel shiftTablesBModel: TableMapperModel {
@@ -774,5 +850,45 @@ QtObject {
     readonly property ScalarParam startInhibitRelayType: registry.addScalarParam(MemoryRange.S32, paramId.start_inhibit_relay_type, true, true, slots.booleanNormalReversed)
 
     readonly property ScalarParam vehicleSpeedSensorPulseCount: registry.addScalarParam(MemoryRange.S32, paramId.vehicle_speed_sensor_pulse_count, true, true, slots.count3)
+
+    readonly property ScalarParam transmissionGear0Number: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 0, false, false, slots.count2)
+    readonly property ScalarParam transmissionGear1Number: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 1, false, false, slots.count2)
+    readonly property ScalarParam transmissionGear2Number: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 2, false, false, slots.count2)
+    readonly property ScalarParam transmissionGear3Number: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 3, false, false, slots.count2)
+    readonly property ScalarParam transmissionGear4Number: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 4, false, false, slots.count2)
+    readonly property ScalarParam transmissionGear5Number: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 5, false, false, slots.count2)
+    readonly property ScalarParam transmissionGear6Number: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 6, false, false, slots.count2)
+    readonly property ScalarParam transmissionGear7Number: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 7, false, false, slots.count2)
+
+    readonly property ScalarParam transmissionGear0Ratio: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 0, false, false, slots.ratio1)
+    readonly property ScalarParam transmissionGear1Ratio: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 1, false, false, slots.ratio1)
+    readonly property ScalarParam transmissionGear2Ratio: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 2, false, false, slots.ratio1)
+    readonly property ScalarParam transmissionGear3Ratio: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 3, false, false, slots.ratio1)
+    readonly property ScalarParam transmissionGear4Ratio: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 4, false, false, slots.ratio1)
+    readonly property ScalarParam transmissionGear5Ratio: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 5, false, false, slots.ratio1)
+    readonly property ScalarParam transmissionGear6Ratio: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 6, false, false, slots.ratio1)
+    readonly property ScalarParam transmissionGear7Ratio: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 7, false, false, slots.ratio1)
+
+    property var transmissionGearNumbers: [
+        transmissionGear0Number,
+        transmissionGear1Number,
+        transmissionGear2Number,
+        transmissionGear3Number,
+        transmissionGear4Number,
+        transmissionGear5Number,
+        transmissionGear6Number,
+        transmissionGear7Number
+    ]
+
+    property var transmissionGearRatios: [
+        transmissionGear0Ratio,
+        transmissionGear1Ratio,
+        transmissionGear2Ratio,
+        transmissionGear3Ratio,
+        transmissionGear4Ratio,
+        transmissionGear5Ratio,
+        transmissionGear6Ratio,
+        transmissionGear7Ratio
+    ]
 }
 

@@ -33,6 +33,7 @@ public:
     Q_INVOKABLE virtual double asFloat(QVariant raw) const = 0;
     Q_INVOKABLE virtual QString asString(QVariant raw) const = 0;
     Q_INVOKABLE virtual QVariant asRaw(QVariant engr) const = 0;
+    Q_INVOKABLE virtual QVariant stringRoundtrip(QVariant engr);
     Q_INVOKABLE virtual bool rawInRange(QVariant engr) const = 0;
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const = 0;
     virtual QVariant rawMin() const;
