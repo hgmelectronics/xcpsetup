@@ -116,7 +116,7 @@ Window {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumWidth: 450
-            Layout.minimumHeight: 200
+            Layout.minimumHeight: 250
             spacing: 10
             Component {
                 id: valueEditDelegate
@@ -145,23 +145,23 @@ Window {
                 TableViewColumn {
                     role: "tps"
                     title: qsTr("Throttle %1").arg(tpsSlot.unit)
-                    width: tableView.viewport.width / tableView.columnCount
+                    width: tableView.viewport.width / tableView.columnCount + 5
                 }
                 TableViewColumn {
                     role: "speed"
                     title: speedSlot.unit
                     delegate: valueEditDelegate
-                    width: tableView.viewport.width / tableView.columnCount
+                    width: tableView.viewport.width / tableView.columnCount - 25
                 }
                 TableViewColumn {
                     role: "beforeRpm"
                     title: qsTr("Before %1").arg(rpmSlot.unit)
-                    width: tableView.viewport.width / tableView.columnCount
+                    width: tableView.viewport.width / tableView.columnCount + 10
                 }
                 TableViewColumn {
                     role: "beforeRpm"
                     title: qsTr("After %1").arg(rpmSlot.unit)
-                    width: tableView.viewport.width / tableView.columnCount
+                    width: tableView.viewport.width / tableView.columnCount + 10
                 }
                 model: root.tableDisplayModel
                 selectionMode: SelectionMode.ExtendedSelection
