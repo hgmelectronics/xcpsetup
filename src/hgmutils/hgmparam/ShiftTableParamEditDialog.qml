@@ -10,7 +10,7 @@ Window {
     id: root
     title: name
     width: 500
-    height: 400
+    height: 500
     minimumWidth: 500
     minimumHeight: 220 + chartBox.height
 
@@ -87,10 +87,97 @@ Window {
         }
     }
 
+
+    Action {
+        id: makeSteeper
+        text: qsTr("Steeper")
+        onTriggered: scaleAbout(steeperFlatterRatio, arrayAverage())
+    }
+    Action {
+        id: makeFlatter
+        text: qsTr("Flatter")
+        onTriggered: scaleAbout(1 / steeperFlatterRatio, arrayAverage())
+    }
+    Action {
+        id: increaseAll
+        text: qsTr("Increase All")
+        onTriggered: offset(increaseDecreaseDelta)
+    }
+    Action {
+        id: decreaseAll
+        text: qsTr("Decrease All")
+        onTriggered: offset(-increaseDecreaseDelta)
+    }
+    Action {
+        id: increaseSelected
+        text: qsTr("Increase Selected (+)")
+        enabled: tableView.selection.count > 0
+        onTriggered: tableView.selection.forEach(
+                       function(rowIndex) {
+                           speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) + increaseDecreaseDelta))
+                       }
+                   )
+    }
+    Action {
+        id: decreaseSelected
+        text: qsTr("Decrease Selected (-)")
+        enabled: tableView.selection.count > 0
+        onTriggered: tableView.selection.forEach(
+                       function(rowIndex) {
+                           speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) - increaseDecreaseDelta))
+                       }
+                   )
+    }
+
+    Action {
+        id: linearizeSelected
+        text: qsTr("Linearize Selected (/)")
+        enabled: tableView.selection.count > 0
+        onTriggered: {
+            var minIndex = tableView.model.rowCount()
+            var maxIndex = -1
+            tableView.selection.forEach(
+                                   function(rowIndex) {
+                                       minIndex = Math.min(minIndex, rowIndex)
+                                       maxIndex = Math.max(maxIndex, rowIndex)
+                                   }
+                               )
+            var minIndexX = parseFloat(stringModelIfDefined(speedTableParam.x).get(minIndex))
+            var maxIndexX = parseFloat(stringModelIfDefined(speedTableParam.x).get(maxIndex))
+            var minIndexY = parseFloat(speedTableParam.value.get(minIndex))
+            var maxIndexY = parseFloat(speedTableParam.value.get(maxIndex))
+            var dYdX = (maxIndexY - minIndexY) / (maxIndexX - minIndexX)
+            tableView.selection.forEach(
+                                   function(rowIndex) {
+                                       var x = parseFloat(stringModelIfDefined(speedTableParam.x).get(rowIndex))
+                                       speedTableParam.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
+                                   }
+                               )
+        }
+    }
+
     SplitView {
         anchors.fill: parent
         anchors.margins: 10
         orientation: Qt.Vertical
+
+        Component.onCompleted: forceActiveFocus()
+
+        Keys.onPressed: {
+            if(event.key === Qt.Key_Plus || event.key === Qt.Key_Equal) {
+                increaseSelected.trigger()
+                event.accepted = true
+            }
+            else if(event.key === Qt.Key_Minus || event.key === Qt.Key_Underscore) {
+                decreaseSelected.trigger()
+                event.accepted = true
+            }
+            else if(event.key === Qt.Key_Slash) {
+                linearizeSelected.trigger()
+                event.accepted = true
+            }
+        }
+
         Rectangle {
             id: chartBox
             Layout.fillWidth: true
@@ -130,7 +217,7 @@ Window {
                         onSelectedChanged: {
                             if(styleData.selected) {
                                 selectAll()
-                                forceActiveFocus()
+//                                forceActiveFocus()
                             }
                         }
                     }
@@ -175,43 +262,31 @@ Window {
                 spacing: 10
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Steeper")
-                    onClicked: scaleAbout(steeperFlatterRatio, arrayAverage())
+                    action: makeSteeper
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Flatter")
-                    onClicked: scaleAbout(1 / steeperFlatterRatio, arrayAverage())
+                    action: makeFlatter
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Increase All")
-                    onClicked: offset(increaseDecreaseDelta)
+                    action: increaseAll
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Decrease All")
-                    onClicked: offset(-increaseDecreaseDelta)
+                    action: decreaseAll
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Increase Selected")
-                    enabled: tableView.selection.count > 0
-                    onClicked: tableView.selection.forEach(
-                                   function(rowIndex) {
-                                       speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) + increaseDecreaseDelta))
-                                   }
-                               )
+                    action: increaseSelected
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Decrease Selected")
-                    enabled: tableView.selection.count > 0
-                    onClicked: tableView.selection.forEach(
-                                   function(rowIndex) {
-                                       speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) - increaseDecreaseDelta))
-                                   }
-                               )
+                    action: decreaseSelected
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: linearizeSelected
                 }
             }
         }
