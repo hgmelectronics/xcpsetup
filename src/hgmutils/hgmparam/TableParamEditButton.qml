@@ -19,5 +19,4 @@ Button {
         id: table
         title: button.text
     }
-
 }

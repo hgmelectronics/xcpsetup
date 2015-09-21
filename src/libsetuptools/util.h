@@ -215,6 +215,20 @@ public:
 
 private:
     UrlUtil();
+
+
+// possible alternative
+//    onAccepted: {
+//            var path = myFileDialog.fileUrl.toString();
+//            // remove prefixed "file:///"
+//            path = path.replace(/^(file:\/{3})/,"");
+//            // unescape html codes like '%23' for '#'
+//            cleanPath = decodeURIComponent(path);
+//            console.log(cleanPath)
+//        }
+//    }
+
+
 };
 
 template <typename T>

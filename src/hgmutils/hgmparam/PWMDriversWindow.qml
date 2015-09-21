@@ -49,7 +49,6 @@ Window {
         }
     }
 
-
     TableView {
         id: tableView
         property real columnWidth: viewport.width / tableView.columnCount

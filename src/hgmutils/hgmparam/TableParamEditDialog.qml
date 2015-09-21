@@ -20,33 +20,32 @@ Window {
     minimumWidth: 400
     minimumHeight: 220 + chartBox.height
 
-
     function arrayAverage() {
-        var sum = 0.0;
-        for(var i = 0; i < tableParam.value.count; ++i) {
-            sum += tableParam.value.get(i);
+        var sum = 0.0
+        for (var i = 0; i < tableParam.value.count; ++i) {
+            sum += tableParam.value.get(i)
         }
-        return sum / tableParam.value.count;
+        return sum / tableParam.value.count
     }
 
     function clampValue(val) {
-        if(val < tableParam.value.slot.engrMin)
+        if (val < tableParam.value.slot.engrMin)
             return tableParam.value.slot.engrMin
-        else if(val > tableParam.value.slot.engrMax)
+        else if (val > tableParam.value.slot.engrMax)
             return tableParam.value.slot.engrMax
         else
             return val
     }
 
     function scaleAbout(scale, zero) {
-        for(var i = 0; i < tableParam.value.count; ++i) {
+        for (var i = 0; i < tableParam.value.count; ++i) {
             var oldDelta = tableParam.value.get(i) - zero
             tableParam.value.set(i, clampValue(oldDelta * scale + zero))
         }
     }
 
     function offset(delta) {
-        for(var i = 0; i < tableParam.value.count; ++i) {
+        for (var i = 0; i < tableParam.value.count; ++i) {
             tableParam.value.set(i, clampValue(tableParam.value.get(i) + delta))
         }
     }
@@ -155,7 +154,8 @@ Window {
                 Button {
                     Layout.fillWidth: true
                     text: qsTr("Flatter")
-                    onClicked: scaleAbout(1 / steeperFlatterRatio, arrayAverage())
+                    onClicked: scaleAbout(1 / steeperFlatterRatio,
+                                          arrayAverage())
                 }
                 Button {
                     Layout.fillWidth: true
@@ -171,21 +171,23 @@ Window {
                     Layout.fillWidth: true
                     text: qsTr("Increase Selected")
                     enabled: tableView.selection.count > 0
-                    onClicked: tableView.selection.forEach(
-                                   function(rowIndex) {
-                                       tableParam.value.set(rowIndex, clampValue(tableParam.value.get(rowIndex) + increaseDecreaseDelta))
-                                   }
-                               )
+                    onClicked: tableView.selection.forEach(function (rowIndex) {
+                        tableParam.value.set(
+                                    rowIndex, clampValue(
+                                        tableParam.value.get(
+                                            rowIndex) + increaseDecreaseDelta))
+                    })
                 }
                 Button {
                     Layout.fillWidth: true
                     text: qsTr("Decrease Selected")
                     enabled: tableView.selection.count > 0
-                    onClicked: tableView.selection.forEach(
-                                   function(rowIndex) {
-                                       tableParam.value.set(rowIndex, clampValue(tableParam.value.get(rowIndex) - increaseDecreaseDelta))
-                                   }
-                               )
+                    onClicked: tableView.selection.forEach(function (rowIndex) {
+                        tableParam.value.set(
+                                    rowIndex, clampValue(
+                                        tableParam.value.get(
+                                            rowIndex) - increaseDecreaseDelta))
+                    })
                 }
             }
         }

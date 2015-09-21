@@ -11,14 +11,16 @@ import com.hgmelectronics.utils 1.0
 ApplicationWindow {
     id: application
 
-    readonly property string programName: qsTr("COMPUSHIFT Parameter Editor")
-    readonly property string programVersion: "1.1"
+    property string programName: qsTr("COMPUSHIFT Parameter Editor")
+    property string programVersion: "1.1"
     property alias useMetricUnits: paramTabView.useMetricUnits
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
-    property CS2Defaults cs2Defaults: CS2Defaults {
+    property CS2Defaults cs2Defaults:  CS2Defaults {
                                       }
-    title: paramFileIo.name.length === 0 ? programName : "%1 - %2".arg(paramFileIo.name).arg(programName)
+    title: paramFileIo.name.length === 0 ? programName : "%1 - %2".arg(
+                                               paramFileIo.name).arg(
+                                               programName)
     width: 800
     height: 600
     visible: true
@@ -26,7 +28,8 @@ ApplicationWindow {
     signal connect
 
     onConnect: {
-        paramLayer.slaveId = "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
+        paramLayer.slaveId = "%1:%2".arg(targetCmdId.value).arg(
+                    targetResId.value)
         paramLayer.connectSlave()
     }
 
@@ -235,7 +238,7 @@ ApplicationWindow {
         tooltip: qsTr("Writes modified parameters to the COMPUSHIFT")
         onTriggered: {
             paramLayer.download()
-            if(saveParametersOnWrite) {
+            if (saveParametersOnWrite) {
                 paramLayer.nvWrite()
             }
         }
@@ -269,7 +272,6 @@ ApplicationWindow {
         text: qsTr("Disable all parameters")
         onTriggered: paramLayer.registry.setValidAll(false)
     }
-
 
     menuBar: MenuBar {
         Menu {

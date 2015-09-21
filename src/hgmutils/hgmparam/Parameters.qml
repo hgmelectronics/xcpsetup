@@ -28,8 +28,8 @@ QtObject {
     }
     property SlotArrayModel upshiftDownshiftAxisModel: SlotArrayModel {
         slot: slots.upshiftDownShiftTableIndex
-//        count: 14
-//  temporary fix for NAG1.
+        //        count: 14
+        //  temporary fix for NAG1.
         count: 12
     }
     property SlotArrayModel tempAxisModel: SlotArrayModel {
@@ -49,116 +49,148 @@ QtObject {
         count: 16
     }
 
-    property SlotArrayModel pwmDriverIdModel: SlotArrayModel {
-        slot: slots.pwmDriverId
-        count: 12
-    }
 
-//    readonly property ArrayParam controllerSoftwareVersion: registry.addScalarParam(MemoryRange.S32, paramId.controller_software_version: 0x80010000
-//    readonly property ScalarParam controllerHeapUsed: registry.addScalarParam(MemoryRange.S32, paramId.controller_heap_used: 0x80080000
-//    readonly property ScalarParam controllerHeapSize: registry.addScalarParam(MemoryRange.S32, paramId.controller_heap_size: 0x80090000
-//    readonly property ScalarParam controllerHeapAllocationCount: registry.addScalarParam(MemoryRange.S32, paramId.controller_heap_allocation_count: 0x800a0000
-//    readonly property ScalarParam controllerHeapReleaseCount: registry.addScalarParam(MemoryRange.S32, paramId.controller_heap_release_count: 0x800b0000
+    //readonly property ArrayParam controllerSoftwareVersion: registry.addArrayParam(MemoryRange.S32, paramId.controller_software_version, false, false, slots)
+    readonly property ScalarParam controllerHeapUsed: registry.addScalarParam(
+                                                          MemoryRange.S32,
+                                                          paramId.controller_heap_used,
+                                                          false,
+                                                          false,
+                                                          slots.count)
+    readonly property ScalarParam controllerHeapSize: registry.addScalarParam(
+                                                          MemoryRange.S32,
+                                                          paramId.controller_heap_size,
+                                                          false,
+                                                          false,
+                                                          slots.count)
 
-//    readonly property ScalarParam controllerTachInputFrequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_tach_input_frequency: 0x80100000
-//    readonly property ScalarParam controllerTissInputFrequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_tiss_input_frequency: 0x80110000
-//    readonly property ScalarParam controllerTossInputFrequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_toss_input_frequency: 0x80120000
-//    readonly property ScalarParam controllerSpareInputFrequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_spare_input_frequency: 0x80130000
+    readonly property ScalarParam controllerHeapAllocationCount: registry.addScalarParam(MemoryRange.S32, paramId.controller_heap_allocation_count, false, false, slots.count)
 
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_throttle_position_sensor_voltage: 0x80200000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_map_sensor_voltage: 0x80210000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_internal_temperature_sensor_voltage: 0x80220000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_internal_temperature: 0x80230000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_engine_temperature_sensor_voltage: 0x80240000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_transmission_temperature_sensor_voltage: 0x80250000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_multiplexed_sensor_voltage: 0x80260000
+    readonly property ScalarParam controllerHeapReleaseCount: registry.addScalarParam(MemoryRange.S32, paramId.controller_heap_release_count, false, false, slots.count)
 
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_5_volt_bus_voltage: 0x80270000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_3_3_volt_bus_voltage: 0x80280000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_1_8_volt_bus_voltage: 0x80290000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_12_volt_bus_voltage: 0x802a0000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_voltage: 0x802c0000
+    readonly property ScalarParam controllerTachInputFrequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_tach_input_frequency, false, false, slots.frequency)
 
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_acclerometer: 0x80300000
+    readonly property ScalarParam controllerTissInputFrequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_tiss_input_frequency, false, false, slots.frequency)
 
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_1_frequency: 0x80400000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_2_frequency: 0x80410000
+    readonly property ScalarParam controllerTossInputFrequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_toss_input_frequency, false, false, slots.frequency)
 
-//    readonly property ArrayParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_switch_state: 0x80500000
-//    readonly property ArrayParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_switch_current: 0x80510000
+    readonly property ScalarParam controllerSpareInputFrequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_spare_input_frequency, false, false, slots.frequency)
 
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_sd_card_write_protect: 0x80600000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_sd_card_present: 0x80610000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_master_driver_fault: 0x80620000
+    readonly property ScalarParam controllertThrottlePositionSensorVoltage: registry.addScalarParam(MemoryRange.S32, paramId.controller_throttle_position_sensor_voltage, false, false, slots.voltage1)
 
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_usb_power: 0x80700000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_greed_led: 0x80710000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_red_led: 0x80720000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_transmission_temperature_sensor_bias: 0x80730000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_engine_temperature_sensor_bias: 0x80740000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_throttle_position_sensor_ground: 0x80750000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_map_ground: 0x80760000
-//    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_usb_connect: 0x80770000
+    readonly property ScalarParam controllerMAPSensorVoltage: registry.addScalarParam(MemoryRange.S32, paramId.controller_map_sensor_voltage, false, false, slots.voltage1)
 
-//    readonly property var controllerPWMDriverFrequency: [
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+0, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+1, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+2, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+3, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+4, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+5, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+6, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+7, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+8, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+9, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+10, true, false, slots.frequency),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency+11, true, false, slots.frequency),
-//    ]
+    readonly property ScalarParam controllerInternalTemperatureSensorVoltage: registry.addScalarParam(MemoryRange.S32, paramId.controller_internal_temperature_sensor_voltage, false, false, slots.voltage1)
 
+    readonly property ScalarParam controllerInternalTemprature: registry.addScalarParam(MemoryRange.S32, paramId.controller_internal_temperature, false, false, slots.temperature1)
 
-//    readonly property var controllerPWMDriverDutyCycle: [
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+0, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+1, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+2, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+3, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+4, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+5, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+6, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+7, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+8, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+9, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+10, true, false, slots.percentage2),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle+11, true, false, slots.percentage2)
-//    ]
+    readonly property ScalarParam controllerEngineTempratureSensorVoltage: registry.addScalarParam(MemoryRange.S32, paramId.controller_engine_temperature_sensor_voltage, false, false, slots.voltage1)
 
-//    readonly property var controllerPWMDriverMode: [
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+0, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+1, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+2, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+3, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+4, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+5, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+6, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+7, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+8, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+9, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+10, true, false, slots.pwmDriverMode),
-//        registry.addScalarParam(MemoryRange.S32, paramId.controllerPWMDriverMode+11, true, false, slots.pwmDriverMode)
-//    ]
+    readonly property ScalarParam controllerTransmissionTemperatureSensorVoltage: registry.addScalarParam(MemoryRange.S32, paramId.controller_transmission_temperature_sensor_voltage, false, false, slots.voltage1)
+
+    readonly property ScalarParam controllerMultipltexedSensorVoltage: registry.addScalarParam(MemoryRange.S32, paramId.controller_multiplexed_sensor_voltage, false, false, slots.voltage1)
+
+    readonly property ScalarParam controllerBus5Voltage: registry.addScalarParam(
+                                                             MemoryRange.S32,
+                                                             paramId.controller_5_volt_bus_voltage,
+                                                             false,
+                                                             false,
+                                                             slots.voltage1)
+
+    readonly property ScalarParam controllerBus3_3Voltage: registry.addScalarParam(MemoryRange.S32, paramId.controller_3_3_volt_bus_voltage, false, false, slots.voltage1)
+
+    readonly property ScalarParam controllerBus1_8Voltage: registry.addScalarParam(MemoryRange.S32, paramId.controller_1_8_volt_bus_voltage, false, false, slots.voltage1)
+
+    readonly property ScalarParam controllerBus12Voltage: registry.addScalarParam(
+                                                              MemoryRange.S32,
+                                                              paramId.controller_12_volt_bus_voltage,
+                                                              false, false,
+                                                              slots.voltage1)
+
+    readonly property ScalarParam controllerBusVoltage: registry.addScalarParam(
+                                                            MemoryRange.S32,
+                                                            paramId.controller_voltage,
+                                                            false,
+                                                            false,
+                                                            slots.voltage1)
+
+    readonly property ScalarParam controllerSpeedTimer1Frequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_1_frequency, true, false, slots.frequency)
+
+    readonly property ScalarParam controllerSpeedTimer2Frequency: registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_2_frequency, true, false, slots.frequency)
+
+    readonly property ScalarParam controllerSDCardWriteProtect: registry.addScalarParam(MemoryRange.S32, paramId.controller_sd_card_write_protect, false, false, slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerSDCardPresent: registry.addScalarParam(MemoryRange.S32, paramId.controller_sd_card_present, false, false, slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerMasterDriveFault: registry.addScalarParam(MemoryRange.S32, paramId.controller_master_driver_fault, false, false, slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerUSBPower: registry.addScalarParam(
+                                                          MemoryRange.S32,
+                                                          paramId.controller_usb_power,
+                                                          false,
+                                                          false,
+                                                          slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerUSBConnect: registry.addScalarParam(
+                                                            MemoryRange.S32,
+                                                            paramId.controller_usb_connect,
+                                                            false,
+                                                            false,
+                                                            slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerGreenLED: registry.addScalarParam(
+                                                          MemoryRange.S32,
+                                                          paramId.controller_greed_led,
+                                                          false,
+                                                          false,
+                                                          slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerRedLED: registry.addScalarParam(
+                                                        MemoryRange.S32,
+                                                        paramId.controller_red_led,
+                                                        false,
+                                                        false,
+                                                        slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerTransmissionTemperatureSensorBias: registry.addScalarParam(MemoryRange.S32, paramId.controller_transmission_temperature_sensor_bias, false, false, slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerEngineTemperatureSensorBias: registry.addScalarParam(MemoryRange.S32, paramId.controller_engine_temperature_sensor_bias, false, false, slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerThrottlePositionSensorGround: registry.addScalarParam(MemoryRange.S32, paramId.controller_throttle_position_sensor_ground, false, false, slots.booleanOnOff1)
+
+    readonly property ScalarParam controllerMAPSensorGround: registry.addScalarParam(MemoryRange.S32, paramId.controller_map_ground, false, false, slots.booleanOnOff1)
 
     readonly property ArrayParam controllerPWMDriverFrequency: registry.addArrayParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency, 12, true, false, slots.frequency)
 
     readonly property ArrayParam controllerPWMDriverDutyCycle: registry.addArrayParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle, 12, true, false, slots.percentage2)
 
-    readonly property ArrayParam controllerPWMDriverMode: registry.addArrayParam(MemoryRange.S32, paramId.controller_pwmdriver_mode, 12, true, false, slots.pwmDriverMode)
+    readonly property ArrayParam controllerPWMDriverMode: registry.addArrayParam(
+                                                              MemoryRange.S32,
+                                                              paramId.controller_pwmdriver_mode,
+                                                              12,
+                                                              true, false,
+                                                              slots.pwmDriverMode)
 
-    property TableMapperModel controllerPWMDriverModel : TableMapperModel {
-        mapping: { "x": pwmDriverIdModel,
-                   "frequency": controllerPWMDriverFrequency.stringModel,
-                   "dutyCycle": controllerPWMDriverDutyCycle.stringModel,
-                   "mode": controllerPWMDriverMode.stringModel
+    property SlotArrayModel controllerPWMDriverIdModel: SlotArrayModel {
+        slot: slots.pwmDriverId
+        count: 12
+    }
+
+
+    property TableMapperModel controllerPWMDriverModel: TableMapperModel {
+        mapping: {
+            "x": controllerPWMDriverIdModel,
+                    "frequency": controllerPWMDriverFrequency.stringModel,
+                    "dutyCycle": controllerPWMDriverDutyCycle.stringModel,
+                    "mode": controllerPWMDriverMode.stringModel
         }
     }
+
+    //    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_acclerometer, false, false, slots)
+
+    //    readonly property ArrayParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_switch_state, false, false, slots)
+    //    readonly property ArrayParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_switch_current, false, false, slots)
+
 
 
     readonly property
@@ -642,8 +674,8 @@ QtObject {
     property TableMapperModel engineTorqueMap: TableMapperModel {
         mapping: {
             "rpm" : engineTorqueMapSpeedsArray.stringModel,
-            "motoring": engineMotorTorqueMap.value.stringModel,
-            "braking": engineBrakeTorqueMap.value.stringModel
+                    "motoring": engineMotorTorqueMap.value.stringModel,
+                    "braking": engineBrakeTorqueMap.value.stringModel
         }
     }
 
@@ -765,11 +797,11 @@ QtObject {
     property TableMapperModel shiftTablesAModel: TableMapperModel {
         mapping: {
             "tps": percentage1AxisModel,
-            "shift12": shiftTablesA[0].value.stringModel,
-            "shift23": shiftTablesA[1].value.stringModel,
-            "shift34": shiftTablesA[2].value.stringModel,
-            "shift45": shiftTablesA[3].value.stringModel,
-            "shift56": shiftTablesA[4].value.stringModel
+                    "shift12": shiftTablesA[0].value.stringModel,
+                    "shift23": shiftTablesA[1].value.stringModel,
+                    "shift34": shiftTablesA[2].value.stringModel,
+                    "shift45": shiftTablesA[3].value.stringModel,
+                    "shift56": shiftTablesA[4].value.stringModel
         }
     }
 
@@ -799,11 +831,11 @@ QtObject {
     property TableMapperModel shiftTablesBModel: TableMapperModel {
         mapping: {
             "tps": percentage1AxisModel,
-            "shift12": shiftTablesB[0].value.stringModel,
-            "shift23": shiftTablesB[1].value.stringModel,
-            "shift34": shiftTablesB[2].value.stringModel,
-            "shift45": shiftTablesB[3].value.stringModel,
-            "shift56": shiftTablesB[4].value.stringModel
+                    "shift12": shiftTablesB[0].value.stringModel,
+                    "shift23": shiftTablesB[1].value.stringModel,
+                    "shift34": shiftTablesB[2].value.stringModel,
+                    "shift45": shiftTablesB[3].value.stringModel,
+                    "shift56": shiftTablesB[4].value.stringModel
         }
     }
 
