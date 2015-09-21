@@ -4,7 +4,7 @@ import QtQuick.Controls 1.4
 GroupBox {
     property string value
     TextField {
-        anchors.fill: parent
+
         horizontalAlignment: TextInput.AlignRight
         text: value
         validator: RegExpValidator {

@@ -18,5 +18,13 @@
         <file>ShiftTableParamEditDialog.qml</file>
         <file>ShiftTableByShiftEditButtonGroup.qml</file>
         <file>ShiftTableParamEditButton.qml</file>
+        <file>PWMDriversWindow.qml</file>
+        <file>DiagnosticsLayout.qml</file>
+        <file>EngineLayout.qml</file>
+        <file>ShiftSpeedsLayout.qml</file>
+        <file>VehicleLayout.qml</file>
+        <file>PressureAbsoluteLayout.qml</file>
+        <file>PressurePercentageLayout.qml</file>
+        <file>ScalarParamCheckBox.qml</file>
     </qresource>
 </RCC>

@@ -4,24 +4,17 @@ import QtQuick.Layouts 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
-ColumnLayout {
-    property string name
+GroupBox {
+    id: groupBox
+    enabled: param.valid
+    property alias name: groupBox.title
+    property alias horizontalAlignment: text.horizontalAlignment
     property ScalarParam param
 
-    enabled: param.valid
-
-    Label {
-        text: name
-    }
-
-    RowLayout {
-        TextField {
-            text: param.stringVal
-            onEditingFinished: param.stringVal = text
-        }
-
-        Label {
-            text: param.slot.unit
-        }
+    TextField {
+        id: text
+        text: param.stringVal
+        readOnly: param.range.writable
+        onEditingFinished: param.stringVal = text
     }
 }

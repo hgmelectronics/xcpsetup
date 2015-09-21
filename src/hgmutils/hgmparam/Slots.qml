@@ -150,6 +150,8 @@ QtObject {
         ]
     }
 
+
+
     property EncodingSlot gear1: EncodingSlot {
         encodingList: [
             { raw: 0xFF, engr: "I"},
@@ -293,7 +295,8 @@ QtObject {
     property EncodingSlot pwmDriverMode: EncodingSlot {
         encodingList: [
             { raw: 0, engr: "Low side"},
-            { raw: 1, engr: "High side"}
+            { raw: 1, engr: "High side"},
+            { raw: 2, engr: "Both"}
         ]
     }
 
@@ -346,6 +349,18 @@ QtObject {
         engrB: 1E7
         precision: 2
     }
+
+    property LinearSlot frequency: LinearSlot {
+        rawA:0
+        engrA: 0
+        rawB: 1E9
+        engrB: 1E8
+        precision: 1
+        unit: "Hz"
+    }
+
+
+
 
     property EncodingSlot resetDefaults: EncodingSlot {
         encodingList: [
@@ -572,13 +587,6 @@ QtObject {
         precision: 2
     }
 
-    property LinearSlot voltageGauge: LinearSlot {
-        rawA: 0
-        engrA: 0
-        rawB: 1E9
-        engrB: 1E6
-        precision: 1
-    }
 
     property LinearSlot timeMilliseconds1: LinearSlot {
         rawA: 0
@@ -624,14 +632,6 @@ QtObject {
         precision: useMetricUnits ? 0 : 1
     }
 
-    property LinearSlot pressureGauge: LinearSlot {
-        rawA: 0
-        engrA: 0
-        rawB: 1E9
-        engrB: useMetricUnits ? 1E9 : 1.45037738E8
-        precision: useMetricUnits ? 0 : 1
-    }
-
     property LinearSlot temperature1: LinearSlot {
         rawA: -2730
         engrA: useMetricUnits ? -273 : -459.4
@@ -641,14 +641,6 @@ QtObject {
         precision: 1
     }
 
-    property LinearSlot temperatureGauge: LinearSlot {
-        rawA: -2730
-        engrA: useMetricUnits ? -273 : -459.4
-        rawB: 50000
-        engrB: useMetricUnits ? 5000 : 9032
-        unit: useMetricUnits ? "C" : "F"
-        precision: 0
-    }
 
     property LinearSlot vehicleSpeed: LinearSlot {
         rawA: 0

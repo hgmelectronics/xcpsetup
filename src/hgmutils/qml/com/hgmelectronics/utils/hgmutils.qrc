@@ -11,5 +11,6 @@
         <file>HexEntryField.qml</file>
         <file>InterfaceChooser.qml</file>
         <file>CS2Defaults.qml</file>
+        <file>ColumnEditDelegate.qml</file>
     </qresource>
 </RCC>
