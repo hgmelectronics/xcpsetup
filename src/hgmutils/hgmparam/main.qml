@@ -317,8 +317,9 @@ ApplicationWindow {
 
         RowLayout {
             Layout.topMargin: 5
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.fillWidth: true
+            Layout.leftMargin: 5
+            Layout.rightMargin: 5
             spacing: 0
 
             InterfaceChooser {
@@ -329,13 +330,13 @@ ApplicationWindow {
 
             BitRateChooser {
                 id: bitRateChooser
-                Layout.fillWidth: true
+                width: 100
                 enabled: !paramLayer.intfcOk
             }
 
             HexEntryField {
                 id: targetCmdId
-                Layout.fillWidth: true
+                width: 150
                 title: qsTr("Command ID")
                 value: cs2Defaults.targetCmdId
                 enabled: !paramLayer.slaveConnected
@@ -343,7 +344,7 @@ ApplicationWindow {
 
             HexEntryField {
                 id: targetResId
-                Layout.fillWidth: true
+                width: 150
                 title: qsTr("Response ID")
                 value: cs2Defaults.targetResId
                 enabled: !paramLayer.slaveConnected
