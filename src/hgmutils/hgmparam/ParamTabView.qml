@@ -9,444 +9,61 @@ import com.hgmelectronics.setuptools.ui 1.0
 
 Item {
     id: root
-    property alias useMetricUnits: parameters.useMetricUnits
+    property alias useMetricUnits: params.useMetricUnits
     property ParamRegistry registry
+
     anchors.left: parent.left
     anchors.right: parent.right
+
+    Parameters {
+        id: params
+        registry: root.registry
+    }
+
     TabView {
         id: tabView
-        anchors.fill: root
-
-        Parameters {
-            id: parameters
-            registry: root.registry
-        }
+        anchors.fill: parent
 
         Tab {
             title: qsTr("Vehicle")
-            active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                ScalarParamSpinBox {
-                    name: qsTr("Final Drive Ratio")
-                    param: parameters.finalDriveRatio
-                }
-                ScalarParamSpinBox {
-                    name: qsTr("Tire Diameter")
-                    param: parameters.tireDiameter
-                }
-                EncodingParamEdit {
-                    name: qsTr("Display Units")
-                    param: parameters.displayUnits
-                }
-                ScalarParamSpinBox {
-                    name: qsTr("Display Brightness")
-                    param: parameters.displayBrightness
-                }
-                ScalarParamSpinBox {
-                    name: qsTr("Display Contrast")
-                    param: parameters.displayContrast
-                }
+            VehicleLayout{
+                parameters: params
             }
         }
 
         Tab {
             title: qsTr("Engine")
-            active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-
-                ScalarParamSpinBox {
-                    name: qsTr("Engine Cylinders")
-                    param: parameters.engineCylinders
-                }
-
-                ScalarParamSpinBox {
-                    name: qsTr("Max Engine Speed A")
-                    param: parameters.shiftMaxEngineSpeedA
-                }
-                ScalarParamSpinBox {
-                    name: qsTr("Max Engine Speed B")
-                    param: parameters.shiftMaxEngineSpeedB
-                }
+            EngineLayout{
+                parameters: params
             }
         }
 
         Tab {
-            title: qsTr("Shift Tables")
-            active: true
-
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-
-                RowLayout {
-                    Layout.fillHeight: true
-                    Layout.minimumHeight: 200
-                    TablePlot {
-                        id: shiftAPlot
-                        plots: [
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[0].stringModel
-                                valid: parameters.shiftTablesA[0].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[0]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[1].stringModel
-                                valid: parameters.shiftTablesA[1].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[1]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[2].stringModel
-                                valid: parameters.shiftTablesA[2].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[2]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[3].stringModel
-                                valid: parameters.shiftTablesA[3].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[3]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[4].stringModel
-                                valid: parameters.shiftTablesA[4].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[4]
-                                fill: false
-                            }
-                        ]
-                        visible: shiftASelectButton.checked
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        anchors.bottom: parent.bottom
-                        anchors.top: parent.top
-                    }
-
-                    TablePlot {
-                        id: shiftBPlot
-                        plots: [
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[0].stringModel
-                                valid: parameters.shiftTablesB[0].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[0]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[1].stringModel
-                                valid: parameters.shiftTablesB[1].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[1]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[2].stringModel
-                                valid: parameters.shiftTablesB[2].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[2]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[3].stringModel
-                                valid: parameters.shiftTablesB[3].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[3]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[4].stringModel
-                                valid: parameters.shiftTablesB[4].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[4]
-                                fill: false
-                            }
-                        ]
-                        visible: shiftBSelectButton.checked
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                    }
-
-                    TablePlot {
-                        id: shiftABPlot
-                        plots: [
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[0].stringModel
-                                valid: parameters.shiftTablesA[0].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[0]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[1].stringModel
-                                valid: parameters.shiftTablesA[1].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[1]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[2].stringModel
-                                valid: parameters.shiftTablesA[2].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[2]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[3].stringModel
-                                valid: parameters.shiftTablesA[3].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[3]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesA[4].stringModel
-                                valid: parameters.shiftTablesA[4].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[4]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[0].stringModel
-                                valid: parameters.shiftTablesB[0].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[5]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[1].stringModel
-                                valid: parameters.shiftTablesB[1].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[6]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[2].stringModel
-                                valid: parameters.shiftTablesB[2].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[7]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[3].stringModel
-                                valid: parameters.shiftTablesB[3].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[8]
-                                fill: false
-                            },
-                            XYTrace {
-                                tableModel: parameters.shiftTablesB[4].stringModel
-                                valid: parameters.shiftTablesB[4].value.valid
-                                baseColor: cs2Defaults.preferredPlotColors[9]
-                                fill: false
-                            }
-                        ]
-                        visible: shiftABSelectButton.checked
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                    }
-
-                    ColumnLayout {
-                        ExclusiveGroup { id: shiftPlotSelectGroup }
-
-                        RadioButton {
-                            id: shiftASelectButton
-                            text: "A"
-                            checked: true
-                            exclusiveGroup: shiftPlotSelectGroup
-                            Layout.minimumWidth: 60
-                        }
-                        RadioButton {
-                            id: shiftBSelectButton
-                            text: "B"
-                            exclusiveGroup: shiftPlotSelectGroup
-                            Layout.minimumWidth: 60
-                        }
-                        RadioButton {
-                            id: shiftABSelectButton
-                            text: "A + B"
-                            exclusiveGroup: shiftPlotSelectGroup
-                            Layout.minimumWidth: 60
-                        }
-                    }
-                }
-
-                ShiftTableByShiftEditButtonGroup {
-                    title: qsTr("Shift Tables A")
-                    speedTableParams: parameters.shiftTablesA
-                    rpmTableParams: parameters.rpmShiftTablesA
-                    gearRatioParams: parameters.transmissionGearRatios
-                    Layout.minimumHeight: 60
-                }
-
-                ShiftTableByShiftEditButtonGroup {
-                    title: qsTr("Shift Tables B")
-                    speedTableParams: parameters.shiftTablesB
-                    rpmTableParams: parameters.rpmShiftTablesB
-                    gearRatioParams: parameters.transmissionGearRatios
-                    Layout.minimumHeight: 60
-                }
-
-                Row {
-                    spacing: 10
-                    ScalarParamSpinBox {
-                        name: qsTr("Downshift Offset A")
-                        param: parameters.shiftDownshiftOffsetA
-                    }
-                    ScalarParamSpinBox {
-                        name: qsTr("Downshift Offset B")
-                        param: parameters.shiftDownshiftOffsetB
-                    }
-                    Layout.minimumHeight: 60
-                    Layout.bottomMargin: 10
-                }
+            title: qsTr("Shift Speeds")
+            ShiftSpeedsLayout {
+                parameters: params
             }
         }
 
         Tab {
-            title: qsTr("Shift Pressure % Tables")
-
-            active: true
-
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-
-                TableByGearEditButtonGroup {
-                    title: qsTr("Shift Pressure A")
-                    count: 6
-                    tableParam: parameters.pressureTablesA
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("%")
-                }
-
-                TableByGearEditButtonGroup {
-                    title: qsTr("Shift Pressure B")
-                    count: 6
-                    tableParam: parameters.pressureTablesB
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("%")
-                }
-
-                TableByShiftEditButtonGroup {
-                    title: qsTr("Upshift Apply Pressure %")
-                    count: 5
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("%")
-                    tableParam: parameters.transmissionUpshiftApplyPercentage
-                }
-
-                TableByShiftEditButtonGroup {
-                    title: qsTr("Downshift Apply Pressure %")
-                    count: 4
-                    isDownshift: true
-
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("%")
-                    tableParam: parameters.transmissionDownshiftApplyPercentage
-                }
-
-                GroupBox {
-                    title: qsTr("Shift Prefill")
-                    Row {
-                        spacing: 10
-                        TableParamEditButton {
-                            name: qsTr("Pressure")
-                            xLabel: qsTr("Shift")
-                            valueLabel: qsTr("%")
-                            tableParam: parameters.transmissionShiftPrefillPercentage
-                        }
-
-                        TableParamEditButton {
-                            name: qsTr("Time")
-                            xLabel: qsTr("Shift")
-                            valueLabel: qsTr("ms")
-                            tableParam: parameters.transmissionShiftPrefillTime
-                        }
-                    }
-                }
-
-                TableByGearEditButtonGroup {
-                    title: qsTr("Main Pressure %")
-                    count: 6
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("%")
-                    tableParam: parameters.transmissionMainPercentage
-                }
+            title: qsTr("Shift Pressures %")
+            PressurePercentageLayout {
+                parameters: params
             }
         }
 
         Tab {
-            title: qsTr("Shift Pressure Tables")
-            active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
+            title: qsTr("Shift Pressures")
+            PressureAbsoluteLayout {
+                parameters: params
+            }
+        }
 
-                TableByShiftEditButtonGroup {
-                    title: qsTr("Upshift Apply Pressure")
-                    count: 5
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("Pressure")
-                    tableParam: parameters.transmissionUpshiftApplyPressure
-                }
-
-                TableByShiftEditButtonGroup {
-                    title: qsTr("Upshift Apply Pressure")
-                    count: 5
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("Pressure")
-                    tableParam: parameters.transmissionUpshiftApplyPressure
-                }
-
-                TableByShiftEditButtonGroup {
-                    title: qsTr("Downshift Apply Pressure")
-                    count: 4
-                    isDownshift: true
-
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("Pressure")
-                    tableParam: parameters.transmissionDownshiftApplyPressure
-                }
-
-                GroupBox {
-                    title: qsTr("Shift Prefill")
-                    Row {
-                        spacing: 10
-                        TableParamEditButton {
-                            name: qsTr("Pressure")
-                            xLabel: qsTr("Shift")
-                            valueLabel: qsTr("Pressure")
-                            tableParam: parameters.transmissionShiftPrefillPressure
-                        }
-
-                        TableParamEditButton {
-                            name: qsTr("Time")
-                            xLabel: qsTr("Shift")
-                            valueLabel: qsTr("ms")
-                            tableParam: parameters.transmissionShiftPrefillTime
-                        }
-                    }
-                }
-
-                TableByGearEditButtonGroup {
-                    title: qsTr("Main Pressure")
-                    count: 6
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("Pressure")
-                    tableParam: parameters.transmissionMainPressure
-                }
+        Tab {
+            title: qsTr("Diagnostics")
+            DiagnosticsLayout {
+                parameters: params
             }
         }
     }
 }
-//        Tab {
-//            title: qsTr("Inputs")
-//            active: true
-//            Flow {
-//                anchors.fill: parent
-//                anchors.margins: 10
-//                spacing: 10
-//                TableParamView {
-//                    name: qsTr("Switch Monitor Input")
-//                    xLabel: qsTr("Switch #")
-//                    valueLabel: qsTr("State")
-//                    tableParam: parameters.switchMonitorModel
-//                    enabled: parameters.switchMonitorInput.valid
-//                }
-//            }
-//        }
-
