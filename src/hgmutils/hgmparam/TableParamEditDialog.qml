@@ -94,27 +94,16 @@ Window {
                         model[styleData.role] = text
                     }
 
-                    onFocusChanged: {
-                        if (focus) {
-                            selectAll()
-                            forceActiveFocus()
-                        }
-                    }
-
-                    onAccepted: {
-                        if (focus)
-                            selectAll()
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: {
-                            tableView.currentRow = styleData.row
-                            tableView.selection.clear()
-                            tableView.selection.select(styleData.row)
-                            input.selectAll()
-                            input.forceActiveFocus(Qt.MouseFocusReaso)
+                    Connections {
+                        target: styleData
+                        onSelectedChanged: {
+                            if(styleData.selected) {
+                                selectAll()
+                                forceActiveFocus()
+                            }
+                            else {
+                                deselect()
+                            }
                         }
                     }
                 }

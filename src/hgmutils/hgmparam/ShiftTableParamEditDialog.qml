@@ -217,7 +217,10 @@ Window {
                         onSelectedChanged: {
                             if(styleData.selected) {
                                 selectAll()
-//                                forceActiveFocus()
+                                forceActiveFocus()
+                            }
+                            else {
+                                deselect()
                             }
                         }
                     }
