@@ -1338,6 +1338,7 @@ var Chart = function(canvas, context) {
         var labelHeight;
         var labelTemplateString;
         var widestXLabel;
+        var widestYLabel;
         var yAxisPosX;
         var xAxisPosY;
         var rotateLabels = 0;
@@ -1347,14 +1348,16 @@ var Chart = function(canvas, context) {
         // /////////////////////////////////////////////////////////////////
 
         this.init = function () {
-            xDataBounds = getXDataBounds();
-            yDataBounds = getYDataBounds();
+            widestXLabel = config.scaleFontSize * 5 // approximate value
+            widestYLabel = config.scaleFontSize * 5 // approximate value
+            labelHeight = config.scaleFontSize
             labelTemplateString = (config.scaleShowLabels)? config.scaleLabel : "";
 
-            widestXLabel = config.scaleFontSize * 5 // approximate value
-            for(var i = 0; i < 2; ++i) {    // iteratively compute scales
+            for(var i = 0; i < 4; ++i) {    // iteratively compute scales
+                xDataBounds = getXDataBounds();
+                yDataBounds = getYDataBounds();
                 if (!config.xScaleOverride) {
-                    calculatedXScale = calculateScale(width - widestXLabel - 50,xDataBounds.maxSteps,xDataBounds.minSteps,xDataBounds.maxValue,xDataBounds.minValue,labelTemplateString);
+                    calculatedXScale = calculateScale(width - widestYLabel - 50,xDataBounds.maxSteps,xDataBounds.minSteps,xDataBounds.maxValue,xDataBounds.minValue,labelTemplateString);
                 }
                 else {
                     calculatedXScale = {
@@ -1365,7 +1368,7 @@ var Chart = function(canvas, context) {
                     }
                     populateLabels(labelTemplateString, calculatedXScale.labels,calculatedXScale.steps,config.xScaleStartValue,config.xScaleStepWidth);
                 }
-                calculateDrawingSizes();    // sets yScaleHeight, maxSize, widestXLabel, labelHeight
+                calculateDrawingSizes();    // sets yAxisHeight, maxSize, widestXLabel, labelHeight
 
                 if (!config.yScaleOverride) {
                     calculatedYScale = calculateScale(yAxisHeight,yDataBounds.maxSteps,yDataBounds.minSteps,yDataBounds.maxValue,yDataBounds.minValue,labelTemplateString);
@@ -1526,18 +1529,18 @@ var Chart = function(canvas, context) {
 
         function calculateXAxisSize() {
 
-            var longestText = 1;
+            widestYLabel = 1;
 
             if (config.scaleShowLabels) {
                 ctx.font = config.scaleFontStyle + " " + config.scaleFontSize+"px " + config.scaleFontFamily;
                 for (var i=0; i<calculatedYScale.labels.length; i++) {
                     var measuredText = ctx.measureText(calculatedYScale.labels[i]).width;
-                    longestText = (measuredText > longestText)? measuredText : longestText;
+                    widestYLabel = (measuredText > widestYLabel)? measuredText : widestYLabel;
                 }
-                longestText +=10;
+                widestYLabel +=10;
             }
 
-            xAxisLength = width - longestText - widestXLabel;
+            xAxisLength = width - widestYLabel - widestXLabel;
             xScaleHop = Math.floor(xAxisLength/(calculatedXScale.labels.length - 1));
 
             yAxisPosX = width-widestXLabel/2-xAxisLength;
@@ -1570,8 +1573,8 @@ var Chart = function(canvas, context) {
                 }
             };
 
-            var maxSteps = Math.floor((yAxisHeight / labelHeight * 1.5));
-            var minSteps = Math.floor((yAxisHeight / labelHeight * 0.5));
+            var maxSteps = Math.floor((yAxisHeight / labelHeight * 1));
+            var minSteps = Math.floor((yAxisHeight / labelHeight * 0.333));
 
             return {
                 maxValue: upperValue,
@@ -1593,8 +1596,8 @@ var Chart = function(canvas, context) {
                 }
             };
 
-            var maxSteps = Math.floor(((width - config.scaleFontSize * 5) / widestXLabel * 1.5));
-            var minSteps = Math.floor(((width - config.scaleFontSize * 5) / widestXLabel * 0.5));
+            var maxSteps = Math.floor(((width - config.scaleFontSize * 5) / widestXLabel * 1));
+            var minSteps = Math.floor(((width - config.scaleFontSize * 5) / widestXLabel * 0.333));
 
             return {
                 maxValue: upperValue,
