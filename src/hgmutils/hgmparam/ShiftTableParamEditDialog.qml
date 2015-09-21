@@ -159,7 +159,7 @@ Window {
                     width: tableView.viewport.width / tableView.columnCount + 10
                 }
                 TableViewColumn {
-                    role: "beforeRpm"
+                    role: "afterRpm"
                     title: qsTr("After %1").arg(rpmSlot.unit)
                     width: tableView.viewport.width / tableView.columnCount + 10
                 }
