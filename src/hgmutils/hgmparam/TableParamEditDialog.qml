@@ -8,13 +8,11 @@ import com.hgmelectronics.setuptools.ui 1.0
 
 Window {
     id: root
-
     property alias xLabel: xColumn.title
     property alias valueLabel: valueColumn.title
     property TableParam tableParam
     property double steeperFlatterRatio: 1.1
     property double increaseDecreaseDelta: 1.0
-
     width: 400
     height: 400
     minimumWidth: 400
@@ -95,16 +93,27 @@ Window {
                             model[styleData.role] = text
                     }
 
-                    Connections {
-                        target: styleData
-                        onSelectedChanged: {
-                            if(styleData.selected) {
-                                selectAll()
-                                forceActiveFocus()
-                            }
-                            else {
-                                deselect()
-                            }
+                    onFocusChanged: {
+                        if (focus) {
+                            selectAll()
+                            forceActiveFocus()
+                        }
+                    }
+
+                    onAccepted: {
+                        if (focus)
+                            selectAll()
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: {
+                            tableView.currentRow = styleData.row
+                            tableView.selection.clear()
+                            tableView.selection.select(styleData.row)
+                            input.selectAll()
+                            input.forceActiveFocus(Qt.MouseFocusReaso)
                         }
                     }
                 }

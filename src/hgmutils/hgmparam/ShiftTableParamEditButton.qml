@@ -8,7 +8,6 @@ import com.hgmelectronics.setuptools 1.0
 
 Button {
     id: button
-    enabled: table.speedTableParam.value.range.valid
     property alias name: button.text
     property alias speedTableParam: table.speedTableParam
     property alias rpmTableParam: table.rpmTableParam
@@ -17,6 +16,7 @@ Button {
     property alias thisGearName: table.thisGearName
     property alias nextGearName: table.nextGearName
 
+    enabled: table.speedTableParam.value.range.valid
     onClicked: table.visible = true
 
     ShiftTableParamEditDialog {

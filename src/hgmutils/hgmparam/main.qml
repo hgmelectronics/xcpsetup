@@ -10,7 +10,6 @@ import com.hgmelectronics.utils 1.0
 
 ApplicationWindow {
     id: application
-
     property string programName: qsTr("COMPUSHIFT Parameter Editor")
     property string programVersion: "1.1"
     property alias useMetricUnits: paramTabView.useMetricUnits
@@ -18,6 +17,7 @@ ApplicationWindow {
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property CS2Defaults cs2Defaults:  CS2Defaults {
                                       }
+
     title: paramFileIo.name.length === 0 ? programName : "%1 - %2".arg(
                                                paramFileIo.name).arg(
                                                programName)

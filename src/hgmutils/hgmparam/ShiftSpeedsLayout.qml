@@ -8,11 +8,10 @@ import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
 ColumnLayout {
-    anchors.fill: parent
-    anchors.margins: 10
-    spacing: 10
-
     property Parameters parameters
+    anchors.fill: parent
+    anchors.margins: 5
+    spacing: 5
 
     RowLayout {
         Layout.fillHeight: true
@@ -210,7 +209,7 @@ ColumnLayout {
     }
 
     Row {
-        spacing: 10
+        spacing: 5
         ScalarParamSpinBox {
             name: qsTr("Downshift Offset A")
             param: parameters.shiftDownshiftOffsetA
