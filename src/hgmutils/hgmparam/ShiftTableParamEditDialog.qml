@@ -259,7 +259,7 @@ Window {
                             model[styleData.role] = text
                     }
                     onAccepted: {
-                        if (focus)
+                        if (styleData.selected)
                             selectAll()
                     }
 
