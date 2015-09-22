@@ -8,11 +8,11 @@ GroupBox {
     id: groupBox
     enabled: param.valid
     property alias name: groupBox.title
-    property alias horizontalAlignment: text.horizontalAlignment
+    property alias horizontalAlignment: textField.horizontalAlignment
     property ScalarParam param
 
     TextField {
-        id: text
+        id: textField
         text: param.stringVal
         readOnly: param.range.writable
         onEditingFinished: {
