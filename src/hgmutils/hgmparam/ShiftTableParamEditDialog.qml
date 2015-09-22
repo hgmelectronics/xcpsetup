@@ -258,9 +258,15 @@ Window {
                         if(model[styleData.role] != text)
                             model[styleData.role] = text
                     }
+                    onAccepted: {
+                        if (focus)
+                            selectAll()
+                    }
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
+                            tableView.currentRow = styleData.row
                             tableView.selection.clear()
                             tableView.selection.select(styleData.row, styleData.row)
                             selectAll()
