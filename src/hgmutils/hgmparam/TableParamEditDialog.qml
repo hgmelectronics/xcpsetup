@@ -20,9 +20,9 @@ Window {
     property double increaseDecreaseDelta: 1.0
 
     width: (hasShapers || hasPlot) ? 420 : 240
-    height: 420
+    height: 290 + chartBox.height
     minimumWidth: (hasShapers || hasPlot) ? 420 : 240
-    minimumHeight: 270 + chartBox.height
+    minimumHeight: 290 + chartBox.height
 
     function arrayAverage() {
         var sum = 0.0
@@ -42,24 +42,129 @@ Window {
     }
 
     function scaleAbout(scale, zero) {
-        for (var i = 0; i < tableParam.value.count; ++i) {
-            var oldDelta = tableParam.value.get(i) - zero
-            tableParam.value.set(i, clampValue(oldDelta * scale + zero))
-        }
+        tableView.selection.forEach( function(rowIndex) {
+            var oldDelta = tableParam.value.get(rowIndex) - zero
+            tableParam.value.set(rowIndex, clampValue(oldDelta * scale + zero))
+        } )
     }
 
     function offset(delta) {
-        for (var i = 0; i < tableParam.value.count; ++i) {
-            tableParam.value.set(i, clampValue(tableParam.value.get(i) + delta))
+        tableView.selection.forEach( function(rowIndex) {
+            tableParam.value.set(rowIndex, clampValue(tableParam.value.get(rowIndex) + delta))
+        } )
+    }
+
+    function selectionAverage() {
+        var average = 0.0
+        tableView.selection.forEach( function(rowIndex) {
+            average += tableParam.value.get(rowIndex)
+        } )
+        average /= tableView.selection.count
+        return average
+    }
+
+    function isDefined(val) {
+        return (typeof(val) !== "undefined") && (val !== null)
+    }
+
+    function stringModelIfDefined(param) {
+        return isDefined(param.stringModel) ? param.stringModel : param
+    }
+
+    Action {
+        id: selectAll
+        text: qsTr("Select All (Ctrl-A)")
+        enabled: tableView.selection.count < tableView.rowCount
+        onTriggered: tableView.selection.selectAll()
+    }
+    Action {
+        id: deselect
+        text: qsTr("Deselect (Ctrl-Shift-A)")
+        enabled: tableView.selection.count > 0
+        onTriggered: tableView.selection.clear()
+    }
+    Action {
+        id: makeSteeper
+        text: qsTr("Steeper")
+        enabled: tableView.selection.count > 0
+        onTriggered: scaleAbout(steeperFlatterRatio, selectionAverage())
+    }
+    Action {
+        id: makeFlatter
+        text: qsTr("Flatter")
+        enabled: tableView.selection.count > 0
+        onTriggered: scaleAbout(1 / steeperFlatterRatio, selectionAverage())
+    }
+    Action {
+        id: increaseSelected
+        text: qsTr("Increase Selected (+)")
+        enabled: tableView.selection.count > 0
+        onTriggered: offset(increaseDecreaseDelta)
+    }
+    Action {
+        id: decreaseSelected
+        text: qsTr("Decrease Selected (-)")
+        enabled: tableView.selection.count > 0
+        onTriggered: offset(-increaseDecreaseDelta)
+    }
+    Action {
+        id: linearizeSelected
+        text: qsTr("Linearize Selected (/)")
+        enabled: tableView.selection.count > 0
+        onTriggered: {
+            var minIndex = tableView.model.rowCount()
+            var maxIndex = -1
+            tableView.selection.forEach(
+                                   function(rowIndex) {
+                                       minIndex = Math.min(minIndex, rowIndex)
+                                       maxIndex = Math.max(maxIndex, rowIndex)
+                                   }
+                               )
+            var minIndexX = parseFloat(stringModelIfDefined(tableParam.x).get(minIndex))
+            var maxIndexX = parseFloat(stringModelIfDefined(tableParam.x).get(maxIndex))
+            var minIndexY = parseFloat(tableParam.value.get(minIndex))
+            var maxIndexY = parseFloat(tableParam.value.get(maxIndex))
+            var dYdX = (maxIndexY - minIndexY) / (maxIndexX - minIndexX)
+            tableView.selection.forEach(
+                                   function(rowIndex) {
+                                       var x = parseFloat(stringModelIfDefined(tableParam.x).get(rowIndex))
+                                       tableParam.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
+                                   }
+                               )
         }
     }
 
     property TableView tableView: encodingValue ? encodingTableView : regularTableView
 
     SplitView {
+        id: splitView
         anchors.fill: parent
         anchors.margins: 10
         orientation: Qt.Vertical
+
+        Connections {
+            target: root
+            onActiveChanged: {
+                if(root.active)
+                    splitView.forceActiveFocus(Qt.ActiveWindowFocusReason)
+            }
+        }
+
+        Keys.onPressed: {
+            event.accepted = true
+            if(event.key === Qt.Key_Plus || event.key === Qt.Key_Equal)
+                increaseSelected.trigger()
+            else if(event.key === Qt.Key_Minus || event.key === Qt.Key_Underscore)
+                decreaseSelected.trigger()
+            else if(event.key === Qt.Key_Slash)
+                linearizeSelected.trigger()
+            else if(event.key === Qt.Key_A && event.modifiers === Qt.ControlModifier)
+                selectAll.trigger()
+            else if(event.key === Qt.Key_A && event.modifiers === (Qt.ShiftModifier | Qt.ControlModifier))
+                deselect.trigger()
+            else
+                event.accepted = false
+        }
 
           // dreadful hack because making chart invisible causes QML to hang
         handleDelegate: Rectangle {
@@ -109,14 +214,6 @@ Window {
                         if(model[styleData.role] != text)
                             model[styleData.role] = text
                     }
-
-                    onFocusChanged: {
-                        if (focus) {
-                            selectAll()
-                            forceActiveFocus()
-                        }
-                    }
-
                     onAccepted: {
                         if (focus)
                             selectAll()
@@ -124,13 +221,21 @@ Window {
 
                     MouseArea {
                         anchors.fill: parent
-                        hoverEnabled: true
                         onClicked: {
-                            regularTableView.currentRow = styleData.row
-                            regularTableView.selection.clear()
-                            regularTableView.selection.select(styleData.row)
-                            input.selectAll()
-                            input.forceActiveFocus(Qt.MouseFocusReaso)
+                            tableView.currentRow = styleData.row
+                            tableView.selection.clear()
+                            tableView.selection.select(styleData.row, styleData.row)
+                            selectAll()
+                            forceActiveFocus(Qt.MouseFocusReason)
+                        }
+                    }
+
+                    Connections {
+                        target: styleData
+                        onSelectedChanged: {
+                            if(!styleData.selected) {
+                                deselect()
+                            }
                         }
                     }
                 }
@@ -229,46 +334,31 @@ Window {
                 spacing: 10
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Steeper")
-                    onClicked: scaleAbout(steeperFlatterRatio, arrayAverage())
+                    action: selectAll
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Flatter")
-                    onClicked: scaleAbout(1 / steeperFlatterRatio,
-                                          arrayAverage())
+                    action: deselect
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Increase All")
-                    onClicked: offset(increaseDecreaseDelta, arrayAverage())
+                    action: makeSteeper
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Decrease All")
-                    onClicked: offset(-increaseDecreaseDelta, arrayAverage())
+                    action: makeFlatter
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Increase Selected")
-                    enabled: root.tableView.selection.count > 0
-                    onClicked: root.tableView.selection.forEach(function (rowIndex) {
-                        tableParam.value.set(
-                                    rowIndex, clampValue(
-                                        tableParam.value.get(
-                                            rowIndex) + increaseDecreaseDelta))
-                    })
+                    action: increaseSelected
                 }
                 Button {
                     Layout.fillWidth: true
-                    text: qsTr("Decrease Selected")
-                    enabled: root.tableView.selection.count > 0
-                    onClicked: root.tableView.selection.forEach(function (rowIndex) {
-                        tableParam.value.set(
-                                    rowIndex, clampValue(
-                                        tableParam.value.get(
-                                            rowIndex) - increaseDecreaseDelta))
-                    })
+                    action: decreaseSelected
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: linearizeSelected
                 }
             }
         }
