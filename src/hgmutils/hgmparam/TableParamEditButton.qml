@@ -11,6 +11,7 @@ Button {
     property alias tableParam: table.tableParam
     property alias valueLabel: table.valueLabel
     property alias xLabel: table.xLabel
+    property alias hasPlot: table.hasPlot
 
     enabled: table.tableParam.value.range.valid
     onClicked: table.visible = true

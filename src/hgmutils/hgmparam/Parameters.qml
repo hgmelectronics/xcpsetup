@@ -186,11 +186,15 @@ QtObject {
         }
     }
 
+    property TableParam controllerPwmDriverModeTable: TableParam {
+        x: controllerPWMDriverIdModel
+        value: controllerPWMDriverMode
+    }
+
     //    readonly property ScalarParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_acclerometer, false, false, slots)
 
     //    readonly property ArrayParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_switch_state, false, false, slots)
     //    readonly property ArrayParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_switch_current, false, false, slots)
-
 
 
     readonly property

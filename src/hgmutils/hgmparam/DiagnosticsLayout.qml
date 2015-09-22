@@ -201,6 +201,11 @@ Flow {
                     model: parameters.controllerPWMDriverModel
                 }
             }
+            TableParamEditButton {
+                name: "controllerPwmDriverModeTable"
+                tableParam: parameters.controllerPwmDriverModeTable
+                hasPlot: false
+            }
         }
     }
 }
