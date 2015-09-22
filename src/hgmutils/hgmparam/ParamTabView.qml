@@ -54,7 +54,7 @@ Item {
 
         Tab {
             title: qsTr("Shift Pressures")
-            PressureAbsoluteLayout{
+            PressureAbsoluteLayout {
                 parameters: params
             }
         }

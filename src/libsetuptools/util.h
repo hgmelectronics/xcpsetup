@@ -236,7 +236,7 @@ bool updateDelta(T &val, T newVal)
 {
     T oldVal = val;
     val = newVal;
-    return (oldVal != newVal);
+    return !(oldVal == newVal);
 }
 
 template <typename Ii>

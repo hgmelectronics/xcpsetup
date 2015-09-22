@@ -25,13 +25,13 @@ Param::Param(MemoryRange *baseRange, Slot* slot, QObject *parent) :
 
 SetupTools::Slot *Param::slot() const
 {
-    Q_ASSERT(mSlot);
     return mSlot;
 }
 
 bool Param::valid() const
 {
-    Q_ASSERT(mBaseRange);
+    if(!mBaseRange)
+        return false;
     return mBaseRange->valid();
 }
 
@@ -43,7 +43,8 @@ void Param::setValid(bool valid)
 
 bool Param::writeCacheDirty() const
 {
-    Q_ASSERT(mBaseRange);
+    if(!mBaseRange)
+        return false;
     return mBaseRange->writeCacheDirty();
 }
 
@@ -55,7 +56,8 @@ void Param::setWriteCacheDirty(bool dirty)
 
 void Param::resetCaches()
 {
-    Q_ASSERT(mBaseRange);
+    if(!mBaseRange)
+        return;
     mBaseRange->resetCaches();
 }
 

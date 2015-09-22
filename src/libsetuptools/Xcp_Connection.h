@@ -68,9 +68,8 @@ class XcpPtr
     Q_PROPERTY(quint8 ext MEMBER ext)
 public:
     XcpPtr() : addr(0), ext(0) {}
-    XcpPtr(quint32 addr_in) : addr(addr_in), ext(0) {}
+    XcpPtr(quint64 addrAndExt) : addr(addrAndExt), ext(addrAndExt >> 32) {}
     XcpPtr(quint32 addr_in, quint8 ext_in) : addr(addr_in), ext(ext_in) {}
-
     QString toString() const;
 
     static XcpPtr fromString(QString str, bool *ok = nullptr);

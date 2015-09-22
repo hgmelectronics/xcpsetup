@@ -4,7 +4,9 @@ namespace SetupTools {
 
 TransposeProxyModel::TransposeProxyModel(QObject *parent) :
     QAbstractProxyModel(parent)
-{}
+{
+    connect(this, &QAbstractProxyModel::sourceModelChanged, this, &TransposeProxyModel::onSourceModelChanged);
+}
 
 QModelIndex TransposeProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {

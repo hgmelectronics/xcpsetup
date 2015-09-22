@@ -19,6 +19,7 @@ class ArrayParam : public SetupTools::Xcp::Param
 
     Q_PROPERTY(ArrayParamModel* stringModel READ stringModel NOTIFY modelDataChanged)
     Q_PROPERTY(ArrayParamModel* floatModel READ floatModel NOTIFY modelDataChanged)
+    Q_PROPERTY(ArrayParamModel* rawModel READ rawModel NOTIFY modelDataChanged)
     Q_PROPERTY(int count READ count CONSTANT)
     Q_PROPERTY(ArrayMemoryRange* range READ range CONSTANT)
 
@@ -42,6 +43,11 @@ public:
     ArrayParamModel* floatModel() const
     {
         return mFloatModel;
+    }
+
+    ArrayParamModel* rawModel() const
+    {
+        return mRawModel;
     }
 
     ArrayMemoryRange* range() const
@@ -69,6 +75,7 @@ private:
     ArrayMemoryRange* const mRange;    // owned by the ParamRegistry
     ArrayParamModel* const mStringModel;  // owned by this
     ArrayParamModel* const mFloatModel;   // owned by this
+    ArrayParamModel* const mRawModel;   // owned by this
 };
 
 
@@ -76,7 +83,7 @@ class ArrayParamModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    ArrayParamModel(bool stringFormat, ArrayParam *parent);
+    ArrayParamModel(bool stringFormat, bool raw, ArrayParam *parent);
 
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
@@ -88,6 +95,7 @@ private:
     void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
     ArrayParam* const mParam;
     const bool mStringFormat;
+    const bool mRaw;
 };
 
 } // namespace Xcp

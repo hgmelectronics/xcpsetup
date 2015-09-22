@@ -676,13 +676,15 @@ QtObject {
         precision: 1
     }
 
+    // 1e9 RPM, 1 cm tire, 1:1 final drive = 1884955.59 kph
+    // 1e9 RPM, 1 in tire, 1:1 final drive = 2974993.04 mph
+    property double speedPerTossRpm: (useMetricUnits ? 1.88495559E-03 : 2.97499304E-03) * tireDiameter / finalDriveRatio
+
     property LinearSlot tossRPMAsSpeed: LinearSlot {
         rawA: 0
         engrA: 0
         rawB: 1E9
-        // 1e9 RPM, 1 cm tire, 1:1 final drive = 1884955.59 kph
-        // 1e9 RPM, 1 in tire, 1:1 final drive = 2974993.04 mph
-        engrB: (useMetricUnits ? 1884955.59 : 2974993.04) * tireDiameter / finalDriveRatio
+        engrB: 1E9 * speedPerTossRpm
         unit: useMetricUnits ? "KPH" : "MPH"
         precision: 1
     }

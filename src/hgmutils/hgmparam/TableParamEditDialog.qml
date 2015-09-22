@@ -69,6 +69,7 @@ Window {
                 plots: [
                     XYTrace {
                         tableModel: root.tableParam.stringModel
+                        valid: root.tableParam.value.valid
                     }
                 ]
             }
@@ -78,7 +79,7 @@ Window {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumWidth: 300
-            Layout.minimumHeight: 200
+            Layout.minimumHeight: 250
             spacing: 10
 
             Component {
@@ -90,7 +91,8 @@ Window {
                     text: styleData.value !== undefined ? styleData.value : ""
 
                     onEditingFinished: {
-                        model[styleData.role] = text
+                        if(model[styleData.role] != text)
+                            model[styleData.role] = text
                     }
 
                     onFocusChanged: {
