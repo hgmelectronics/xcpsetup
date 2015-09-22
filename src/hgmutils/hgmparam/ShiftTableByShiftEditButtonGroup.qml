@@ -12,7 +12,7 @@ GroupBox {
     property var speedTableParams
     property var rpmTableParams
     property var gearRatioParams
-    property int firstGearTableOffset: 2
+    property int firstGearTableOffset: 1
     property bool isDownshift
 
     Row {
@@ -39,7 +39,7 @@ GroupBox {
                 property ScalarParam dummyScalar: ScalarParam {}
                 nextGearRatio: isDownshift ?
                                    ((index > 0) ? gearRatioParams[index - 1 + firstGearTableOffset] : dummyScalar) :
-                                   ((index < (count - 1)) ? gearRatioParams[index + 1 + firstGearTableOffset] : dummyScalar)
+                                   ((index < count ) ? gearRatioParams[index + 1 + firstGearTableOffset] : dummyScalar)
             }
         }
     }
