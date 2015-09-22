@@ -23,6 +23,8 @@ Window {
     }
 
     property string name
+    property string thisGearName
+    property string nextGearName
     property TableParam speedTableParam
     property TableParam rpmTableParam
     property ScalarParam thisGearRatio
@@ -240,23 +242,23 @@ Window {
                 TableViewColumn {
                     role: "tps"
                     title: qsTr("Throttle %1").arg(tpsSlot.unit)
-                    width: tableView.viewport.width / tableView.columnCount + 5
+                    width: tableView.viewport.width / tableView.columnCount
                 }
                 TableViewColumn {
                     role: "speed"
                     title: speedSlot.unit
                     delegate: valueEditDelegate
-                    width: tableView.viewport.width / tableView.columnCount - 25
+                    width: tableView.viewport.width / tableView.columnCount
                 }
                 TableViewColumn {
                     role: "beforeRpm"
-                    title: qsTr("Before %1").arg(rpmSlot.unit)
-                    width: tableView.viewport.width / tableView.columnCount + 10
+                    title: qsTr("%1 @%2").arg(rpmSlot.unit).arg(thisGearName)
+                    width: tableView.viewport.width / tableView.columnCount
                 }
                 TableViewColumn {
                     role: "afterRpm"
-                    title: qsTr("After %1").arg(rpmSlot.unit)
-                    width: tableView.viewport.width / tableView.columnCount + 10
+                    title: qsTr("%1 @%2").arg(rpmSlot.unit).arg(nextGearName)
+                    width: tableView.viewport.width / tableView.columnCount
                 }
                 model: root.tableDisplayModel
                 selectionMode: SelectionMode.ContiguousSelection

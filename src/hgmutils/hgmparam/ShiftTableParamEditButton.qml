@@ -14,6 +14,8 @@ Button {
     property alias rpmTableParam: table.rpmTableParam
     property alias thisGearRatio: table.thisGearRatio
     property alias nextGearRatio: table.nextGearRatio
+    property alias thisGearName: table.thisGearName
+    property alias nextGearName: table.nextGearName
 
     onClicked: table.visible = true
 

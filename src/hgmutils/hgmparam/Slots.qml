@@ -375,7 +375,7 @@ QtObject {
         engrA: 0
         rawB:  1E9
         engrB: 1E9
-        unit: "rpm"
+        unit: "RPM"
         precision: 0
     }
 

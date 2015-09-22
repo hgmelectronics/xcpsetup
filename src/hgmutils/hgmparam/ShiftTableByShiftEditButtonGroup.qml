@@ -23,16 +23,10 @@ GroupBox {
             model: 5
             ShiftTableParamEditButton {
                 id: tableButton
-                function getTitle(i) {
-                    var first = i + 1
-                    var second = i + 2
-                    if (!isDownshift) {
-                        return qsTr("Shift %1-%2").arg(first).arg(second)
-                    } else {
-                        return qsTr("Shift %1-%2").arg(second).arg(first)
-                    }
-                }
-                name: getTitle(index)
+
+                thisGearName: qsTr("%1").arg(isDownshift ? (index + 2) : (index + 1))
+                nextGearName: qsTr("%1").arg(isDownshift ? (index + 1) : (index + 2))
+                name: qsTr("Shift %1-%2").arg(thisGearName).arg(nextGearName)
                 speedTableParam: groupBox.speedTableParams[index]
                 rpmTableParam: groupBox.rpmTableParams[index]
                 thisGearRatio: gearRatioParams[index + firstGearTableOffset]
