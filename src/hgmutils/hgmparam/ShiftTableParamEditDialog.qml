@@ -221,7 +221,8 @@ Window {
                         onSelectedChanged: {
                             if(styleData.selected) {
                                 selectAll()
-                                forceActiveFocus()
+                                if(tableView.selection.count === 1)
+                                    forceActiveFocus()
                             }
                             else {
                                 deselect()
@@ -258,7 +259,7 @@ Window {
                     width: tableView.viewport.width / tableView.columnCount + 10
                 }
                 model: root.tableDisplayModel
-                selectionMode: SelectionMode.ExtendedSelection
+                selectionMode: SelectionMode.ContiguousSelection
             }
 
             ColumnLayout {
