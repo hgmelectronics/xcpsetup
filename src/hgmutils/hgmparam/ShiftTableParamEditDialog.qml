@@ -76,6 +76,22 @@ Window {
             return val
     }
 
+    function clampWeakOrderingUp() {
+        for(var i = 1; i < speedTableParam.value.count; ++i) {
+            var prevVal = speedTableParam.value.get(i - 1)
+            if(parseFloat(speedTableParam.value.get(i)) < parseFloat(prevVal))
+                speedTableParam.value.set(i, prevVal)
+        }
+    }
+
+    function clampWeakOrderingDown() {
+        for(var i = speedTableParam.value.count - 2; i >= 0; --i) {
+            var prevVal = speedTableParam.value.get(i + 1)
+            if(parseFloat(speedTableParam.value.get(i)) > parseFloat(prevVal))
+                speedTableParam.value.set(i, prevVal)
+        }
+    }
+
     function scaleAbout(scale, zero) {
         for(var i = 0; i < speedTableParam.value.count; ++i) {
             var oldDelta = speedTableParam.value.get(i) - zero
@@ -114,21 +130,27 @@ Window {
         id: increaseSelected
         text: qsTr("Increase Selected (+)")
         enabled: tableView.selection.count > 0
-        onTriggered: tableView.selection.forEach(
-                       function(rowIndex) {
-                           speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) + increaseDecreaseDelta))
-                       }
-                   )
+        onTriggered: {
+            tableView.selection.forEach(
+                        function(rowIndex) {
+                            speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) + increaseDecreaseDelta))
+                        }
+                        )
+            clampWeakOrderingUp()
+        }
     }
     Action {
         id: decreaseSelected
         text: qsTr("Decrease Selected (-)")
         enabled: tableView.selection.count > 0
-        onTriggered: tableView.selection.forEach(
-                       function(rowIndex) {
-                           speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) - increaseDecreaseDelta))
-                       }
-                   )
+        onTriggered: {
+            tableView.selection.forEach(
+                        function(rowIndex) {
+                            speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) - increaseDecreaseDelta))
+                        }
+                        )
+            clampWeakOrderingDown()
+        }
     }
 
     Action {
