@@ -11,8 +11,8 @@ GroupBox {
     property int count: repeater.model
     property var speedTableParams
     property var rpmTableParams
+    property var gearNumberParams
     property var gearRatioParams
-    property int firstGearTableOffset: 2
     property bool isDownshift
 
     Row {
@@ -24,16 +24,23 @@ GroupBox {
             ShiftTableParamEditButton {
                 id: tableButton
 
-                thisGearName: qsTr("%1").arg(isDownshift ? (index + 2) : (index + 1))
-                nextGearName: qsTr("%1").arg(isDownshift ? (index + 1) : (index + 2))
+                function findRatioIndex(gearNum) {
+                    for(var i = 0; i < gearNumberParams.length; ++i) {
+                        if(gearNumberParams[i].floatVal === gearNum)
+                            return i;
+                    }
+                    return -1;
+                }
+
+                property int thisGearNum: isDownshift ? (index + 2) : (index + 1)
+                property int nextGearNum: isDownshift ? (index + 1) : (index + 2)
+                thisGearName: thisGearNum
+                nextGearName: nextGearNum
                 name: qsTr("Shift %1-%2").arg(thisGearName).arg(nextGearName)
                 speedTableParam: groupBox.speedTableParams[index]
                 rpmTableParam: groupBox.rpmTableParams[index]
-                thisGearRatio: gearRatioParams[index + firstGearTableOffset]
-                property ScalarParam dummyScalar: ScalarParam {}
-                nextGearRatio: isDownshift ?
-                                   ((index > 0) ? gearRatioParams[index - 1 + firstGearTableOffset] : dummyScalar) :
-                                   ((index < (count - 1)) ? gearRatioParams[index + 1 + firstGearTableOffset] : dummyScalar)
+                thisGearRatio: gearRatioParams[findRatioIndex(thisGearNum)]
+                nextGearRatio: gearRatioParams[findRatioIndex(nextGearNum)]
             }
         }
     }
