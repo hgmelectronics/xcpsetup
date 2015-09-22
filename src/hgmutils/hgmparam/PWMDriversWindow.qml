@@ -6,7 +6,6 @@ import QtQuick.Window 2.0
 Window {
     id: root
     property alias model: tableView.model
-
     title: qsTr("PWM Drivers")
     width: 400
     height: 400

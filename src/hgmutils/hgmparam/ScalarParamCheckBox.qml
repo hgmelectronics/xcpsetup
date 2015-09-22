@@ -8,8 +8,8 @@ CheckBox {
     id: checkBox
     property ScalarParam param
     property alias name: checkBox.text
-    checked: param.floatVal
+    checked: param.floatVal != 0
     enabled: param.valid
-    onCheckedChanged: param.floatVal = checked
+    onClicked: param.floatVal = checked
 }
 

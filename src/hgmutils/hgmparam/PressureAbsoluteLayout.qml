@@ -8,11 +8,10 @@ import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
 Flow {
-    anchors.fill: parent
-    anchors.margins: 10
-    spacing: 10
-
     property Parameters parameters
+    anchors.fill: parent
+    anchors.margins: 5
+    spacing: 5
 
     TableByShiftEditButtonGroup {
         title: qsTr("Upshift Apply Pressure")
@@ -43,7 +42,7 @@ Flow {
     GroupBox {
         title: qsTr("Shift Prefill")
         Row {
-            spacing: 10
+            spacing: 5
             TableParamEditButton {
                 name: qsTr("Pressure")
                 xLabel: qsTr("Shift")
