@@ -76,16 +76,19 @@ Window {
             return val
     }
 
-    function clampWeakOrderingUp() {
-        for(var i = 1; i < speedTableParam.value.count; ++i) {
+    function clampWeakOrderingFromSelection() {
+        var selectionFirst = speedTableParam.value.count
+        var selectionLast = -1
+        tableView.selection.forEach( function(rowIndex) {
+            selectionFirst = Math.min(rowIndex, selectionFirst)
+            selectionLast = Math.max(rowIndex, selectionLast)
+        } )
+        for(var i = selectionLast + 1; i < speedTableParam.value.count; ++i) {
             var prevVal = speedTableParam.value.get(i - 1)
             if(parseFloat(speedTableParam.value.get(i)) < parseFloat(prevVal))
                 speedTableParam.value.set(i, prevVal)
         }
-    }
-
-    function clampWeakOrderingDown() {
-        for(var i = speedTableParam.value.count - 2; i >= 0; --i) {
+        for(var i = selectionFirst - 1; i >= 0; --i) {
             var prevVal = speedTableParam.value.get(i + 1)
             if(parseFloat(speedTableParam.value.get(i)) > parseFloat(prevVal))
                 speedTableParam.value.set(i, prevVal)
@@ -93,50 +96,58 @@ Window {
     }
 
     function scaleAbout(scale, zero) {
-        for(var i = 0; i < speedTableParam.value.count; ++i) {
-            var oldDelta = speedTableParam.value.get(i) - zero
-            speedTableParam.value.set(i, clampValue(oldDelta * scale + zero))
-        }
+        tableView.selection.forEach( function(rowIndex) {
+            var oldDelta = speedTableParam.value.get(rowIndex) - zero
+            speedTableParam.value.set(rowIndex, clampValue(oldDelta * scale + zero))
+        } )
     }
 
     function offset(delta) {
-        for(var i = 0; i < speedTableParam.value.count; ++i) {
-            speedTableParam.value.set(i, clampValue(speedTableParam.value.get(i) + delta))
-        }
+        tableView.selection.forEach( function(rowIndex) {
+            speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) + delta))
+        } )
+    }
+
+    function selectionAverage() {
+        var average = 0.0
+        tableView.selection.forEach( function(rowIndex) {
+            average += speedTableParam.value.get(rowIndex)
+        } )
+        average /= tableView.selection.count
+        return average
     }
 
 
     Action {
+        id: selectAll
+        text: qsTr("Select All")
+        onTriggered: tableView.selection.selectAll()
+    }
+    Action {
+        id: deselect
+        text: qsTr("Deselect")
+        onTriggered: tableView.selection.clear()
+    }
+    Action {
         id: makeSteeper
         text: qsTr("Steeper")
-        onTriggered: scaleAbout(steeperFlatterRatio, arrayAverage())
+        onTriggered: {
+            scaleAbout(steeperFlatterRatio, selectionAverage())
+            clampWeakOrderingFromSelection()
+        }
     }
     Action {
         id: makeFlatter
         text: qsTr("Flatter")
-        onTriggered: scaleAbout(1 / steeperFlatterRatio, arrayAverage())
-    }
-    Action {
-        id: increaseAll
-        text: qsTr("Increase All")
-        onTriggered: offset(increaseDecreaseDelta)
-    }
-    Action {
-        id: decreaseAll
-        text: qsTr("Decrease All")
-        onTriggered: offset(-increaseDecreaseDelta)
+        onTriggered: scaleAbout(1 / steeperFlatterRatio, selectionAverage())
     }
     Action {
         id: increaseSelected
         text: qsTr("Increase Selected (+)")
         enabled: tableView.selection.count > 0
         onTriggered: {
-            tableView.selection.forEach(
-                        function(rowIndex) {
-                            speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) + increaseDecreaseDelta))
-                        }
-                        )
-            clampWeakOrderingUp()
+            offset(increaseDecreaseDelta)
+            clampWeakOrderingFromSelection()
         }
     }
     Action {
@@ -144,12 +155,8 @@ Window {
         text: qsTr("Decrease Selected (-)")
         enabled: tableView.selection.count > 0
         onTriggered: {
-            tableView.selection.forEach(
-                        function(rowIndex) {
-                            speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) - increaseDecreaseDelta))
-                        }
-                        )
-            clampWeakOrderingDown()
+            offset(-increaseDecreaseDelta)
+            clampWeakOrderingFromSelection()
         }
     }
 
@@ -188,18 +195,15 @@ Window {
         Component.onCompleted: forceActiveFocus()
 
         Keys.onPressed: {
-            if(event.key === Qt.Key_Plus || event.key === Qt.Key_Equal) {
+            event.accepted = true
+            if(event.key === Qt.Key_Plus || event.key === Qt.Key_Equal)
                 increaseSelected.trigger()
-                event.accepted = true
-            }
-            else if(event.key === Qt.Key_Minus || event.key === Qt.Key_Underscore) {
+            else if(event.key === Qt.Key_Minus || event.key === Qt.Key_Underscore)
                 decreaseSelected.trigger()
-                event.accepted = true
-            }
-            else if(event.key === Qt.Key_Slash) {
+            else if(event.key === Qt.Key_Slash)
                 linearizeSelected.trigger()
-                event.accepted = true
-            }
+            else
+                event.accepted = false
         }
 
         Rectangle {
@@ -239,16 +243,20 @@ Window {
                         if(model[styleData.role] != text)
                             model[styleData.role] = text
                     }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            tableView.selection.clear()
+                            tableView.selection.select(styleData.row, styleData.row)
+                            selectAll()
+                            forceActiveFocus(Qt.MouseFocusReason)
+                        }
+                    }
 
                     Connections {
                         target: styleData
                         onSelectedChanged: {
-                            if(styleData.selected) {
-                                selectAll()
-                                if(tableView.selection.count === 1)
-                                    forceActiveFocus()
-                            }
-                            else {
+                            if(!styleData.selected) {
                                 deselect()
                             }
                         }
@@ -294,19 +302,19 @@ Window {
                 spacing: 10
                 Button {
                     Layout.fillWidth: true
+                    action: selectAll
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: deselect
+                }
+                Button {
+                    Layout.fillWidth: true
                     action: makeSteeper
                 }
                 Button {
                     Layout.fillWidth: true
                     action: makeFlatter
-                }
-                Button {
-                    Layout.fillWidth: true
-                    action: increaseAll
-                }
-                Button {
-                    Layout.fillWidth: true
-                    action: decreaseAll
                 }
                 Button {
                     Layout.fillWidth: true
