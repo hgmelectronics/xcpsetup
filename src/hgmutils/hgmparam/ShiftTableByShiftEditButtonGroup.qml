@@ -24,12 +24,13 @@ GroupBox {
             ShiftTableParamEditButton {
                 id: tableButton
 
-                function findRatioIndex(gearNum) {
-                    for(var i = 0; i < gearNumberParams.length; ++i) {
-                        if(gearNumberParams[i].floatVal === gearNum)
-                            return i;
+                function findRatioIndex(numberParams, gearNum) {
+                    for(var i = 0; i < numberParams.length; ++i) {
+                        if(numberParams[i].floatVal === gearNum)
+                            return i
                     }
-                    return -1;
+                    // probably being instantiated before parameters are loaded - return something that at least does not cause an error
+                    return 0
                 }
 
                 property int thisGearNum: isDownshift ? (index + 2) : (index + 1)
@@ -39,8 +40,8 @@ GroupBox {
                 name: qsTr("Shift %1-%2").arg(thisGearName).arg(nextGearName)
                 speedTableParam: groupBox.speedTableParams[index]
                 rpmTableParam: groupBox.rpmTableParams[index]
-                thisGearRatio: gearRatioParams[findRatioIndex(thisGearNum)]
-                nextGearRatio: gearRatioParams[findRatioIndex(nextGearNum)]
+                thisGearRatio: gearRatioParams[findRatioIndex(gearNumberParams, thisGearNum)]
+                nextGearRatio: gearRatioParams[findRatioIndex(gearNumberParams, nextGearNum)]
             }
         }
     }
