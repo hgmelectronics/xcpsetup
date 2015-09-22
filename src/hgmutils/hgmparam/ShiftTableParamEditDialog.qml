@@ -120,17 +120,20 @@ Window {
 
     Action {
         id: selectAll
-        text: qsTr("Select All")
+        text: qsTr("Select All (Ctrl-A)")
+        enabled: tableView.selection.count < tableView.rowCount
         onTriggered: tableView.selection.selectAll()
     }
     Action {
         id: deselect
-        text: qsTr("Deselect")
+        text: qsTr("Deselect (Ctrl-Shift-A)")
+        enabled: tableView.selection.count > 0
         onTriggered: tableView.selection.clear()
     }
     Action {
         id: makeSteeper
         text: qsTr("Steeper")
+        enabled: tableView.selection.count > 0
         onTriggered: {
             scaleAbout(steeperFlatterRatio, selectionAverage())
             clampWeakOrderingFromSelection()
@@ -139,6 +142,7 @@ Window {
     Action {
         id: makeFlatter
         text: qsTr("Flatter")
+        enabled: tableView.selection.count > 0
         onTriggered: scaleAbout(1 / steeperFlatterRatio, selectionAverage())
     }
     Action {
@@ -188,11 +192,18 @@ Window {
     }
 
     SplitView {
+        id: splitView
         anchors.fill: parent
         anchors.margins: 10
         orientation: Qt.Vertical
 
-        Component.onCompleted: forceActiveFocus()
+        Connections {
+            target: root
+            onActiveChanged: {
+                if(root.active)
+                    splitView.forceActiveFocus(Qt.ActiveWindowFocusReason)
+            }
+        }
 
         Keys.onPressed: {
             event.accepted = true
@@ -202,6 +213,10 @@ Window {
                 decreaseSelected.trigger()
             else if(event.key === Qt.Key_Slash)
                 linearizeSelected.trigger()
+            else if(event.key === Qt.Key_A && event.modifiers === Qt.ControlModifier)
+                selectAll.trigger()
+            else if(event.key === Qt.Key_A && event.modifiers === (Qt.ShiftModifier | Qt.ControlModifier))
+                deselect.trigger()
             else
                 event.accepted = false
         }
