@@ -8,13 +8,11 @@ import com.hgmelectronics.setuptools.ui 1.0
 
 Window {
     id: root
-
     property alias xLabel: xColumn.title
     property alias valueLabel: valueColumn.title
     property TableParam tableParam
     property double steeperFlatterRatio: 1.1
     property double increaseDecreaseDelta: 1.0
-
     width: 400
     height: 400
     minimumWidth: 400

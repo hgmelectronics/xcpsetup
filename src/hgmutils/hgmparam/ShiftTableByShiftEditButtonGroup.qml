@@ -16,7 +16,7 @@ GroupBox {
     property bool isDownshift
 
     Row {
-        spacing: 10
+        spacing: 5
 
         Repeater {
             id: repeater

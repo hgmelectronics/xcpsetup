@@ -5,14 +5,14 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
 GroupBox {
+    id: groupBox
     property alias count: repeater.model
     property string xLabel
     property string valueLabel
     property var tableParam
 
-    id: groupBox
     Row {
-        spacing: 10
+        spacing: 5
         Repeater {
             id: repeater
             TableParamEditButton {

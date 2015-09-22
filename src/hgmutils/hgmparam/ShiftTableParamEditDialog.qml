@@ -8,11 +8,26 @@ import com.hgmelectronics.setuptools.ui 1.0
 
 Window {
     id: root
-    title: name
-    width: 500
-    height: 400
-    minimumWidth: 500
-    minimumHeight: 220 + chartBox.height
+    property alias name: root.title
+    property TableParam speedTableParam
+    property TableParam rpmTableParam
+    property ScalarParam thisGearRatio
+    property ScalarParam nextGearRatio
+    property var speedSlot: speedTableParam.value.slot
+    property var tpsSlot: speedTableParam.x.slot
+    property var rpmSlot: rpmTableParam.value.slot
+    property double steeperFlatterRatio: 1.1
+    property double increaseDecreaseDelta: 1.0
+
+    minimumWidth: layout.Layout.minimumWidth
+    minimumHeight: layout.Layout.minimumHeight
+    width: layout.implicitWidth
+    height: layout.implicitHeight
+
+//    width: 500
+//    height: 400
+//    minimumWidth: 500
+//    minimumHeight: 220 + chartBox.height
 
     function isDefined(val) {
         return (typeof(val) !== "undefined") && (val !== null)
@@ -22,18 +37,6 @@ Window {
         return isDefined(param.stringModel) ? param.stringModel : param
     }
 
-    property string name
-    property TableParam speedTableParam
-    property TableParam rpmTableParam
-    property ScalarParam thisGearRatio
-    property ScalarParam nextGearRatio
-
-    property var speedSlot: speedTableParam.value.slot
-    property var tpsSlot: speedTableParam.x.slot
-    property var rpmSlot: rpmTableParam.value.slot
-
-    property double steeperFlatterRatio: 1.1
-    property double increaseDecreaseDelta: 1.0
 
 
     property ScaleOffsetProxyModel beforeRpmModel: ScaleOffsetProxyModel {
@@ -88,6 +91,7 @@ Window {
     }
 
     SplitView {
+        id: layout
         anchors.fill: parent
         anchors.margins: 10
         orientation: Qt.Vertical

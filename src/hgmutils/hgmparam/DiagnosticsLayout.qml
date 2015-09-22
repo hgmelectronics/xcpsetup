@@ -8,16 +8,15 @@ import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
 Flow {
+    property Parameters parameters
     anchors.fill: parent
     anchors.margins: 10
     spacing: 10
 
-    property Parameters parameters
-
     GroupBox {
         title: "Bus Voltages"
         Column {
-            spacing: 10
+            spacing: 5
             ScalarParamEdit {
                 name: "5V Bus"
                 param: parameters.controllerBus5Voltage
@@ -43,7 +42,7 @@ Flow {
     GroupBox {
         title: "Frequency Sensors"
         Column {
-            spacing: 10
+            spacing: 5
             ScalarParamEdit {
                 name: "Tachometer"
                 param: parameters.controllerTachInputFrequency
@@ -65,7 +64,7 @@ Flow {
     GroupBox {
         title: "Voltage Sensors"
         Column {
-            spacing: 10
+            spacing: 5
             ScalarParamEdit {
                 name: "Throttle Position"
                 param: parameters.controllertThrottlePositionSensorVoltage
@@ -100,7 +99,7 @@ Flow {
     GroupBox {
         title: "Software"
         Column {
-            spacing: 10
+            spacing: 5
             ScalarParamEdit {
                 name: "Heap Used"
                 param: parameters.controllerHeapUsed
@@ -122,7 +121,7 @@ Flow {
     }
 
     GroupBox {
-        title: "Digital Inputs"
+        title: "Digital Outputs"
         Column {
             ScalarParamCheckBox {
                 text: "Green LED"
@@ -156,9 +155,8 @@ Flow {
     }
 
     GroupBox {
-        title: "Digital Outputs"
+        title: "Digital Inputs"
         Column {
-
             ScalarParamCheckBox {
                 name: "SD Card Protect"
                 param: parameters.controllerSDCardWriteProtect
@@ -181,7 +179,7 @@ Flow {
     GroupBox {
         title: "Frequency Outputs"
         Column {
-            spacing: 10
+            spacing: 5
             ScalarParamSpinBox {
                 name: "Speed 1"
                 param: parameters.controllerSpeedTimer1Frequency

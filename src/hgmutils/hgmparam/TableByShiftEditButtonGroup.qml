@@ -10,11 +10,10 @@ GroupBox {
     property string xLabel
     property string valueLabel
     property var tableParam
-
     property bool isDownshift: false
 
     Row {
-        spacing: 10
+        spacing: 5
         Repeater {
             id: repeater
             TableParamEditButton {

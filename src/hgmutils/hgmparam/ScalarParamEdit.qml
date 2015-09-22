@@ -15,6 +15,7 @@ GroupBox {
         id: textField
         text: param.stringVal
         readOnly: param.range.writable
+        horizontalAlignment: TextInput.AlignRight
         onEditingFinished: {
             if(param.stringVal != text)
                 param.stringVal = text
