@@ -7,5 +7,8 @@
         <file>ui/qmldir</file>
         <file>qmldir</file>
         <file>TableParam.qml</file>
+        <file>ui/ScalarParamEdit.qml</file>
+        <file>ui/ScalarParamSpinBox.qml</file>
+        <file>ui/ScalarParamCheckBox.qml</file>
     </qresource>
 </RCC>

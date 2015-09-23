@@ -4,12 +4,10 @@
         <file>HelpDialog.qml</file>
         <file>ParamTabView.qml</file>
         <file>Slots.qml</file>
-        <file>ScalarParamEdit.qml</file>
         <file>TableParamEdit.qml</file>
         <file>TableParamView.qml</file>
         <file>EncodingParamEdit.qml</file>
         <file>Parameters.qml</file>
-        <file>ScalarParamSpinBox.qml</file>
         <file>ParamId.qml</file>
         <file>TableParamEditDialog.qml</file>
         <file>TableParamEditButton.qml</file>
@@ -25,6 +23,5 @@
         <file>VehicleLayout.qml</file>
         <file>PressureAbsoluteLayout.qml</file>
         <file>PressurePercentageLayout.qml</file>
-        <file>ScalarParamCheckBox.qml</file>
     </qresource>
 </RCC>
