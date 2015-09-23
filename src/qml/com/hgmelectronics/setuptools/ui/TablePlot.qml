@@ -37,13 +37,16 @@ QChart {
         chartData = newChartData
     }
     onPlotsChanged: {
-        replot()
         for(var i = 0; i < plots.length; ++i) {
             plots[i].plotChanged.disconnect(replot)
             plots[i].plotChanged.connect(replot)
         }
+        replot()
     }
     Component.onCompleted: {
+        for(var i = 0; i < plots.length; ++i) {
+            plots[i].plotChanged.connect(replot)
+        }
         replot()
     }
 }
