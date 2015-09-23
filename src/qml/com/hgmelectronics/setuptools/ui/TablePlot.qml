@@ -33,17 +33,23 @@ QChart {
                                    yData: plots[i].valueList
                                })
             }
+            else
+                console.log("plots[i].valid == false")
         }
         chartData = newChartData
+        console.log(JSON.stringify(chartData))
     }
     onPlotsChanged: {
-        replot()
         for(var i = 0; i < plots.length; ++i) {
             plots[i].plotChanged.disconnect(replot)
             plots[i].plotChanged.connect(replot)
         }
+        replot()
     }
     Component.onCompleted: {
+        for(var i = 0; i < plots.length; ++i) {
+            plots[i].plotChanged.connect(replot)
+        }
         replot()
     }
 }

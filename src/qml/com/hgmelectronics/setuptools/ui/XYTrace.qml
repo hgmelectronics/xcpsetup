@@ -25,4 +25,5 @@ QtObject {
     onValueListChanged: plotChanged()
     onBaseColorChanged: plotChanged()
     onFadeChanged: plotChanged()
+    onValidChanged: plotChanged()
 }
