@@ -8,6 +8,19 @@
 
 namespace SetupTools {
 
+class EncodingSlot;
+
+class EncodingValidator : public QValidator
+{
+    Q_OBJECT
+public:
+    EncodingValidator(EncodingSlot *parent = nullptr);
+public slots:
+    void slotChanged();
+
+    virtual QValidator::State validate(QString &input, int &pos) const;
+};
+
 struct EncodingPair
 {
     double raw;
@@ -22,6 +35,7 @@ struct EncodingPair
 class EncodingSlot : public Slot
 {
     Q_OBJECT
+    friend class EncodingValidator;
 
     Q_PROPERTY(SetupTools::Slot *unencodedSlot READ unencodedSlot WRITE setUnencodedSlot NOTIFY unencodedSlotChanged)       //!< SLOT used when the value to be converted is not in the encoding model
     Q_PROPERTY(QVariant encodingList READ encodingList WRITE setEncodingList NOTIFY encodingListChanged)
@@ -45,6 +59,7 @@ public:
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const;
     Q_INVOKABLE int engrToEncodingIndex(QVariant engr) const;
     Q_INVOKABLE void append(double raw, QString engr);
+    virtual QValidator *validator();
 
     double oorFloat;
     QString oorString;
@@ -55,11 +70,15 @@ signals:
 
 private:
     void onUnencodedSlotUnitChanged();
+    void onUnencodedSlotValueParamChanged();
+
     Slot *mUnencodedSlot;
     QList<EncodingPair> mList;
     QMap<double, QString> mRawToEngr;
     QMap<QString, double> mEngrToRaw;
     QMap<QString, int> mEngrToIndex;
+
+    EncodingValidator *mValidator;
 };
 
 } // namespace SetupTools
