@@ -26,6 +26,7 @@ GroupBox {
             onAccepted: {
                 param.stringVal = editText
             }
+            validator: param.slot.validator
         }
 
         Label {

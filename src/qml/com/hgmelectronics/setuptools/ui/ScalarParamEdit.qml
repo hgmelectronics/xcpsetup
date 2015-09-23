@@ -20,5 +20,6 @@ GroupBox {
             if(param.stringVal != text)
                 param.stringVal = text
         }
+        validator: param.slot.validator
     }
 }
