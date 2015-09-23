@@ -18,8 +18,8 @@ GroupBox {
         implicitWidth: 150
         horizontalAlignment: Qt.AlignRight
         stepSize: Math.pow(10,-param.slot.precision)
-        minimumValue: param.slot.engrA
-        maximumValue: param.slot.engrB
+        minimumValue: Math.min(param.slot.engrA, param.slot.engrB)
+        maximumValue: Math.max(param.slot.engrA, param.slot.engrB)
         decimals: param.slot.precision
         suffix: param.slot.unit.length != 0 ? " %1".arg(param.slot.unit) : ""
         value: param.floatVal

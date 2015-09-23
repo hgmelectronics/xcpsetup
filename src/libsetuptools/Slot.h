@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QValidator>
 
 namespace SetupTools {
 
@@ -18,6 +19,7 @@ class Slot : public QObject
     Q_PROPERTY(QVariant rawMax READ rawMax NOTIFY valueParamChanged)
     Q_PROPERTY(QVariant engrMin READ engrMin NOTIFY valueParamChanged)
     Q_PROPERTY(QVariant engrMax READ engrMax NOTIFY valueParamChanged)
+    Q_PROPERTY(QValidator *validator READ validator NOTIFY valueParamChanged)
 public:
     Slot(QObject *parent = nullptr);
 
@@ -40,6 +42,7 @@ public:
     virtual QVariant rawMax() const;
     virtual QVariant engrMin() const;
     virtual QVariant engrMax() const;
+    virtual QValidator *validator();
 signals:
     void unitChanged();
     void valueParamChanged();

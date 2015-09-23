@@ -132,6 +132,7 @@ Window {
                         if(model[styleData.role] != text)
                             model[styleData.role] = text
                     }
+                    validator: root.speedTableParam.value.slot.validator
 
                     Connections {
                         target: styleData

@@ -87,6 +87,7 @@ Window {
                     color: styleData.textColor
                     anchors.margins: 4
                     text: styleData.value !== undefined ? styleData.value : ""
+                    validator: tableParam.value.slot.validator
 
                     onEditingFinished: {
                         if(model[styleData.role] != text)
