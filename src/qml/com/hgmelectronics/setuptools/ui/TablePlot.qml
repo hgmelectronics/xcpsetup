@@ -33,11 +33,8 @@ QChart {
                                    yData: plots[i].valueList
                                })
             }
-            else
-                console.log("plots[i].valid == false")
         }
         chartData = newChartData
-        console.log(JSON.stringify(chartData))
     }
     onPlotsChanged: {
         for(var i = 0; i < plots.length; ++i) {
