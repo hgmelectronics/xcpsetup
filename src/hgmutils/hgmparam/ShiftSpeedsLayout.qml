@@ -194,6 +194,7 @@ ColumnLayout {
         title: qsTr("Shift Tables A")
         speedTableParams: parameters.shiftTablesA
         rpmTableParams: parameters.rpmShiftTablesA
+        gearNumberParams: parameters.transmissionGearNumbers
         gearRatioParams: parameters.transmissionGearRatios
         Layout.minimumHeight: 60
     }
@@ -202,6 +203,7 @@ ColumnLayout {
         title: qsTr("Shift Tables B")
         speedTableParams: parameters.shiftTablesB
         rpmTableParams: parameters.rpmShiftTablesB
+        gearNumberParams: parameters.transmissionGearNumbers
         gearRatioParams: parameters.transmissionGearRatios
         Layout.minimumHeight: 60
     }

@@ -19,6 +19,9 @@ public:
     SlotArrayModel(QObject *parent = nullptr);
     SlotArrayModel(Slot *slot, int count, int min = 0, int stride = 1, bool stringFormat = true, QObject *parent = nullptr);
 
+    // gets the value in enginering units
+    Q_INVOKABLE QVariant get(int row) const;
+
     Slot *slot() const { return mSlot; }
     void setSlot(Slot *newSlot);
 
