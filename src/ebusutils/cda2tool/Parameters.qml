@@ -25,6 +25,14 @@ QtObject {
         count: 4
     }
 
+    readonly property ScalarParam cbtmFaultDecayCyc: registry.addScalarParam(MemoryRange.S32, paramId.cbtmFaultDecayCyc, true, true, slots.raw32)
+    readonly property ScalarParam cbtmNonQuiescentTripCyc: registry.addScalarParam(MemoryRange.S32, paramId.cbtmNonQuiescentTripCyc, true, true, slots.raw32)
+    readonly property ScalarParam cbtmNonQuiescentDecayCyc: registry.addScalarParam(MemoryRange.S32, paramId.cbtmNonQuiescentDecayCyc, true, true, slots.raw32)
+    readonly property ScalarParam cbtmIsospi1FirstBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi1FirstBoard, true, true, slots.raw32)
+    readonly property ScalarParam cbtmIsospi1LastBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi1LastBoard, true, true, slots.raw32)
+    readonly property ScalarParam cbtmIsospi2FirstBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2FirstBoard, true, true, slots.raw32)
+    readonly property ScalarParam cbtmIsospi2LastBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2LastBoard, true, true, slots.raw32)
+
     readonly property ArrayParam cbtmCellVoltArray: registry.addArrayParam(MemoryRange.S32, paramId.cbtmCellVolt, cbtmCellAxisModel.count, false, false, slots.ltcCellv)
     property TableMapperModel cbtmCellVolt: TableMapperModel { mapping: { "x" : cbtmCellAxisModel, "value": cbtmCellVoltArray.stringModel } }
 
@@ -53,4 +61,12 @@ QtObject {
 
     readonly property ArrayParam ctcBClosedArray: registry.addArrayParam(MemoryRange.S32, paramId.ctcBClosed, ctcAxisModel.count, false, false, slots.raw32)
     property TableMapperModel ctcBClosed: TableMapperModel { mapping: { "x" : ctcAxisModel, "value": ctcBClosedArray.stringModel } }
+
+    readonly property ScalarParam sysCycleIdleTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleIdleTicks, false, false, slots.raw32)
+    readonly property ScalarParam sysDrvCbtmInTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysDrvCbtmInTicks, false, false, slots.raw32)
+    readonly property ScalarParam sysDrvIaiInTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysDrvIaiInTicks, false, false, slots.raw32)
+    readonly property ScalarParam sysCtlAuxBattTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCtlAuxBattTicks, false, false, slots.raw32)
+    readonly property ScalarParam sysCtlLampTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCtlLampTicks, false, false, slots.raw32)
+    readonly property ScalarParam sysCtlMotorTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCtlMotorTicks, false, false, slots.raw32)
+    readonly property ScalarParam sysCtlPackTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCtlPackTicks, false, false, slots.raw32)
 }

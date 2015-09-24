@@ -20,23 +20,20 @@ Item {
             registry: root.registry
         }
 
-//        Tab {
-//            title: "Analog I/O"
-//            active: true
-//            Flow {
-//                anchors.fill: parent
-//                anchors.margins: 10
-//                spacing: 10
-//                ScalarParamEdit {
-//                    name: "Final Drive Ratio"
-//                    param: registry.addScalarParam(MemoryRange.U32, 0x0A000000*4, true, true, slots.raw32)
-//                }
-//                ScalarParamEdit {
-//                    name: "Max Engine Speed A"
-//                    param: registry.addScalarParam(MemoryRange.U32, 0x04230000*4, true, true, slots.raw32)
-//                }
-//            }
-//        }
+        Tab {
+            title: "Analog I/O"
+            active: true
+            TableParamEdit {
+                name: "AI"
+                xLabel: "#"
+                valueLabel: "cts"
+                tableModel: parameters.aioAiCts
+            }
+            ScalarParamEdit {
+                name: "VBat"
+                param: parameters.aioVbatEv01
+            }
+        }
 
         Tab {
             title: "CBTM"
@@ -45,6 +42,24 @@ Item {
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
+                ColumnLayout {
+                    ScalarParamEdit {
+                        name: "IsoSPI #1 First Board"
+                        param: parameters.cbtmIsospi1FirstBoard
+                    }
+                    ScalarParamEdit {
+                        name: "IsoSPI #1 Last Board"
+                        param: parameters.cbtmIsospi1LastBoard
+                    }
+                    ScalarParamEdit {
+                        name: "IsoSPI #2 First Board"
+                        param: parameters.cbtmIsospi2FirstBoard
+                    }
+                    ScalarParamEdit {
+                        name: "IsoSPI #2 Last Board"
+                        param: parameters.cbtmIsospi2LastBoard
+                    }
+                }
                 TableParamEdit {
                     name: "Cell Voltage"
                     xLabel: "Cell #"
