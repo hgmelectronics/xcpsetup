@@ -4,7 +4,6 @@
         <file>HelpDialog.qml</file>
         <file>ParamTabView.qml</file>
         <file>Slots.qml</file>
-        <file>TableParamEdit.qml</file>
         <file>TableParamView.qml</file>
         <file>EncodingParamEdit.qml</file>
         <file>Parameters.qml</file>

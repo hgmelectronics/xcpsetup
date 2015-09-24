@@ -134,7 +134,7 @@ Window {
         }
     }
 
-    property TableView tableView: encodingValue ? encodingTableView : regularTableView
+    property TableView tableView: encodingValue ? encodingTableParamEdit.tableView : regularTableParamEdit.tableView
 
     SplitView {
         id: splitView
@@ -202,130 +202,24 @@ Window {
             Layout.minimumHeight: 250
             spacing: 10
 
-            Component {
-                id: regularValueEditDelegate
-                TextInput {
-                    id: input
-                    color: styleData.textColor
-                    anchors.margins: 4
-                    text: styleData.value !== undefined ? styleData.value : ""
-                    validator: tableParam.value.slot.validator
-
-                    onEditingFinished: {
-                        if(model[styleData.role] != text)
-                            model[styleData.role] = text
-                    }
-                    onAccepted: {
-                        if (styleData.selected)
-                            selectAll()
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            tableView.currentRow = styleData.row
-                            tableView.selection.clear()
-                            tableView.selection.select(styleData.row, styleData.row)
-                            selectAll()
-                            forceActiveFocus(Qt.MouseFocusReason)
-                        }
-                    }
-
-                    Connections {
-                        target: styleData
-                        onSelectedChanged: {
-                            if(!styleData.selected) {
-                                deselect()
-                            }
-                        }
-                    }
-                }
-            }
-
-            Component {
-                id: encodingValueEditDelegate
-                Item {
-                    id: modelForwarder
-                    property var dataModel: model[styleData.role]
-                    ComboBox {
-                        id: combo
-                        model: tableParam.value.slot.encodingStringList
-                        editable: true
-                        onActivated: {
-                            if (index == -1)
-                                modelForwarder.dataModel = editText
-                            else
-                                modelForwarder.dataModel = model[index]
-                        }
-                        onAccepted: {
-                            modelForwarder.dataModel = editText
-                        }
-                    }
-                }
-            }
-
-
-            TableView {
-                id: regularTableView
+            TableParamEdit {
+                id: regularTableParamEdit
+                xLabel: root.xLabel
+                valueLabel: root.valueLabel
+                tableParam: root.tableParam
                 visible: !encodingValue
-                property real columnWidth: viewport.width / columnCount
-
-                model: root.tableParam.stringModel
-                selectionMode: SelectionMode.ExtendedSelection
                 Layout.margins: 10
                 Layout.fillHeight: true
-
-                TableViewColumn {
-                    role: "x"
-                    width: regularTableView.columnWidth
-                    title: xLabel
-                }
-                TableViewColumn {
-                    role: "value"
-                    delegate: regularValueEditDelegate
-                    width: regularTableView.columnWidth
-                    title: valueLabel
-                }
             }
-            TableView {
-                id: encodingTableView
-                visible: encodingValue
-                property real columnWidth: viewport.width / columnCount
 
-                model: root.tableParam.stringModel
-                selectionMode: SelectionMode.ExtendedSelection
+            EncodingTableParamEdit {
+                id: encodingTableParamEdit
+                xLabel: root.xLabel
+                valueLabel: root.valueLabel
+                tableParam: root.tableParam
+                visible: encodingValue
                 Layout.margins: 10
                 Layout.fillHeight: true
-                rowDelegate: Rectangle {
-                    height: 20
-                    property TableView control: encodingTableView
-                    property color selectedColor: control.activeFocus ? "#07c" : "#999"
-                    property SystemPalette palette: SystemPalette {
-                        colorGroup: control.enabled ?
-                                        SystemPalette.Active :
-                                        SystemPalette.Disabled
-                    }
-
-                    property color backgroundColor: control.backgroundVisible ? palette.base : "transparent"
-                    property color alternateBackgroundColor: "#f5f5f5"
-                    color: styleData.selected ?
-                               selectedColor :
-                               (!styleData.alternate ?
-                                   alternateBackgroundColor :
-                                   backgroundColor)
-                }
-
-                TableViewColumn {
-                    role: "x"
-                    width: encodingTableView.columnWidth
-                    title: xLabel
-                }
-                TableViewColumn {
-                    role: "value"
-                    delegate: encodingValueEditDelegate
-                    width: encodingTableView.columnWidth
-                    title: valueLabel
-                }
             }
 
             ColumnLayout {
