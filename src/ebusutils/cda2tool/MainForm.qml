@@ -35,14 +35,6 @@ ColumnLayout {
         paramLoadFileDialog.open()
     }
 
-    TextField {
-        id: paramFileNameField
-        text: paramFilePath
-        readOnly: true
-        anchors.left: parent.left
-        anchors.right: parent.right
-    }
-
     ParamTabView {
         id: paramTabView
         anchors.left: parent.left

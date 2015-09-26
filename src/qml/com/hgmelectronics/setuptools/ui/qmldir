@@ -2,3 +2,10 @@ module com.hgmelectronics.setuptools.ui
 
 XYTrace 1.0 XYTrace.qml
 TablePlot 1.0 TablePlot.qml
+ScalarParamCheckBox 1.0 ScalarParamCheckBox.qml
+ScalarParamIndicator 1.0 ScalarParamIndicator.qml
+ScalarParamEdit 1.0 ScalarParamEdit.qml
+ScalarParamSpinBox 1.0 ScalarParamSpinBox.qml
+TableParamEdit 1.0 TableParamEdit.qml
+EncodingTableParamEdit 1.0 EncodingTableParamEdit.qml
+EncodingParamEdit 1.0 EncodingParamEdit.qml

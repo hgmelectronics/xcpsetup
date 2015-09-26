@@ -11,8 +11,8 @@ GroupBox {
     property int count: repeater.model
     property var speedTableParams
     property var rpmTableParams
+    property var gearNumberParams
     property var gearRatioParams
-    property int firstGearTableOffset: 1
     property bool isDownshift
 
     Row {
@@ -23,23 +23,25 @@ GroupBox {
             model: 5
             ShiftTableParamEditButton {
                 id: tableButton
-                function getTitle(i) {
-                    var first = i + 1
-                    var second = i + 2
-                    if (!isDownshift) {
-                        return qsTr("Shift %1-%2").arg(first).arg(second)
-                    } else {
-                        return qsTr("Shift %1-%2").arg(second).arg(first)
+
+                function findRatioIndex(numberParams, gearNum) {
+                    for(var i = 0; i < numberParams.length; ++i) {
+                        if(numberParams[i].floatVal === gearNum)
+                            return i
                     }
+                    // probably being instantiated before parameters are loaded - return something that at least does not cause an error
+                    return 0
                 }
-                name: getTitle(index)
+
+                property int thisGearNum: isDownshift ? (index + 2) : (index + 1)
+                property int nextGearNum: isDownshift ? (index + 1) : (index + 2)
+                thisGearName: thisGearNum
+                nextGearName: nextGearNum
+                name: qsTr("Shift %1-%2").arg(thisGearName).arg(nextGearName)
                 speedTableParam: groupBox.speedTableParams[index]
                 rpmTableParam: groupBox.rpmTableParams[index]
-                thisGearRatio: gearRatioParams[index + firstGearTableOffset]
-                property ScalarParam dummyScalar: ScalarParam {}
-                nextGearRatio: isDownshift ?
-                                   ((index > 0) ? gearRatioParams[index - 1 + firstGearTableOffset] : dummyScalar) :
-                                   ((index < count ) ? gearRatioParams[index + 1 + firstGearTableOffset] : dummyScalar)
+                thisGearRatio: gearRatioParams[findRatioIndex(gearNumberParams, thisGearNum)]
+                nextGearRatio: gearRatioParams[findRatioIndex(gearNumberParams, nextGearNum)]
             }
         }
     }
