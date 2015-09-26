@@ -8,10 +8,13 @@ QtObject {
     readonly property double cbtmFaultDecayCyc: 4*0x00030000
     readonly property double cbtmNonQuiescentTripCyc: 4*0x00030001
     readonly property double cbtmNonQuiescentDecayCyc: 4*0x00030002
-    readonly property double cbtmIsospi1FirstBoard: 4*0x00030003
-    readonly property double cbtmIsospi1LastBoard: 4*0x00030004
-    readonly property double cbtmIsospi2FirstBoard: 4*0x00030005
-    readonly property double cbtmIsospi2LastBoard: 4*0x00030006
+    readonly property double cbtmBalanceOpenDeltaVThresh: 4*0x00030003
+    readonly property double cbtmBalanceShortDeltaVThresh: 4*0x00030004
+    readonly property double cbtmQuiescentDeltaVThresh: 4*0x00030005
+    readonly property double cbtmIsospi1FirstBoard: 4*0x00030006
+    readonly property double cbtmIsospi1LastBoard: 4*0x00030007
+    readonly property double cbtmIsospi2FirstBoard: 4*0x00030008
+    readonly property double cbtmIsospi2LastBoard: 4*0x00030009
     readonly property double cbtmCellVolt: 4*0x00031000
     readonly property double cbtmTabTemp: 4*0x00032000
     readonly property double cbtmDisch: 4*0x00033000
@@ -82,6 +85,10 @@ QtObject {
     readonly property double auxBattRestartVoltTimeCount: 4*0x00070015
     readonly property double auxBattRestartAlwaysTimeCount: 4*0x00070016
     readonly property double auxBattStopOutCurrTimeCount: 4*0x00070017
+
+    readonly property double auxBattBattTemp0: 4*0x00071000
+    readonly property double auxBattBattTemp1: 4*0x00071001
+    readonly property double auxBattStatus: 4*0x00071002
 
     readonly property double motorFailsafeSpeed: 4*0x00080000
     readonly property double motorMinEffSpeed: 4*0x00080001
@@ -167,8 +174,7 @@ QtObject {
     readonly property double packGndFltCenterVolt:              4*0x0009101D
     readonly property double packGndFltFrac:                    4*0x0009101E
     readonly property double packGndFltConduct:                 4*0x0009101F
-    readonly property double packGndFltTripped:                 4*0x00091020
-    readonly property double packCtcCtrlStateCode:              4*0x00091021
+    readonly property double packCtcCtrlStateCode:              4*0x00091020
 
     readonly property double sysCycleIdleTicks:         4*0x000A0000
     readonly property double sysCycleDrvAioInTicks:     4*0x000A0001
