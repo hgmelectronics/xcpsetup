@@ -10,16 +10,22 @@ GroupBox {
     property alias name: groupBox.title
     property alias horizontalAlignment: textField.horizontalAlignment
     property ScalarParam param
+    width: implicitWidth
 
-    TextField {
-        id: textField
-        text: param.stringVal
-        readOnly: param.range.writable
-        horizontalAlignment: TextInput.AlignRight
-        onEditingFinished: {
-            if(param.stringVal != text)
-                param.stringVal = text
+    RowLayout {
+        TextField {
+            id: textField
+            text: param.stringVal
+            readOnly: !param.range.writable
+            horizontalAlignment: TextInput.AlignRight
+            onEditingFinished: {
+                if(param.stringVal != text)
+                    param.stringVal = text
+            }
+            validator: param.slot.validator
         }
-        validator: param.slot.validator
+        Label {
+            text: param.slot.unit
+        }
     }
 }
