@@ -175,6 +175,7 @@ QtObject {
     readonly property double packGndFltFrac:                    4*0x0009101E
     readonly property double packGndFltConduct:                 4*0x0009101F
     readonly property double packCtcCtrlStateCode:              4*0x00091020
+    readonly property double packBalancerStateCode:             4*0x00091021
 
     readonly property double sysCycleIdleTicks:         4*0x000A0000
     readonly property double sysCycleDrvAioInTicks:     4*0x000A0001

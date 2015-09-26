@@ -275,6 +275,7 @@ QtObject {
     readonly property ScalarParam packGndFltFrac: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltFrac, false, false, slots.saePc01)
     readonly property ScalarParam packGndFltConduct: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltConduct, false, false, slots.conductance1)
     readonly property ScalarParam packCtcCtrlStateCode: registry.addScalarParam(MemoryRange.S32, paramId.packCtcCtrlStateCode, false, false, slots.ctcCtrlState)
+    readonly property ScalarParam packBalancerStateCode: registry.addScalarParam(MemoryRange.S32, paramId.packBalancerStateCode, false, false, slots.balancerState)
 
     readonly property ScalarParam sysCycleIdleTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleIdleTicks, false, false, slots.timeSysTick)
     readonly property ScalarParam sysCycleDrvCbtmInTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleDrvCbtmInTicks, false, false, slots.timeSysTick)

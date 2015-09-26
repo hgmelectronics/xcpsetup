@@ -845,6 +845,10 @@ Item {
                             name: "Ctc Ctrl State"
                             param: parameters.packCtcCtrlStateCode
                         }
+                        ScalarParamEdit {
+                            name: "Balancer State"
+                            param: parameters.packBalancerStateCode
+                        }
                         ScalarParamIndicator {
                             name: "CBTM Open Wire"
                             param: parameters.packStatus

@@ -128,6 +128,14 @@ Item {
             { raw: 7, engr: "Fault Halt" }
         ]
     }
+    property EncodingSlot balancerState: EncodingSlot {
+        encodingList: [
+            { raw: 0, engr: "Idle" },
+            { raw: 1, engr: "Sample" },
+            { raw: 2, engr: "Disch High" },
+            { raw: 3, engr: "Disch All" }
+        ]
+    }
     property LinearSlot conductance1: LinearSlot {
         rawA: 0
         engrA: 0
