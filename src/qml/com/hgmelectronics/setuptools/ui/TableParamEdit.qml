@@ -5,8 +5,8 @@ import com.hgmelectronics.setuptools 1.0
 
 Rectangle {
     id: root
-    property string xLabel
-    property string valueLabel
+    property string xLabel: tableParam.x.slot.unit
+    property string valueLabel: tableParam.value.slot.unit
     property TableParam tableParam
     property alias tableView: tableView
     width: tableView.implicitWidth

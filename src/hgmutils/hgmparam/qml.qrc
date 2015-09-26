@@ -5,7 +5,6 @@
         <file>ParamTabView.qml</file>
         <file>Slots.qml</file>
         <file>TableParamView.qml</file>
-        <file>EncodingParamEdit.qml</file>
         <file>Parameters.qml</file>
         <file>ParamId.qml</file>
         <file>TableParamEditDialog.qml</file>

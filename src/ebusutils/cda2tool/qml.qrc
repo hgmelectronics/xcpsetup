@@ -5,12 +5,9 @@
         <file>AboutDialog.qml</file>
         <file>HelpDialog.qml</file>
         <file>Slots.qml</file>
-        <file>ScalarParamEdit.qml</file>
-        <file>TableParamEdit.qml</file>
-        <file>TableParamView.qml</file>
-        <file>EncodingParamEdit.qml</file>
         <file>ParamTabView.qml</file>
         <file>Parameters.qml</file>
         <file>ParamId.qml</file>
+        <file>SimpleTableParamEditButton.qml</file>
     </qresource>
 </RCC>
