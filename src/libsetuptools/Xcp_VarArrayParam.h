@@ -76,7 +76,7 @@ public:
 signals:
     void modelChanged();
     void countChanged();
-    void modelDataChanged(quint32 first, quint32 last);
+    void modelDataChanged(quint32 begin, quint32 end);
 
 public slots:
     virtual void upload();

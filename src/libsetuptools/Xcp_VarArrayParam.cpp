@@ -283,7 +283,7 @@ void VarArrayParam::onRangeDownloadDone(OpResult result)
 void VarArrayParam::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)
 {
     emit modelChanged();
-    emit modelDataChanged(beginChanged, int(endChanged) - 1);
+    emit modelDataChanged(beginChanged, endChanged);
 }
 
 void VarArrayParam::onExtRangeUploadDone(OpResult result)
@@ -323,7 +323,7 @@ void VarArrayParam::onExtRangeUploadDone(OpResult result)
     {
         {
             int offset = mExtRangeUploadIdx.get() + mRange->count();
-            emit modelDataChanged(offset, offset);
+            emit modelDataChanged(offset, offset + 1);
         }
 
         if(mExtRangeUploadIdx.get() < (mExtRanges.size() - 1))
@@ -370,7 +370,7 @@ void VarArrayParam::onExtRangeDownloadDone(OpResult result)
 void VarArrayParam::onExtRangeValueChanged(int index)
 {
     emit modelChanged();
-    emit modelDataChanged(mRange->count() + index, mRange->count() + index);
+    emit modelDataChanged(mRange->count() + index, mRange->count() + index + 1);
 }
 
 VarArrayParamModel::VarArrayParamModel(bool stringFormat, bool raw, VarArrayParam *parent) :
@@ -447,12 +447,12 @@ Qt::ItemFlags VarArrayParamModel::flags(const QModelIndex &index) const
 
 void VarArrayParamModel::onValueParamChanged()
 {
-    emit dataChanged(index(0), index(mParam->count() - 1));
+    emit dataChanged(createIndex(0, 0), createIndex(mParam->count() - 1, 0));
 }
 
 void VarArrayParamModel::onParamDataChanged(quint32 beginChanged, quint32 endChanged)
 {
-    emit dataChanged(index(beginChanged), index(endChanged - 1));   // convert from STL style (end = past-the-end) to Qt model style (end = last one)
+    emit dataChanged(createIndex(beginChanged, 0), createIndex(endChanged - 1, 0));   // convert from STL style (end = past-the-end) to Qt model style (end = last one)
 }
 
 void VarArrayParamModel::onParamCountChanged()

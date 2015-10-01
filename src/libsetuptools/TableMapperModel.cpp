@@ -19,29 +19,45 @@ TableMapperModel::TableMapperModel(QObject *parent) :
     mColumnCount(0)
 {}
 
-void TableMapperModel::setMapping(const QVariantMap &mapping)
+bool TableMapperModel::tryUpdateMapping()
 {
-    // do nothing if the mapping has not changed
-    if(!updateDelta<>(mMapping, mapping))
-        return;
-
-    // disconnect old data change signals
-    for(QAbstractItemModel *subModel : mSubModels)
-        disconnect(subModel, &QAbstractItemModel::dataChanged, this, &TableMapperModel::onMappedDataChanged);
 
     // determine the new dimensions of the model, and confirm that all values in the QVariantMap are convertible to QAbstractItemModel *
     int newRowCount = 0;
     int newColumnCount = 0;
 
-    for(const QString &roleName : mapping.keys())
+    for(const QString &roleName : mMapping.keys())
     {
-        QAbstractItemModel *subModel = mapping[roleName].value<QAbstractItemModel *>();
+        QAbstractItemModel *subModel = mMapping[roleName].value<QAbstractItemModel *>();
         if(subModel == nullptr)
-            qWarning("TableMapperModel submodel \"%s\" not convertible to QAbstractItemModel, instead type %d", roleName.toLocal8Bit().data(), mapping[roleName].type());
+            qWarning("TableMapperModel submodel \"%s\" not convertible to QAbstractItemModel, instead type %d", roleName.toLocal8Bit().data(), mMapping[roleName].type());
         Q_ASSERT(subModel != nullptr);
 
         newRowCount = std::max(newRowCount, subModel->rowCount());
         newColumnCount = std::max(newColumnCount, subModel->columnCount());
+    }
+
+    for(const QString &roleName : mMapping.keys())   // verify dimensions are compatible
+    {
+        QAbstractItemModel *subModel = mMapping[roleName].value<QAbstractItemModel *>();
+
+        if(subModel->rowCount() != 1 && subModel->rowCount() != newRowCount)
+            return false;
+
+        if(subModel->columnCount() != 1 && subModel->columnCount() != newColumnCount)
+            return false;
+    }
+
+    // we are OK, proceed with update
+
+    // disconnect old change signals
+    for(QAbstractItemModel *subModel : mSubModels)
+    {
+        disconnect(subModel, &QAbstractItemModel::dataChanged, this, &TableMapperModel::onMappedDataChanged);
+        disconnect(subModel, &QAbstractItemModel::rowsInserted, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        disconnect(subModel, &QAbstractItemModel::rowsRemoved, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        disconnect(subModel, &QAbstractItemModel::columnsInserted, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        disconnect(subModel, &QAbstractItemModel::columnsRemoved, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
     }
 
     // call pre-hook for dimensional change
@@ -62,22 +78,22 @@ void TableMapperModel::setMapping(const QVariantMap &mapping)
     mRowCount = newRowCount;
     mColumnCount = newColumnCount;
     mSubModels.clear();
-    mSubModels.reserve(mapping.size());
+    mSubModels.reserve(mMapping.size());
     mRoleNames.clear();
-    mRoleNames.reserve(mapping.size());
+    mRoleNames.reserve(mMapping.size());
 
     int role = Qt::UserRole;
-    for(const QString &roleName : mapping.keys())
+    for(const QString &roleName : mMapping.keys())
     {
-        QAbstractItemModel *subModel = mapping[roleName].value<QAbstractItemModel *>();
-
-        if(!(subModel->rowCount() == 1 || subModel->rowCount() == newRowCount))
-            qDebug() << roleName << subModel->rowCount();
-        Q_ASSERT(subModel->rowCount() == 1 || subModel->rowCount() == newRowCount);
-        Q_ASSERT(subModel->columnCount() == 1 || subModel->columnCount() == newColumnCount);
+        QAbstractItemModel *subModel = mMapping[roleName].value<QAbstractItemModel *>();
 
         mSubModels.append(subModel);
         connect(subModel, &QAbstractItemModel::dataChanged, this, &TableMapperModel::onMappedDataChanged);
+        connect(subModel, &QAbstractItemModel::dataChanged, this, &TableMapperModel::onMappedDataChanged);
+        connect(subModel, &QAbstractItemModel::rowsInserted, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        connect(subModel, &QAbstractItemModel::rowsRemoved, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        connect(subModel, &QAbstractItemModel::columnsInserted, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        connect(subModel, &QAbstractItemModel::columnsRemoved, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
         mRoleNames[role] = roleName.toUtf8();
         ++role;
     }
@@ -96,6 +112,16 @@ void TableMapperModel::setMapping(const QVariantMap &mapping)
     // all data in the model has changed
     emit dataChanged(index(0, 0), index(mRowCount - 1, mColumnCount - 1), QVector<int>::fromList(mRoleNames.keys()));
 
+    return true;
+}
+
+void TableMapperModel::setMapping(const QVariantMap &mapping)
+{
+    // do nothing if the mapping has not changed
+    if(!updateDelta<>(mMapping, mapping))
+        return;
+
+    tryUpdateMapping();
     // the mapping property has changed
     emit mappingChanged();
 }
@@ -197,7 +223,20 @@ void TableMapperModel::onMappedDataChanged(const QModelIndex &topLeft, const QMo
         rightColumn = mColumnCount - 1;
     }
     QVector<int> rolesOut = {subModelNumToRole(subModelNum)};
-    emit dataChanged(index(topRow, leftColumn), index(bottomRow, rightColumn), rolesOut);
+
+    QModelIndex topLeftOut = index(topRow, leftColumn);
+    QModelIndex bottomRightOut = index(bottomRow, rightColumn);
+    if(topLeftOut.isValid() && bottomRightOut.isValid())
+        emit dataChanged(topLeftOut, bottomRightOut, rolesOut);
+}
+
+void TableMapperModel::onSubmodelRowsColsAddedRemoved(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+
+    tryUpdateMapping();
 }
 
 bool TableMapperModel::isValidRole(int role) const
