@@ -93,12 +93,13 @@ private slots:
 private:
     ArrayMemoryRange *mRange;   // owned by the ParamRegistry
     QList<ScalarMemoryRange *> const mExtRanges;    // owned by the ParamRegistry
-    VarArrayParamModel * const mStringModel;  // owned by this
-    VarArrayParamModel * const mFloatModel;   // owned by this
-    VarArrayParamModel * const mRawModel;   // owned by this
     QSignalMapper mExtRangeChangedMapper;
     boost::optional<int> mActualDim;
     boost::optional<int> mExtRangeUploadIdx, mExtRangeDownloadIdx;
+    bool mUploadingRange;
+    VarArrayParamModel * const mStringModel;  // owned by this
+    VarArrayParamModel * const mFloatModel;   // owned by this
+    VarArrayParamModel * const mRawModel;   // owned by this
 };
 
 

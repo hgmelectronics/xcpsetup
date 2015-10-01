@@ -25,6 +25,7 @@ VarArrayParam::VarArrayParam(ArrayMemoryRange *range, QList<ScalarMemoryRange *>
     Param(range, QListCast<MemoryRange *>(extRanges), false, slot, parent),
     mRange(range),
     mExtRanges(extRanges),
+    mUploadingRange(false),
     mStringModel(new VarArrayParamModel(true, false, this)),
     mFloatModel(new VarArrayParamModel(false, false, this)),
     mRawModel(new VarArrayParamModel(false, true, this))
@@ -201,6 +202,7 @@ void VarArrayParam::upload()
         return;
     }
     Q_ASSERT(mRange && slot());
+    mUploadingRange = true;
     mRange->upload();
 }
 
@@ -218,27 +220,48 @@ void VarArrayParam::download()
 void VarArrayParam::onCachesReset()
 {
     mActualDim.reset();
+    mUploadingRange = false;
     mExtRangeUploadIdx.reset();
     mExtRangeDownloadIdx.reset();
 }
 
 void VarArrayParam::onRangeUploadDone(OpResult result)
 {
-    if(result != OpResult::Success)
-
+    if(!mUploadingRange)    // initiated by memory range in response to upload
     {
-        emit uploadDone(result);
-    }
-    else if(mExtRanges.empty()
-            || (mActualDim && mActualDim.get() == 0))
-    {
-        emit uploadDone(result);
-        emit modelDataChanged(0, mRange->count());
+        /// If mActualDim is set and equal to base range count, then this is the last upload
+        /// that will result from the ongoing download sequence, and we should emit a signal.
+        /// If not set, then the next download might fail, so upload would not be triggered,
+        /// and we would never emit uploadDone. Therefore, must emit now.
+        if(!mActualDim || mActualDim.get() == mRange->count())
+            emit uploadDone(result);
     }
     else
     {
-        mExtRangeUploadIdx = 0;
-        mExtRanges[0]->upload();
+        mUploadingRange = false;    /// Always clear the "we initiated this upload" flag.
+
+        if(result != OpResult::Success || !mRange->valid())
+        {
+            /// If operation fails or range is not valid, then just emit signal.
+            /// User will find out range is not valid through existing method on Param.
+            emit uploadDone(result);
+        }
+        else
+        {
+            emit modelDataChanged(0, mRange->count());
+
+            if(mExtRanges.empty() || (mActualDim && mActualDim.get() == 0))
+            {
+                /// If we know there is no data in extended ranges, we're done
+                emit uploadDone(result);
+            }
+            else
+            {
+                /// Otherwise begin upload of extended ranges
+                mExtRangeUploadIdx = 0;
+                mExtRanges[0]->upload();
+            }
+        }
     }
 }
 
@@ -265,18 +288,60 @@ void VarArrayParam::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)
 
 void VarArrayParam::onExtRangeUploadDone(OpResult result)
 {
-    Q_ASSERT(mExtRangeUploadIdx);
-    if(result == OpResult::SlaveErrorOutOfRange && !mActualDim)
+    if(!mExtRangeUploadIdx) // initiated by memory range in response to download
     {
-        mActualDim = mExtRangeUploadIdx.get() + mRange->count();
-        emit countChanged();
+        /// Same logic as base range uploadDone in response to download:
+        /// if we don't know that the next upload should succeed, emit.
+        /// Otherwise, emit if active download index is cleared (meaning the last extRangeDownloadDone handler has run)
+        if(!mActualDim || !mExtRangeDownloadIdx)
+            emit uploadDone(result);
+    }
+    else if(result != OpResult::Success)
+    {
+        // Success is returned when address out of range (just sets valid = false), so some other failure occurred
         mExtRangeUploadIdx.reset();
-        emit uploadDone(OpResult::Success);
+        emit uploadDone(result);
+    }
+    else if(!mExtRanges[mExtRangeUploadIdx.get()]->valid())
+    {
+        // This appears to be one past the end of the array
+        if(!mActualDim)
+        {
+            mActualDim = mExtRangeUploadIdx.get() + mRange->count();
+            emit countChanged();
+            mExtRangeUploadIdx.reset();
+            emit uploadDone(OpResult::Success);
+        }
+        else
+        {
+            // Array shrank while connected - ??????
+            mExtRangeUploadIdx.reset();
+            emit uploadDone(OpResult::UnknownError);
+        }
     }
     else
     {
-        mExtRangeUploadIdx.reset();
-        emit uploadDone(result);
+        {
+            int offset = mExtRangeUploadIdx.get() + mRange->count();
+            emit modelDataChanged(offset, offset);
+        }
+
+        if(mExtRangeUploadIdx.get() < (mExtRanges.size() - 1))
+        {
+            // More extended ranges to go
+            mExtRangeUploadIdx = mExtRangeUploadIdx.get() + 1;
+            mExtRanges[mExtRangeUploadIdx.get()]->upload();
+        }
+        else
+        {
+            if(!mActualDim)
+            {
+                mActualDim = mExtRanges.size() + mRange->count();
+                emit countChanged();
+            }
+            mExtRangeUploadIdx.reset();
+            emit uploadDone(result);
+        }
     }
 }
 
@@ -289,6 +354,11 @@ void VarArrayParam::onExtRangeDownloadDone(OpResult result)
         emit countChanged();
         mExtRangeDownloadIdx.reset();
         emit downloadDone(OpResult::Success);
+    }
+    else if(mExtRangeDownloadIdx.get() < (mExtRanges.size() - 1))
+    {
+        mExtRangeDownloadIdx = mExtRangeDownloadIdx.get() + 1;
+        mExtRanges[mExtRangeDownloadIdx.get()]->download();
     }
     else
     {
@@ -364,7 +434,7 @@ bool VarArrayParamModel::setData(const QModelIndex &index, const QVariant &value
     }
     else
     {
-        mParam->mExtRanges[(index.row() - mParam->range()->count())]->setValue(value);
+        mParam->mExtRanges[(index.row() - mParam->range()->count())]->setValue(toSet);
         return true;
     }
 }

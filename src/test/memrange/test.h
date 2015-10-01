@@ -67,12 +67,8 @@ private slots:
 
     void slotArrayModel();
 
-    void uploadVarArrayNoOverlap_data();
-    void uploadVarArrayNoOverlap();
-    void downloadVarArrayNoOverlap_data();
-    void downloadVarArrayNoOverlap();
-    void uploadVarArraySub_data();
-    void uploadVarArraySub();
+    void varArrayParamDownloadUpload_data();
+    void varArrayParamDownloadUpload();
 private:
     void updateAg(int ag);
     void setWaitConnState(const MemoryRangeTable *table, Connection::State state);
