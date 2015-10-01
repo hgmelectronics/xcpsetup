@@ -6,7 +6,7 @@ namespace SetupTools
 namespace Xcp
 {
 
-void Test::uploadTableNoOverlap_data()
+void Test::uploadArrayNoOverlap_data()
 {
     QTest::addColumn<quint32>("ag");
     QTest::addColumn<quint32>("base");
@@ -16,7 +16,7 @@ void Test::uploadTableNoOverlap_data()
     QTest::newRow("AG==4 cbo=0") << quint32(0x4) << quint32(0x100) << QVector<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF});
 }
 
-void Test::uploadTableNoOverlap()
+void Test::uploadArrayNoOverlap()
 {
     QFETCH(quint32, ag);
     QFETCH(quint32, base);
@@ -57,7 +57,7 @@ void Test::uploadTableNoOverlap()
         QCOMPARE(range->data()[idx].toUInt(), value[idx]);
 }
 
-void Test::downloadTableNoOverlap_data()
+void Test::downloadArrayNoOverlap_data()
 {
     QTest::addColumn<quint32>("ag");
     QTest::addColumn<quint32>("base");
@@ -71,7 +71,7 @@ void Test::downloadTableNoOverlap_data()
     QTest::newRow("AG==4 sdr=1") << quint32(0x4) << quint32(0x100) << QVector<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF}) << true;
 }
 
-void Test::downloadTableNoOverlap()
+void Test::downloadArrayNoOverlap()
 {
     QFETCH(quint32, ag);
     QFETCH(quint32, base);
@@ -144,7 +144,7 @@ void Test::downloadTableNoOverlap()
     }
 }
 
-void Test::uploadTableSub_data()
+void Test::uploadArraySub_data()
 {
     QTest::addColumn<quint32>("ag");
     QTest::addColumn<quint32>("base");
@@ -154,7 +154,7 @@ void Test::uploadTableSub_data()
     QTest::newRow("AG==4") << quint32(0x4) << quint32(0x100) << QVector<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF});
 }
 
-void Test::uploadTableSub()
+void Test::uploadArraySub()
 {
     QFETCH(quint32, ag);
     QFETCH(quint32, base);
@@ -198,7 +198,7 @@ void Test::uploadTableSub()
     QCOMPARE(range->data().last().isNull(), true);
 }
 
-void Test::uploadTableOverlap_data()
+void Test::uploadArrayOverlap_data()
 {
     QTest::addColumn<quint32>("ag");
     QTest::addColumn<quint32>("base");
@@ -208,7 +208,7 @@ void Test::uploadTableOverlap_data()
     QTest::newRow("AG==4") << quint32(0x4) << quint32(0x100) << QVector<quint32>({0xDEADBEEF, 0x7F, 0x01234567, 0x89ABCDEF});
 }
 
-void Test::uploadTableOverlap()
+void Test::uploadArrayOverlap()
 {
     QFETCH(quint32, ag);
     QFETCH(quint32, base);
