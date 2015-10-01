@@ -10,8 +10,11 @@ LinearSlot::LinearSlot(QObject *parent) :
     mOorEngr(NAN),
     mRawA(quint32(0)),
     mRawB(quint32(0)),
-    mOorRaw(quint32(0xFFFFFFFF))
-{}
+    mOorRaw(quint32(0xFFFFFFFF)),
+    mValidator(new QDoubleValidator(this))
+{
+    connect(this, &Slot::valueParamChanged, this, &LinearSlot::updateValidator);
+}
 
 double LinearSlot::engrA() const
 {
@@ -173,6 +176,19 @@ QVariant LinearSlot::engrMin() const
 QVariant LinearSlot::engrMax() const
 {
     return std::max(mEngrA, mEngrB);
+}
+
+QValidator *LinearSlot::validator()
+{
+    return mValidator;
+}
+
+void LinearSlot::updateValidator()
+{
+    if(mEngrA > mEngrB)
+        mValidator->setRange(mEngrB, mEngrA, precision());
+    else
+        mValidator->setRange(mEngrA, mEngrB, precision());
 }
 
 } // namespace SetupTools

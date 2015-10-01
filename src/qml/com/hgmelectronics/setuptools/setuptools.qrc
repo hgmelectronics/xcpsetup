@@ -7,5 +7,13 @@
         <file>ui/qmldir</file>
         <file>qmldir</file>
         <file>TableParam.qml</file>
+        <file>ui/ScalarParamEdit.qml</file>
+        <file>ui/ScalarParamSpinBox.qml</file>
+        <file>ui/ScalarParamCheckBox.qml</file>
+        <file>ui/TableParamEdit.qml</file>
+        <file>ui/EncodingTableParamEdit.qml</file>
+        <file>ui/ScalarParamIndicator.qml</file>
+        <file>ui/EncodingParamEdit.qml</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

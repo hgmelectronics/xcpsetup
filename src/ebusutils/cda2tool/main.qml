@@ -8,8 +8,8 @@ import com.hgmelectronics.setuptools 1.0
 
 ApplicationWindow {
     title: qsTr("CDA2 Param Tool")
-    width: 800
-    height: 600
+    width: 1200
+    height: 850
     visible: true
 
     menuBar: MenuBar {
