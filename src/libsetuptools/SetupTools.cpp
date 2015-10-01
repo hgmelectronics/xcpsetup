@@ -52,6 +52,9 @@ void registerTypes()
     qmlRegisterUncreatableType<SetupTools::Xcp::ArrayMemoryRange>("com.hgmelectronics.setuptools.xcp", major, minor, "ArrayMemoryRange", "SetupTools::Xcp::ArrayMemoryRange is uncreatable from within QML");
     qmlRegisterUncreatableType<SetupTools::Xcp::ArrayParamModel>("com.hgmelectronics.setuptools.xcp", major, minor, "ArrayParamModel", "SetupTools::Xcp::ArrayParamModel is uncreatable from within QML");
 
+    qmlRegisterType<SetupTools::Xcp::VarArrayParam>("com.hgmelectronics.setuptools.xcp", major, minor, "VarArrayParam");
+    qmlRegisterUncreatableType<SetupTools::Xcp::VarArrayParamModel>("com.hgmelectronics.setuptools.xcp", major, minor, "VarArrayParamModel", "SetupTools::Xcp::VarArrayParamModel is uncreatable from within QML");
+
     qmlRegisterUncreatableType<SetupTools::Slot>("com.hgmelectronics.setuptools", major, minor, "Slot", "SetupTools::Slot is uncreatable from within QML");
     qmlRegisterType<SetupTools::LinearSlot>("com.hgmelectronics.setuptools", major, minor, "LinearSlot");
     qmlRegisterType<SetupTools::EncodingSlot>("com.hgmelectronics.setuptools", major, minor, "EncodingSlot");

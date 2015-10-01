@@ -42,10 +42,10 @@ int ArrayParam::count() const
     return mRange->count();
 }
 
-
 QVariant ArrayParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 {
-    Q_ASSERT(mRange && slot());
+    if(!mRange || !slot())
+        return QVariant();
 
     QStringList ret;
     ret.reserve(mRange->count());
@@ -72,7 +72,8 @@ QVariant ArrayParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 
 bool ArrayParam::setSerializableValue(const QVariant &val)
 {
-    Q_ASSERT(mRange && slot());
+    if(!mRange || !slot())
+        return false;
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     QStringList stringList = val.toStringList();
@@ -95,7 +96,8 @@ bool ArrayParam::setSerializableValue(const QVariant &val)
 
 QVariant ArrayParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
 {
-    Q_ASSERT(mRange && slot());
+    if(!mRange || !slot())
+        return QVariant();
 
     QVariantList ret;
     ret.reserve(mRange->count());
@@ -122,7 +124,8 @@ QVariant ArrayParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
 
 bool ArrayParam::setSerializableRawValue(const QVariant &val)
 {
-    Q_ASSERT(mRange && slot());
+    if(!mRange || !slot())
+        return false;
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     if(val.toList().size() != mRange->count())
@@ -151,7 +154,7 @@ void ArrayParam::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)
 {
     Q_UNUSED(beginChanged);
     Q_UNUSED(endChanged);
-    emit modelDataChanged();
+    emit modelChanged();
 }
 
 void ArrayParam::upload()
