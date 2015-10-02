@@ -131,102 +131,113 @@ Item {
         Tab {
             title: "CBTM"
             active: true
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                ColumnLayout {
-                    Layout.alignment: Qt.AlignTop
-                    ScalarParamEdit {
-                        name: "Fault Decay"
-                        param: parameters.cbtmFaultDecayCyc
-                    }
-                    ScalarParamEdit {
-                        name: "Non-Quiescent Trip"
-                        param: parameters.cbtmNonQuiescentTripCyc
-                    }
-                    ScalarParamEdit {
-                        name: "Non-Quiescent Decay"
-                        param: parameters.cbtmNonQuiescentDecayCyc
-                    }
-                    ScalarParamEdit {
-                        name: "Balance Open Delta-V"
-                        param: parameters.cbtmBalanceOpenDeltaVThresh
-                    }
-                    ScalarParamEdit {
-                        name: "Balance Short Delta-V"
-                        param: parameters.cbtmBalanceShortDeltaVThresh
-                    }
-                    ScalarParamEdit {
-                        name: "Quiescent Delta-V"
-                        param: parameters.cbtmQuiescentDeltaVThresh
-                    }
-                    ScalarParamEdit {
-                        name: "IsoSPI #1 First ID"
-                        param: parameters.cbtmIsospi1FirstBoard
-                    }
-                    ScalarParamEdit {
-                        name: "IsoSPI #1 Last ID"
-                        param: parameters.cbtmIsospi1LastBoard
-                    }
-                    ScalarParamEdit {
-                        name: "IsoSPI #2 First ID"
-                        param: parameters.cbtmIsospi2FirstBoard
-                    }
-                    ScalarParamEdit {
-                        name: "IsoSPI #2 Last ID"
-                        param: parameters.cbtmIsospi2LastBoard
-                    }
-                }
-                ColumnLayout {
+            Item {
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
                     spacing: 10
-                    TableParamEdit {
-                        Layout.fillHeight: true
-                        xLabel: "Board #"
-                        valueLabel: "Disch"
-                        tableParam: parameters.cbtmDisch
-                    }
-                    TableParamEdit {
-                        Layout.fillHeight: true
-                        xLabel: "Board #"
-                        valueLabel: "Status"
-                        tableParam: parameters.cbtmStatus
-                    }
-                }
-
-                TableParamEdit {
-                    Layout.fillHeight: true
-                    xLabel: "Cell #"
-                    tableParam: parameters.cbtmCellVolt
-                }
-                TableParamEdit {
-                    Layout.fillHeight: true
-                    xLabel: "Tab #"
-                    tableParam: parameters.cbtmTabTemp
-                }
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    GroupBox {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        title: "Cell Voltages"
-                        TablePlot {
-                            XYTrace {
-                                tableModel: parameters.cbtmCellVolt.stringModel
-                                valid: parameters.cbtmCellVolt.value.valid
-                            }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "Fault Decay"
+                            param: parameters.cbtmFaultDecayCyc
+                        }
+                        ScalarParamEdit {
+                            name: "Non-Quiescent Trip"
+                            param: parameters.cbtmNonQuiescentTripCyc
+                        }
+                        ScalarParamEdit {
+                            name: "Non-Quiescent Decay"
+                            param: parameters.cbtmNonQuiescentDecayCyc
+                        }
+                        ScalarParamEdit {
+                            name: "Balance Open Delta-V"
+                            param: parameters.cbtmBalanceOpenDeltaVThresh
+                        }
+                        ScalarParamEdit {
+                            name: "Balance Short Delta-V"
+                            param: parameters.cbtmBalanceShortDeltaVThresh
+                        }
+                        ScalarParamEdit {
+                            name: "Quiescent Delta-V"
+                            param: parameters.cbtmQuiescentDeltaVThresh
+                        }
+                        ScalarParamEdit {
+                            name: "IsoSPI #1 First ID"
+                            param: parameters.cbtmIsospi1FirstBoard
+                        }
+                        ScalarParamEdit {
+                            name: "IsoSPI #1 Last ID"
+                            param: parameters.cbtmIsospi1LastBoard
+                        }
+                        ScalarParamEdit {
+                            name: "IsoSPI #2 First ID"
+                            param: parameters.cbtmIsospi2FirstBoard
+                        }
+                        ScalarParamEdit {
+                            name: "IsoSPI #2 Last ID"
+                            param: parameters.cbtmIsospi2LastBoard
                         }
                     }
-                    GroupBox {
+                    ColumnLayout {
+                        spacing: 10
+                        TableParamEdit {
+                            Layout.fillHeight: true
+                            xLabel: "Board #"
+                            valueLabel: "Disch"
+                            tableParam: parameters.cbtmDisch
+                        }
+                        TableParamEdit {
+                            Layout.fillHeight: true
+                            xLabel: "Board #"
+                            valueLabel: "Status"
+                            tableParam: parameters.cbtmStatus
+                        }
+                    }
+
+                    TableParamEdit {
+                        Layout.fillHeight: true
+                        xLabel: "Cell #"
+                        tableParam: parameters.cbtmCellVolt
+                    }
+                    TableParamEdit {
+                        Layout.fillHeight: true
+                        xLabel: "Tab #"
+                        tableParam: parameters.cbtmTabTemp
+                    }
+                    ColumnLayout {
+                        id: graphsLayout
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        title: "Tab Temperatures"
+                        Label {
+                            Layout.alignment: Qt.AlignLeft
+                            text: "Cell Voltages"
+                            font.bold: true
+                        }
                         TablePlot {
-                            XYTrace {
-                                tableModel: parameters.cbtmTabTemp.stringModel
-                                valid: parameters.cbtmTabTemp.value.valid
-                            }
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            plots: [
+                                XYTrace {
+                                    tableModel: parameters.cbtmCellVolt.stringModel
+                                    valid: parameters.cbtmCellVolt.value.valid
+                                }
+                            ]
+                        }
+                        Label {
+                            Layout.alignment: Qt.AlignLeft
+                            text: "Tab Temperatures"
+                            font.bold: true
+                        }
+                        TablePlot {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            plots: [
+                                XYTrace {
+                                    tableModel: parameters.cbtmTabTemp.stringModel
+                                    valid: parameters.cbtmTabTemp.value.valid
+                                }
+                            ]
                         }
                     }
                 }
