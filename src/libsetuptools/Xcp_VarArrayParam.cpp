@@ -250,7 +250,7 @@ void VarArrayParam::onRangeUploadDone(OpResult result)
         {
             emit modelDataChanged(0, mRange->count());
 
-            if(mExtRanges.empty() || (mActualDim && mActualDim.get() == 0))
+            if(mExtRanges.empty() || (mActualDim && mActualDim.get() == mRange->count()))
             {
                 /// If we know there is no data in extended ranges, we're done
                 emit uploadDone(result);
@@ -326,7 +326,11 @@ void VarArrayParam::onExtRangeUploadDone(OpResult result)
             emit modelDataChanged(offset, offset + 1);
         }
 
-        if(mExtRangeUploadIdx.get() < (mExtRanges.size() - 1))
+        int lastExtRange = mExtRanges.size() - 1;
+        if(mActualDim)
+            lastExtRange = mActualDim.get() - mRange->count() - 1;
+
+        if(mExtRangeUploadIdx.get() < lastExtRange)
         {
             // More extended ranges to go
             mExtRangeUploadIdx = mExtRangeUploadIdx.get() + 1;
@@ -385,6 +389,11 @@ VarArrayParamModel::VarArrayParamModel(bool stringFormat, bool raw, VarArrayPara
     connect(mParam, &VarArrayParam::countChanged, this, &VarArrayParamModel::onParamCountChanged);
 }
 
+int VarArrayParamModel::count() const
+{
+    return rowCount();
+}
+
 int VarArrayParamModel::rowCount(const QModelIndex &parent) const
 {
     return parent.isValid() ? 0 : mParam->count();
@@ -402,9 +411,7 @@ QVariant VarArrayParamModel::data(const QModelIndex &index, int role) const
 
     QVariant rawData;
     if(index.row() < mParam->range()->count())
-    {
         rawData = mParam->range()->get(index.row());
-    }
     else
         rawData = mParam->mExtRanges[(index.row() - mParam->range()->count())]->value();
 
@@ -467,6 +474,9 @@ void VarArrayParamModel::onParamCountChanged()
         beginRemoveRows(QModelIndex(), mParam->count(), mPrevCount - 1);
         endRemoveRows();
     }
+    mPrevCount = mParam->count();
+    emit countChanged();
+    emit dataChanged(createIndex(0, 0), createIndex(mParam->count() - 1, 0));
 }
 
 } // namespace Xcp

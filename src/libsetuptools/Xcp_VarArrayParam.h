@@ -106,15 +106,18 @@ private:
 class VarArrayParamModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
     VarArrayParamModel(bool stringFormat, bool raw, VarArrayParam *parent);
 
+    int count() const;
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-
-private:
+signals:
+    void countChanged();
+private slots:
     void onValueParamChanged();
     void onParamDataChanged(quint32 beginChanged, quint32 endChanged);
     void onParamCountChanged();

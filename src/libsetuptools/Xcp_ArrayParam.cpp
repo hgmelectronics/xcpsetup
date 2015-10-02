@@ -180,6 +180,11 @@ ArrayParamModel::ArrayParamModel(bool stringFormat, bool raw, ArrayParam *parent
     connect(mParam->range(), &ArrayMemoryRange::dataChanged, this, &ArrayParamModel::onRangeDataChanged);
 }
 
+int ArrayParamModel::count() const
+{
+    return rowCount();
+}
+
 int ArrayParamModel::rowCount(const QModelIndex &parent) const
 {
     return parent.isValid() ? 0 : mParam->range()->count();

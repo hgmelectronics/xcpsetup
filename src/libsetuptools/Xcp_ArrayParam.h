@@ -82,9 +82,11 @@ private:
 class ArrayParamModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ count CONSTANT)
 public:
     ArrayParamModel(bool stringFormat, bool raw, ArrayParam *parent);
 
+    int count() const;
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
