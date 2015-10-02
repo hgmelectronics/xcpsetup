@@ -100,13 +100,19 @@ QtObject {
     }
 
     property TableParam cbtmDisch: TableParam {
-        x: cbtmBoardAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.cbtmDisch, cbtmBoardAxisModel.count, true, false, slots.raw32hex)
+        x: SlotArrayModel {
+            slot: slots.raw32
+            count: cbtmDisch.value.count
+        }
+        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmDisch, 1, cbtmBoardAxisModel.count, true, false, slots.raw32hex)
     }
 
     property TableParam cbtmStatus: TableParam {
-        x: cbtmBoardAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.cbtmStatus, cbtmBoardAxisModel.count, false, false, slots.raw32hex)
+        x: SlotArrayModel {
+            slot: slots.raw32
+            count: cbtmStatus.value.count
+        }
+        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmStatus, 1, cbtmBoardAxisModel.count, false, false, slots.raw32hex)
     }
 
     readonly property ScalarParam ctcMaxSimulPickup: registry.addScalarParam(MemoryRange.S32, paramId.ctcMaxSimulPickup, true, true, slots.raw32)
