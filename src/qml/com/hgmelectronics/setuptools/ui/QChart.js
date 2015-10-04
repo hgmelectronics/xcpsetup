@@ -1325,18 +1325,17 @@ var Chart = function(canvas, context) {
 // /////////////////////////////////////////////////////////////////
 
     var Scatter = function(data,config,ctx) {
+        var labelHeight;
+        var labelTemplateString;
+        var xDataBounds;
+        var yDataBounds;
 
-        var maxSize;
         var xScaleHop;
         var yScaleHop;
         var calculatedXScale;
         var calculatedYScale;
         var xAxisLength;
         var yAxisHeight;
-        var xDataBounds;
-        var yDataBounds;
-        var labelHeight;
-        var labelTemplateString;
         var widestXLabel;
         var widestYLabel;
         var yAxisPosX;
@@ -1348,44 +1347,45 @@ var Chart = function(canvas, context) {
         // /////////////////////////////////////////////////////////////////
 
         this.init = function () {
-            widestXLabel = config.scaleFontSize * 5 // approximate value
-            widestYLabel = config.scaleFontSize * 5 // approximate value
             labelHeight = config.scaleFontSize
-            labelTemplateString = (config.scaleShowLabels)? config.scaleLabel : "";
+            labelTemplateString = (config.scaleShowLabels)? config.scaleLabel : ""
+            yAxisHeight = height - 2 * config.scaleFontSize - 5;
+            xDataBounds = getXDataBounds()
+            yDataBounds = getYDataBounds()
 
-            for(var i = 0; i < 4; ++i) {    // iteratively compute scales
-                xDataBounds = getXDataBounds();
-                yDataBounds = getYDataBounds();
-                if (!config.xScaleOverride) {
-                    calculatedXScale = calculateScale(width - widestYLabel - 50,xDataBounds.maxSteps,xDataBounds.minSteps,xDataBounds.maxValue,xDataBounds.minValue,labelTemplateString);
-                }
-                else {
-                    calculatedXScale = {
-                        steps: config.xScaleSteps,
-                        stepValue: config.xScaleStepWidth,
-                        graphMin: config.xScaleStartValue,
-                        labels: []
-                    }
-                    populateLabels(labelTemplateString, calculatedXScale.labels,calculatedXScale.steps,config.xScaleStartValue,config.xScaleStepWidth);
-                }
-                calculateDrawingSizes();    // sets yAxisHeight, maxSize, widestXLabel, labelHeight
-
-                if (!config.yScaleOverride) {
-                    calculatedYScale = calculateScale(yAxisHeight,yDataBounds.maxSteps,yDataBounds.minSteps,yDataBounds.maxValue,yDataBounds.minValue,labelTemplateString);
-                }
-                else {
-                    calculatedYScale = {
-                        steps: config.yScaleSteps,
-                        stepValue: config.yScaleStepWidth,
-                        graphMin: config.yScaleStartValue,
-                        labels: []
-                    }
-                    populateLabels(labelTemplateString, calculatedYScale.labels,calculatedYScale.steps,config.yScaleStartValue,config.yScaleStepWidth);
-                }
-
-                yScaleHop = Math.floor(yAxisHeight/calculatedYScale.steps);
-                calculateXAxisSize();   // sets xAxisLength, xScaleHop, yAxisPosX, xAxisPosY
+            if (!config.yScaleOverride) {
+                calculatedYScale = calculateScaleDecade(yAxisHeight, labelHeight, yDataBounds.maxValue, yDataBounds.minValue, labelTemplateString);
             }
+            else {
+                calculatedYScale = {
+                    steps: config.yScaleSteps,
+                    stepValue: config.yScaleStepWidth,
+                    graphMin: config.yScaleStartValue,
+                    labels: []
+                }
+                populateLabels(labelTemplateString, calculatedYScale.labels, calculatedYScale.steps, config.yScaleStartValue, config.yScaleStepWidth);
+            }
+
+            widestYLabel = config.scaleShowLabels ? calculateWidestLabel(calculatedYScale.labels) + 10 : 1
+
+            yScaleHop = Math.floor(yAxisHeight / calculatedYScale.steps)
+
+            if(!config.xScaleOverride) {
+                // compute finest possible X scale
+                widestXLabel = width / 3 // ultraconservative value
+
+                calculatedXScale = calculateXScaleDecade(width - widestYLabel - 50, xDataBounds.maxValue, xDataBounds.minValue, labelTemplateString);
+            }
+            else {
+                calculatedXScale = {
+                    steps: config.xScaleSteps,
+                    stepValue: config.xScaleStepWidth,
+                    graphMin: config.xScaleStartValue,
+                    labels: []
+                }
+                populateLabels(labelTemplateString, calculatedXScale.labels, calculatedXScale.steps, config.xScaleStartValue, config.xScaleStepWidth);
+            }
+            calculateXAxisSize();   // sets xAxisLength, xScaleHop, yAxisPosX, xAxisPosY
         }
 
         // /////////////////////////////////////////////////////////////////
@@ -1527,19 +1527,16 @@ var Chart = function(canvas, context) {
             }
         }
 
+        function calculateWidestLabel(labels) {
+            var widest = 0;
+            ctx.font = config.scaleFontStyle + " " + config.scaleFontSize+"px " + config.scaleFontFamily;
+            for (var i = 0; i < labels.length; i++)
+                widest = Math.max(widest, ctx.measureText(labels[i]).width)
+
+            return widest
+        }
+
         function calculateXAxisSize() {
-
-            widestYLabel = 1;
-
-            if (config.scaleShowLabels) {
-                ctx.font = config.scaleFontStyle + " " + config.scaleFontSize+"px " + config.scaleFontFamily;
-                for (var i=0; i<calculatedYScale.labels.length; i++) {
-                    var measuredText = ctx.measureText(calculatedYScale.labels[i]).width;
-                    widestYLabel = (measuredText > widestYLabel)? measuredText : widestYLabel;
-                }
-                widestYLabel +=10;
-            }
-
             xAxisLength = width - widestYLabel - widestXLabel;
             xScaleHop = Math.floor(xAxisLength/(calculatedXScale.labels.length - 1));
 
@@ -1547,21 +1544,102 @@ var Chart = function(canvas, context) {
             xAxisPosY = yAxisHeight + config.scaleFontSize/2;
         }
 
-        function calculateDrawingSizes() {
-            yAxisHeight = maxSize = height - 2 * config.scaleFontSize - 5;
-            labelHeight = config.scaleFontSize;
+        function getXDataBounds() {
+            var upperValue = Number.MIN_VALUE
+            var lowerValue = Number.MAX_VALUE
 
-            ctx.font = config.scaleFontStyle + " " + config.scaleFontSize + "px " + config.scaleFontFamily;
+            for (var i=0; i<data.length; i++) {
+                for (var j=0; j<data[i].xData.length; j++) {
+                    upperValue = Math.max(upperValue, data[i].xData[j])
+                    lowerValue = Math.min(lowerValue, data[i].xData[j])
+                }
+            }
 
-            widestXLabel = 1;
-
-            for (var i=0; i<calculatedXScale.labels.length; i++) {
-                var textLength = ctx.measureText(calculatedXScale.labels[i]).width;
-                widestXLabel = (textLength > widestXLabel)? textLength : widestXLabel;
+            return {
+                maxValue: upperValue,
+                minValue: lowerValue
             }
         }
 
         function getYDataBounds() {
+            var upperValue = Number.MIN_VALUE
+            var lowerValue = Number.MAX_VALUE
+
+            for (var i=0; i<data.length; i++) {
+                for (var j=0; j<data[i].yData.length; j++) {
+                    upperValue = Math.max(upperValue, data[i].yData[j])
+                    lowerValue = Math.min(lowerValue, data[i].yData[j])
+                }
+            }
+
+            return {
+                maxValue: upperValue,
+                minValue: lowerValue
+            }
+        }
+
+        function calculateXScaleDecade(drawingLength, maxValue, minValue, labelTemplateString) {
+            function calculateOrderOfMagnitude(val) {
+                return Math.floor(Math.log(val) / Math.LN10);
+            }
+            function stepSize(val) {
+                var exp = Math.floor(val / 3)
+                var sub = Math.floor(val - exp * 3)
+                var mult = Math.pow(10, exp)
+                switch(sub) {
+                case 0:
+                    return mult * 1
+                case 1:
+                    return mult * 2
+                case 2:
+                    return mult * 5
+                }
+            }
+            var valueRange = maxValue - minValue;
+            var rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange);
+            var graphMin = Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
+            var graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
+            var graphRange = graphMax - graphMin;
+
+            var stepSizeIndex = 3 * (rangeOrderOfMagnitude + 1) // guaranteed to be too big
+
+            var stepValue
+            var numberOfSteps
+            var labels
+            while(1) {
+                stepValue = stepSize(stepSizeIndex)
+                numberOfSteps = Math.round(graphRange / stepValue)
+
+                labels = [];
+                populateLabels(labelTemplateString, labels, numberOfSteps, graphMin, stepValue);
+
+                widestXLabel = calculateWidestLabel(labels)
+
+                var maxSteps = drawingLength / widestXLabel / 1.5
+
+                if(numberOfSteps > maxSteps)
+                    break
+                else
+                    --stepSizeIndex
+            }
+
+            ++stepSizeIndex
+
+            stepValue = stepSize(stepSizeIndex)
+            numberOfSteps = Math.round(graphRange / stepValue)
+
+            labels = [];
+            populateLabels(labelTemplateString, labels, numberOfSteps, graphMin, stepValue);
+
+            return {
+                steps: numberOfSteps,
+                stepValue: stepValue,
+                graphMin: graphMin,
+                labels: labels
+            }
+        }
+
+        function oldGetYDataBounds() {
 
             var upperValue = Number.MIN_VALUE;
             var lowerValue = Number.MAX_VALUE;
@@ -1584,7 +1662,7 @@ var Chart = function(canvas, context) {
             };
         }
 
-        function getXDataBounds() {
+        function oldGetXDataBounds() {
 
             var upperValue = Number.MIN_VALUE;
             var lowerValue = Number.MAX_VALUE;
@@ -1627,6 +1705,9 @@ var Chart = function(canvas, context) {
     }
 
     function calculateScale(drawingHeight,maxSteps,minSteps,maxValue,minValue,labelTemplateString) {
+        function calculateOrderOfMagnitude(val) {
+            return Math.floor(Math.log(val) / Math.LN10);
+        }
 
         var graphMin,graphMax,graphRange,stepValue,numberOfSteps,valueRange,rangeOrderOfMagnitude,decimalNum;
 
@@ -1658,9 +1739,56 @@ var Chart = function(canvas, context) {
             graphMin: graphMin,
             labels: labels
         }
+    }
 
+
+    function calculateScaleDecade(drawingLength, minTickLength, maxValue, minValue, labelTemplateString) {
         function calculateOrderOfMagnitude(val) {
             return Math.floor(Math.log(val) / Math.LN10);
+        }
+        function stepSize(val) {
+            var exp = Math.floor(val / 3)
+            var sub = Math.floor(val - exp * 3)
+            var mult = Math.pow(10, exp)
+            switch(sub) {
+            case 0:
+                return mult * 1
+            case 1:
+                return mult * 2
+            case 2:
+                return mult * 5
+            }
+        }
+        var valueRange = maxValue - minValue;
+        var rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange);
+        var graphMin = Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
+        var graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
+        var graphRange = graphMax - graphMin;
+
+        var minSteps = drawingLength / minTickLength / 2.5
+
+        var stepSizeIndex = 3 * (rangeOrderOfMagnitude + 1) // guaranteed to be too big
+
+        var stepValue
+        var numberOfSteps
+        while(1) {
+            stepValue = stepSize(stepSizeIndex)
+            numberOfSteps = Math.round(graphRange / stepValue)
+            if(numberOfSteps >= minSteps)
+                break
+            else
+                --stepSizeIndex
+        }
+
+        var labels = [];
+
+        populateLabels(labelTemplateString, labels, numberOfSteps, graphMin, stepValue);
+
+        return {
+            steps: numberOfSteps,
+            stepValue: stepValue,
+            graphMin: graphMin,
+            labels: labels
         }
     }
 
