@@ -469,7 +469,7 @@ void ParamLayer::onConnSetStateDone(OpResult result)
 
 void ParamLayer::onConnStateChanged()
 {
-    if(mState == State::Disconnected && mConn->state() == Connection::State::CalMode)
+    if(mState == State::Connect && mConn->state() == Connection::State::CalMode)
         mRegistry->resetCaches();
 
     Connection::State newState = mConn->state();
@@ -580,7 +580,6 @@ Param *ParamLayer::getNextParam()
 
 void ParamLayer::setState(State val)
 {
-    qDebug() << "Xcp::ParamLayer setState" << static_cast<int>(val);
     if(updateDelta<>(mState, val))
         emit stateChanged();
 }

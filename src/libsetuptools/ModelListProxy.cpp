@@ -19,14 +19,20 @@ QVariantList ModelListProxy::list() const
 void ModelListProxy::setSource(QAbstractItemModel *source)
 {
     disconnect(mDataChangedConnection);
-    disconnect(mLayoutChangedConnection);
+    disconnect(mRowsInsertedConnection);
+    disconnect(mRowsRemovedConnection);
+    disconnect(mColsInsertedConnection);
+    disconnect(mColsRemovedConnection);
 
     mSource = source;
 
     if(mSource)
     {
         mDataChangedConnection = connect(mSource, &QAbstractItemModel::dataChanged, this, &ModelListProxy::onSourceDataChanged);
-        mLayoutChangedConnection = connect(mSource, &QAbstractItemModel::layoutChanged, this, &ModelListProxy::onSourceLayoutChanged);
+        mRowsInsertedConnection = connect(mSource, &QAbstractItemModel::rowsInserted, this, &ModelListProxy::onSourceRowsColsAddedRemoved);
+        mRowsRemovedConnection = connect(mSource, &QAbstractItemModel::rowsRemoved, this, &ModelListProxy::onSourceRowsColsAddedRemoved);
+        mColsInsertedConnection = connect(mSource, &QAbstractItemModel::columnsInserted, this, &ModelListProxy::onSourceRowsColsAddedRemoved);
+        mColsRemovedConnection = connect(mSource, &QAbstractItemModel::columnsRemoved, this, &ModelListProxy::onSourceRowsColsAddedRemoved);
 
         updateRole();
 
@@ -68,10 +74,11 @@ void ModelListProxy::onSourceDataChanged(const QModelIndex &topLeft, const QMode
         updateListData(topLeft.row(), topLeft.column(), bottomRight.row(), bottomRight.column());
 }
 
-void ModelListProxy::onSourceLayoutChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
+void ModelListProxy::onSourceRowsColsAddedRemoved(const QModelIndex &parent, int first, int last)
 {
-    Q_UNUSED(parents);
-    Q_UNUSED(hint);
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
 
     Q_ASSERT(mSource);
 

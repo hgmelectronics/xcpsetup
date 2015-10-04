@@ -46,7 +46,7 @@ signals:
     void listChanged();
 public slots:
     void onSourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
-    void onSourceLayoutChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint);
+    void onSourceRowsColsAddedRemoved(const QModelIndex &parent, int first, int last);
 private:
     QVariant coerceData(QVariant data);
     void createListData();
@@ -56,7 +56,8 @@ private:
     QVariantList mList;
     QAbstractItemModel *mSource;
     QMetaObject::Connection mDataChangedConnection;
-    QMetaObject::Connection mLayoutChangedConnection;
+    QMetaObject::Connection mRowsInsertedConnection, mRowsRemovedConnection;
+    QMetaObject::Connection mColsInsertedConnection, mColsRemovedConnection;
     int mCoercedType;
     int mShape;
     QString mRoleName;

@@ -54,12 +54,14 @@ signals:
 
 public slots:
     void onMappedDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int>());
+    void onSubmodelRowsColsAddedRemoved(const QModelIndex & parent, int first, int last);   // one slot for all since we ignore the params
 
 private:
     bool isValidRole(int role) const;
     bool isValidIndex(const QModelIndex &index) const;
     QModelIndex subModelIndex(int subModelNum, const QModelIndex &index) const;
     QModelIndex subModelIndex(QAbstractItemModel *subModel, const QModelIndex &index) const;
+    bool tryUpdateMapping();
 
     QVariantMap mMapping;
     QList<QAbstractItemModel *> mSubModels;
