@@ -8,7 +8,7 @@ QT       += core serialport testlib quick
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs
+QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -Wall -Wuninitialized
 
 static {
     QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections

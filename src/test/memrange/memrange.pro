@@ -8,7 +8,7 @@ QT       += core testlib quick serialport
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -Wall -Wuninitialized
 
 TARGET = memrange
 CONFIG   += console

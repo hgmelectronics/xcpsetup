@@ -6,7 +6,8 @@ namespace SetupTools {
 EncodingSlot::EncodingSlot(QObject *parent) :
     Slot(parent),
     oorFloat(NAN),
-    mUnencodedSlot(nullptr)
+    mUnencodedSlot(nullptr),
+    mValidator(new EncodingValidator(this))
 {}
 
 Slot *EncodingSlot::unencodedSlot()
