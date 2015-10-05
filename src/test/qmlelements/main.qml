@@ -11,15 +11,35 @@ ApplicationWindow {
     height: 480
     visible: true
 
-    TablePlot {
+    TabView {
         anchors.fill: parent
-        anchors.margins: 10
-        plots: [
-            XYTrace {
-                xList: [0, 1, 2, 3, 4, 5, 6, 7]
-                valueList: [3.8,3.801,3.8,3.802,3.79,3.8,3.8,3.803]
+        anchors.margins: 5
+        Tab {
+            title: "TablePlot cell V"
+            TablePlot {
+                anchors.fill: parent
+                anchors.margins: 10
+                plots: [
+                    XYTrace {
+                        xList: [0, 1, 2, 3, 4, 5, 6, 7]
+                        valueList: [3.8,3.801,3.8,3.802,3.79,3.8,3.8,3.803]
+                    }
+                ]
             }
-        ]
+        }
+        Tab {
+            title: "TablePlot empty"
+            TablePlot {
+                anchors.fill: parent
+                anchors.margins: 10
+                plots: [
+                    XYTrace {
+                        xList: []
+                        valueList: []
+                    }
+                ]
+            }
+        }
     }
 
 }
