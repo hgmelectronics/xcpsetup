@@ -61,7 +61,6 @@ signals:
 private:
     void onTableConnectionChanged();
     void onParamWriteCacheDirtyChanged(QString key);
-    void addParamKey(QString key);
     MemoryRangeTable *mTable;
     QMap<QString, Param *> mParams;
     QList<QString> mParamKeys;  // maintain our own list of keys because QMap<>::keys() just builds a new list every time

@@ -77,12 +77,10 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
     if(!MemoryRange::isValidType(type))
         return nullptr;
 
-    MemoryRange *range = mTable->addScalarRange(MemoryRange::MemoryRangeType(type), base, writable);
-    if(range == nullptr)
+    ScalarMemoryRange *scalarRange = mTable->addScalarRange(MemoryRange::MemoryRangeType(type), base, writable);
+    if(scalarRange == nullptr)
         return nullptr;
 
-    ScalarMemoryRange *scalarRange = qobject_cast<ScalarMemoryRange *>(range);
-    Q_ASSERT(scalarRange != nullptr);
     ScalarParam *param = new ScalarParam(scalarRange, slot, this);
     Q_ASSERT(param != nullptr);
     param->saveable = saveable;
@@ -120,12 +118,10 @@ ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool 
     if(!MemoryRange::isValidType(type))
         return nullptr;
 
-    MemoryRange *range = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
-    if(range == nullptr)
+     ArrayMemoryRange *tableRange = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
+    if(tableRange == nullptr)
         return nullptr;
 
-    ArrayMemoryRange *tableRange = qobject_cast<ArrayMemoryRange *>(range);
-    Q_ASSERT(tableRange != nullptr);
     ArrayParam* param = new ArrayParam(tableRange, slot, this);
     Q_ASSERT(param != nullptr);
     param->saveable = saveable;
@@ -202,13 +198,6 @@ void ParamRegistry::setWriteCacheDirtyAll(bool dirty)
 void ParamRegistry::onTableConnectionChanged()
 {
     emit connectionChanged();
-}
-
-void ParamRegistry::addParamKey(QString key)
-{
-    auto beforeIt = std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key);
-    mParamKeys.insert(beforeIt, key);
-    emit paramsChanged();
 }
 
 void ParamRegistry::onParamWriteCacheDirtyChanged(QString key)

@@ -47,12 +47,12 @@ bool MemoryRangeTable::connectionOk() const
     return mConnectionOk;
 }
 
-MemoryRange *MemoryRangeTable::addScalarRange(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable)
+ScalarMemoryRange *MemoryRangeTable::addScalarRange(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable)
 {
     if(memoryRangeTypeSize(type) % mAddrGran)   // reject unaligned types
         return nullptr;
 
-    MemoryRange *newRange = new ScalarMemoryRange(type, base, writable, mAddrGran, nullptr);
+    ScalarMemoryRange *newRange = new ScalarMemoryRange(type, base, writable, mAddrGran, nullptr);
 
     if(newRange == nullptr)
         return nullptr;
@@ -62,7 +62,7 @@ MemoryRange *MemoryRangeTable::addScalarRange(MemoryRange::MemoryRangeType type,
     return newRange;
 }
 
-MemoryRange *MemoryRangeTable::addTableRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable)
+ArrayMemoryRange *MemoryRangeTable::addTableRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable)
 {
     if(memoryRangeTypeSize(type) % mAddrGran)   // reject unaligned types
         return nullptr;
@@ -70,7 +70,7 @@ MemoryRange *MemoryRangeTable::addTableRange(MemoryRange::MemoryRangeType type, 
     if(count < 1)
         return nullptr;
 
-    MemoryRange *newRange = new ArrayMemoryRange(type, count, base, writable, mAddrGran, nullptr);
+    ArrayMemoryRange *newRange = new ArrayMemoryRange(type, count, base, writable, mAddrGran, nullptr);
 
     if(newRange == nullptr)
         return nullptr;
