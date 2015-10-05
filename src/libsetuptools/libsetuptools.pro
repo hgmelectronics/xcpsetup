@@ -8,7 +8,7 @@ QT       += network serialport quick qml
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections
+QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections -Wall -Wuninitialized
 
 TARGET = setuptools
 TEMPLATE = lib
