@@ -17,6 +17,6 @@ QtObject {
     }
 
     Component.onCompleted: {
-        console.assert(xModel.count === valueModel.count, "TableParam instantiated with mismatched row counts", xModel.rowCount(), "and", valueModel.rowCount())
+        console.assert(xModel.count === valueModel.count, "TableParam instantiated with mismatched row counts", xModel.count, "and", valueModel.count)
     }
 }

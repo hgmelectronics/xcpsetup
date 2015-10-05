@@ -12,6 +12,11 @@ SlotProxyModel::SlotProxyModel(QObject *parent) :
     updateTargetRoles();
 }
 
+int SlotProxyModel::count()
+{
+    return rowCount();
+}
+
 QStringList SlotProxyModel::targetRoleNames() const
 {
     return mTargetRoleNames;
@@ -251,6 +256,7 @@ void SlotProxyModel::onSourceRowsInserted(const QModelIndex &parent, int first, 
     Q_UNUSED(first);
     Q_UNUSED(last);
     endInsertRows();
+    emit countChanged();
 }
 
 void SlotProxyModel::onSourceRowsRemoved(const QModelIndex &parent, int first, int last)
@@ -259,6 +265,7 @@ void SlotProxyModel::onSourceRowsRemoved(const QModelIndex &parent, int first, i
     Q_UNUSED(first);
     Q_UNUSED(last);
     endRemoveRows();
+    emit countChanged();
 }
 
 } // namespace SetupTools
