@@ -1,105 +1,113 @@
 import QtQuick 2.5
 
 QtObject {
-    readonly property double aioAiCts: 4*0x00010000
-    readonly property double aioAoCts: 4*0x00010010
-    readonly property double aioVbatEv01: 4*0x00010020
+    readonly property double aioAiCts:                          4*0x00011000
+    readonly property double aioAoCts:                          4*0x00011010
+    readonly property double aioVbatEv01:                       4*0x00011020
 
-    readonly property double cbtmFaultDecayCyc: 4*0x00030000
-    readonly property double cbtmNonQuiescentTripCyc: 4*0x00030001
-    readonly property double cbtmNonQuiescentDecayCyc: 4*0x00030002
-    readonly property double cbtmBalanceOpenDeltaVThresh: 4*0x00030003
-    readonly property double cbtmBalanceShortDeltaVThresh: 4*0x00030004
-    readonly property double cbtmQuiescentDeltaVThresh: 4*0x00030005
-    readonly property double cbtmIsospi1FirstBoard: 4*0x00030006
-    readonly property double cbtmIsospi1LastBoard: 4*0x00030007
-    readonly property double cbtmIsospi2FirstBoard: 4*0x00030008
-    readonly property double cbtmIsospi2LastBoard: 4*0x00030009
-    readonly property double cbtmCellVolt: 4*0x00031000
-    readonly property double cbtmTabTemp: 4*0x00032000
-    readonly property double cbtmDisch: 4*0x00033000
-    readonly property double cbtmStatus: 4*0x00033100
 
-    readonly property double canAuxBattCnvtCmdOn: 4*0x00021000
-    readonly property double canAuxBattCnvtCmdVolt: 4*0x00021001
-    readonly property double canCtlMaxMotoringTorque: 4*0x00021002
-    readonly property double canCtlMaxRegenTorque: 4*0x00021003
-    readonly property double canTracMotorSpeed: 4*0x00022000
-    readonly property double canLimpHomeCmdOn: 4*0x00022001
-    readonly property double canBattMaxDischCurrCmd: 4*0x00022002
-    readonly property double canBattMaxChgCurrCmd: 4*0x00022003
-    readonly property double canAuxBattCnvtState: 4*0x00022004
-    readonly property double canAuxBattCnvtTemp: 4*0x00022005
-    readonly property double canAuxBattCnvtInputVolt: 4*0x00022006
-    readonly property double canAuxBattCnvtOutputVolt: 4*0x00022007
-    readonly property double canAuxBattCnvtOutputCurr: 4*0x00022008
-    readonly property double canExtChgCtcRqst: 4*0x00022009
-    readonly property double canAuxCtcRqrd: 4*0x0002200A
-    readonly property double canXcpProgramRequested: 4*0x0002200B
-    readonly property double canCan1RxErrCount: 4*0x0002200C
-    readonly property double canCan1TxErrCount: 4*0x0002200D
-    readonly property double canCan2RxErrCount: 4*0x0002200E
-    readonly property double canCan2TxErrCount: 4*0x0002200F
+    readonly property double canAuxBattCnvtCmdOn:               4*0x00021000
+    readonly property double canAuxBattCnvtCmdVolt:             4*0x00021001
+    readonly property double canCtlMaxMotoringTorque:           4*0x00021002
+    readonly property double canCtlMaxRegenTorque:              4*0x00021003
+    readonly property double canTracMotorSpeed:                 4*0x00022000
+    readonly property double canLimpHomeCmdOn:                  4*0x00022001
+    readonly property double canBattMaxDischCurrCmd:            4*0x00022002
+    readonly property double canBattMaxChgCurrCmd:              4*0x00022003
+    readonly property double canAuxBattCnvtState:               4*0x00022004
+    readonly property double canAuxBattCnvtTemp:                4*0x00022005
+    readonly property double canAuxBattCnvtInputVolt:           4*0x00022006
+    readonly property double canAuxBattCnvtOutputVolt:          4*0x00022007
+    readonly property double canAuxBattCnvtOutputCurr:          4*0x00022008
+    readonly property double canExtChgCtcRqst:                  4*0x00022009
+    readonly property double canAuxCtcRqrd:                     4*0x0002200A
+    readonly property double canXcpProgramRequested:            4*0x0002200B
+    readonly property double canCan1RxErrCount:                 4*0x0002200C
+    readonly property double canCan1TxErrCount:                 4*0x0002200D
+    readonly property double canCan2RxErrCount:                 4*0x0002200E
+    readonly property double canCan2TxErrCount:                 4*0x0002200F
 
-    readonly property double ctcMaxSimulPickup: 4*0x00040000
-    readonly property double ctcLowVbatTripVolt: 4*0x00040001
-    readonly property double ctcLowVbatOkVolt: 4*0x00040002
-    readonly property double ctcHasBInput: 4*0x00040010
-    readonly property double ctcOn: 4*0x00041010
-    readonly property double ctcOk: 4*0x00041020
-    readonly property double ctcAClosed: 4*0x00041030
-    readonly property double ctcBClosed: 4*0x00041040
 
-    readonly property double dioDi: 4*0x00050000
-    readonly property double dioDo: 4*0x00050100
-    readonly property double dioDs: 4*0x00050200
+    readonly property double cbtmFaultDecayCyc:                 4*0x00030000
+    readonly property double cbtmNonQuiescentTripCyc:           4*0x00030001
+    readonly property double cbtmNonQuiescentDecayCyc:          4*0x00030002
+    readonly property double cbtmBalanceOpenDeltaVThresh:       4*0x00030003
+    readonly property double cbtmBalanceShortDeltaVThresh:      4*0x00030004
+    readonly property double cbtmQuiescentDeltaVThresh:         4*0x00030005
+    readonly property double cbtmIsospi1FirstBoard:             4*0x00030006
+    readonly property double cbtmIsospi1LastBoard:              4*0x00030007
+    readonly property double cbtmIsospi2FirstBoard:             4*0x00030008
+    readonly property double cbtmIsospi2LastBoard:              4*0x00030009
+    readonly property double cbtmCellVolt:                      4*0x00031000
+    readonly property double cbtmTabTemp:                       4*0x00032000
+    readonly property double cbtmDisch:                         4*0x00033000
+    readonly property double cbtmStatus:                        4*0x00033100
 
-    readonly property double iaiDiffCts: 4*0x00060000
-    readonly property double iaiOk: 4*0x00060010
-    readonly property double iai4PosCts: 4*0x00060020
-    readonly property double iai4NegCts: 4*0x00060021
-    readonly property double iai4Pullup: 4*0x00060030
-    readonly property double iai4Pulldown: 4*0x00060031
 
-    readonly property double auxBattCnvtType: 4*0x00070000
-    readonly property double auxBattCnvtInputVoltMin: 4*0x00070001
-    readonly property double auxBattCnvtStartTemp: 4*0x00070002
-    readonly property double auxBattCnvtStopTemp: 4*0x00070003
-    readonly property double auxBattFloatVolt: 4*0x00070004
-    readonly property double auxBattFloatVoltTempCoeff: 4*0x00070005
-    readonly property double auxBattFloatVoltMin: 4*0x00070006
-    readonly property double auxBattFloatVoltMax: 4*0x00070007
-    readonly property double auxBattFloatVoltFailsafe: 4*0x00070008
-    readonly property double auxBattRestartVoltHysteresis: 4*0x00070009
-    readonly property double auxBattRestartVoltTime: 4*0x0007000A
-    readonly property double auxBattRestartAlwaysTime: 4*0x0007000B
-    readonly property double auxBattStopOutCurr: 4*0x0007000C
-    readonly property double auxBattStopOutCurrTime: 4*0x0007000D
-    readonly property double auxBattBattOkTemp: 4*0x0007000E
-    readonly property double auxBattBattWarmTemp: 4*0x0007000F
-    readonly property double auxBattBattHotTemp: 4*0x00070010
-    readonly property double auxBattBattTemp0AiChan: 4*0x00070011
-    readonly property double auxBattBattTemp1AiChan: 4*0x00070012
-    readonly property double auxBattBattTemp0Curve: 4*0x00070013
-    readonly property double auxBattBattTemp1Curve: 4*0x00070014
-    readonly property double auxBattRestartVoltTimeCount: 4*0x00070015
-    readonly property double auxBattRestartAlwaysTimeCount: 4*0x00070016
-    readonly property double auxBattStopOutCurrTimeCount: 4*0x00070017
+    readonly property double ctcMaxSimulPickup:                 4*0x00040000
+    readonly property double ctcLowVbatTripVolt:                4*0x00040001
+    readonly property double ctcLowVbatOkVolt:                  4*0x00040002
+    readonly property double ctcHasBInput:                      4*0x00040010
+    readonly property double ctcOn:                             4*0x00041010
+    readonly property double ctcOk:                             4*0x00041020
+    readonly property double ctcAClosed:                        4*0x00041030
+    readonly property double ctcBClosed:                        4*0x00041040
 
-    readonly property double auxBattBattTemp0: 4*0x00071000
-    readonly property double auxBattBattTemp1: 4*0x00071001
-    readonly property double auxBattStatus: 4*0x00071002
 
-    readonly property double motorFailsafeSpeed: 4*0x00080000
-    readonly property double motorMinEffSpeed: 4*0x00080001
-    readonly property double motorRatedTorque: 4*0x00080002
-    readonly property double motorCurrRegPropCoeff: 4*0x00080003
-    readonly property double motorCurrRegIntCoeff: 4*0x00080004
-    readonly property double motorMaxTorqueRefErr: 4*0x00080005
-    readonly property double motorMotoringIntegrator: 4*0x00081000
-    readonly property double motorRegenIntegrator: 4*0x00081001
-    readonly property double motorAdjMaxMotoringCurr: 4*0x00081002
-    readonly property double motorAdjMaxRegenCurr: 4*0x00081003
+    readonly property double dioDi:                             4*0x00051000
+    readonly property double dioDo:                             4*0x00051100
+    readonly property double dioDs:                             4*0x00051200
+
+
+    readonly property double iaiDiffCts:                        4*0x00061000
+    readonly property double iaiOk:                             4*0x00061010
+    readonly property double iai4PosCts:                        4*0x00061020
+    readonly property double iai4NegCts:                        4*0x00061021
+    readonly property double iai4Pullup:                        4*0x00061030
+    readonly property double iai4Pulldown:                      4*0x00061031
+
+
+    readonly property double auxBattCnvtType:                   4*0x00070000
+    readonly property double auxBattCnvtInputVoltMin:           4*0x00070001
+    readonly property double auxBattCnvtStartTemp:              4*0x00070002
+    readonly property double auxBattCnvtStopTemp:               4*0x00070003
+    readonly property double auxBattFloatVolt:                  4*0x00070004
+    readonly property double auxBattFloatVoltTempCoeff:         4*0x00070005
+    readonly property double auxBattFloatVoltMin:               4*0x00070006
+    readonly property double auxBattFloatVoltMax:               4*0x00070007
+    readonly property double auxBattFloatVoltFailsafe:          4*0x00070008
+    readonly property double auxBattRestartVoltHysteresis:      4*0x00070009
+    readonly property double auxBattRestartVoltTime:            4*0x0007000A
+    readonly property double auxBattRestartAlwaysTime:          4*0x0007000B
+    readonly property double auxBattStopOutCurr:                4*0x0007000C
+    readonly property double auxBattStopOutCurrTime:            4*0x0007000D
+    readonly property double auxBattBattOkTemp:                 4*0x0007000E
+    readonly property double auxBattBattWarmTemp:               4*0x0007000F
+    readonly property double auxBattBattHotTemp:                4*0x00070010
+    readonly property double auxBattBattTemp0AiChan:            4*0x00070011
+    readonly property double auxBattBattTemp1AiChan:            4*0x00070012
+    readonly property double auxBattBattTemp0Curve:             4*0x00070013
+    readonly property double auxBattBattTemp1Curve:             4*0x00070014
+    readonly property double auxBattRestartVoltTimeCount:       4*0x00070015
+    readonly property double auxBattRestartAlwaysTimeCount:     4*0x00070016
+    readonly property double auxBattStopOutCurrTimeCount:       4*0x00070017
+
+    readonly property double auxBattBattTemp0:                  4*0x00071000
+    readonly property double auxBattBattTemp1:                  4*0x00071001
+    readonly property double auxBattStatus:                     4*0x00071002
+
+
+    readonly property double motorFailsafeSpeed:                4*0x00080000
+    readonly property double motorMinEffSpeed:                  4*0x00080001
+    readonly property double motorRatedTorque:                  4*0x00080002
+    readonly property double motorCurrRegPropCoeff:             4*0x00080003
+    readonly property double motorCurrRegIntCoeff:              4*0x00080004
+    readonly property double motorMaxTorqueRefErr:              4*0x00080005
+    readonly property double motorMotoringIntegrator:           4*0x00081000
+    readonly property double motorRegenIntegrator:              4*0x00081001
+    readonly property double motorAdjMaxMotoringCurr:           4*0x00081002
+    readonly property double motorAdjMaxRegenCurr:              4*0x00081003
+
 
     readonly property double packBoardsPerString:               4*0x00090000
     readonly property double packIaiFunc:                       4*0x00090001
@@ -177,23 +185,24 @@ QtObject {
     readonly property double packCtcCtrlStateCode:              4*0x00091020
     readonly property double packBalancerStateCode:             4*0x00091021
 
-    readonly property double sysCycleIdleTicks:         4*0x000A0000
-    readonly property double sysCycleDrvAioInTicks:     4*0x000A0001
-    readonly property double sysCycleDrvAioOutTicks:    4*0x000A0002
-    readonly property double sysCycleDrvCanInTicks:     4*0x000A0003
-    readonly property double sysCycleDrvCanOutTicks:    4*0x000A0004
-    readonly property double sysCycleDrvCbtmInTicks:    4*0x000A0005
-    readonly property double sysCycleDrvCbtmOutTicks:   4*0x000A0006
-    readonly property double sysCycleDrvCtcInTicks:     4*0x000A0007
-    readonly property double sysCycleDrvCtcOutTicks:    4*0x000A0008
-    readonly property double sysCycleDrvDioInTicks:     4*0x000A0009
-    readonly property double sysCycleDrvDioOutTicks:    4*0x000A000A
-    readonly property double sysCycleDrvIaiInTicks:     4*0x000A000B
-    readonly property double sysCycleDrvIaiOutTicks:    4*0x000A000C
-    readonly property double sysCycleCtlAuxBattTicks:   4*0x000A000D
-    readonly property double sysCycleCtlLampTicks:      4*0x000A000E
-    readonly property double sysCycleCtlMotorTicks:     4*0x000A000F
-    readonly property double sysCycleCtlPackTicks:      4*0x000A0010
-    readonly property double sysCycleTimeViolation:     4*0x000A0011
-    readonly property double sysWatchdogReset:          4*0x000A0012
+
+    readonly property double sysCycleIdleTicks:                 4*0x000A1000
+    readonly property double sysCycleDrvAioInTicks:             4*0x000A1001
+    readonly property double sysCycleDrvAioOutTicks:            4*0x000A1002
+    readonly property double sysCycleDrvCanInTicks:             4*0x000A1003
+    readonly property double sysCycleDrvCanOutTicks:            4*0x000A1004
+    readonly property double sysCycleDrvCbtmInTicks:            4*0x000A1005
+    readonly property double sysCycleDrvCbtmOutTicks:           4*0x000A1006
+    readonly property double sysCycleDrvCtcInTicks:             4*0x000A1007
+    readonly property double sysCycleDrvCtcOutTicks:            4*0x000A1008
+    readonly property double sysCycleDrvDioInTicks:             4*0x000A1009
+    readonly property double sysCycleDrvDioOutTicks:            4*0x000A100A
+    readonly property double sysCycleDrvIaiInTicks:             4*0x000A100B
+    readonly property double sysCycleDrvIaiOutTicks:            4*0x000A100C
+    readonly property double sysCycleCtlAuxBattTicks:           4*0x000A100D
+    readonly property double sysCycleCtlLampTicks:              4*0x000A100E
+    readonly property double sysCycleCtlMotorTicks:             4*0x000A100F
+    readonly property double sysCycleCtlPackTicks:              4*0x000A1010
+    readonly property double sysCycleTimeViolation:             4*0x000A1011
+    readonly property double sysWatchdogReset:                  4*0x000A1012
 }

@@ -233,7 +233,6 @@ QValidator::State EncodingValidator::validate(QString &input, int &pos) const
         }
     }
 
-    qDebug() << encodedValid << unencodedValid;
     return std::max(encodedValid, unencodedValid);
 }
 
