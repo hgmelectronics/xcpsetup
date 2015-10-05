@@ -1545,7 +1545,7 @@ var Chart = function(canvas, context) {
         }
 
         function getXDataBounds() {
-            var upperValue = Number.MIN_VALUE
+            var upperValue = -Number.MAX_VALUE
             var lowerValue = Number.MAX_VALUE
 
             for (var i=0; i<data.length; i++) {
@@ -1562,7 +1562,7 @@ var Chart = function(canvas, context) {
         }
 
         function getYDataBounds() {
-            var upperValue = Number.MIN_VALUE
+            var upperValue = -Number.MAX_VALUE
             var lowerValue = Number.MAX_VALUE
 
             for (var i=0; i<data.length; i++) {
@@ -1596,6 +1596,25 @@ var Chart = function(canvas, context) {
                 }
             }
             var valueRange = maxValue - minValue;
+            if(valueRange < 0) {
+                return {
+                    steps: 1,
+                    stepValue: 1,
+                    graphMin: 0,
+                    labels: [""]
+                }
+            }
+            else if(valueRange == 0) {
+                var degenLabels = []
+
+                populateLabels(labelTemplateString, degenLabels, 1, minValue, 1);
+                return {
+                    steps: 1,
+                    stepValue: 1,
+                    graphMin: minValue,
+                    labels: degenLabels
+                }
+            }
             var rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange);
             var graphMin = Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
             var graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
@@ -1637,52 +1656,6 @@ var Chart = function(canvas, context) {
                 graphMin: graphMin,
                 labels: labels
             }
-        }
-
-        function oldGetYDataBounds() {
-
-            var upperValue = Number.MIN_VALUE;
-            var lowerValue = Number.MAX_VALUE;
-
-            for (var i=0; i<data.length; i++) {
-                for (var j=0; j<data[i].yData.length; j++) {
-                    if ( data[i].yData[j] > upperValue) { upperValue = data[i].yData[j] };
-                    if ( data[i].yData[j] < lowerValue) { lowerValue = data[i].yData[j] };
-                }
-            };
-
-            var maxSteps = Math.floor((yAxisHeight / labelHeight * 1));
-            var minSteps = Math.floor((yAxisHeight / labelHeight * 0.333));
-
-            return {
-                maxValue: upperValue,
-                minValue: lowerValue,
-                maxSteps: maxSteps,
-                minSteps: minSteps
-            };
-        }
-
-        function oldGetXDataBounds() {
-
-            var upperValue = Number.MIN_VALUE;
-            var lowerValue = Number.MAX_VALUE;
-
-            for (var i=0; i<data.length; i++) {
-                for (var j=0; j<data[i].xData.length; j++) {
-                    if ( data[i].xData[j] > upperValue) { upperValue = data[i].xData[j] };
-                    if ( data[i].xData[j] < lowerValue) { lowerValue = data[i].xData[j] };
-                }
-            };
-
-            var maxSteps = Math.floor(((width - config.scaleFontSize * 5) / widestXLabel * 1));
-            var minSteps = Math.floor(((width - config.scaleFontSize * 5) / widestXLabel * 0.333));
-
-            return {
-                maxValue: upperValue,
-                minValue: lowerValue,
-                maxSteps: maxSteps,
-                minSteps: minSteps
-            };
         }
     }
 
@@ -1760,6 +1733,26 @@ var Chart = function(canvas, context) {
             }
         }
         var valueRange = maxValue - minValue;
+        if(valueRange < 0) {
+            return {
+                steps: 1,
+                stepValue: 1,
+                graphMin: 0,
+                labels: [""]
+            }
+        }
+        else if(valueRange == 0) {
+            var degenLabels = []
+
+            populateLabels(labelTemplateString, degenLabels, 1, minValue, 1);
+            return {
+                steps: 1,
+                stepValue: 1,
+                graphMin: minValue,
+                labels: degenLabels
+            }
+        }
+
         var rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange);
         var graphMin = Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
         var graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
