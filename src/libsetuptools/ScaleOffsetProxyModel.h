@@ -43,10 +43,26 @@ signals:
 public slots:
     void onSourceModelChanged();
     void onSourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+    void onSourceColumnsAboutToBeInserted(const QModelIndex &parent, int first, int last);
+    void onSourceColumnsAboutToBeRemoved(const QModelIndex &parent, int first, int last);
+    void onSourceColumnsInserted(const QModelIndex &parent, int first, int last);
+    void onSourceColumnsRemoved(const QModelIndex &parent, int first, int last);
+    void onSourceRowsAboutToBeInserted(const QModelIndex &parent, int first, int last);
+    void onSourceRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last);
+    void onSourceRowsInserted(const QModelIndex &parent, int first, int last);
+    void onSourceRowsRemoved(const QModelIndex &parent, int first, int last);
 private:
     void updateTargetRoles();
 
     QMetaObject::Connection mDataChangedConnection;
+    QMetaObject::Connection mColumnsAboutToBeInsertedConnection;
+    QMetaObject::Connection mColumnsAboutToBeRemovedConnection;
+    QMetaObject::Connection mColumnsInsertedConnection;
+    QMetaObject::Connection mColumnsRemovedConnection;
+    QMetaObject::Connection mRowsAboutToBeInsertedConnection;
+    QMetaObject::Connection mRowsAboutToBeRemovedConnection;
+    QMetaObject::Connection mRowsInsertedConnection;
+    QMetaObject::Connection mRowsRemovedConnection;
     double mScale;
     double mOffset;
     bool mTargetAllRoles;
