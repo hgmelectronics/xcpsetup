@@ -14,16 +14,12 @@ Flow {
     spacing: 5
 
     ScalarParamSpinBox {
-        name: qsTr("Engine Cylinders")
-        param: parameters.engineCylinders
-    }
-
-    ScalarParamSpinBox {
-        name: qsTr("Max Engine Speed A")
-        param: parameters.shiftMaxEngineSpeedA
+        metaParam: parameters.engineCylinders
     }
     ScalarParamSpinBox {
-        name: qsTr("Max Engine Speed B")
-        param: parameters.shiftMaxEngineSpeedB
+        metaParam: parameters.shiftMaxEngineSpeedA
+    }
+    ScalarParamSpinBox {
+        metaParam: parameters.shiftMaxEngineSpeedB
     }
 }

@@ -39,7 +39,7 @@ QtObject {
     readonly property double controller_master_driver_fault: 0x80620000
 
     readonly property double controller_usb_power: 0x80700000
-    readonly property double controller_greed_led: 0x80710000
+    readonly property double controller_green_led: 0x80710000
     readonly property double controller_red_led: 0x80720000
     readonly property double controller_transmission_temperature_sensor_bias: 0x80730000
     readonly property double controller_engine_temperature_sensor_bias: 0x80740000

@@ -18,24 +18,19 @@ Flow {
         Column {
             spacing: 5
             ScalarParamEdit {
-                name: "5V Bus"
-                param: parameters.controllerBus5Voltage
+                metaParam: parameters.controllerBus5Voltage
             }
             ScalarParamEdit {
-                name: "3.3V Bus"
-                param: parameters.controllerBus3_3Voltage
+                metaParam: parameters.controllerBus3_3Voltage
             }
             ScalarParamEdit {
-                name: "1.8V Bus"
-                param: parameters.controllerBus1_8Voltage
+                metaParam: parameters.controllerBus1_8Voltage
             }
             ScalarParamEdit {
-                name: "12V Bus"
-                param: parameters.controllerBus12Voltage
+                metaParam: parameters.controllerBus12Voltage
             }
             ScalarParamEdit {
-                name: "Main bus"
-                param: parameters.controllerBusVoltage
+                metaParam: parameters.controllerBusVoltage
             }
         }
     }
@@ -44,20 +39,16 @@ Flow {
         Column {
             spacing: 5
             ScalarParamEdit {
-                name: "Tachometer"
-                param: parameters.controllerTachInputFrequency
+                metaParam: parameters.controllerTachInputFrequency
             }
             ScalarParamEdit {
-                name: "TISS"
-                param: parameters.controllerTissInputFrequency
+                metaParam: parameters.controllerTissInputFrequency
             }
             ScalarParamEdit {
-                name: "TOSS"
-                param: parameters.controllerTossInputFrequency
+                metaParam: parameters.controllerTossInputFrequency
             }
             ScalarParamEdit {
-                name: "Spare"
-                param: parameters.controllerSpareInputFrequency
+                metaParam: parameters.controllerSpareInputFrequency
             }
         }
     }
@@ -66,32 +57,25 @@ Flow {
         Column {
             spacing: 5
             ScalarParamEdit {
-                name: "Throttle Position"
-                param: parameters.controllertThrottlePositionSensorVoltage
+                metaParam: parameters.controllerThrottlePositionSensorVoltage
             }
             ScalarParamEdit {
-                name: "MAP"
-                param: parameters.controllerMAPSensorVoltage
+                metaParam: parameters.controllerMAPSensorVoltage
             }
             ScalarParamEdit {
-                name: "Inernal Temperature"
-                param: parameters.controllerInternalTemperatureSensorVoltage
+                metaParam: parameters.controllerInternalTemperatureSensorVoltage
             }
             //            ScalarParamEdit {
-            //                name: "Internal Temperature"
-            //                param: parameters.controllerInternalTemprature
+            //                metaParam: parameters.controllerInternalTemprature
             //            }
             ScalarParamEdit {
-                name: "Engine Temperature"
-                param: parameters.controllerEngineTempratureSensorVoltage
+                metaParam: parameters.controllerEngineTempratureSensorVoltage
             }
             ScalarParamEdit {
-                name: "Transmission Temperature"
-                param: parameters.controllerTransmissionTemperatureSensorVoltage
+                metaParam: parameters.controllerTransmissionTemperatureSensorVoltage
             }
             ScalarParamEdit {
-                name: "Multiplex"
-                param: parameters.controllerMultipltexedSensorVoltage
+                metaParam: parameters.controllerMultiplexedSensorVoltage
             }
         }
     }
@@ -101,21 +85,16 @@ Flow {
         Column {
             spacing: 5
             ScalarParamEdit {
-                name: "Heap Used"
-                param: parameters.controllerHeapUsed
+                metaParam: parameters.controllerHeapUsed
             }
             ScalarParamEdit {
-                name: "Heap Size"
-                param: parameters.controllerHeapSize
-            }
-
-            ScalarParamEdit {
-                name: "Allocation Count"
-                param: parameters.controllerHeapAllocationCount
+                metaParam: parameters.controllerHeapSize
             }
             ScalarParamEdit {
-                name: "Release Count"
-                param: parameters.controllerHeapReleaseCount
+                metaParam: parameters.controllerHeapAllocationCount
+            }
+            ScalarParamEdit {
+                metaParam: parameters.controllerHeapReleaseCount
             }
         }
     }
@@ -124,32 +103,25 @@ Flow {
         title: "Digital Outputs"
         Column {
             ScalarParamCheckBox {
-                text: "Green LED"
-                param: parameters.controllerGreenLED
+                metaParam: parameters.controllerGreenLED
             }
             ScalarParamCheckBox {
-                name: "Red LED"
-                param: parameters.controllerRedLED
+                metaParam: parameters.controllerRedLED
             }
             ScalarParamCheckBox {
-                name: "USB Connect"
-                param: parameters.controllerUSBConnect
+                metaParam: parameters.controllerUSBConnect
             }
             ScalarParamCheckBox {
-                name: "Transmission Temperature Sensor Bias"
-                param: parameters.controllerTransmissionTemperatureSensorBias
+                metaParam: parameters.controllerTransmissionTemperatureSensorBias
             }
             ScalarParamCheckBox {
-                name: "Engine Temperature Sensor Bias"
-                param: parameters.controllerEngineTemperatureSensorBias
+                metaParam: parameters.controllerEngineTemperatureSensorBias
             }
             ScalarParamCheckBox {
-                name: "Throttle Position Sensor Ground"
-                param: parameters.controllerThrottlePositionSensorGround
+                metaParam: parameters.controllerThrottlePositionSensorGround
             }
             ScalarParamCheckBox {
-                name: "MAP Sensor Ground"
-                param: parameters.controllerMAPSensorGround
+                metaParam: parameters.controllerMAPSensorGround
             }
         }
     }
@@ -158,20 +130,16 @@ Flow {
         title: "Digital Inputs"
         Column {
             ScalarParamCheckBox {
-                name: "SD Card Protect"
-                param: parameters.controllerSDCardWriteProtect
+                metaParam: parameters.controllerSDCardWriteProtect
             }
             ScalarParamCheckBox {
-                name: "SD Card Present"
-                param: parameters.controllerSDCardPresent
+                metaParam: parameters.controllerSDCardPresent
             }
             ScalarParamCheckBox {
-                name: "Master Driver Fault"
-                param: parameters.controllerMasterDriveFault
+                metaParam: parameters.controllerMasterDriverFault
             }
             ScalarParamCheckBox {
-                name: "USB Power"
-                param: parameters.controllerUSBPower
+                metaParam: parameters.controllerUSBPower
             }
         }
     }
@@ -181,12 +149,10 @@ Flow {
         Column {
             spacing: 5
             ScalarParamSpinBox {
-                name: "Speed 1"
-                param: parameters.controllerSpeedTimer1Frequency
+                metaParam: parameters.controllerSpeedTimer1Frequency
             }
             ScalarParamSpinBox {
-                name: "Speed 2"
-                param: parameters.controllerSpeedTimer2Frequency
+                metaParam: parameters.controllerSpeedTimer2Frequency
             }
             Button {
                 text: "PWM Drivers"

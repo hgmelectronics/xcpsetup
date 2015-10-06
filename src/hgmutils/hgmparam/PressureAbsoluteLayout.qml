@@ -14,7 +14,7 @@ ColumnLayout {
 
     TableByShiftEditButtonGroup {
         title: qsTr("Upshift Apply Pressure")
-        count: 5
+        count: 6
         xLabel: qsTr("Torque")
         valueLabel: qsTr("Pressure")
         tableParam: parameters.transmissionUpshiftApplyPressure
@@ -22,7 +22,7 @@ ColumnLayout {
 
     TableByShiftEditButtonGroup {
         title: qsTr("Downshift Apply Pressure")
-        count: 4
+        count: 5
         isDownshift: true
 
         xLabel: qsTr("Torque")

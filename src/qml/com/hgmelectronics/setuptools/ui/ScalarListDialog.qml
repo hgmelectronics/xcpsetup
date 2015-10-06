@@ -22,7 +22,6 @@ Window {
     }
 
     property int columns: paramLists.length
-    property int rows: paramLists[0].params.length
     maximumWidth: 15 + (stalkingHorse.implicitWidth + 5) * columns + scrollView.width - scrollView.viewport.width
     width: maximumWidth
 
@@ -48,11 +47,11 @@ Window {
                     spacing: 5
                     property ScalarMetaParamList paramList: paramLists[index]
                     Repeater {
-                        model: rows
+                        model: paramList.length
                         ScalarParamEdit {
                             id: edit
                             metaParam: paramList.params[index]
-                            visible: paramList.params[index].param.valid
+                            enabled: paramList.params[index].param.valid
                         }
                     }
                 }

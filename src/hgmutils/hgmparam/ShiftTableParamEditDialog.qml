@@ -22,38 +22,38 @@ Window {
         return isDefined(param.stringModel) ? param.stringModel : param
     }
 
-    property string name
+    property string name: speedTableParam.name
     property string thisGearName
     property string nextGearName
-    property TableParam speedTableParam
-    property TableParam rpmTableParam
-    property ScalarParam thisGearRatio
-    property ScalarParam nextGearRatio
+    property TableMetaParam speedTableParam
+    property TableMetaParam rpmTableParam
+    property ScalarMetaParam thisGearRatio
+    property ScalarMetaParam nextGearRatio
 
-    property var speedSlot: speedTableParam.value.slot
-    property var tpsSlot: speedTableParam.x.slot
-    property var rpmSlot: rpmTableParam.value.slot
+    property var speedSlot: speedTableParam.param.value.slot
+    property var tpsSlot: speedTableParam.param.x.slot
+    property var rpmSlot: rpmTableParam.param.value.slot
 
     property double steeperFlatterRatio: 1.1
     property double increaseDecreaseDelta: 1.0
 
 
     property ScaleOffsetProxyModel beforeRpmModel: ScaleOffsetProxyModel {
-        sourceModel: stringModelIfDefined(rpmTableParam.value)
-        scale: thisGearRatio.floatVal
+        sourceModel: stringModelIfDefined(rpmTableParam.param.value)
+        scale: thisGearRatio.param.floatVal
         formatSlot: rpmSlot
     }
 
     property ScaleOffsetProxyModel afterRpmModel: ScaleOffsetProxyModel {
-        sourceModel: stringModelIfDefined(rpmTableParam.value)
-        scale: nextGearRatio.floatVal
+        sourceModel: stringModelIfDefined(rpmTableParam.param.value)
+        scale: nextGearRatio.param.floatVal
         formatSlot: rpmSlot
     }
 
     property TableMapperModel tableDisplayModel: TableMapperModel {
         mapping: {
-            "tps": stringModelIfDefined(speedTableParam.x),
-            "speed": stringModelIfDefined(speedTableParam.value),
+            "tps": stringModelIfDefined(speedTableParam.param.x),
+            "speed": stringModelIfDefined(speedTableParam.param.value),
             "beforeRpm": beforeRpmModel,
             "afterRpm": afterRpmModel
         }
@@ -61,57 +61,57 @@ Window {
 
     function arrayAverage() {
         var sum = 0.0;
-        for(var i = 0; i < speedTableParam.value.count; ++i) {
-            sum += speedTableParam.value.get(i);
+        for(var i = 0; i < speedTableParam.param.value.count; ++i) {
+            sum += speedTableParam.param.value.get(i);
         }
-        return sum / speedTableParam.value.count;
+        return sum / speedTableParam.param.value.count;
     }
 
     function clampValue(val) {
-        if(val < speedTableParam.value.slot.engrMin)
-            return speedTableParam.value.slot.engrMin
-        else if(val > speedTableParam.value.slot.engrMax)
-            return speedTableParam.value.slot.engrMax
+        if(val < speedTableParam.param.value.slot.engrMin)
+            return speedTableParam.param.value.slot.engrMin
+        else if(val > speedTableParam.param.value.slot.engrMax)
+            return speedTableParam.param.value.slot.engrMax
         else
             return val
     }
 
     function clampWeakOrderingFromSelection() {
-        var selectionFirst = speedTableParam.value.count
+        var selectionFirst = speedTableParam.param.value.count
         var selectionLast = -1
         tableView.selection.forEach( function(rowIndex) {
             selectionFirst = Math.min(rowIndex, selectionFirst)
             selectionLast = Math.max(rowIndex, selectionLast)
         } )
-        for(var i = selectionLast + 1; i < speedTableParam.value.count; ++i) {
-            var prevVal = speedTableParam.value.get(i - 1)
-            if(parseFloat(speedTableParam.value.get(i)) < parseFloat(prevVal))
-                speedTableParam.value.set(i, prevVal)
+        for(var i = selectionLast + 1; i < speedTableParam.param.value.count; ++i) {
+            var prevVal = speedTableParam.param.value.get(i - 1)
+            if(parseFloat(speedTableParam.param.value.get(i)) < parseFloat(prevVal))
+                speedTableParam.param.value.set(i, prevVal)
         }
         for(var i = selectionFirst - 1; i >= 0; --i) {
-            var prevVal = speedTableParam.value.get(i + 1)
-            if(parseFloat(speedTableParam.value.get(i)) > parseFloat(prevVal))
-                speedTableParam.value.set(i, prevVal)
+            var prevVal = speedTableParam.param.value.get(i + 1)
+            if(parseFloat(speedTableParam.param.value.get(i)) > parseFloat(prevVal))
+                speedTableParam.param.value.set(i, prevVal)
         }
     }
 
     function scaleAbout(scale, zero) {
         tableView.selection.forEach( function(rowIndex) {
-            var oldDelta = speedTableParam.value.get(rowIndex) - zero
-            speedTableParam.value.set(rowIndex, clampValue(oldDelta * scale + zero))
+            var oldDelta = speedTableParam.param.value.get(rowIndex) - zero
+            speedTableParam.param.value.set(rowIndex, clampValue(oldDelta * scale + zero))
         } )
     }
 
     function offset(delta) {
         tableView.selection.forEach( function(rowIndex) {
-            speedTableParam.value.set(rowIndex, clampValue(speedTableParam.value.get(rowIndex) + delta))
+            speedTableParam.param.value.set(rowIndex, clampValue(speedTableParam.param.value.get(rowIndex) + delta))
         } )
     }
 
     function selectionAverage() {
         var average = 0.0
         tableView.selection.forEach( function(rowIndex) {
-            average += speedTableParam.value.get(rowIndex)
+            average += speedTableParam.param.value.get(rowIndex)
         } )
         average /= tableView.selection.count
         return average
@@ -177,15 +177,15 @@ Window {
                                        maxIndex = Math.max(maxIndex, rowIndex)
                                    }
                                )
-            var minIndexX = parseFloat(stringModelIfDefined(speedTableParam.x).get(minIndex))
-            var maxIndexX = parseFloat(stringModelIfDefined(speedTableParam.x).get(maxIndex))
-            var minIndexY = parseFloat(speedTableParam.value.get(minIndex))
-            var maxIndexY = parseFloat(speedTableParam.value.get(maxIndex))
+            var minIndexX = parseFloat(stringModelIfDefined(speedTableParam.param.x).get(minIndex))
+            var maxIndexX = parseFloat(stringModelIfDefined(speedTableParam.param.x).get(maxIndex))
+            var minIndexY = parseFloat(speedTableParam.param.value.get(minIndex))
+            var maxIndexY = parseFloat(speedTableParam.param.value.get(maxIndex))
             var dYdX = (maxIndexY - minIndexY) / (maxIndexX - minIndexX)
             tableView.selection.forEach(
                                    function(rowIndex) {
-                                       var x = parseFloat(stringModelIfDefined(speedTableParam.x).get(rowIndex))
-                                       speedTableParam.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
+                                       var x = parseFloat(stringModelIfDefined(speedTableParam.param.x).get(rowIndex))
+                                       speedTableParam.param.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
                                    }
                                )
         }
@@ -235,8 +235,8 @@ Window {
                 anchors.margins: 10
                 plots: [
                     XYTrace {
-                        tableModel: root.speedTableParam.stringModel
-                        valid: root.speedTableParam.value.valid
+                        tableModel: root.speedTableParam.param.stringModel
+                        valid: root.speedTableParam.param.value.valid
                     }
                 ]
             }
@@ -258,7 +258,7 @@ Window {
                         if(model[styleData.role] != text)
                             model[styleData.role] = text
                     }
-                    validator: root.speedTableParam.value.slot.validator
+                    validator: root.speedTableParam.param.value.slot.validator
                     onAccepted: {
                         if (styleData.selected)
                             selectAll()

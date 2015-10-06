@@ -20,32 +20,32 @@ ColumnLayout {
             id: shiftAPlot
             plots: [
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[0].stringModel
-                    valid: parameters.shiftTablesA[0].value.valid
+                    tableModel: parameters.shiftTablesA[0].param.stringModel
+                    valid: parameters.shiftTablesA[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[0]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[1].stringModel
-                    valid: parameters.shiftTablesA[1].value.valid
+                    tableModel: parameters.shiftTablesA[1].param.stringModel
+                    valid: parameters.shiftTablesA[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[1]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[2].stringModel
-                    valid: parameters.shiftTablesA[2].value.valid
+                    tableModel: parameters.shiftTablesA[2].param.stringModel
+                    valid: parameters.shiftTablesA[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[2]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[3].stringModel
-                    valid: parameters.shiftTablesA[3].value.valid
+                    tableModel: parameters.shiftTablesA[3].param.stringModel
+                    valid: parameters.shiftTablesA[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[3]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[4].stringModel
-                    valid: parameters.shiftTablesA[4].value.valid
+                    tableModel: parameters.shiftTablesA[4].param.stringModel
+                    valid: parameters.shiftTablesA[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[4]
                     fill: false
                 }
@@ -61,32 +61,32 @@ ColumnLayout {
             id: shiftBPlot
             plots: [
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[0].stringModel
-                    valid: parameters.shiftTablesB[0].value.valid
+                    tableModel: parameters.shiftTablesB[0].param.stringModel
+                    valid: parameters.shiftTablesB[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[0]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[1].stringModel
-                    valid: parameters.shiftTablesB[1].value.valid
+                    tableModel: parameters.shiftTablesB[1].param.stringModel
+                    valid: parameters.shiftTablesB[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[1]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[2].stringModel
-                    valid: parameters.shiftTablesB[2].value.valid
+                    tableModel: parameters.shiftTablesB[2].param.stringModel
+                    valid: parameters.shiftTablesB[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[2]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[3].stringModel
-                    valid: parameters.shiftTablesB[3].value.valid
+                    tableModel: parameters.shiftTablesB[3].param.stringModel
+                    valid: parameters.shiftTablesB[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[3]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[4].stringModel
-                    valid: parameters.shiftTablesB[4].value.valid
+                    tableModel: parameters.shiftTablesB[4].param.stringModel
+                    valid: parameters.shiftTablesB[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[4]
                     fill: false
                 }
@@ -100,62 +100,62 @@ ColumnLayout {
             id: shiftABPlot
             plots: [
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[0].stringModel
-                    valid: parameters.shiftTablesA[0].value.valid
+                    tableModel: parameters.shiftTablesA[0].param.stringModel
+                    valid: parameters.shiftTablesA[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[0]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[1].stringModel
-                    valid: parameters.shiftTablesA[1].value.valid
+                    tableModel: parameters.shiftTablesA[1].param.stringModel
+                    valid: parameters.shiftTablesA[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[1]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[2].stringModel
-                    valid: parameters.shiftTablesA[2].value.valid
+                    tableModel: parameters.shiftTablesA[2].param.stringModel
+                    valid: parameters.shiftTablesA[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[2]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[3].stringModel
-                    valid: parameters.shiftTablesA[3].value.valid
+                    tableModel: parameters.shiftTablesA[3].param.stringModel
+                    valid: parameters.shiftTablesA[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[3]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[4].stringModel
-                    valid: parameters.shiftTablesA[4].value.valid
+                    tableModel: parameters.shiftTablesA[4].param.stringModel
+                    valid: parameters.shiftTablesA[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[4]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[0].stringModel
-                    valid: parameters.shiftTablesB[0].value.valid
+                    tableModel: parameters.shiftTablesB[0].param.stringModel
+                    valid: parameters.shiftTablesB[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[5]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[1].stringModel
-                    valid: parameters.shiftTablesB[1].value.valid
+                    tableModel: parameters.shiftTablesB[1].param.stringModel
+                    valid: parameters.shiftTablesB[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[6]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[2].stringModel
-                    valid: parameters.shiftTablesB[2].value.valid
+                    tableModel: parameters.shiftTablesB[2].param.stringModel
+                    valid: parameters.shiftTablesB[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[7]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[3].stringModel
-                    valid: parameters.shiftTablesB[3].value.valid
+                    tableModel: parameters.shiftTablesB[3].param.stringModel
+                    valid: parameters.shiftTablesB[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[8]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[4].stringModel
-                    valid: parameters.shiftTablesB[4].value.valid
+                    tableModel: parameters.shiftTablesB[4].param.stringModel
+                    valid: parameters.shiftTablesB[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[9]
                     fill: false
                 }
@@ -211,12 +211,10 @@ ColumnLayout {
     Row {
         spacing: 5
         ScalarParamSpinBox {
-            name: qsTr("Downshift Offset A")
-            param: parameters.shiftDownshiftOffsetA
+            metaParam: parameters.shiftDownshiftOffsetA
         }
         ScalarParamSpinBox {
-            name: qsTr("Downshift Offset B")
-            param: parameters.shiftDownshiftOffsetB
+            metaParam: parameters.shiftDownshiftOffsetB
         }
         Layout.minimumHeight: 60
         Layout.bottomMargin: 10

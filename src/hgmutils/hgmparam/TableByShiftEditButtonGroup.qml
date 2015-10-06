@@ -12,22 +12,15 @@ GroupBox {
     property var tableParam
     property bool isDownshift: false
 
+    title: tableParam[0].name.replace(/Shift [1-9RN]-[1-9RN] (.*)/, "$1")
+
     Row {
         spacing: 5
         Repeater {
             id: repeater
             TableParamEditButton {
                 id: tableButton
-                function getTitle(i) {
-                    var first = i + 1
-                    var second = i + 2
-                    if (!isDownshift) {
-                        return qsTr("Shift %1-%2").arg(first).arg(second)
-                    } else {
-                        return qsTr("Shift %1-%2").arg(second).arg(first)
-                    }
-                }
-                name: getTitle(index)
+                name: groupBox.tableParam[index].name.replace(/(Shift [1-9RN]-[1-9RN]).*/, "$1")
                 tableParam: groupBox.tableParam[index]
                 xLabel: groupBox.xLabel
                 valueLabel: groupBox.valueLabel

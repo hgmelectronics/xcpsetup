@@ -26,7 +26,7 @@ GroupBox {
 
                 function findRatioIndex(numberParams, gearNum) {
                     for(var i = 0; i < numberParams.length; ++i) {
-                        if(numberParams[i].floatVal === gearNum)
+                        if(numberParams.params[i].param.floatVal === gearNum)
                             return i
                     }
                     // probably being instantiated before parameters are loaded - return something that at least does not cause an error
@@ -40,8 +40,8 @@ GroupBox {
                 name: qsTr("Shift %1-%2").arg(thisGearName).arg(nextGearName)
                 speedTableParam: groupBox.speedTableParams[index]
                 rpmTableParam: groupBox.rpmTableParams[index]
-                thisGearRatio: gearRatioParams[findRatioIndex(gearNumberParams, thisGearNum)]
-                nextGearRatio: gearRatioParams[findRatioIndex(gearNumberParams, nextGearNum)]
+                thisGearRatio: gearRatioParams.params[findRatioIndex(gearNumberParams, thisGearNum)]
+                nextGearRatio: gearRatioParams.params[findRatioIndex(gearNumberParams, nextGearNum)]
             }
         }
     }

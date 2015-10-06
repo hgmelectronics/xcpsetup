@@ -14,23 +14,18 @@ Flow {
     spacing: 5
 
     ScalarParamSpinBox {
-        name: qsTr("Final Drive Ratio")
-        param: parameters.finalDriveRatio
+        metaParam: parameters.finalDriveRatio
     }
     ScalarParamSpinBox {
-        name: qsTr("Tire Diameter")
-        param: parameters.tireDiameter
+        metaParam: parameters.tireDiameter
     }
     EncodingParamEdit {
-        name: qsTr("Display Units")
-        param: parameters.displayUnits
+        metaParam: parameters.displayUnits
     }
     ScalarParamSpinBox {
-        name: qsTr("Display Brightness")
-        param: parameters.displayBrightness
+        metaParam: parameters.displayBrightness
     }
     ScalarParamSpinBox {
-        name: qsTr("Display Contrast")
-        param: parameters.displayContrast
+        metaParam: parameters.displayContrast
     }
 }

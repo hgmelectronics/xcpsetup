@@ -10,15 +10,17 @@ import com.hgmelectronics.setuptools.ui 1.0
 Window {
     id: root
 
+    property string name: tableParam.name
     property string xLabel
     property string valueLabel
     property bool hasPlot: !encodingValue
     property bool hasShapers: !encodingValue
-    property TableParam tableParam
-    property bool encodingValue: (typeof(tableParam.value.slot.encodingStringList) !== "undefined")
+    property TableMetaParam tableParam
+    property bool encodingValue: (typeof(tableParam.param.value.slot.encodingStringList) !== "undefined")
     property double steeperFlatterRatio: 1.1
     property double increaseDecreaseDelta: 1.0
 
+    title: name
     width: (hasShapers || hasPlot) ? 420 : 240
     height: 290 + chartBox.height
     minimumWidth: (hasShapers || hasPlot) ? 420 : 240
@@ -26,38 +28,38 @@ Window {
 
     function arrayAverage() {
         var sum = 0.0
-        for (var i = 0; i < tableParam.value.count; ++i) {
-            sum += tableParam.value.get(i)
+        for (var i = 0; i < tableParam.param.value.count; ++i) {
+            sum += tableParam.param.value.get(i)
         }
-        return sum / tableParam.value.count
+        return sum / tableParam.param.value.count
     }
 
     function clampValue(val) {
-        if (val < tableParam.value.slot.engrMin)
-            return tableParam.value.slot.engrMin
-        else if (val > tableParam.value.slot.engrMax)
-            return tableParam.value.slot.engrMax
+        if (val < tableParam.param.value.slot.engrMin)
+            return tableParam.param.value.slot.engrMin
+        else if (val > tableParam.param.value.slot.engrMax)
+            return tableParam.param.value.slot.engrMax
         else
             return val
     }
 
     function scaleAbout(scale, zero) {
         tableView.selection.forEach( function(rowIndex) {
-            var oldDelta = tableParam.value.get(rowIndex) - zero
-            tableParam.value.set(rowIndex, clampValue(oldDelta * scale + zero))
+            var oldDelta = tableParam.param.value.get(rowIndex) - zero
+            tableParam.param.value.set(rowIndex, clampValue(oldDelta * scale + zero))
         } )
     }
 
     function offset(delta) {
         tableView.selection.forEach( function(rowIndex) {
-            tableParam.value.set(rowIndex, clampValue(tableParam.value.get(rowIndex) + delta))
+            tableParam.param.value.set(rowIndex, clampValue(tableParam.param.value.get(rowIndex) + delta))
         } )
     }
 
     function selectionAverage() {
         var average = 0.0
         tableView.selection.forEach( function(rowIndex) {
-            average += tableParam.value.get(rowIndex)
+            average += tableParam.param.value.get(rowIndex)
         } )
         average /= tableView.selection.count
         return average
@@ -120,15 +122,15 @@ Window {
                                        maxIndex = Math.max(maxIndex, rowIndex)
                                    }
                                )
-            var minIndexX = parseFloat(stringModelIfDefined(tableParam.x).get(minIndex))
-            var maxIndexX = parseFloat(stringModelIfDefined(tableParam.x).get(maxIndex))
-            var minIndexY = parseFloat(tableParam.value.get(minIndex))
-            var maxIndexY = parseFloat(tableParam.value.get(maxIndex))
+            var minIndexX = parseFloat(stringModelIfDefined(tableParam.param.x).get(minIndex))
+            var maxIndexX = parseFloat(stringModelIfDefined(tableParam.param.x).get(maxIndex))
+            var minIndexY = parseFloat(tableParam.param.value.get(minIndex))
+            var maxIndexY = parseFloat(tableParam.param.value.get(maxIndex))
             var dYdX = (maxIndexY - minIndexY) / (maxIndexX - minIndexX)
             tableView.selection.forEach(
                                    function(rowIndex) {
-                                       var x = parseFloat(stringModelIfDefined(tableParam.x).get(rowIndex))
-                                       tableParam.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
+                                       var x = parseFloat(stringModelIfDefined(tableParam.param.x).get(rowIndex))
+                                       tableParam.param.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
                                    }
                                )
         }
@@ -188,8 +190,8 @@ Window {
                 anchors.margins: 10
                 plots: [
                     XYTrace {
-                        tableModel: root.tableParam.stringModel
-                        valid: root.tableParam.value.valid
+                        tableModel: root.tableParam.param.stringModel
+                        valid: root.tableParam.param.value.valid
                     }
                 ]
             }
@@ -206,7 +208,7 @@ Window {
                 id: regularTableParamEdit
                 xLabel: root.xLabel
                 valueLabel: root.valueLabel
-                tableParam: root.tableParam
+                tableParam: root.tableParam.param
                 visible: !encodingValue
                 Layout.margins: 10
                 Layout.fillHeight: true
@@ -216,7 +218,7 @@ Window {
                 id: encodingTableParamEdit
                 xLabel: root.xLabel
                 valueLabel: root.valueLabel
-                tableParam: root.tableParam
+                tableParam: root.tableParam.param
                 visible: encodingValue
                 Layout.margins: 10
                 Layout.fillHeight: true
