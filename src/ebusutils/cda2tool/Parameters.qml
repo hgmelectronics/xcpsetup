@@ -9,17 +9,20 @@ QtObject {
     property ParamId paramId: ParamId {}
     property Slots slots: Slots {}
 
+    property int cbtmCellsPerBoard: 8
+    property int cbtmTabsPerBoard: 9
+    property int cbtmMaxBoards: 32
     property SlotArrayModel cbtmCellAxisModel: SlotArrayModel {
         slot: slots.raw32
-        count: 256
+        count: cbtmCellsPerBoard * cbtmMaxBoards
     }
     property SlotArrayModel cbtmTabAxisModel: SlotArrayModel {
         slot: slots.raw32
-        count: 288
+        count: cbtmTabsPerBoard * cbtmMaxBoards
     }
     property SlotArrayModel cbtmBoardAxisModel: SlotArrayModel {
         slot: slots.raw32
-        count: 32
+        count: cbtmMaxBoards
     }
     property SlotArrayModel ctcAxisModel: SlotArrayModel {
         slot: slots.raw32
@@ -81,23 +84,35 @@ QtObject {
     readonly property ScalarParam cbtmIsospi2LastBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2LastBoard, true, true, slots.raw32)
 
     property TableParam cbtmCellVolt: TableParam {
-        x: cbtmCellAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.cbtmCellVolt, cbtmCellAxisModel.count, false, false, slots.ltcCellv)
+        x: SlotArrayModel {
+            slot: slots.raw32
+            count: cbtmCellVolt.value.count
+        }
+        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmCellVolt, cbtmCellsPerBoard, cbtmCellAxisModel.count, false, false, slots.ltcCellv)
     }
 
     property TableParam cbtmTabTemp: TableParam {
-        x: cbtmTabAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.cbtmTabTemp, cbtmTabAxisModel.count, false, false, slots.saeTp02)
+        x: SlotArrayModel {
+            slot: slots.raw32
+            count: cbtmTabTemp.value.count
+        }
+        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmTabTemp, cbtmTabsPerBoard, cbtmTabAxisModel.count, false, false, slots.saeTp02)
     }
 
     property TableParam cbtmDisch: TableParam {
-        x: cbtmBoardAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.cbtmDisch, cbtmBoardAxisModel.count, true, false, slots.raw32hex)
+        x: SlotArrayModel {
+            slot: slots.raw32
+            count: cbtmDisch.value.count
+        }
+        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmDisch, 1, cbtmBoardAxisModel.count, true, false, slots.raw32hex)
     }
 
     property TableParam cbtmStatus: TableParam {
-        x: cbtmBoardAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.cbtmStatus, cbtmBoardAxisModel.count, false, false, slots.raw32hex)
+        x: SlotArrayModel {
+            slot: slots.raw32
+            count: cbtmStatus.value.count
+        }
+        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmStatus, 1, cbtmBoardAxisModel.count, false, false, slots.raw32hex)
     }
 
     readonly property ScalarParam ctcMaxSimulPickup: registry.addScalarParam(MemoryRange.S32, paramId.ctcMaxSimulPickup, true, true, slots.raw32)

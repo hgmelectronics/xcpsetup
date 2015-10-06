@@ -46,7 +46,7 @@ void SlotArrayModel::setSlot(Slot *newSlot)
 
 void SlotArrayModel::setCount(int newCount)
 {
-    Q_ASSERT(newCount > 0);
+    Q_ASSERT(newCount >= 0);
     if(newCount > mCount)
     {
         emit countChanged();
