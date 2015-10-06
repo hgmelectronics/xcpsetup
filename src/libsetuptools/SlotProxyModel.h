@@ -15,9 +15,11 @@ class SlotProxyModel : public QAbstractProxyModel
     Q_PROPERTY(bool targetAllRoles MEMBER mTargetAllRoles WRITE setTargetAllRoles NOTIFY targetAllRolesChanged)
     Q_PROPERTY(QStringList targetRoleNames READ targetRoleNames WRITE setTargetRoleNames NOTIFY targetRoleNamesChanged)
     Q_PROPERTY(Slot *slot MEMBER mSlot WRITE setSlot NOTIFY slotChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
     explicit SlotProxyModel(QObject *parent = 0);
 
+    int count();
     void setTargetAllRoles(bool);
     QStringList targetRoleNames() const;
     void setTargetRoleNames(QStringList);
@@ -37,6 +39,7 @@ signals:
     void targetAllRolesChanged();
     void slotChanged();
     void stringFormatChanged();
+    void countChanged();
 public slots:
     void onSourceModelChanged();
     void onSourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
