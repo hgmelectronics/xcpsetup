@@ -1,3 +1,5 @@
 module com.hgmelectronics.setuptools
 
 TableParam 1.0 TableParam.qml
+ScalarMetaParam 1.0 ScalarMetaParam.qml
+TableMetaParam 1.0 TableMetaParam.qml

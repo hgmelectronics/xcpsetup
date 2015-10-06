@@ -5,8 +5,10 @@ import com.hgmelectronics.setuptools 1.0
 
 CheckBox {
     id: checkBox
-    property ScalarParam param
-    property alias name: checkBox.text
+    property ScalarMetaParam metaParam
+    property string name: metaParam.name
+    property ScalarParam param: metaParam.param
+    text: name
     property double bitMask: 0x00000001
     checked: (param.floatVal & bitMask)
     enabled: param.valid

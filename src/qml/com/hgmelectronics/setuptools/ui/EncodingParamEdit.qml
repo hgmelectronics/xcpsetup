@@ -6,9 +6,11 @@ import com.hgmelectronics.setuptools 1.0
 
 GroupBox {
     id: groupBox
-    property alias name: groupBox.title
-    property ScalarParam param
+    property ScalarMetaParam metaParam
+    property string name: metaParam.name
+    property ScalarParam param: metaParam.param
     enabled: param.valid
+    title: name
 
     RowLayout {
         id: row
