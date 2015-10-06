@@ -13,6 +13,10 @@ ScaleOffsetProxyModel::ScaleOffsetProxyModel(QObject *parent) :
     updateTargetRoles();
 }
 
+int ScaleOffsetProxyModel::count() {
+    return rowCount();
+}
+
 void ScaleOffsetProxyModel::setScale(double val)
 {
     if(updateDelta<>(mScale, val))
@@ -255,6 +259,7 @@ void ScaleOffsetProxyModel::onSourceRowsInserted(const QModelIndex &parent, int 
     Q_UNUSED(first);
     Q_UNUSED(last);
     endInsertRows();
+    emit countChanged();
 }
 
 void ScaleOffsetProxyModel::onSourceRowsRemoved(const QModelIndex &parent, int first, int last)
@@ -263,6 +268,7 @@ void ScaleOffsetProxyModel::onSourceRowsRemoved(const QModelIndex &parent, int f
     Q_UNUSED(first);
     Q_UNUSED(last);
     endRemoveRows();
+    emit countChanged();
 }
 
 } // namespace SetupTools
