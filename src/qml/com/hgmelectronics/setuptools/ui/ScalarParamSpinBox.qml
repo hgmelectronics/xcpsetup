@@ -6,10 +6,12 @@ import com.hgmelectronics.setuptools 1.0
 
 GroupBox {
     id: groupBox
-    property alias name: groupBox.title
     property alias horizontalAlignment: spinBox.horizontalAlignment
     property alias stepSize: spinBox.stepSize
-    property ScalarParam param
+    property ScalarMetaParam metaParam
+    property string name: metaParam.name
+    property ScalarParam param: metaParam.param
+    title: name
     enabled: param.valid
 
     SpinBox

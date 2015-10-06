@@ -7,7 +7,8 @@ Rectangle {
     id: root
     property string xLabel
     property string valueLabel
-    property TableParam tableParam
+    property TableMetaParam tableMetaParam
+    property TableParam tableParam: tableMetaParam.param
     property alias tableView: tableView
     width: tableView.implicitWidth
     height: tableView.implicitHeight

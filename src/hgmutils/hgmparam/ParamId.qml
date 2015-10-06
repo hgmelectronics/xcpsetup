@@ -216,10 +216,75 @@ QtObject {
     readonly property double transmission_shift_7_6_release_percentage: 0x38d0000
     readonly property double transmission_shift_8_7_release_percentage: 0x38e0000
 
-    readonly property double transmission_shift_prefill_time: 0x3b00000
-    readonly property double transmission_shift_prefill_pressure: 0x3c00000
-    readonly property double transmission_shift_prefill_percentage: 0x3d00000
-    readonly property double transmission_shift_overlap_pressure: 0x3e00000
+    readonly property double transmission_shift_r_n_prefill_time:       0x03b00000
+    readonly property double transmission_shift_r_n_prefill_pressure:   0x03c00000
+    readonly property double transmission_shift_r_n_prefill_percentage: 0x03d00000
+    readonly property double transmission_shift_r_n_overlap_pressure:   0x03e00000
+
+    readonly property double transmission_shift_n_r_prefill_time:       0x03b00001
+    readonly property double transmission_shift_n_r_prefill_pressure:   0x03c00001
+    readonly property double transmission_shift_n_r_prefill_percentage: 0x03d00001
+    readonly property double transmission_shift_n_r_overlap_pressure:   0x03e00001
+
+    readonly property double transmission_shift_n_1_prefill_time:       0x03b00002
+    readonly property double transmission_shift_n_1_prefill_pressure:   0x03c00002
+    readonly property double transmission_shift_n_1_prefill_percentage: 0x03d00002
+    readonly property double transmission_shift_n_1_overlap_pressure:   0x03e00002
+
+    readonly property double transmission_shift_1_n_prefill_time:       0x03b00003
+    readonly property double transmission_shift_1_n_prefill_pressure:   0x03c00003
+    readonly property double transmission_shift_1_n_prefill_percentage: 0x03d00003
+    readonly property double transmission_shift_1_n_overlap_pressure:   0x03e00003
+
+    readonly property double transmission_shift_1_2_prefill_time:       0x03b00004
+    readonly property double transmission_shift_1_2_prefill_pressure:   0x03c00004
+    readonly property double transmission_shift_1_2_prefill_percentage: 0x03d00004
+    readonly property double transmission_shift_1_2_overlap_pressure:   0x03e00004
+
+    readonly property double transmission_shift_2_1_prefill_time:       0x03b00005
+    readonly property double transmission_shift_2_1_prefill_pressure:   0x03c00005
+    readonly property double transmission_shift_2_1_prefill_percentage: 0x03d00005
+    readonly property double transmission_shift_2_1_overlap_pressure:   0x03e00005
+
+    readonly property double transmission_shift_2_3_prefill_time:       0x03b00006
+    readonly property double transmission_shift_2_3_prefill_pressure:   0x03c00006
+    readonly property double transmission_shift_2_3_prefill_percentage: 0x03d00006
+    readonly property double transmission_shift_2_3_overlap_pressure:   0x03e00006
+
+    readonly property double transmission_shift_3_2_prefill_time:       0x03b00007
+    readonly property double transmission_shift_3_2_prefill_pressure:   0x03c00007
+    readonly property double transmission_shift_3_2_prefill_percentage: 0x03d00007
+    readonly property double transmission_shift_3_2_overlap_pressure:   0x03e00007
+
+    readonly property double transmission_shift_3_4_prefill_time:       0x03b00008
+    readonly property double transmission_shift_3_4_prefill_pressure:   0x03c00008
+    readonly property double transmission_shift_3_4_prefill_percentage: 0x03d00008
+    readonly property double transmission_shift_3_4_overlap_pressure:   0x03e00008
+
+    readonly property double transmission_shift_4_3_prefill_time:       0x03b00009
+    readonly property double transmission_shift_4_3_prefill_pressure:   0x03c00009
+    readonly property double transmission_shift_4_3_prefill_percentage: 0x03d00009
+    readonly property double transmission_shift_4_3_overlap_pressure:   0x03e00009
+
+    readonly property double transmission_shift_4_5_prefill_time:       0x03b0000a
+    readonly property double transmission_shift_4_5_prefill_pressure:   0x03c0000a
+    readonly property double transmission_shift_4_5_prefill_percentage: 0x03d0000a
+    readonly property double transmission_shift_4_5_overlap_pressure:   0x03e0000a
+
+    readonly property double transmission_shift_5_4_prefill_time:       0x03b0000b
+    readonly property double transmission_shift_5_4_prefill_pressure:   0x03c0000b
+    readonly property double transmission_shift_5_4_prefill_percentage: 0x03d0000b
+    readonly property double transmission_shift_5_4_overlap_pressure:   0x03e0000b
+
+    readonly property double transmission_shift_5_6_prefill_time:       0x03b0000c
+    readonly property double transmission_shift_5_6_prefill_pressure:   0x03c0000c
+    readonly property double transmission_shift_5_6_prefill_percentage: 0x03d0000c
+    readonly property double transmission_shift_5_6_overlap_pressure:   0x03e0000c
+
+    readonly property double transmission_shift_6_5_prefill_time:       0x03b0000d
+    readonly property double transmission_shift_6_5_prefill_pressure:   0x03c0000d
+    readonly property double transmission_shift_6_5_prefill_percentage: 0x03d0000d
+    readonly property double transmission_shift_6_5_overlap_pressure:   0x03e0000d
 
     readonly property double transmission_pressure_temperature_compensation: 0x3a00000
 

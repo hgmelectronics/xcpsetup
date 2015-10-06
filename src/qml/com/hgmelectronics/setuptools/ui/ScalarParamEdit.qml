@@ -7,12 +7,15 @@ import com.hgmelectronics.setuptools 1.0
 GroupBox {
     id: groupBox
     enabled: param.valid
-    property alias name: groupBox.title
     property alias horizontalAlignment: textField.horizontalAlignment
-    property ScalarParam param
+    property ScalarMetaParam metaParam
+    property string name: metaParam.name
+    property ScalarParam param: metaParam.param
+    title: name
     width: implicitWidth
 
     RowLayout {
+        anchors.fill: parent
         TextField {
             id: textField
             text: param.stringVal
@@ -23,6 +26,7 @@ GroupBox {
                     param.stringVal = text
             }
             validator: param.slot.validator
+            Layout.fillWidth: true
         }
         Label {
             text: param.slot.unit

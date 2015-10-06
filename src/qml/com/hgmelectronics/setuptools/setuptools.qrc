@@ -14,6 +14,9 @@
         <file>ui/EncodingTableParamEdit.qml</file>
         <file>ui/ScalarParamIndicator.qml</file>
         <file>ui/EncodingParamEdit.qml</file>
+        <file>ScalarMetaParam.qml</file>
+        <file>MetaParam.qml</file>
+        <file>TableMetaParam.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

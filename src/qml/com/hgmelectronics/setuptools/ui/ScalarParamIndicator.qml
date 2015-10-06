@@ -7,8 +7,9 @@ import com.hgmelectronics.setuptools 1.0
 Row {
     id: root
 
-    property ScalarParam param
-    property string name
+    property ScalarMetaParam metaParam
+    property string name: metaParam.name
+    property ScalarParam param: metaParam.param
     property double bitMask: 0x00000001
     property alias color: indicator.color
     property bool indicatorRight: false
