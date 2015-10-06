@@ -17,6 +17,8 @@
         <file>ScalarMetaParam.qml</file>
         <file>MetaParam.qml</file>
         <file>TableMetaParam.qml</file>
+        <file>ui/ScalarListDialog.qml</file>
+        <file>ScalarMetaParamList.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

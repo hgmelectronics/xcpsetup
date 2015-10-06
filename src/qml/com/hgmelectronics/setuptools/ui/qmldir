@@ -9,3 +9,4 @@ ScalarParamSpinBox 1.0 ScalarParamSpinBox.qml
 TableParamEdit 1.0 TableParamEdit.qml
 EncodingTableParamEdit 1.0 EncodingTableParamEdit.qml
 EncodingParamEdit 1.0 EncodingParamEdit.qml
+ScalarListDialog 1.0 ScalarListDialog.qml

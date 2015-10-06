@@ -265,241 +265,241 @@ QtObject {
         }
     ]
 
-    property list<ScalarMetaParam> transmissionShiftPrefillTime: [
+    property ScalarMetaParamList transmissionShiftPrefillTime: ScalarMetaParamList {
         ScalarMetaParam {
             name: "Prefill Time R-N"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time N-R"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time N-1"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 1-N"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 1-2"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 2-1"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 2-3"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 3-2"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 3-4"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 4-3"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 4-5"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 5-4"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 5-6"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_prefill_time, true, true, slots.timeMilliseconds1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Time 6-5"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_prefill_time, true, true, slots.timeMilliseconds1)
         }
-    ]
+    }
 
-    property list<ScalarMetaParam> transmissionShiftPrefillPercentage: [
+    property ScalarMetaParamList transmissionShiftPrefillPercentage: ScalarMetaParamList {
         ScalarMetaParam {
             name: "Prefill Pressure R-N"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure N-R"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure N-1"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 1-N"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 1-2"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 2-1"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 2-3"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 3-2"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 3-4"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 4-3"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 4-5"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 5-4"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 5-6"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_prefill_percentage, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 6-5"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_prefill_percentage, true, true, slots.percentage1)
         }
-    ]
+    }
 
-    property list<ScalarMetaParam> transmissionShiftPrefillPressure: [
+    property ScalarMetaParamList transmissionShiftPrefillPressure: ScalarMetaParamList {
         ScalarMetaParam {
             name: "Prefill Pressure R-N"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure N-R"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure N-1"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 1-N"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 1-2"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 2-1"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 2-3"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 3-2"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 3-4"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 4-3"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 4-5"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 5-4"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 5-6"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_prefill_pressure, true, true, slots.pressure)
-        },
+        }
         ScalarMetaParam {
             name: "Prefill Pressure 6-5"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_prefill_pressure, true, true, slots.pressure)
         }
-    ]
+    }
 
-    property list<ScalarMetaParam> transmissionShiftOverlapPressure: [
+    property ScalarMetaParamList transmissionShiftOverlapPressure: ScalarMetaParamList {
         ScalarMetaParam {
             name: "Overlap Pressure R-N"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure N-R"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure N-1"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 1-N"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 1-2"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 2-1"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 2-3"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 3-2"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 3-4"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 4-3"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 4-5"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 5-4"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 5-6"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_overlap_pressure, true, true, slots.percentage1)
-        },
+        }
         ScalarMetaParam {
             name: "Overlap Pressure 6-5"
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_overlap_pressure, true, true, slots.percentage1)
         }
-    ]
+    }
 
     property TableParam transmissionTemperaturePressureCompensation: TableParam {
         x: tempAxisModel
