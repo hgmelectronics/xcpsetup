@@ -8,7 +8,7 @@ QT       += network serialport quick qml
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections
+QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections -Wall -Wuninitialized
 
 TARGET = setuptools
 TEMPLATE = lib
@@ -49,7 +49,8 @@ SOURCES += \
     JSONParamFile.cpp \
     Xcp_Interface_Can_Socket_Interface.cpp \
     ScaleOffsetProxyModel.cpp \
-    SlotProxyModel.cpp
+    SlotProxyModel.cpp \
+    Xcp_VarArrayParam.cpp
 
 HEADERS += \
     util.h \
@@ -86,7 +87,8 @@ HEADERS += \
     Xcp_Interface_Can_Socket_Interface.h \
     SlotArrayModel.h \
     ScaleOffsetProxyModel.h \
-    SlotProxyModel.h
+    SlotProxyModel.h \
+    Xcp_VarArrayParam.h
 
 unix {
     target.path = /usr/lib

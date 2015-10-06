@@ -12,6 +12,11 @@ SlotProxyModel::SlotProxyModel(QObject *parent) :
     updateTargetRoles();
 }
 
+int SlotProxyModel::count()
+{
+    return rowCount();
+}
+
 QStringList SlotProxyModel::targetRoleNames() const
 {
     return mTargetRoleNames;
@@ -172,12 +177,28 @@ bool SlotProxyModel::setData(const QModelIndex &index, const QVariant &value, in
 void SlotProxyModel::onSourceModelChanged()
 {
     disconnect(mDataChangedConnection);
+    disconnect(mColumnsAboutToBeInsertedConnection);
+    disconnect(mColumnsAboutToBeRemovedConnection);
+    disconnect(mColumnsInsertedConnection);
+    disconnect(mColumnsRemovedConnection);
+    disconnect(mRowsAboutToBeInsertedConnection);
+    disconnect(mRowsAboutToBeRemovedConnection);
+    disconnect(mRowsInsertedConnection);
+    disconnect(mRowsRemovedConnection);
 
     QAbstractItemModel *source = sourceModel();
     mSourceRoleNumbers.clear();
     if(source)
     {
         mDataChangedConnection = connect(source, &QAbstractItemModel::dataChanged, this, &SlotProxyModel::onSourceDataChanged);
+        mColumnsAboutToBeInsertedConnection = connect(source, &QAbstractItemModel::columnsAboutToBeInserted, this, &SlotProxyModel::onSourceColumnsAboutToBeInserted);
+        mColumnsAboutToBeRemovedConnection = connect(source, &QAbstractItemModel::columnsAboutToBeRemoved, this, &SlotProxyModel::onSourceColumnsAboutToBeRemoved);
+        mColumnsInsertedConnection = connect(source, &QAbstractItemModel::columnsInserted, this, &SlotProxyModel::onSourceColumnsInserted);
+        mColumnsRemovedConnection = connect(source, &QAbstractItemModel::columnsRemoved, this, &SlotProxyModel::onSourceColumnsRemoved);
+        mRowsAboutToBeInsertedConnection = connect(source, &QAbstractItemModel::rowsAboutToBeInserted, this, &SlotProxyModel::onSourceRowsAboutToBeInserted);
+        mRowsAboutToBeRemovedConnection = connect(source, &QAbstractItemModel::rowsAboutToBeRemoved, this, &SlotProxyModel::onSourceRowsAboutToBeRemoved);
+        mRowsInsertedConnection = connect(source, &QAbstractItemModel::rowsInserted, this, &SlotProxyModel::onSourceRowsInserted);
+        mRowsRemovedConnection = connect(source, &QAbstractItemModel::rowsRemoved, this, &SlotProxyModel::onSourceRowsRemoved);
         auto sourceRoleNames = source->roleNames();
         for(int role : sourceRoleNames.keys())
         {
@@ -191,6 +212,60 @@ void SlotProxyModel::onSourceModelChanged()
 void SlotProxyModel::onSourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
     emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight), roles);
+}
+
+void SlotProxyModel::onSourceColumnsAboutToBeInserted(const QModelIndex &parent, int first, int last)
+{
+    beginInsertColumns(parent, first, last);
+}
+
+void SlotProxyModel::onSourceColumnsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+{
+    beginRemoveRows(parent, first, last);
+}
+
+void SlotProxyModel::onSourceColumnsInserted(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+    endInsertColumns();
+}
+
+void SlotProxyModel::onSourceColumnsRemoved(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+    endRemoveColumns();
+}
+
+void SlotProxyModel::onSourceRowsAboutToBeInserted(const QModelIndex &parent, int first, int last)
+{
+    beginInsertRows(parent, first, last);
+}
+
+void SlotProxyModel::onSourceRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+{
+    beginRemoveRows(parent, first, last);
+}
+
+void SlotProxyModel::onSourceRowsInserted(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+    endInsertRows();
+    emit countChanged();
+}
+
+void SlotProxyModel::onSourceRowsRemoved(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+    endRemoveRows();
+    emit countChanged();
 }
 
 } // namespace SetupTools

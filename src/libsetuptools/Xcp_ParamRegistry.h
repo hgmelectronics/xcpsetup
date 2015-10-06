@@ -6,6 +6,7 @@
 #include "Xcp_Param.h"
 #include "Xcp_ScalarParam.h"
 #include "Xcp_ArrayParam.h"
+#include "Xcp_VarArrayParam.h"
 #include "Xcp_ConnectionFacade.h"
 
 #include <QObject>
@@ -42,11 +43,15 @@ public:
     SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
     SetupTools::Xcp::ArrayParam *addArrayParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot* slot);
     SetupTools::Xcp::ArrayParam *addArrayParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
+    SetupTools::Xcp::VarArrayParam *addVarArrayParam(int type, SetupTools::Xcp::XcpPtr base, int minCount, int maxCount, bool writable, bool saveable, SetupTools::Slot* slot);
+    SetupTools::Xcp::VarArrayParam *addVarArrayParam(int type, SetupTools::Xcp::XcpPtr base, int minCount, int maxCount, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
 
     Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, double base, bool writable, bool saveable, SetupTools::Slot* slot);
     Q_INVOKABLE SetupTools::Xcp::ScalarParam *addScalarParam(int type, double base, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
     Q_INVOKABLE SetupTools::Xcp::ArrayParam *addArrayParam(int type, double base, int count, bool writable, bool saveable, SetupTools::Slot* slot);
     Q_INVOKABLE SetupTools::Xcp::ArrayParam *addArrayParam(int type, double base, int count, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
+    Q_INVOKABLE SetupTools::Xcp::VarArrayParam *addVarArrayParam(int type, double base, int minCount, int maxCount, bool writable, bool saveable, SetupTools::Slot* slot);
+    Q_INVOKABLE SetupTools::Xcp::VarArrayParam *addVarArrayParam(int type, double base, int minCount, int maxCount, bool writable, bool saveable, SetupTools::Slot* slot, QString key);
     Q_INVOKABLE SetupTools::Xcp::Param *getParam(QString key);
     Q_INVOKABLE void resetCaches();
     Q_INVOKABLE void setValidAll(bool valid);
@@ -61,7 +66,6 @@ signals:
 private:
     void onTableConnectionChanged();
     void onParamWriteCacheDirtyChanged(QString key);
-    void addParamKey(QString key);
     MemoryRangeTable *mTable;
     QMap<QString, Param *> mParams;
     QList<QString> mParamKeys;  // maintain our own list of keys because QMap<>::keys() just builds a new list every time

@@ -1,5 +1,5 @@
-#ifndef SETUPTOOLS_XCP_TABLEPARAM_H
-#define SETUPTOOLS_XCP_TABLEPARAM_H
+#ifndef SETUPTOOLS_XCP_ARRAYPARAM_H
+#define SETUPTOOLS_XCP_ARRAYPARAM_H
 
 #include <QObject>
 #include "Xcp_Param.h"
@@ -17,9 +17,9 @@ class ArrayParam : public SetupTools::Xcp::Param
 
     friend class ArrayParamModel;
 
-    Q_PROPERTY(ArrayParamModel* stringModel READ stringModel NOTIFY modelDataChanged)
-    Q_PROPERTY(ArrayParamModel* floatModel READ floatModel NOTIFY modelDataChanged)
-    Q_PROPERTY(ArrayParamModel* rawModel READ rawModel NOTIFY modelDataChanged)
+    Q_PROPERTY(ArrayParamModel* stringModel READ stringModel NOTIFY modelChanged)
+    Q_PROPERTY(ArrayParamModel* floatModel READ floatModel NOTIFY modelChanged)
+    Q_PROPERTY(ArrayParamModel* rawModel READ rawModel NOTIFY modelChanged)
     Q_PROPERTY(int count READ count CONSTANT)
     Q_PROPERTY(ArrayMemoryRange* range READ range CONSTANT)
 
@@ -31,7 +31,7 @@ public:
     Q_INVOKABLE QVariant get(int row) const;
 
     // sets the value in engineering units
-    Q_INVOKABLE bool set(int row, const QVariant& data) const;
+    Q_INVOKABLE bool set(int row, const QVariant& value) const;
 
     int count() const;
 
@@ -61,7 +61,7 @@ public:
     virtual bool setSerializableRawValue(const QVariant &val);
 
 signals:
-    void modelDataChanged();
+    void modelChanged();
 
 public slots:
     virtual void upload();
@@ -82,17 +82,20 @@ private:
 class ArrayParamModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ count CONSTANT)
 public:
     ArrayParamModel(bool stringFormat, bool raw, ArrayParam *parent);
 
+    int count() const;
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
-private:
+private slots:
     void onValueParamChanged();
     void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
+private:
     ArrayParam* const mParam;
     const bool mStringFormat;
     const bool mRaw;

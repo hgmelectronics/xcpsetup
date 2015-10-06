@@ -5,6 +5,7 @@
 #include <Xcp_Exception.h>
 #include <Xcp_MemoryRange.h>
 #include <Slot.h>
+#include <boost/dynamic_bitset.hpp>
 
 namespace SetupTools {
 namespace Xcp {
@@ -22,6 +23,7 @@ class Param : public QObject
 public:
     explicit Param(QObject *parent = nullptr);
     explicit Param(MemoryRange *baseRange, Slot* slot, QObject *parent = nullptr);
+    explicit Param(MemoryRange *baseRange, QList<MemoryRange *> extRanges, bool requireExtRangesValid, Slot* slot, QObject *parent = nullptr);
 
     bool valid() const;
     void setValid(bool valid);
@@ -46,6 +48,7 @@ signals:
     void downloadDone(SetupTools::Xcp::OpResult result);
     void writeCacheDirtyChanged(QString key);
     void validChanged();
+    void cachesReset();
 
 public slots:
     virtual void upload() = 0;
@@ -54,8 +57,19 @@ public slots:
 private:
     void onRangeValidChanged();
     void onRangeWriteCacheDirtyChanged();
-    MemoryRange* const mBaseRange;
-    Slot* const mSlot;
+    void onExtRangeValidChanged(int index);
+    void onExtRangeWriteCacheDirtyChanged(int index);
+
+    MemoryRange * const mBaseRange;
+    QList<MemoryRange *> const mExtRanges;
+
+    QSignalMapper *mExtRangeValidChangedMapper;
+    QSignalMapper *mExtRangeWriteCacheDirtyChangedMapper;
+    boost::dynamic_bitset<> mExtRangeValid;
+    boost::dynamic_bitset<> mExtRangeWriteCacheDirty;
+
+    const bool mRequireExtRangesValid;
+    Slot * const mSlot;
 };
 
 }   // namespace Xcp

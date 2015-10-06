@@ -69,5 +69,9 @@ QVariant Slot::engrMax() const
 {
     return QVariant();
 }
+QValidator *Slot::validator()
+{
+    return nullptr;
+}
 
 }   // namespace SetupTools

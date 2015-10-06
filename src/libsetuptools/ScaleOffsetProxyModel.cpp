@@ -13,6 +13,10 @@ ScaleOffsetProxyModel::ScaleOffsetProxyModel(QObject *parent) :
     updateTargetRoles();
 }
 
+int ScaleOffsetProxyModel::count() {
+    return rowCount();
+}
+
 void ScaleOffsetProxyModel::setScale(double val)
 {
     if(updateDelta<>(mScale, val))
@@ -176,12 +180,28 @@ bool ScaleOffsetProxyModel::setData(const QModelIndex &index, const QVariant &va
 void ScaleOffsetProxyModel::onSourceModelChanged()
 {
     disconnect(mDataChangedConnection);
+    disconnect(mColumnsAboutToBeInsertedConnection);
+    disconnect(mColumnsAboutToBeRemovedConnection);
+    disconnect(mColumnsInsertedConnection);
+    disconnect(mColumnsRemovedConnection);
+    disconnect(mRowsAboutToBeInsertedConnection);
+    disconnect(mRowsAboutToBeRemovedConnection);
+    disconnect(mRowsInsertedConnection);
+    disconnect(mRowsRemovedConnection);
 
     QAbstractItemModel *source = sourceModel();
     mSourceRoleNumbers.clear();
     if(source)
     {
         mDataChangedConnection = connect(source, &QAbstractItemModel::dataChanged, this, &ScaleOffsetProxyModel::onSourceDataChanged);
+        mColumnsAboutToBeInsertedConnection = connect(source, &QAbstractItemModel::columnsAboutToBeInserted, this, &ScaleOffsetProxyModel::onSourceColumnsAboutToBeInserted);
+        mColumnsAboutToBeRemovedConnection = connect(source, &QAbstractItemModel::columnsAboutToBeRemoved, this, &ScaleOffsetProxyModel::onSourceColumnsAboutToBeRemoved);
+        mColumnsInsertedConnection = connect(source, &QAbstractItemModel::columnsInserted, this, &ScaleOffsetProxyModel::onSourceColumnsInserted);
+        mColumnsRemovedConnection = connect(source, &QAbstractItemModel::columnsRemoved, this, &ScaleOffsetProxyModel::onSourceColumnsRemoved);
+        mRowsAboutToBeInsertedConnection = connect(source, &QAbstractItemModel::rowsAboutToBeInserted, this, &ScaleOffsetProxyModel::onSourceRowsAboutToBeInserted);
+        mRowsAboutToBeRemovedConnection = connect(source, &QAbstractItemModel::rowsAboutToBeRemoved, this, &ScaleOffsetProxyModel::onSourceRowsAboutToBeRemoved);
+        mRowsInsertedConnection = connect(source, &QAbstractItemModel::rowsInserted, this, &ScaleOffsetProxyModel::onSourceRowsInserted);
+        mRowsRemovedConnection = connect(source, &QAbstractItemModel::rowsRemoved, this, &ScaleOffsetProxyModel::onSourceRowsRemoved);
         auto sourceRoleNames = source->roleNames();
         for(int role : sourceRoleNames.keys())
         {
@@ -195,6 +215,60 @@ void ScaleOffsetProxyModel::onSourceModelChanged()
 void ScaleOffsetProxyModel::onSourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
     emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight), roles);
+}
+
+void ScaleOffsetProxyModel::onSourceColumnsAboutToBeInserted(const QModelIndex &parent, int first, int last)
+{
+    beginInsertColumns(parent, first, last);
+}
+
+void ScaleOffsetProxyModel::onSourceColumnsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+{
+    beginRemoveRows(parent, first, last);
+}
+
+void ScaleOffsetProxyModel::onSourceColumnsInserted(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+    endInsertColumns();
+}
+
+void ScaleOffsetProxyModel::onSourceColumnsRemoved(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+    endRemoveColumns();
+}
+
+void ScaleOffsetProxyModel::onSourceRowsAboutToBeInserted(const QModelIndex &parent, int first, int last)
+{
+    beginInsertRows(parent, first, last);
+}
+
+void ScaleOffsetProxyModel::onSourceRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+{
+    beginRemoveRows(parent, first, last);
+}
+
+void ScaleOffsetProxyModel::onSourceRowsInserted(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+    endInsertRows();
+    emit countChanged();
+}
+
+void ScaleOffsetProxyModel::onSourceRowsRemoved(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(first);
+    Q_UNUSED(last);
+    endRemoveRows();
+    emit countChanged();
 }
 
 } // namespace SetupTools

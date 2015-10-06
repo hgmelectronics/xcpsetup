@@ -6,7 +6,8 @@ namespace SetupTools {
 EncodingSlot::EncodingSlot(QObject *parent) :
     Slot(parent),
     oorFloat(NAN),
-    mUnencodedSlot(nullptr)
+    mUnencodedSlot(nullptr),
+    mValidator(new EncodingValidator(this))
 {}
 
 Slot *EncodingSlot::unencodedSlot()
@@ -18,10 +19,14 @@ void EncodingSlot::setUnencodedSlot(Slot *slot)
 {
     if(mUnencodedSlot != slot)
     {
-        if(mUnencodedSlot)
+        if(mUnencodedSlot) {
             disconnect(mUnencodedSlot, &Slot::unitChanged, this, &EncodingSlot::onUnencodedSlotUnitChanged);
+            disconnect(mUnencodedSlot, &Slot::valueParamChanged, this, &EncodingSlot::onUnencodedSlotValueParamChanged);
+        }
         mUnencodedSlot = slot;
         connect(mUnencodedSlot, &Slot::unitChanged, this, &EncodingSlot::onUnencodedSlotUnitChanged);
+        connect(mUnencodedSlot, &Slot::valueParamChanged, this, &EncodingSlot::onUnencodedSlotValueParamChanged);
+        emit valueParamChanged();
         emit unencodedSlotChanged();
         setUnit(mUnencodedSlot->unit());
     }
@@ -67,6 +72,7 @@ void EncodingSlot::setEncodingList(QVariant listVar)
             }
         }
     }
+    emit valueParamChanged();
     emit encodingListChanged();
 }
 
@@ -172,12 +178,63 @@ void EncodingSlot::append(double raw, QString engr)
         mRawToEngr[raw] = engr;
         mEngrToRaw[engr] = raw;
         mEngrToIndex[engr] = mList.size() - 1;
+        emit valueParamChanged();
+        emit encodingListChanged();
     }
+}
+
+QValidator *EncodingSlot::validator()
+{
+    return mValidator;
 }
 
 void EncodingSlot::onUnencodedSlotUnitChanged()
 {
     setUnit(mUnencodedSlot->unit());
+}
+
+void EncodingSlot::onUnencodedSlotValueParamChanged()
+{
+    emit valueParamChanged();
+}
+
+EncodingValidator::EncodingValidator(EncodingSlot *parent) :
+    QValidator(parent)
+{
+    connect(parent, &Slot::valueParamChanged, this, &EncodingValidator::slotChanged);
+}
+
+void EncodingValidator::slotChanged()
+{
+    emit changed();
+}
+
+QValidator::State EncodingValidator::validate(QString &input, int &pos) const
+{
+    static_assert(QValidator::State::Acceptable > QValidator::State::Intermediate, "Sorting order for QValidator::State not as expected");
+    static_assert(QValidator::State::Intermediate > QValidator::State::Invalid, "Sorting order for QValidator::State not as expected");
+    Q_UNUSED(pos);
+
+    EncodingSlot *slot = qobject_cast<EncodingSlot *>(parent());
+    Q_ASSERT(slot);
+
+    QValidator::State encodedValid = QValidator::State::Invalid;
+    QValidator::State unencodedValid = QValidator::State::Invalid;
+    if(slot->mUnencodedSlot)
+        unencodedValid = slot->mUnencodedSlot->validator()->validate(input, pos);
+
+    if(slot->mEngrToRaw.count(input))
+        encodedValid = QValidator::State::Acceptable;
+    else
+    {
+        for(QString engr : slot->mEngrToRaw.keys())
+        {
+            if(engr.startsWith(input))
+                encodedValid = QValidator::State::Intermediate;
+        }
+    }
+
+    return std::max(encodedValid, unencodedValid);
 }
 
 } // namespace SetupTools

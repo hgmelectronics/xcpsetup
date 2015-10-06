@@ -375,7 +375,7 @@ QtObject {
         engrA: 0
         rawB:  1E9
         engrB: 1E9
-        unit: "rpm"
+        unit: "RPM"
         precision: 0
     }
 
@@ -594,6 +594,7 @@ QtObject {
         rawB: 1E8
         engrB: 1E9
         precision: 0
+        unit: "ms"
     }
 
     property LinearSlot timeSeconds1: LinearSlot {
@@ -602,6 +603,7 @@ QtObject {
         rawB: 1E9
         engrB: 1E7
         precision: 2
+        unit: "s"
     }
 
     property EncodingSlot timeInSecondsZeroIsDisabled: EncodingSlot {

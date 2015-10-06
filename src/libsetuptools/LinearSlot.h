@@ -41,8 +41,11 @@ public:
     virtual QVariant rawMax() const;
     virtual QVariant engrMin() const;
     virtual QVariant engrMax() const;
+    virtual QValidator *validator();
 signals:
     void linearValueParamChanged();
+public slots:
+    void updateValidator();
 private:
     double mEngrA;
     double mEngrB;
@@ -50,6 +53,8 @@ private:
     double mRawA;
     double mRawB;
     double mOorRaw;
+
+    QDoubleValidator *mValidator;
 };
 
 } // namespace SetupTools

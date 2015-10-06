@@ -12,6 +12,9 @@ namespace SetupTools
 namespace Xcp
 {
 
+class ScalarMemoryRange;
+class ArrayMemoryRange;
+
 class MemoryRangeTable: public QObject
 {
     Q_OBJECT
@@ -30,8 +33,8 @@ public:
     /**
      * @brief adds a memrange to table, either in new list or overlapping list, or returns an identical one if existing
      */
-    Q_INVOKABLE MemoryRange *addScalarRange(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable);
-    Q_INVOKABLE MemoryRange *addTableRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable);
+    Q_INVOKABLE ScalarMemoryRange *addScalarRange(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable);
+    Q_INVOKABLE ArrayMemoryRange *addTableRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable);
 
     /**
      * @brief Clear all ranges from table - mostly useful for testing

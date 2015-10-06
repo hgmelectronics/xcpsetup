@@ -24,6 +24,11 @@ SlotArrayModel::SlotArrayModel(Slot *slot, int count, int min, int stride, bool 
         connect(mSlot, &Slot::valueParamChanged, this, &SlotArrayModel::onSlotValueParamChanged);
 }
 
+QVariant SlotArrayModel::get(int row) const
+{
+    return data(index(row));
+}
+
 void SlotArrayModel::setSlot(Slot *newSlot)
 {
     if(mSlot == newSlot)
@@ -41,7 +46,7 @@ void SlotArrayModel::setSlot(Slot *newSlot)
 
 void SlotArrayModel::setCount(int newCount)
 {
-    Q_ASSERT(newCount > 0);
+    Q_ASSERT(newCount >= 0);
     if(newCount > mCount)
     {
         emit countChanged();
@@ -105,7 +110,8 @@ int SlotArrayModel::columnCount(const QModelIndex &parent) const
 
 QVariant SlotArrayModel::data(const QModelIndex &index, int role) const
 {
-    if(!index.isValid()
+    if(!mSlot
+            || !index.isValid()
             || index.column() != 0
             || index.row() < 0
             || index.row() >= mCount

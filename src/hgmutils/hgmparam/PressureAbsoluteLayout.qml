@@ -7,19 +7,10 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
-Flow {
+ColumnLayout {
     property Parameters parameters
     anchors.fill: parent
     anchors.margins: 5
-    spacing: 5
-
-    TableByShiftEditButtonGroup {
-        title: qsTr("Upshift Apply Pressure")
-        count: 5
-        xLabel: qsTr("Torque")
-        valueLabel: qsTr("Pressure")
-        tableParam: parameters.transmissionUpshiftApplyPressure
-    }
 
     TableByShiftEditButtonGroup {
         title: qsTr("Upshift Apply Pressure")
@@ -38,33 +29,29 @@ Flow {
         valueLabel: qsTr("Pressure")
         tableParam: parameters.transmissionDownshiftApplyPressure
     }
-
-    GroupBox {
-        title: qsTr("Shift Prefill")
-        Row {
-            spacing: 5
-            TableParamEditButton {
-                name: qsTr("Pressure")
-                xLabel: qsTr("Shift")
-                valueLabel: qsTr("Pressure")
-                tableParam: parameters.transmissionShiftPrefillPressure
-            }
-
-            TableParamEditButton {
-                name: qsTr("Time")
-                xLabel: qsTr("Shift")
-                valueLabel: qsTr("ms")
-                tableParam: parameters.transmissionShiftPrefillTime
-            }
-        }
-    }
-
     TableByGearEditButtonGroup {
         title: qsTr("Main Pressure")
         count: 6
         xLabel: qsTr("Torque")
         valueLabel: qsTr("Pressure")
         tableParam: parameters.transmissionMainPressure
+    }
+
+    GroupBox {
+        title: "Prefill"
+        Button {
+            text: "Edit"
+            onClicked: prefillDialog.visible = true
+            enabled: prefillDialog.anyValid
+        }
+    }
+
+    ScalarListDialog {
+        id: prefillDialog
+        paramLists: [
+            parameters.transmissionShiftPrefillPressure,
+            parameters.transmissionShiftPrefillTime
+        ]
     }
 }
 
