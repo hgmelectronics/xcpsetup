@@ -10,7 +10,6 @@ GroupBox {
     property string xLabel
     property string valueLabel
     property var tableParam
-    property bool isDownshift: false
 
     title: tableParam[0].name.replace(/Shift [1-9RN]-[1-9RN] (.*)/, "$1")
 
@@ -18,6 +17,7 @@ GroupBox {
         spacing: 5
         Repeater {
             id: repeater
+            model: tableParam.length
             TableParamEditButton {
                 id: tableButton
                 name: groupBox.tableParam[index].name.replace(/(Shift [1-9RN]-[1-9RN]).*/, "$1")

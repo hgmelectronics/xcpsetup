@@ -21,5 +21,11 @@
         <file>VehicleLayout.qml</file>
         <file>PressureAbsoluteLayout.qml</file>
         <file>PressurePercentageLayout.qml</file>
+        <file>KeypadDisplayLayout.qml</file>
+        <file>TccLayout.qml</file>
+        <file>CanLayout.qml</file>
+        <file>EvLayout.qml</file>
+        <file>TransmissionLayout.qml</file>
+        <file>TableByClutchEditButtonGroup.qml</file>
     </qresource>
 </RCC>

@@ -13,158 +13,187 @@ Flow {
     anchors.margins: 10
     spacing: 10
 
-    GroupBox {
+    Button {
+        text: "Bus Voltages"
+        onClicked: busVoltageDialog.visible = true
+    }
+
+    ScalarListDialog {
+        id: busVoltageDialog
         title: "Bus Voltages"
-        Column {
-            spacing: 5
-            ScalarParamEdit {
-                metaParam: parameters.controllerBus5Voltage
+        paramLists: [
+            ScalarMetaParamList {
+                params: [
+                    parameters.controllerBus5Voltage,
+                    parameters.controllerBus3_3Voltage,
+                    parameters.controllerBus1_8Voltage,
+                    parameters.controllerBus12Voltage,
+                    parameters.controllerBusVoltage
+                ]
             }
-            ScalarParamEdit {
-                metaParam: parameters.controllerBus3_3Voltage
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerBus1_8Voltage
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerBus12Voltage
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerBusVoltage
-            }
-        }
+        ]
     }
-    GroupBox {
+
+    Button {
+        text: "Frequency Sensors"
+        onClicked: frequencySensorsDialog.visible = true
+    }
+
+    ScalarListDialog {
+        id: frequencySensorsDialog
         title: "Frequency Sensors"
-        Column {
-            spacing: 5
-            ScalarParamEdit {
-                metaParam: parameters.controllerTachInputFrequency
+        paramLists: [
+            ScalarMetaParamList {
+                params: [
+                    parameters.controllerTachInputFrequency,
+                    parameters.controllerTissInputFrequency,
+                    parameters.controllerTossInputFrequency,
+                    parameters.controllerSpareInputFrequency
+                ]
             }
-            ScalarParamEdit {
-                metaParam: parameters.controllerTissInputFrequency
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerTossInputFrequency
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerSpareInputFrequency
-            }
-        }
+        ]
     }
-    GroupBox {
+
+    Button {
+        text: "Voltage Sensors"
+        onClicked: voltageSensorsDialog.visible = true
+    }
+
+    ScalarListDialog {
+        id: voltageSensorsDialog
         title: "Voltage Sensors"
-        Column {
-            spacing: 5
-            ScalarParamEdit {
-                metaParam: parameters.controllerThrottlePositionSensorVoltage
+        paramLists: [
+            ScalarMetaParamList {
+                params: [
+                    parameters.controllerThrottlePositionSensorVoltage,
+                    parameters.controllerMAPSensorVoltage,
+                    parameters.controllerInternalTemperatureSensorVoltage,
+                    parameters.controllerInternalTemperature,
+                    parameters.controllerEngineTemperatureSensorVoltage,
+                    parameters.controllerTransmissionTemperatureSensorVoltage,
+                    parameters.controllerMultiplexedSensorVoltage
+                ]
             }
-            ScalarParamEdit {
-                metaParam: parameters.controllerMAPSensorVoltage
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerInternalTemperatureSensorVoltage
-            }
-            //            ScalarParamEdit {
-            //                metaParam: parameters.controllerInternalTemprature
-            //            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerEngineTempratureSensorVoltage
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerTransmissionTemperatureSensorVoltage
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerMultiplexedSensorVoltage
-            }
-        }
+        ]
     }
 
-    GroupBox {
+    Button {
+        text: "Software"
+        onClicked: softwareDialog.visible = true
+    }
+
+    ScalarListDialog {
+        id: softwareDialog
         title: "Software"
-        Column {
+        paramLists: [
+            ScalarMetaParamList {
+                params: [
+                    parameters.controllerHeapUsed,
+                    parameters.controllerHeapSize,
+                    parameters.controllerHeapAllocationCount,
+                    parameters.controllerHeapReleaseCount
+                ]
+            }
+        ]
+    }
+
+    Button {
+        text: "Digital I/O"
+        onClicked: dioDialog.visible = true
+    }
+
+    Window {
+        id: dioDialog
+        title: "Digital I/O"
+        width: 450
+        height: Math.max(inputColumn.implicitHeight, outputColumn.implicitHeight) + 40
+        RowLayout {
+            anchors.fill: parent
+            anchors.margins: 10
             spacing: 5
-            ScalarParamEdit {
-                metaParam: parameters.controllerHeapUsed
+            ColumnLayout {
+                id: inputColumn
+                Layout.alignment: Qt.AlignTop
+                Layout.fillWidth: true
+                spacing: 5
+                Label {
+                    text: "Inputs"
+                    font.bold: true
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerSDCardWriteProtect
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerSDCardPresent
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerMasterDriverFault
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerUSBPower
+                }
             }
-            ScalarParamEdit {
-                metaParam: parameters.controllerHeapSize
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerHeapAllocationCount
-            }
-            ScalarParamEdit {
-                metaParam: parameters.controllerHeapReleaseCount
-            }
-        }
-    }
-
-    GroupBox {
-        title: "Digital Outputs"
-        Column {
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerGreenLED
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerRedLED
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerUSBConnect
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerTransmissionTemperatureSensorBias
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerEngineTemperatureSensorBias
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerThrottlePositionSensorGround
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerMAPSensorGround
-            }
-        }
-    }
-
-    GroupBox {
-        title: "Digital Inputs"
-        Column {
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerSDCardWriteProtect
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerSDCardPresent
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerMasterDriverFault
-            }
-            ScalarParamCheckBox {
-                metaParam: parameters.controllerUSBPower
+            ColumnLayout {
+                id: outputColumn
+                Layout.alignment: Qt.AlignTop
+                Layout.fillWidth: true
+                spacing: 5
+                Label {
+                    text: "Outputs"
+                    font.bold: true
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerGreenLED
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerRedLED
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerUSBConnect
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerTransmissionTemperatureSensorBias
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerEngineTemperatureSensorBias
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerThrottlePositionSensorGround
+                }
+                ScalarParamIndicator {
+                    metaParam: parameters.controllerMAPSensorGround
+                }
             }
         }
     }
 
-    GroupBox {
+    Button {
+        text: "Frequency Outputs"
+        onClicked: frequencyOutputDialog.visible = true
+    }
+
+    ScalarListDialog {
+        id: frequencyOutputDialog
         title: "Frequency Outputs"
-        Column {
-            spacing: 5
-            ScalarParamSpinBox {
-                metaParam: parameters.controllerSpeedTimer1Frequency
+        paramLists: [
+            ScalarMetaParamList {
+                params: [
+                    parameters.controllerSpeedTimer1Frequency,
+                    parameters.controllerSpeedTimer2Frequency
+                ]
             }
-            ScalarParamSpinBox {
-                metaParam: parameters.controllerSpeedTimer2Frequency
-            }
-            Button {
-                text: "PWM Drivers"
-                enabled: parameters.controllerPWMDriverFrequency.range.valid
-                onClicked: {
-                    pwmDriversWindow.visible = true
-                }
-                PWMDriversWindow {
-                    id: pwmDriversWindow
-                    model: parameters.controllerPWMDriverModel
-                }
-            }
+        ]
+    }
+
+    Button {
+        text: "PWM Drivers"
+        enabled: parameters.controllerPWMDriverFrequency.range.valid
+        onClicked: {
+            pwmDriversWindow.visible = true
+        }
+        PWMDriversWindow {
+            id: pwmDriversWindow
+            model: parameters.controllerPWMDriverModel
         }
     }
 }

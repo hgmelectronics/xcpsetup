@@ -25,14 +25,22 @@ Item {
 
         Tab {
             title: qsTr("Vehicle")
-            VehicleLayout{
+            VehicleLayout {
+                parameters: params
+            }
+            visible: false
+        }
+
+        Tab {
+            title: qsTr("Engine")
+            EngineLayout {
                 parameters: params
             }
         }
 
         Tab {
-            title: qsTr("Engine")
-            EngineLayout{
+            title: qsTr("Trans")
+            TransmissionLayout {
                 parameters: params
             }
         }
@@ -59,10 +67,38 @@ Item {
         }
 
         Tab {
+            title: qsTr("TCC")
+            TccLayout {
+                parameters: params
+            }
+        }
+
+        Tab {
             title: qsTr("Diagnostics")
             DiagnosticsLayout {
                 parameters: params
             }
         }
+
+        Tab {
+            title: qsTr("Keypad")
+            KeypadDisplayLayout {
+                parameters: params
+            }
+        }
+
+        Tab {
+            title: qsTr("CAN")
+            CanLayout {
+                parameters: params
+            }
+        }
+
+//        Tab {
+//            title: qsTr("EV")
+//            EvLayout {
+//                parameters: params
+//            }
+//        }
     }
 }

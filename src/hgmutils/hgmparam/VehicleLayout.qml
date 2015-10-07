@@ -7,12 +7,24 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
-Flow {
+GridLayout {
     property Parameters parameters
     anchors.fill: parent
     anchors.margins: 5
-    spacing: 5
+    columnSpacing: 5
+    rowSpacing: 5
+    rows: 6
+    flow: GridLayout.TopToBottom
 
+    EncodingParamEdit {
+        metaParam: parameters.vehicleVariation
+    }
+    ScalarParamSpinBox {
+        metaParam: parameters.vehicleMass
+    }
+    ScalarParamSpinBox {
+        metaParam: parameters.transferCaseRatio
+    }
     ScalarParamSpinBox {
         metaParam: parameters.finalDriveRatio
     }
@@ -20,12 +32,20 @@ Flow {
         metaParam: parameters.tireDiameter
     }
     EncodingParamEdit {
-        metaParam: parameters.displayUnits
+        metaParam: parameters.speedometerCalibration
+    }
+    EncodingParamEdit {
+        metaParam: parameters.startInhibitRelayType
     }
     ScalarParamSpinBox {
-        metaParam: parameters.displayBrightness
+        metaParam: parameters.vehicleSpeedSensorPulseCount
     }
-    ScalarParamSpinBox {
-        metaParam: parameters.displayContrast
+    TableParamEditButton {
+        tableParam: parameters.shiftSelectorGearVoltages
+        xLabel: "Gear"
+        valueLabel: "Position"
+    }
+    ScalarParamCheckBox {
+        metaParam: parameters.shiftSelectorODCancelAtStartup
     }
 }

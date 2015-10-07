@@ -14,7 +14,6 @@ ColumnLayout {
 
     TableByGearEditButtonGroup {
         title: qsTr("Shift Pressure A")
-        count: 6
         tableParam: parameters.pressureTablesA
         xLabel: qsTr("Torque")
         valueLabel: qsTr("%")
@@ -22,7 +21,6 @@ ColumnLayout {
 
     TableByGearEditButtonGroup {
         title: qsTr("Shift Pressure B")
-        count: 6
         tableParam: parameters.pressureTablesB
         xLabel: qsTr("Torque")
         valueLabel: qsTr("%")
@@ -30,7 +28,6 @@ ColumnLayout {
 
     TableByShiftEditButtonGroup {
         title: qsTr("Upshift Apply Pressure %")
-        count: 6
         xLabel: qsTr("Torque")
         valueLabel: qsTr("%")
         tableParam: parameters.transmissionUpshiftApplyPercentage
@@ -38,16 +35,12 @@ ColumnLayout {
 
     TableByShiftEditButtonGroup {
         title: qsTr("Downshift Apply Pressure %")
-        count: 5
-        isDownshift: true
-
         xLabel: qsTr("Torque")
         valueLabel: qsTr("%")
         tableParam: parameters.transmissionDownshiftApplyPercentage
     }
     TableByGearEditButtonGroup {
         title: qsTr("Main Pressure %")
-        count: 6
         xLabel: qsTr("Torque")
         valueLabel: qsTr("%")
         tableParam: parameters.transmissionMainPercentage
@@ -57,7 +50,7 @@ ColumnLayout {
         Button {
             text: "Edit"
             onClicked: prefillDialog.visible = true
-            enabled: prefillDialog.anyValid
+            enabled: prefillDialog.allListsAnyValid
         }
     }
 

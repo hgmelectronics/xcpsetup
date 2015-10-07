@@ -14,8 +14,8 @@ QtObject {
 
     readonly property double controller_throttle_position_sensor_voltage: 0x80200000
     readonly property double controller_map_sensor_voltage: 0x80210000
-    readonly property double controller_doubleernal_temperature_sensor_voltage: 0x80220000
-    readonly property double controller_doubleernal_temperature: 0x80230000
+    readonly property double controller_internal_temperature_sensor_voltage: 0x80220000
+    readonly property double controller_internal_temperature: 0x80230000
     readonly property double controller_engine_temperature_sensor_voltage: 0x80240000
     readonly property double controller_transmission_temperature_sensor_voltage: 0x80250000
     readonly property double controller_multiplexed_sensor_voltage: 0x80260000

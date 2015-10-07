@@ -15,7 +15,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillHeight: true
-        Layout.minimumHeight: 200
+        Layout.minimumHeight: 150
         TablePlot {
             id: shiftAPlot
             plots: [
@@ -196,7 +196,7 @@ ColumnLayout {
         rpmTableParams: parameters.rpmShiftTablesA
         gearNumberParams: parameters.transmissionGearNumbers
         gearRatioParams: parameters.transmissionGearRatios
-        Layout.minimumHeight: 60
+        Layout.minimumHeight: 40
     }
 
     ShiftTableByShiftEditButtonGroup {
@@ -205,18 +205,43 @@ ColumnLayout {
         rpmTableParams: parameters.rpmShiftTablesB
         gearNumberParams: parameters.transmissionGearNumbers
         gearRatioParams: parameters.transmissionGearRatios
-        Layout.minimumHeight: 60
+        Layout.minimumHeight: 40
     }
 
     Row {
         spacing: 5
         ScalarParamSpinBox {
+            metaParam: parameters.shiftSpeedAdjustA
+        }
+        ScalarParamSpinBox {
             metaParam: parameters.shiftDownshiftOffsetA
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.shiftMaxEngineSpeedA
+        }
+        ScalarParamCheckBox {
+            Layout.alignment: Qt.AlignVCenter
+            metaParam: parameters.shiftManualModeA
+        }
+
+        Layout.minimumHeight: 40
+    }
+    Row {
+        spacing: 5
+        ScalarParamSpinBox {
+            metaParam: parameters.shiftSpeedAdjustB
         }
         ScalarParamSpinBox {
             metaParam: parameters.shiftDownshiftOffsetB
         }
-        Layout.minimumHeight: 60
-        Layout.bottomMargin: 10
+        ScalarParamSpinBox {
+            metaParam: parameters.shiftMaxEngineSpeedB
+        }
+        ScalarParamCheckBox {
+            Layout.alignment: Qt.AlignVCenter
+            metaParam: parameters.shiftManualModeB
+        }
+
+        Layout.minimumHeight: 40
     }
 }

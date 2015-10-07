@@ -23,6 +23,14 @@ Window {
         return false
     }
 
+    property bool allListsAnyValid: {
+        for(var i = 0; i < paramLists.length; ++i) {
+            if(!paramLists[i].anyValid)
+                return false
+        }
+        return true
+    }
+
     property int rows: {
         var n = 0
         for(var i = 0; i < paramLists.length; ++i) {

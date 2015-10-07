@@ -103,22 +103,22 @@ QtObject {
 
     property ScalarMetaParam controllerInternalTemperatureSensorVoltage: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_internal_temperature_sensor_voltage, false, false, slots.voltage1)
-        name: qsTr("Internal Temperature")
+        name: qsTr("Internal Temp")
     }
 
-    property ScalarMetaParam controllerInternalTemprature: ScalarMetaParam {
+    property ScalarMetaParam controllerInternalTemperature: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_internal_temperature, false, false, slots.temperature1)
-        name: qsTr("Internal Temperature")
+        name: qsTr("Internal Temp")
     }
 
-    property ScalarMetaParam controllerEngineTempratureSensorVoltage: ScalarMetaParam {
+    property ScalarMetaParam controllerEngineTemperatureSensorVoltage: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_engine_temperature_sensor_voltage, false, false, slots.voltage1)
-        name: qsTr("Engine Temperature")
+        name: qsTr("Engine Temp")
     }
 
     property ScalarMetaParam controllerTransmissionTemperatureSensorVoltage: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_transmission_temperature_sensor_voltage, false, false, slots.voltage1)
-        name: qsTr("Trans Temperature")
+        name: qsTr("Trans Temp")
     }
 
     property ScalarMetaParam controllerMultiplexedSensorVoltage: ScalarMetaParam {
@@ -279,56 +279,56 @@ QtObject {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_1_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 1 Fill")
+            name: qsTr("Clutch 1 Fill")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_2_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 2 Fill")
+            name: qsTr("Clutch 2 Fill")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_3_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 3 Fill")
+            name: qsTr("Clutch 3 Fill")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_4_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 4 Fill")
+            name: qsTr("Clutch 4 Fill")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_5_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 5 Fill")
+            name: qsTr("Clutch 5 Fill")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_6_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 6 Fill")
+            name: qsTr("Clutch 6 Fill")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_7_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 7 Fill")
+            name: qsTr("Clutch 7 Fill")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_8_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 8 Fill")
+            name: qsTr("Clutch 8 Fill")
         }
     ]
 
@@ -339,56 +339,56 @@ QtObject {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_1_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 1 Empty")
+            name: qsTr("Clutch 1 Empty")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_2_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 2 Empty")
+            name: qsTr("Clutch 2 Empty")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_3_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 3 Empty")
+            name: qsTr("Clutch 3 Empty")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_4_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 4 Empty")
+            name: qsTr("Clutch 4 Empty")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_5_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 5 Empty")
+            name: qsTr("Clutch 5 Empty")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_6_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 6 Empty")
+            name: qsTr("Clutch 6 Empty")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_7_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 7 Empty")
+            name: qsTr("Clutch 7 Empty")
         },
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_8_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
             }
-            name: qsTr("Trans Clutch 8 Empty")
+            name: qsTr("Clutch 8 Empty")
         }
     ]
 
@@ -1210,12 +1210,19 @@ QtObject {
         name: qsTr("Pressure R2L Boost B")
     }
 
-    property TableMetaParam displayColor: TableMetaParam {
-        param: TableParam {
-            x: colorIndexAxisModel
-            value: registry.addArrayParam(MemoryRange.S32, paramId.display_color, colorIndexAxisModel.count, true, true, slots.percentage1)
-        }
-        name: qsTr("Display Color")
+    property ScalarMetaParam displayColorRed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.display_color + 0, true, true, slots.percentage1)
+        name: qsTr("Display Color Red")
+    }
+
+    property ScalarMetaParam displayColorGreen: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.display_color + 1, true, true, slots.percentage1)
+        name: qsTr("Display Color Green")
+    }
+
+    property ScalarMetaParam displayColorBlue: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.display_color + 2, true, true, slots.percentage1)
+        name: qsTr("Display Color Blue")
     }
 
     property ScalarMetaParam displayBrightness: ScalarMetaParam {
@@ -1283,27 +1290,27 @@ QtObject {
     }
 
     property ScalarMetaParam can0BaudRate: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.can0_baud_rate, true, true, slots.kiloBaud)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.can0_baud_rate, true, true, slots.canSpeed)
         name: qsTr("CAN 0 Baud Rate")
     }
 
     property ScalarMetaParam can1BaudRate: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.can1_baud_rate, true, true, slots.kiloBaud)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.can1_baud_rate, true, true, slots.canSpeed)
         name: qsTr("CAN 1 Baud Rate")
     }
 
     property ScalarMetaParam j1939TransmissionAddress: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.j1939_transmission_address, true, true, slots.count3)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.j1939_transmission_address, true, true, slots.countByte)
         name: qsTr("J1939 Trans Address")
     }
 
     property ScalarMetaParam j1939EngineAddress: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.j1939_engine_address, true, true, slots.count3)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.j1939_engine_address, true, true, slots.countByte)
         name: qsTr("J1939 Engine Address")
     }
 
     property ScalarMetaParam j1939ShiftSelectorAddress: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.j1939_shift_selector_address, true, true, slots.count3)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.j1939_shift_selector_address, true, true, slots.countByte)
         name: qsTr("J1939 Shift Selector Address")
     }
 
@@ -1318,22 +1325,22 @@ QtObject {
     }
 
     property ScalarMetaParam shiftManualModeA: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_manual_mode_a, true, true, slots.booleanManualMode)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_manual_mode_a, true, true, slots.booleanYesNo1)
         name: qsTr("Manual Shift A")
     }
 
     property ScalarMetaParam shiftManualModeB: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_manual_mode_b, true, true, slots.booleanManualMode)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_manual_mode_b, true, true, slots.booleanYesNo1)
         name: qsTr("Manual Shift B")
     }
 
     property ScalarMetaParam tccManualModeA: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_manual_mode_a, true, true, slots.booleanManualMode)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_manual_mode_a, true, true, slots.booleanYesNo1)
         name: qsTr("Manual TCC A")
     }
 
     property ScalarMetaParam tccManualModeB: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_manual_mode_b, true, true, slots.booleanManualMode)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_manual_mode_b, true, true, slots.booleanYesNo1)
         name: qsTr("Manual TCC B")
     }
 
@@ -1663,6 +1670,16 @@ QtObject {
         }
     }
 
+    property ScalarMetaParam tccDownshiftOffsetA: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_downshift_offset_a, true, true, slots.percentage1)
+        name: qsTr("TCC Downshift Offset A")
+    }
+
+    property ScalarMetaParam tccDownshiftOffsetB: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_downshift_offset_b, true, true, slots.percentage1)
+        name: qsTr("TCC Downshift Offset B")
+    }
+
     property ScalarMetaParam tccDisableTOSSPercentA: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_disable_toss_percent_a, true, true, slots.percentage1)
         name: qsTr("TCC Disable TOSS Percent A")
@@ -1731,6 +1748,12 @@ QtObject {
         name: qsTr("TCC Apply Pressure")
     }
 
+    property ScalarMetaParam vehicleVariation: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.variation, true, true, slots.variationTypes)
+        name: qsTr("Vehicle Variation")
+        resetNeeded: true
+    }
+
     property ScalarMetaParam tireDiameter: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tire_diameter, true, true, slots.length)
         name: qsTr("Tire Diameter")
@@ -1784,6 +1807,11 @@ QtObject {
     property ScalarMetaParam voltageMAPSensorGroundEnable: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.voltage_map_sensor_ground_enable, true, true, slots.booleanOnOff1)
         name: qsTr("MAP Ground Enable")
+    }
+
+    property ScalarMetaParam transmissionType: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_type, true, true, slots.transmissionType1)
+        name: qsTr("Trans Type")
     }
 
     property ScalarMetaParam transmissionTempBiasEnable: ScalarMetaParam {

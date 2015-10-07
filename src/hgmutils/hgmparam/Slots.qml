@@ -77,6 +77,13 @@ QtObject {
         engrB: 999
     }
 
+    property LinearSlot countByte: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 255
+        engrB: 255
+    }
+
     property LinearSlot count4: LinearSlot {
         rawA: 0
         engrA: 0
@@ -233,6 +240,16 @@ QtObject {
         unit: "Kb"
     }
 
+    property EncodingSlot canSpeed: EncodingSlot {
+        encodingList: [
+            { raw: 125, engr: "125"},
+            { raw: 250, engr: "250"},
+            { raw: 500, engr: "500"},
+            { raw: 1000, engr: "1000"}
+        ]
+        unit: "kbps"
+    }
+
     property EncodingSlot measurementSystem: EncodingSlot {
         encodingList: [
             { raw: 0, engr: "US"},
@@ -364,9 +381,9 @@ QtObject {
 
     property EncodingSlot resetDefaults: EncodingSlot {
         encodingList: [
-            { "raw": 0, engr: "Factory" },
-            { "raw": 1, engr: "Transmission" },
-            { "raw": 2, "engr": "Disabled" }
+            { raw: 0, engr: "Factory" },
+            { raw: 1, engr: "Transmission" },
+            { raw: 2, engr: "Disabled" }
         ]
     }
 
@@ -585,6 +602,7 @@ QtObject {
         rawB: 1E9
         engrB: 1E6
         precision: 2
+        unit: "V"
     }
 
 
