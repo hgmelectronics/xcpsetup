@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
@@ -22,6 +23,10 @@ Item {
     TabView {
         id: tabView
         anchors.fill: parent
+
+        style: TabViewStyle {
+            tabOverlap: 0
+        }
 
         Tab {
             title: qsTr("Vehicle")
