@@ -20,7 +20,11 @@ QChart {
     function replot() {
         var newChartData = []
         for(var i = 0; i < plots.length; ++i) {
-            if(plots[i].valid) {
+            if(plots[i].valid
+                    && plots[i].xList
+                    && plots[i].valueList
+                    && plots[i].xList.length
+                    && plots[i].xList.length === plots[i].valueList.length) {
                 var baseColor = plots[i].baseColor
                 var alphaMult = plots[i].fade ? 0.5 : 1
                 var fillAlphaMult = plots[i].fill ? 0.5 : 0
