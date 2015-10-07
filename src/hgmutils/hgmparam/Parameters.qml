@@ -679,7 +679,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Shift 5-6 Apply")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -693,7 +693,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_7_8_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Shift 7-8 Apply")
-        }
+        }*/
     ]
 
     property
@@ -732,7 +732,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Shift 6-5 Apply")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -746,7 +746,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_8_7_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Shift 8-7 Apply")
-        }
+        }*/
     ]
 
     property
@@ -785,7 +785,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Shift 5-6 Release")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -799,7 +799,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_7_8_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Shift 7-8 Release")
-        }
+        }*/
     ]
 
     property
@@ -838,7 +838,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Shift 6-5 Release")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -852,7 +852,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_8_7_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Shift 8-7 Release")
-        }
+        }*/
     ]
 
     property
@@ -898,7 +898,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_6_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Gear 6 Main Pressure")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -912,7 +912,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_8_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
             }
             name: qsTr("Gear 8 Main Pressure")
-        }
+        }*/
     ]
 
     property
@@ -958,7 +958,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift 5-6 Apply Pressure")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -972,7 +972,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_7_8_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift 7-8 Apply Pressure")
-        }
+        }*/
     ]
 
     property
@@ -1011,7 +1011,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift 6-5 Apply Pressure")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -1025,7 +1025,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_8_7_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift 8-7 Apply Pressure")
-        }
+        }*/
     ]
 
 
@@ -1065,7 +1065,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_release_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift 5-6 Release Pressure")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -1079,7 +1079,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_7_8_release_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift 7-8 Release Pressure")
-        }
+        }*/
     ]
 
     property
@@ -1118,7 +1118,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_release_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift 6-5 Release Pressure")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -1132,7 +1132,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_8_7_release_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift 8-7 Release Pressure")
-        }
+        }*/
     ]
 
     property
@@ -1178,7 +1178,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_6_main_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Gear 6 Main Pressure")
-        },
+        }/*,
         TableMetaParam {
             param: TableParam {
                 x: pressureAxisModel
@@ -1192,7 +1192,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_8_main_percentage, pressureAxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Gear 8 Main Pressure")
-        }
+        }*/
     ]
 
     property ScalarMetaParam powertrainType: ScalarMetaParam {
