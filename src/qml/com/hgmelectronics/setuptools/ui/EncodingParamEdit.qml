@@ -35,12 +35,16 @@ GroupBox {
         }
     }
 
+    function updateCombo() {
+        combo.currentIndex = param.slot.engrToEncodingIndex(param.stringVal)
+        if (combo.currentIndex == -1)
+            combo.editText = param.stringVal
+    }
+
     Connections {
         target: param
-        onValChanged: {
-            combo.currentIndex = param.slot.engrToEncodingIndex(param.stringVal)
-            if (combo.currentIndex == -1)
-                combo.editText = param.stringVal
-        }
+        onValChanged: updateCombo()
     }
+
+    Component.onCompleted: updateCombo()
 }
