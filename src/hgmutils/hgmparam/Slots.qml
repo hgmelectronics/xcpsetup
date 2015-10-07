@@ -329,27 +329,6 @@ QtObject {
         }
     }
 
-    property var upshiftDownshiftTableIndexEncoding: [
-        { raw: 0, engr: "R-N" },
-        { raw: 1, engr: "N-R" },
-        { raw: 2, engr: "N-1" },
-        { raw: 3, engr: "1-N" },
-        { raw: 4, engr: "1-2" },
-        { raw: 5, engr: "2-1" },
-        { raw: 6, engr: "2-3" },
-        { raw: 7, engr: "3-2" },
-        { raw: 8, engr: "3-4" },
-        { raw: 9, engr: "4-3" },
-        { raw: 10, engr: "4-5" },
-        { raw: 11, engr: "5-4" },
-        { raw: 12, engr: "5-6" },
-        { raw: 13, engr: "6-5" }
-    ]
-
-    property EncodingSlot upshiftDownShiftTableIndex: EncodingSlot {
-        encodingList: upshiftDownshiftTableIndexEncoding
-    }
-
     property LinearSlot ratio1: LinearSlot {
         rawA: 0
         engrA: 0
@@ -375,9 +354,6 @@ QtObject {
         precision: 1
         unit: "Hz"
     }
-
-
-
 
     property EncodingSlot resetDefaults: EncodingSlot {
         encodingList: [
