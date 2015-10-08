@@ -1347,6 +1347,9 @@ var Chart = function(canvas, context) {
         // /////////////////////////////////////////////////////////////////
 
         this.init = function () {
+            // Sanitize data - purge NAN points
+
+
             labelHeight = config.scaleFontSize
             labelTemplateString = (config.scaleShowLabels)? config.scaleLabel : ""
             yAxisHeight = height - 2 * config.scaleFontSize - 5;
@@ -1550,8 +1553,10 @@ var Chart = function(canvas, context) {
 
             for (var i=0; i<data.length; i++) {
                 for (var j=0; j<data[i].xData.length; j++) {
-                    upperValue = Math.max(upperValue, data[i].xData[j])
-                    lowerValue = Math.min(lowerValue, data[i].xData[j])
+                    if(upperValue < data[i].xData[j])
+                        upperValue = data[i].xData[j]
+                    if(lowerValue > data[i].xData[j])
+                        lowerValue = data[i].xData[j]
                 }
             }
 
@@ -1567,8 +1572,10 @@ var Chart = function(canvas, context) {
 
             for (var i=0; i<data.length; i++) {
                 for (var j=0; j<data[i].yData.length; j++) {
-                    upperValue = Math.max(upperValue, data[i].yData[j])
-                    lowerValue = Math.min(lowerValue, data[i].yData[j])
+                    if(upperValue < data[i].yData[j])
+                        upperValue = data[i].yData[j]
+                    if(lowerValue > data[i].yData[j])
+                        lowerValue = data[i].yData[j]
                 }
             }
 
@@ -1625,6 +1632,7 @@ var Chart = function(canvas, context) {
             var stepValue
             var numberOfSteps
             var labels
+            var niter = 0
             while(1) {
                 stepValue = stepSize(stepSizeIndex)
                 numberOfSteps = Math.round(graphRange / stepValue)
@@ -1640,6 +1648,12 @@ var Chart = function(canvas, context) {
                     break
                 else
                     --stepSizeIndex
+
+                ++niter
+                if(niter > 100) {
+                    console.log("Loop is not exiting!")
+                    break
+                }
             }
 
             ++stepSizeIndex
@@ -1764,6 +1778,7 @@ var Chart = function(canvas, context) {
 
         var stepValue
         var numberOfSteps
+        var niter = 0
         while(1) {
             stepValue = stepSize(stepSizeIndex)
             numberOfSteps = Math.round(graphRange / stepValue)
@@ -1771,6 +1786,12 @@ var Chart = function(canvas, context) {
                 break
             else
                 --stepSizeIndex
+
+            ++niter
+            if(niter > 100) {
+                console.log("Loop is not exiting!")
+                break
+            }
         }
 
         var labels = [];
