@@ -14,8 +14,8 @@ QtObject {
 
     readonly property double controller_throttle_position_sensor_voltage: 0x80200000
     readonly property double controller_map_sensor_voltage: 0x80210000
-    readonly property double controller_doubleernal_temperature_sensor_voltage: 0x80220000
-    readonly property double controller_doubleernal_temperature: 0x80230000
+    readonly property double controller_internal_temperature_sensor_voltage: 0x80220000
+    readonly property double controller_internal_temperature: 0x80230000
     readonly property double controller_engine_temperature_sensor_voltage: 0x80240000
     readonly property double controller_transmission_temperature_sensor_voltage: 0x80250000
     readonly property double controller_multiplexed_sensor_voltage: 0x80260000
@@ -39,7 +39,7 @@ QtObject {
     readonly property double controller_master_driver_fault: 0x80620000
 
     readonly property double controller_usb_power: 0x80700000
-    readonly property double controller_greed_led: 0x80710000
+    readonly property double controller_green_led: 0x80710000
     readonly property double controller_red_led: 0x80720000
     readonly property double controller_transmission_temperature_sensor_bias: 0x80730000
     readonly property double controller_engine_temperature_sensor_bias: 0x80740000

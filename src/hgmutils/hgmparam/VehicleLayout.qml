@@ -7,30 +7,45 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
-Flow {
+GridLayout {
     property Parameters parameters
     anchors.fill: parent
     anchors.margins: 5
-    spacing: 5
+    columnSpacing: 5
+    rowSpacing: 5
+    rows: 6
+    flow: GridLayout.TopToBottom
 
-    ScalarParamSpinBox {
-        name: qsTr("Final Drive Ratio")
-        param: parameters.finalDriveRatio
+    EncodingParamEdit {
+        metaParam: parameters.vehicleVariation
     }
     ScalarParamSpinBox {
-        name: qsTr("Tire Diameter")
-        param: parameters.tireDiameter
+        metaParam: parameters.vehicleMass
+    }
+    ScalarParamSpinBox {
+        metaParam: parameters.transferCaseRatio
+    }
+    ScalarParamSpinBox {
+        metaParam: parameters.finalDriveRatio
+    }
+    ScalarParamSpinBox {
+        metaParam: parameters.tireDiameter
     }
     EncodingParamEdit {
-        name: qsTr("Display Units")
-        param: parameters.displayUnits
+        metaParam: parameters.speedometerCalibration
+    }
+    EncodingParamEdit {
+        metaParam: parameters.startInhibitRelayType
     }
     ScalarParamSpinBox {
-        name: qsTr("Display Brightness")
-        param: parameters.displayBrightness
+        metaParam: parameters.vehicleSpeedSensorPulseCount
     }
-    ScalarParamSpinBox {
-        name: qsTr("Display Contrast")
-        param: parameters.displayContrast
+    TableParamEditButton {
+        tableParam: parameters.shiftSelectorGearVoltages
+        xLabel: "Gear"
+        valueLabel: "Position"
+    }
+    ScalarParamCheckBox {
+        metaParam: parameters.shiftSelectorODCancelAtStartup
     }
 }

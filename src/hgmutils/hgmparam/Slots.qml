@@ -77,6 +77,13 @@ QtObject {
         engrB: 999
     }
 
+    property LinearSlot countByte: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 255
+        engrB: 255
+    }
+
     property LinearSlot count4: LinearSlot {
         rawA: 0
         engrA: 0
@@ -233,6 +240,16 @@ QtObject {
         unit: "Kb"
     }
 
+    property EncodingSlot canSpeed: EncodingSlot {
+        encodingList: [
+            { raw: 125, engr: "125"},
+            { raw: 250, engr: "250"},
+            { raw: 500, engr: "500"},
+            { raw: 1000, engr: "1000"}
+        ]
+        unit: "kbps"
+    }
+
     property EncodingSlot measurementSystem: EncodingSlot {
         encodingList: [
             { raw: 0, engr: "US"},
@@ -312,27 +329,6 @@ QtObject {
         }
     }
 
-    property var upshiftDownshiftTableIndexEncoding: [
-        { raw: 0, engr: "R-N" },
-        { raw: 1, engr: "N-R" },
-        { raw: 2, engr: "N-1" },
-        { raw: 3, engr: "1-N" },
-        { raw: 4, engr: "1-2" },
-        { raw: 5, engr: "2-1" },
-        { raw: 6, engr: "2-3" },
-        { raw: 7, engr: "3-2" },
-        { raw: 8, engr: "3-4" },
-        { raw: 9, engr: "4-3" },
-        { raw: 10, engr: "4-5" },
-        { raw: 11, engr: "5-4" },
-        { raw: 12, engr: "5-6" },
-        { raw: 13, engr: "6-5" }
-    ]
-
-    property EncodingSlot upshiftDownShiftTableIndex: EncodingSlot {
-        encodingList: upshiftDownshiftTableIndexEncoding
-    }
-
     property LinearSlot ratio1: LinearSlot {
         rawA: 0
         engrA: 0
@@ -359,14 +355,11 @@ QtObject {
         unit: "Hz"
     }
 
-
-
-
     property EncodingSlot resetDefaults: EncodingSlot {
         encodingList: [
-            { "raw": 0, engr: "Factory" },
-            { "raw": 1, engr: "Transmission" },
-            { "raw": 2, "engr": "Disabled" }
+            { raw: 0, engr: "Factory" },
+            { raw: 1, engr: "Transmission" },
+            { raw: 2, engr: "Disabled" }
         ]
     }
 
@@ -585,6 +578,7 @@ QtObject {
         rawB: 1E9
         engrB: 1E6
         precision: 2
+        unit: "V"
     }
 
 

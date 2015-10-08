@@ -14,11 +14,11 @@ Button {
     property alias hasPlot: table.hasPlot
     property alias hasShapers: table.hasShapers
 
-    enabled: table.tableParam.value.range.valid
+    enabled: table.tableParam.param.value.range.valid
     onClicked: table.visible = true
+    text: tableParam.name
 
     TableParamEditDialog {
         id: table
-        title: button.text
     }
 }

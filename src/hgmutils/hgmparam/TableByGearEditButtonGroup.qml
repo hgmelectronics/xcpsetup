@@ -11,16 +11,16 @@ GroupBox {
     property string valueLabel
     property var tableParam
 
+    title: tableParam[0].name.replace(/Gear [1-9RN] (.*)/, "$1")
+
     Row {
         spacing: 5
         Repeater {
             id: repeater
+            model: tableParam.length
             TableParamEditButton {
                 id: tableButton
-                function getTitle(i) {
-                    return qsTr("Gear %1").arg(i+1)
-                }
-                name: getTitle(index)
+                name: groupBox.tableParam[index].name.replace(/(Gear [1-9RN]).*/, "$1")
                 tableParam: groupBox.tableParam[index]
                 xLabel: groupBox.xLabel
                 valueLabel: groupBox.valueLabel

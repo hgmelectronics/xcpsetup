@@ -10,8 +10,10 @@ Window {
     id: root
 
     property list<ScalarMetaParamList> paramLists
+
     property alias verticalScrollBarPolicy: scrollView.verticalScrollBarPolicy
-    height: 600
+    property int maxInitialHeight: 600
+    height: Math.min(desiredHeight, maxInitialHeight)
 
     property bool anyValid: {
         for(var i = 0; i < paramLists.length; ++i) {
@@ -21,9 +23,25 @@ Window {
         return false
     }
 
+    property bool allListsAnyValid: {
+        for(var i = 0; i < paramLists.length; ++i) {
+            if(!paramLists[i].anyValid)
+                return false
+        }
+        return true
+    }
+
+    property int rows: {
+        var n = 0
+        for(var i = 0; i < paramLists.length; ++i) {
+            n = Math.max(n, paramLists[i].params.length)
+        }
+        return n
+    }
+
+    property int desiredHeight: 30 + (stalkingHorse.implicitHeight + 5) * rows
     property int columns: paramLists.length
-    property int rows: paramLists[0].params.length
-    maximumWidth: 15 + (stalkingHorse.implicitWidth + 5) * columns + scrollView.width - scrollView.viewport.width
+    maximumWidth: 25 + (stalkingHorse.implicitWidth + 5) * columns + scrollView.width - scrollView.viewport.width
     width: maximumWidth
 
     ScalarParamEdit {
@@ -35,24 +53,27 @@ Window {
     ScrollView {
         id: scrollView
         anchors.fill: parent
-        anchors.margins: 5
-        verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
-        Row {
-            id: rowLayout
-            Layout.fillWidth: true
-            spacing: 5
-            Repeater {
-                model: columns
-                Column {
-                    id: column
-                    spacing: 5
-                    property ScalarMetaParamList paramList: paramLists[index]
-                    Repeater {
-                        model: rows
-                        ScalarParamEdit {
-                            id: edit
-                            metaParam: paramList.params[index]
-                            visible: paramList.params[index].param.valid
+        verticalScrollBarPolicy: (desiredHeight > maxInitialHeight) ? Qt.ScrollBarAlwaysOn : Qt.ScrollBarAlwaysOff
+        Item {
+            height: rowLayout.implicitHeight + 20
+            Row {
+                id: rowLayout
+                spacing: 5
+                anchors.fill: parent
+                anchors.margins: 10
+                Repeater {
+                    model: columns
+                    Column {
+                        id: column
+                        spacing: 5
+                        property ScalarMetaParamList paramList: paramLists[index]
+                        Repeater {
+                            model: paramList.length
+                            ScalarParamEdit {
+                                id: edit
+                                metaParam: paramList.params[index]
+                                enabled: paramList.params[index].param.valid
+                            }
                         }
                     }
                 }
