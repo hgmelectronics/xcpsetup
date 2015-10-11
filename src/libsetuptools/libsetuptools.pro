@@ -50,7 +50,8 @@ SOURCES += \
     Xcp_Interface_Can_Socket_Interface.cpp \
     ScaleOffsetProxyModel.cpp \
     SlotProxyModel.cpp \
-    Xcp_VarArrayParam.cpp
+    Xcp_VarArrayParam.cpp \
+    Xcp_TestingSlave.cpp
 
 HEADERS += \
     util.h \
@@ -88,7 +89,8 @@ HEADERS += \
     SlotArrayModel.h \
     ScaleOffsetProxyModel.h \
     SlotProxyModel.h \
-    Xcp_VarArrayParam.h
+    Xcp_VarArrayParam.h \
+    Xcp_TestingSlave.h
 
 unix {
     target.path = /usr/lib

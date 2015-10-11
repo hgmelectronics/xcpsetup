@@ -7,7 +7,7 @@
 
 #include <Xcp_Connection.h>
 #include <Xcp_Interface_Loopback_Interface.h>
-#include "testingslave.h"
+#include <Xcp_TestingSlave.h>
 
 typedef std::pair<SetupTools::Xcp::CksumType, quint32> CksumPair;
 Q_DECLARE_METATYPE(CksumPair)

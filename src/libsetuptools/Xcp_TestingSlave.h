@@ -1,15 +1,17 @@
-#ifndef TESTINGSLAVE_H
-#define TESTINGSLAVE_H
+#ifndef SETUPTOOLS_XCP_TESTINGSLAVE_H
+#define SETUPTOOLS_XCP_TESTINGSLAVE_H
 
 #include <QObject>
 #include <QTimer>
-#include <QtTest>
 #include <Xcp_Interface_Loopback_Interface.h>
 #include <Xcp_Connection.h>
 #include <util.h>
 #include <map>
 #include <functional>
 #include <boost/range/iterator_range.hpp>
+
+namespace SetupTools {
+namespace Xcp {
 
 class TestingSlave : public QThread
 {
@@ -155,7 +157,8 @@ public:
     void setCrcCalc(std::function<quint32(boost::iterator_range<std::vector<quint8>::const_iterator>)> func); // sets user-defined checksum type
     int addMemRange(MemType type, SetupTools::Xcp::XcpPtr base, size_t len, quint8 segment = 0, std::vector<quint8> validPages = {0});
     int addMemRange(MemType type, SetupTools::Xcp::XcpPtr base, std::vector<quint8> data, quint8 segment = 0, std::vector<quint8> validPages = {0});
-    const std::vector<quint8> &getMemRange(int idx);
+    std::vector<quint8> &getMemRange(int idx);
+    SetupTools::Xcp::XcpPtr getMemRangeBase(int idx);
     void setMemRange(int idx, const std::vector<quint8> &data);
     void removeMemRange(int idx);
     void setResponseDelay(OpType op, int delayMsec, int lifetimeIter);	// delayMsec < 0 means never respond, lifetimeIter < 0 means lasts forever
@@ -260,4 +263,7 @@ private:
     SetupTools::Xcp::XcpPtr mMta;
 };
 
-#endif // TESTINGSLAVE_H
+} // namespace Xcp
+} // namespace SetupTools
+
+#endif // SETUPTOOLS_XCP_TESTINGSLAVE_H

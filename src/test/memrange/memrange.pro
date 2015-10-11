@@ -18,7 +18,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    testingslave.cpp \
     test_base.cpp \
     test_scalar_range.cpp \
     test_slot.cpp \
@@ -45,5 +44,4 @@ INCLUDEPATH += $$PWD/../../libsetuptools
 DEPENDPATH += $$PWD/../../libsetuptools
 
 HEADERS += \
-    test.h \
-    testingslave.h
+    test.h
