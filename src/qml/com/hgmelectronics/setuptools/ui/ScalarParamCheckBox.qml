@@ -11,7 +11,21 @@ RowLayout {
     property string name: metaParam.name
     property ScalarParam param: metaParam.param
     property double bitMask: 0x00000001
+    implicitWidth: checkBox.implicitWidth + rightLabel.implicitWidth + spacing
+    property bool boxRight: false
+    property alias textTop: leftLabel.top
+    property int textTopMargin: leftLabel.y - root.y
 
+    spacing: 10
+
+    Label {
+        id: leftLabel
+        text: root.name
+        font.bold: true
+        enabled: param.valid
+        Layout.alignment: Qt.AlignVCenter
+        visible: boxRight
+    }
 
     CheckBox {
         id: checkBox
@@ -24,10 +38,11 @@ RowLayout {
     }
 
     Label {
-        id: label
+        id: rightLabel
         text: root.name
         font.bold: true
         enabled: param.valid
         Layout.alignment: Qt.AlignVCenter
+        visible: !boxRight
     }
 }

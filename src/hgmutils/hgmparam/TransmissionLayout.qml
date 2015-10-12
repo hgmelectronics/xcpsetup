@@ -25,18 +25,23 @@ ColumnLayout {
             }
             ScalarParamCheckBox {
                 metaParam: parameters.transmissionTempBiasEnable
+                boxRight: true
             }
             ScalarParamCheckBox {
                 metaParam: parameters.transmissionHasLinePressureSensor
+                boxRight: true
             }
             ScalarParamCheckBox {
                 metaParam: parameters.transmissionHasLinePressureControl
+                boxRight: true
             }
             ScalarParamCheckBox {
                 metaParam: parameters.transmissionHasAccumulatorControl
+                boxRight: true
             }
             ScalarParamCheckBox {
                 metaParam: parameters.transmissionHasPWMTCC
+                boxRight: true
             }
         }
 

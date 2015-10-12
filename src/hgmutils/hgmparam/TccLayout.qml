@@ -35,6 +35,7 @@ RowLayout {
         }
         ScalarParamCheckBox {
             metaParam: parameters.tccManualModeA
+            boxRight: true
         }
     }
     ColumnLayout {
@@ -60,6 +61,7 @@ RowLayout {
         }
         ScalarParamCheckBox {
             metaParam: parameters.tccManualModeB
+            boxRight: true
         }
     }
     ColumnLayout {

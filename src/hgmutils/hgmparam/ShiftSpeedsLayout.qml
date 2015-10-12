@@ -208,38 +208,49 @@ ColumnLayout {
         Layout.minimumHeight: 40
     }
 
-    Row {
+    RowLayout {
         spacing: 5
         ScalarParamSpinBox {
+            Layout.topMargin: shiftManualModeACheckbox.textTopMargin - 2
             metaParam: parameters.shiftSpeedAdjustA
         }
         ScalarParamSpinBox {
+            Layout.topMargin: shiftManualModeACheckbox.textTopMargin - 2
             metaParam: parameters.shiftDownshiftOffsetA
         }
         ScalarParamSpinBox {
+            Layout.topMargin: shiftManualModeACheckbox.textTopMargin - 2
             metaParam: parameters.shiftMaxEngineSpeedA
         }
+
         ScalarParamCheckBox {
-            Layout.alignment: Qt.AlignVCenter
+            id: shiftManualModeACheckbox
+            Layout.alignment: Qt.AlignTop
             metaParam: parameters.shiftManualModeA
+            boxRight: true
         }
 
         Layout.minimumHeight: 40
     }
-    Row {
+    RowLayout {
         spacing: 5
         ScalarParamSpinBox {
+            Layout.topMargin: shiftManualModeBCheckbox.textTopMargin - 2
             metaParam: parameters.shiftSpeedAdjustB
         }
         ScalarParamSpinBox {
+            Layout.topMargin: shiftManualModeBCheckbox.textTopMargin - 2
             metaParam: parameters.shiftDownshiftOffsetB
         }
         ScalarParamSpinBox {
+            Layout.topMargin: shiftManualModeBCheckbox.textTopMargin - 2
             metaParam: parameters.shiftMaxEngineSpeedB
         }
         ScalarParamCheckBox {
-            Layout.alignment: Qt.AlignVCenter
+            id: shiftManualModeBCheckbox
+            Layout.alignment: Qt.AlignTop
             metaParam: parameters.shiftManualModeB
+            boxRight: true
         }
 
         Layout.minimumHeight: 40

@@ -33,6 +33,7 @@ RowLayout {
         }
         ScalarParamCheckBox {
             metaParam: parameters.cs2EngineTempBiasEnable
+            boxRight: true
         }
         TableParamEditButton {
             tableParam: parameters.engineMotorTorqueMap
@@ -60,9 +61,11 @@ RowLayout {
         }
         ScalarParamCheckBox {
             metaParam: parameters.voltageTPSGroundEnable
+            boxRight: true
         }
         ScalarParamCheckBox {
             metaParam: parameters.voltageTPSIsReversed
+            boxRight: true
         }
     }
 
@@ -78,6 +81,7 @@ RowLayout {
         }
         ScalarParamCheckBox {
             metaParam: parameters.voltageMAPSensorGroundEnable
+            boxRight: true
         }
     }
 }

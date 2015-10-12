@@ -13,9 +13,16 @@ GroupBox {
     property ScalarParam param: metaParam.param
     title: name
     enabled: param.valid
+    width: Math.max(sizeHint.implicitWidth + 6, spinBox.implicitWidth + 6)
 
-    SpinBox
-    {
+    Text {
+        id: sizeHint
+        visible: false
+        text: name
+        font.bold: true
+    }
+
+    SpinBox {
         id: spinBox
         implicitWidth: 150
         horizontalAlignment: Qt.AlignRight

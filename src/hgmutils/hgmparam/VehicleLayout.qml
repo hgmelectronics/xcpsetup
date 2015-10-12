@@ -7,45 +7,53 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
-GridLayout {
+
+RowLayout {
     property Parameters parameters
     anchors.fill: parent
     anchors.margins: 5
-    columnSpacing: 5
-    rowSpacing: 5
-    rows: 6
-    flow: GridLayout.TopToBottom
+    spacing: 5
 
-    EncodingParamEdit {
-        metaParam: parameters.vehicleVariation
+    ColumnLayout {
+        Layout.fillHeight: true
+        Layout.alignment: Qt.AlignTop
+        EncodingParamEdit {
+            metaParam: parameters.vehicleVariation
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.vehicleMass
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.transferCaseRatio
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.finalDriveRatio
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tireDiameter
+        }
     }
-    ScalarParamSpinBox {
-        metaParam: parameters.vehicleMass
-    }
-    ScalarParamSpinBox {
-        metaParam: parameters.transferCaseRatio
-    }
-    ScalarParamSpinBox {
-        metaParam: parameters.finalDriveRatio
-    }
-    ScalarParamSpinBox {
-        metaParam: parameters.tireDiameter
-    }
-    EncodingParamEdit {
-        metaParam: parameters.speedometerCalibration
-    }
-    EncodingParamEdit {
-        metaParam: parameters.startInhibitRelayType
-    }
-    ScalarParamSpinBox {
-        metaParam: parameters.vehicleSpeedSensorPulseCount
-    }
-    TableParamEditButton {
-        tableParam: parameters.shiftSelectorGearVoltages
-        xLabel: "Gear"
-        valueLabel: "Position"
-    }
-    ScalarParamCheckBox {
-        metaParam: parameters.shiftSelectorODCancelAtStartup
+
+    ColumnLayout {
+        Layout.fillHeight: true
+        Layout.alignment: Qt.AlignTop
+        EncodingParamEdit {
+            metaParam: parameters.speedometerCalibration
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.vehicleSpeedSensorPulseCount
+        }
+        EncodingParamEdit {
+            metaParam: parameters.startInhibitRelayType
+        }
+        ScalarParamCheckBox {
+            metaParam: parameters.shiftSelectorODCancelAtStartup
+            boxRight: true
+        }
+        TableParamEditButton {
+            tableParam: parameters.shiftSelectorGearVoltages
+            xLabel: "Gear"
+            valueLabel: "Position"
+        }
     }
 }
