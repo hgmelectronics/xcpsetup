@@ -262,9 +262,6 @@ ApplicationWindow {
         tooltip: qsTr("Writes modified parameters to the COMPUSHIFT")
         onTriggered: {
             paramLayer.download()
-            if (saveParametersOnWrite) {
-                paramLayer.nvWrite()
-            }
         }
         enabled: paramLayer.slaveConnected && paramLayer.idle
     }
