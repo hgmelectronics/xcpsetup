@@ -1,7 +1,10 @@
-#include "testingslave.h"
+#include "Xcp_TestingSlave.h"
 #include <boost/crc.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <numeric>
+
+namespace SetupTools {
+namespace Xcp {
 
 TestingSlave::TestingSlave(SetupTools::Xcp::Interface::Loopback::Interface *intfc, QObject *parent) :
     QThread(parent),
@@ -807,3 +810,8 @@ std::vector<quint8> TestingSlave::doProgramBlock(const std::vector<quint8> packe
     else
         return {};
 }
+
+
+} // namespace Xcp
+} // namespace SetupTools
+
