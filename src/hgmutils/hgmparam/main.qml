@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.2
 import Qt.labs.settings 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 import com.hgmelectronics.utils 1.0
 
 ApplicationWindow {
@@ -342,7 +343,7 @@ ApplicationWindow {
             Layout.rightMargin: 5
             spacing: 0
 
-            InterfaceChooser {
+            XcpInterfaceChooser {
                 id: interfaceChooser
                 Layout.fillWidth: true
                 enabled: !paramLayer.intfcOk

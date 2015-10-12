@@ -5,6 +5,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 ColumnLayout {
     id: root
@@ -60,61 +61,15 @@ ColumnLayout {
                 anchors.right: parent.right
                 spacing: 5
 
-                Label {
-                    text: qsTr("Interface")
-                }
-
-                ComboBox {
-                    id: intfcComboBox
-                    model: registry.avail
-                    textRole: "text"
-                    visible: true
+                XcpInterfaceChooser {
+                    id: interfaceChooser
                     Layout.fillWidth: true
-
-                    property string selectedUri
-                    selectedUri: (count > 0
-                                  && currentIndex < count) ? model[currentIndex].uri : ""
+                    enabled: !intfcOpen
                 }
 
-                ComboBox {
-                    property int bps
-                    id: bitrateComboBox
-                    editable: true
-                    implicitWidth: 80
-                    model: ListModel {
-                        id: bitrateItems
-                        ListElement {
-                            text: "125"
-                        }
-                        ListElement {
-                            text: "250"
-                        }
-                        ListElement {
-                            text: "500"
-                        }
-                        ListElement {
-                            text: "1000"
-                        }
-                    }
-                    validator: DoubleValidator {
-                        bottom: 10
-                        top: 1000
-                    }
-                    onCurrentIndexChanged: {
-                        if (currentIndex >= 0)
-                            bps = parseFloat(bitrateItems.get(
-                                                 currentIndex).text) * 1000
-                    }
-                    onAccepted: {
-                        bps = parseFloat(editText) * 1000
-                    }
-                    Component.onCompleted: {
-                        currentIndex = find("500")
-                    }
-                }
-
-                Label {
-                    text: qsTr("kbps")
+                BitRateChooser {
+                    id: bitRateChooser
+                    enabled: !intfcOpen
                 }
             }
             RowLayout {
@@ -127,10 +82,10 @@ ColumnLayout {
                     id: intfcOpenButton
                     text: qsTr("Open")
                     onClicked: {
-                        if (intfcComboBox.selectedUri !== "")
-                            root.intfcUri = intfcComboBox.selectedUri.replace(
+                        if (interfaceChooser.uri !== "")
+                            root.intfcUri = interfaceChooser.uri.replace(
                                         /bitrate=[0-9]*/,
-                                        "bitrate=" + bitrateComboBox.bps.toString(
+                                        "bitrate=" + bitRateChooser.bps.toString(
                                             ))
                     }
                     enabled: !intfcOpen
@@ -148,88 +103,91 @@ ColumnLayout {
             }
         }
 
-        ColumnLayout {
-            spacing: 5
+        GroupBox {
+            title: "Target"
+            ColumnLayout {
+                spacing: 5
 
-            RowLayout {
-                id: targetConfigRow
-                anchors.left: parent.left
-                anchors.right: parent.right
+                RowLayout {
+                    id: targetConfigRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
 
-                Label {
-                    text: qsTr("Target Command ID")
-                }
-                TextField {
-                    id: targetCmdIdField
-                    text: targetCmdId
-                    readOnly: slaveConnected
-                    validator: RegExpValidator {
-                        regExp: /[0-9A-Fa-f]{1,8}/
+                    Label {
+                        text: qsTr("Command ID")
                     }
-                    onAccepted: {
-                        targetCmdId = text
-                        root.targetChanged()
+                    TextField {
+                        id: targetCmdIdField
+                        text: targetCmdId
+                        readOnly: slaveConnected
+                        validator: RegExpValidator {
+                            regExp: /[0-9A-Fa-f]{1,8}/
+                        }
+                        onAccepted: {
+                            targetCmdId = text
+                            root.targetChanged()
+                        }
+                    }
+
+                    Label {
+                        text: qsTr("Response ID")
+                    }
+                    TextField {
+                        id: targetResIdField
+                        text: targetResId
+                        readOnly: slaveConnected
+                        validator: RegExpValidator {
+                            regExp: /[0-9A-Fa-f]{1,8}/
+                        }
+                        onAccepted: {
+                            targetResId = text
+                            root.targetChanged()
+                        }
                     }
                 }
 
-                Label {
-                    text: qsTr("Target Response ID")
-                }
-                TextField {
-                    id: targetResIdField
-                    text: targetResId
-                    readOnly: slaveConnected
-                    validator: RegExpValidator {
-                        regExp: /[0-9A-Fa-f]{1,8}/
+                RowLayout {
+                    id: paramActionRow
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        id: paramConnectButton
+                        text: qsTr("Connect")
+                        onClicked: root.userConnectParam()
+                        enabled: intfcOpen && !slaveConnected
                     }
-                    onAccepted: {
-                        targetResId = text
-                        root.targetChanged()
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        id: paramUploadButton
+                        text: qsTr("Read")
+                        onClicked: root.userUploadParam()
+                        enabled: slaveConnected && !paramBusy
                     }
-                }
-            }
-
-            RowLayout {
-                id: paramActionRow
-                Button {
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    id: paramConnectButton
-                    text: qsTr("Connect")
-                    onClicked: root.userConnectParam()
-                    enabled: intfcOpen && !slaveConnected
-                }
-                Button {
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    id: paramUploadButton
-                    text: qsTr("Read")
-                    onClicked: root.userUploadParam()
-                    enabled: slaveConnected && !paramBusy
-                }
-                Button {
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    id: paramDownloadButton
-                    text: qsTr("Write")
-                    onClicked: root.userDownloadParam()
-                    enabled: slaveConnected && !paramBusy
-                }
-                Button {
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    id: paramNvWriteButton
-                    text: qsTr("Save")
-                    onClicked: root.userNvWriteParam()
-                    enabled: slaveConnected && !paramBusy
-                }
-                Button {
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    id: paramDisconnectButton
-                    text: qsTr("Disconnect")
-                    onClicked: root.userDisconnectParam()
-                    enabled: slaveConnected
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        id: paramDownloadButton
+                        text: qsTr("Write")
+                        onClicked: root.userDownloadParam()
+                        enabled: slaveConnected && !paramBusy
+                    }
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        id: paramNvWriteButton
+                        text: qsTr("Save")
+                        onClicked: root.userNvWriteParam()
+                        enabled: slaveConnected && !paramBusy
+                    }
+                    Button {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        id: paramDisconnectButton
+                        text: qsTr("Disconnect")
+                        onClicked: root.userDisconnectParam()
+                        enabled: slaveConnected
+                    }
                 }
             }
         }
