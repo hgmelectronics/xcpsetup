@@ -523,17 +523,25 @@ void ParamLayer::downloadKey()
     Q_ASSERT(mState == State::Download);
     Q_ASSERT(mActiveKeyIdx >= 0 && mActiveKeyIdx <= mActiveKeys.size());
 
-    Param *param = getNextParam();
-    if(param == nullptr)
+    while(1)
     {
-        setState(State::Connected);
-        mActiveKeyIdx = -1;
-        emit opProgressChanged();
-        emit downloadDone(mActiveResult, mActiveKeys);
-        return;
+        Param *param = getNextParam();
+        if(param == nullptr)
+        {
+            setState(State::Connected);
+            mActiveKeyIdx = -1;
+            emit opProgressChanged();
+            emit downloadDone(mActiveResult, mActiveKeys);
+            break;
+        }
+        if(param->writeCacheDirty())
+        {
+            mActiveParamConnection = QObject::connect(param, &Param::downloadDone, this, &ParamLayer::onParamDownloadDone);
+            param->download();
+            break;
+        }
+        ++mActiveKeyIdx;
     }
-    mActiveParamConnection = QObject::connect(param, &Param::downloadDone, this, &ParamLayer::onParamDownloadDone);
-    param->download();
 }
 
 void ParamLayer::uploadKey()
