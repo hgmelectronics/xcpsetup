@@ -46,6 +46,10 @@ ApplicationWindow {
         slaveTimeout: 100
         slaveNvWriteTimeout: 200
         onConnectSlaveDone: forceSlaveSupportCalPage()
+        onDownloadDone: {
+            if(saveParametersOnWrite)
+                nvWrite()
+        }
     }
 
     JSONParamFile {
