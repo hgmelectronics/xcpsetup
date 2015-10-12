@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     test_array_param.cpp \
     test_array_range.cpp \
     test_slot_array_model.cpp \
-    test_vararray_param.cpp
+    test_vararray_param.cpp \
+    test_vararray_param_reupload.cpp
 
 win32:CONFIG(release, debug|release): {
     LIBS += -L$$OUT_PWD/../../libsetuptools/release/ -lsetuptools

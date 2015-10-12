@@ -6,6 +6,7 @@
 #include "Xcp_ArrayMemoryRange.h"
 #include "Xcp_ScalarMemoryRange.h"
 #include "Slot.h"
+#include <boost/dynamic_bitset.hpp>
 
 namespace SetupTools {
 namespace Xcp {
@@ -91,8 +92,11 @@ private slots:
     void onExtRangeDownloadDone(SetupTools::Xcp::OpResult result);
     void onExtRangeValueChanged(int index);
 private:
+    void emitDataChanged(bool forceModelChanged = false);
+
     ArrayMemoryRange *mRange;   // owned by the ParamRegistry
     QList<ScalarMemoryRange *> const mExtRanges;    // owned by the ParamRegistry
+    boost::dynamic_bitset<> mDataChanged;
     QSignalMapper mExtRangeChangedMapper;
     boost::optional<int> mActualDim;
     boost::optional<int> mExtRangeUploadIdx, mExtRangeDownloadIdx;
