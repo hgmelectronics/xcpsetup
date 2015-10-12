@@ -52,6 +52,10 @@ ApplicationWindow {
         onDisconnectSlaveDone: {
             ParamResetNeeded.set = false
         }
+        onDownloadDone: {
+            if(saveParametersOnWrite)
+                nvWrite()
+        }
         onNvWriteDone: {
             if(ParamResetNeeded.set) {
                 disconnectSlave()
