@@ -5,6 +5,8 @@ GroupBox {
     id: box
     title: qsTr("Speed (kbps)")
     property int bps
+    property alias allowedRates: bitrateComboBox.model
+    property int defaultRate: 500
 
     ComboBox {
         id: bitrateComboBox
@@ -28,7 +30,7 @@ GroupBox {
         }
 
         Component.onCompleted: {
-            currentIndex = find("500")
+            currentIndex = find(box.defaultRate.toString())
         }
     }
 }

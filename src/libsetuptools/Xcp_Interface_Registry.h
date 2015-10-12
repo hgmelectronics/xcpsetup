@@ -5,8 +5,9 @@
 #include <Xcp_Interface_Interface.h>
 #include <QtQml/QQmlEngine>
 #include <QtQml/QJSEngine>
-#include <QtQml/QQmlListProperty>
+#include <QAbstractListModel>
 #include <QUrl>
+#include <QPair>
 
 namespace SetupTools {
 namespace Xcp {
@@ -21,34 +22,22 @@ public:
     Q_INVOKABLE static QString desc(QUrl uri);
 };
 
-class Info : public QObject
+class QmlRegistry : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl uri READ uri CONSTANT)
-    Q_PROPERTY(QUrl text READ text CONSTANT)
-public:
-    Info();
-    Info(QUrl uri, QString text, QObject *parent = 0);
-    QUrl uri();
-    QString text();
-private:
-    QUrl mUri;
-    QString mText;
-};
-
-class QmlRegistry : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QQmlListProperty<SetupTools::Xcp::Interface::Info> avail READ avail CONSTANT)
 public:
     explicit QmlRegistry(QObject *parent = 0);
-    static Info *listPropAt(QQmlListProperty<SetupTools::Xcp::Interface::Info> *property, int index);
-    static int listPropCount(QQmlListProperty<SetupTools::Xcp::Interface::Info> *property);
-    QQmlListProperty<SetupTools::Xcp::Interface::Info> avail();
+    Q_INVOKABLE void updateAvail();
+    virtual int rowCount(const QModelIndex &parent) const;
+    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual QHash<int, QByteArray> roleNames() const;
+    Q_INVOKABLE QString text(int index) const;
+    Q_INVOKABLE QUrl uri(int index) const;
 private:
-    QList<Info *> mAvail;
-};
+    static const QHash<int, QByteArray> ROLE_NAMES;
 
+    QList<QPair<QUrl, QString> > mAvail;
+};
 
 } // namespace Interface
 } // namespace Xcp

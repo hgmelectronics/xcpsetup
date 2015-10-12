@@ -5,6 +5,7 @@ import com.hgmelectronics.setuptools.xcp 1.0
 GroupBox {
     title: "Interface"
     property alias uri: comboBox.selectedUri
+    property bool allowUpdate: enabled
 
     InterfaceRegistry {
         id: registry
@@ -16,10 +17,36 @@ GroupBox {
 
         enabled: !paramLayer.intfcOk
         anchors.fill: parent
-        model: registry.avail
-        textRole: "text"
+        model: registry
+        textRole: "display"
         visible: true
         selectedUri: (count > 0
-                      && currentIndex < count) ? model[currentIndex].uri : ""
+                      && currentIndex < count) ? registry.uri(currentIndex) : ""
+
+        Connections {
+            target: registry
+            onDataChanged: {
+                if(comboBox.currentIndex >= registry.rowCount())
+                    comboBox.currentIndex = -1
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: true
+
+            onPressed: {
+                mouse.accepted = false
+                if(allowUpdate) {
+                    registry.updateAvail()
+                    console.log("registry.updateAvail()")
+                }
+            }
+            onReleased: mouse.accepted = false
+            onDoubleClicked: mouse.accepted = false
+            onPositionChanged: mouse.accepted = false
+            onPressAndHold: mouse.accepted = false
+            onClicked: mouse.accepted = false
+        }
     }
 }
