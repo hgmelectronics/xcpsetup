@@ -88,11 +88,11 @@ bool TableMapperModel::tryUpdateMapping()
         QAbstractItemModel *subModel = mMapping[roleName].value<QAbstractItemModel *>();
 
         mSubModels.append(subModel);
-        Q_ASSERT(connect(subModel, &QAbstractItemModel::dataChanged, this, &TableMapperModel::onMappedDataChanged));
-        Q_ASSERT(connect(subModel, &QAbstractItemModel::rowsInserted, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved));
-        Q_ASSERT(connect(subModel, &QAbstractItemModel::rowsRemoved, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved));
-        Q_ASSERT(connect(subModel, &QAbstractItemModel::columnsInserted, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved));
-        Q_ASSERT(connect(subModel, &QAbstractItemModel::columnsRemoved, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved));
+        connect(subModel, &QAbstractItemModel::dataChanged, this, &TableMapperModel::onMappedDataChanged);
+        connect(subModel, &QAbstractItemModel::rowsInserted, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        connect(subModel, &QAbstractItemModel::rowsRemoved, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        connect(subModel, &QAbstractItemModel::columnsInserted, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
+        connect(subModel, &QAbstractItemModel::columnsRemoved, this, &TableMapperModel::onSubmodelRowsColsAddedRemoved);
         mRoleNames[role] = roleName.toUtf8();
         ++role;
     }
