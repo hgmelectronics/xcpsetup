@@ -24,19 +24,26 @@ ColumnLayout {
                 metaParam: parameters.transmissionType
             }
             EncodingParamEdit {
-                metaParam: parameters.transmissionTempBiasEnable
-            }
-            EncodingParamEdit {
                 metaParam: parameters.transmissionHasLinePressureSensor
             }
             EncodingParamEdit {
                 metaParam: parameters.transmissionHasLinePressureControl
+            }
+        }
+        ColumnLayout {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignTop
+            EncodingParamEdit {
+                metaParam: parameters.transmissionType
             }
             EncodingParamEdit {
                 metaParam: parameters.transmissionHasAccumulatorControl
             }
             EncodingParamEdit {
                 metaParam: parameters.transmissionHasPWMTCC
+            }
+            EncodingParamEdit {
+                metaParam: parameters.transmissionTempBiasEnable
             }
         }
 
