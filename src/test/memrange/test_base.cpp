@@ -17,6 +17,16 @@ char *toString(const SetupTools::Xcp::OpResult &res)
 }
 }
 
+void waitSignalSpyCount(int delay, int count, QSignalSpy &spy)
+{
+    for(int i = 0; i < count; ++i)
+    {
+        if(spy.count() >= count)
+            return;
+        spy.wait(delay);
+    }
+}
+
 namespace SetupTools
 {
 namespace Xcp

@@ -18,6 +18,8 @@ namespace QTest
 char *toString(const SetupTools::Xcp::OpResult &res);
 }
 
+void waitSignalSpyCount(int delay, int count, QSignalSpy &spy);
+
 namespace SetupTools
 {
 namespace Xcp
@@ -69,6 +71,9 @@ private slots:
 
     void varArrayParamDownloadUpload_data();
     void varArrayParamDownloadUpload();
+
+    void varArrayParamReupload_data();
+    void varArrayParamReupload();
 private:
     void updateAg(int ag);
     void setWaitConnState(const MemoryRangeTable *table, Connection::State state);
