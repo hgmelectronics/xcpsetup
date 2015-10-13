@@ -45,10 +45,22 @@ ApplicationWindow {
         addrGran: 4
         slaveTimeout: 100
         slaveNvWriteTimeout: 200
-        onConnectSlaveDone: forceSlaveSupportCalPage()
+        onConnectSlaveDone: {
+            ParamResetNeeded.set = false
+            forceSlaveSupportCalPage()
+        }
+        onDisconnectSlaveDone: {
+            ParamResetNeeded.set = false
+        }
         onDownloadDone: {
             if(saveParametersOnWrite)
                 nvWrite()
+        }
+        onNvWriteDone: {
+            if(ParamResetNeeded.set) {
+                disconnectSlave()
+                resetNeededDialog.open()
+            }
         }
     }
 
@@ -85,6 +97,13 @@ ApplicationWindow {
                 saveParamFile()
             }
         }
+    }
+
+    MessageDialog {
+        id: resetNeededDialog
+        title: "Reset Needed"
+        text: "The CS2 needs to be restarted to apply the new settings. Please cycle power and then reconnect."
+        standardButtons: StandardButton.Ok
     }
 
     function saveParamFile() {

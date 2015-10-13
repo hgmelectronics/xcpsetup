@@ -19,6 +19,7 @@
         <file>TableMetaParam.qml</file>
         <file>ui/ScalarListDialog.qml</file>
         <file>ScalarMetaParamList.qml</file>
+        <file>ParamResetNeeded.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
