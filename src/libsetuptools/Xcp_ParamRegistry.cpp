@@ -69,17 +69,28 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
                 || other->range()->writable() != writable
                 || other->saveable != saveable
                 || other->slot() != slot)
+        {
+            qDebug() << QString("Failed to create scalar param with key %1, incompatible overlapping range").arg(key);
             return nullptr;
+        }
         else
+        {
             return other;
+        }
     }
 
     if(!MemoryRange::isValidType(type))
+    {
+        qDebug() << QString("Failed to create scalar param with key %1, invalid type %2").arg(key).arg(type);
         return nullptr;
+    }
 
     ScalarMemoryRange *scalarRange = mTable->addScalarRange(MemoryRange::MemoryRangeType(type), base, writable);
     if(scalarRange == nullptr)
+    {
+        qDebug() << QString("Failed to create scalar param with key %1, failed to create range").arg(key);
         return nullptr;
+    }
 
     ScalarParam *param = new ScalarParam(scalarRange, slot, this);
     Q_ASSERT(param != nullptr);
@@ -96,7 +107,10 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
 ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool writable, bool saveable, Slot *slot, QString key)
 {
     if(slot == nullptr)
+    {
+        qDebug() << QString("Failed to create array param with key %1, no slot specified").arg(key);
         return nullptr;
+    }
     if(mParams.count(key))
     {
         ArrayParam *other = qobject_cast<ArrayParam *>(mParams[key]);
@@ -107,20 +121,34 @@ ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool 
                 || other->saveable != saveable
                 || other->count() != count
                 || other->slot() != slot)
+        {
+            qDebug() << QString("Failed to create array param with key %1, incompatible overlapping range").arg(key);
             return nullptr;
+        }
         else
+        {
             return other;
+        }
     }
 
     if(count < 1)
+    {
+        qDebug() << QString("Failed to create array param with key %1, invalid count %2").arg(key).arg(count);
         return nullptr;
+    }
 
     if(!MemoryRange::isValidType(type))
+    {
+        qDebug() << QString("Failed to create array param with key %1, invalid type %2").arg(key).arg(type);
         return nullptr;
+    }
 
      ArrayMemoryRange *tableRange = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
     if(tableRange == nullptr)
+    {
+        qDebug() << QString("Failed to create array param with key %1, failed to create range").arg(key);
         return nullptr;
+    }
 
     ArrayParam* param = new ArrayParam(tableRange, slot, this);
     Q_ASSERT(param != nullptr);
@@ -139,7 +167,10 @@ VarArrayParam *ParamRegistry::addVarArrayParam(int type, XcpPtr base, int minCou
     MemoryRange::MemoryRangeType castType = MemoryRange::MemoryRangeType(type);
 
     if(slot == nullptr)
+    {
+        qDebug() << QString("Failed to create var array param with key %1, no slot specified").arg(key);
         return nullptr;
+    }
     if(mParams.count(key))
     {
         VarArrayParam *other = qobject_cast<VarArrayParam *>(mParams[key]);
@@ -151,13 +182,19 @@ VarArrayParam *ParamRegistry::addVarArrayParam(int type, XcpPtr base, int minCou
                 || other->minCount() != minCount
                 || other->maxCount() != maxCount
                 || other->slot() != slot)
+        {
+            qDebug() << QString("Failed to create var array param with key %1, incompatible overlapping range").arg(key);
             return nullptr;
+        }
         else
             return other;
     }
 
     if(minCount < 1 || maxCount < minCount)
+    {
+        qDebug() << QString("Failed to create var array param with key %1, invalid count range %2-%3").arg(key).arg(minCount).arg(maxCount);
         return nullptr;
+    }
 
     if(!MemoryRange::isValidType(type))
         return nullptr;
@@ -166,7 +203,10 @@ VarArrayParam *ParamRegistry::addVarArrayParam(int type, XcpPtr base, int minCou
                 mTable->addTableRange(castType, base, minCount, writable)
                 );
     if(baseRange == nullptr)
+    {
+        qDebug() << QString("Failed to create param with key %1, failed to create base table range").arg(key);
         return nullptr;
+    }
 
     int nExtRanges = maxCount - minCount;
     QList<ScalarMemoryRange *> extRanges;
@@ -178,7 +218,10 @@ VarArrayParam *ParamRegistry::addVarArrayParam(int type, XcpPtr base, int minCou
                     mTable->addScalarRange(castType, base + offset, writable)
                     );
         if(extRange == nullptr)
+        {
+            qDebug() << QString("Failed to create param with key %1, failed to create extended scalar range").arg(key);
             return nullptr;
+        }
         extRanges.push_back(extRange);
     }
     VarArrayParam *param = new VarArrayParam(baseRange, extRanges, slot, this);
