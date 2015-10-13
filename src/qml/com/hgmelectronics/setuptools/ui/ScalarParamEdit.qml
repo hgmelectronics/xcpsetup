@@ -12,14 +12,8 @@ GroupBox {
     property string name: metaParam.name
     property ScalarParam param: metaParam.param
     title: name
-    implicitWidth: Math.max(sizeHint.implicitWidth + 6, textField.implicitWidth + label.implicitWidth + 10)
-
-    Text {
-        id: sizeHint
-        visible: false
-        text: name
-        font.bold: true
-    }
+    implicitWidth: Math.max(sizeHint.implicitWidth + 16, textField.implicitWidth + label.implicitWidth + 16)
+    width: implicitWidth
 
     RowLayout {
         anchors.fill: parent
@@ -38,6 +32,11 @@ GroupBox {
         Label {
             id: label
             text: param.slot.unit
+        }
+        Text {
+            id: sizeHint
+            visible: false
+            text: name
         }
     }
 }

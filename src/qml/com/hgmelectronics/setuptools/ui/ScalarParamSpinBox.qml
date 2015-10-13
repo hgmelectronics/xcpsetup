@@ -13,25 +13,26 @@ GroupBox {
     property ScalarParam param: metaParam.param
     title: name
     enabled: param.valid
-    width: Math.max(sizeHint.implicitWidth + 6, spinBox.implicitWidth + 6)
+    implicitWidth: Math.max(sizeHint.implicitWidth + 16, spinBox.implicitWidth + 16)
+    width: implicitWidth
 
-    Text {
-        id: sizeHint
-        visible: false
-        text: name
-        font.bold: true
-    }
-
-    SpinBox {
-        id: spinBox
-        implicitWidth: 150
-        horizontalAlignment: Qt.AlignRight
-        stepSize: Math.pow(10,-param.slot.precision)
-        minimumValue: Math.min(param.slot.engrA, param.slot.engrB)
-        maximumValue: Math.max(param.slot.engrA, param.slot.engrB)
-        decimals: param.slot.precision
-        suffix: param.slot.unit.length != 0 ? " %1".arg(param.slot.unit) : ""
-        value: param.floatVal
-        onEditingFinished: param.floatVal = value
+    RowLayout {
+        SpinBox {
+            id: spinBox
+            implicitWidth: 150
+            horizontalAlignment: Qt.AlignRight
+            stepSize: Math.pow(10,-param.slot.precision)
+            minimumValue: Math.min(param.slot.engrA, param.slot.engrB)
+            maximumValue: Math.max(param.slot.engrA, param.slot.engrB)
+            decimals: param.slot.precision
+            suffix: param.slot.unit.length != 0 ? " %1".arg(param.slot.unit) : ""
+            value: param.floatVal
+            onEditingFinished: param.floatVal = value
+        }
+        Text {
+            id: sizeHint
+            visible: false
+            text: name
+        }
     }
 }

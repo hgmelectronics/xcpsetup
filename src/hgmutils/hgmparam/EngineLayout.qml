@@ -31,16 +31,17 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.engineIdleShutdownTime
         }
-        ScalarParamCheckBox {
+        EncodingParamEdit {
             metaParam: parameters.cs2EngineTempBiasEnable
-            boxRight: true
         }
         TableParamEditButton {
+            Layout.margins: 8
             tableParam: parameters.engineMotorTorqueMap
             xLabel: "RPM"
             valueLabel: "%"
         }
         TableParamEditButton {
+            Layout.margins: 8
             tableParam: parameters.engineBrakeTorqueMap
             xLabel: "RPM"
             valueLabel: "%"
@@ -59,13 +60,11 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.voltageTPSFilterOrder
         }
-        ScalarParamCheckBox {
+        EncodingParamEdit {
             metaParam: parameters.voltageTPSGroundEnable
-            boxRight: true
         }
-        ScalarParamCheckBox {
+        EncodingParamEdit {
             metaParam: parameters.voltageTPSIsReversed
-            boxRight: true
         }
     }
 
@@ -79,9 +78,8 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.voltageMAPSensorLowCalibration
         }
-        ScalarParamCheckBox {
+        EncodingParamEdit {
             metaParam: parameters.voltageMAPSensorGroundEnable
-            boxRight: true
         }
     }
 }

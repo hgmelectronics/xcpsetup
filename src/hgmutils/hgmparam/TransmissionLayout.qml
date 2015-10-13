@@ -23,35 +23,30 @@ ColumnLayout {
             EncodingParamEdit {
                 metaParam: parameters.transmissionType
             }
-            ScalarParamCheckBox {
+            EncodingParamEdit {
                 metaParam: parameters.transmissionTempBiasEnable
-                boxRight: true
             }
-            ScalarParamCheckBox {
+            EncodingParamEdit {
                 metaParam: parameters.transmissionHasLinePressureSensor
-                boxRight: true
             }
-            ScalarParamCheckBox {
+            EncodingParamEdit {
                 metaParam: parameters.transmissionHasLinePressureControl
-                boxRight: true
             }
-            ScalarParamCheckBox {
+            EncodingParamEdit {
                 metaParam: parameters.transmissionHasAccumulatorControl
-                boxRight: true
             }
-            ScalarParamCheckBox {
+            EncodingParamEdit {
                 metaParam: parameters.transmissionHasPWMTCC
-                boxRight: true
             }
         }
 
         ColumnLayout {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
-            ScalarParamEdit {
+            ScalarParamSpinBox {
                 metaParam: parameters.transmissionTurbineShaftSpeedSensorPulseCount
             }
-            ScalarParamEdit {
+            ScalarParamSpinBox {
                 metaParam: parameters.transmissionInputShaftSpeedSensorPulseCount
             }
             ScalarListDialog {
@@ -61,15 +56,12 @@ ColumnLayout {
                 ]
             }
             Button {
+                Layout.margins: 8
                 text: "Other Shaft Speed Sensors"
                 onClicked: transShaftSpeedSensorDialog.visible = true
             }
-        }
-
-        ColumnLayout {
-            Layout.fillHeight: true
-            Layout.alignment: Qt.AlignTop
             TableParamEditButton {
+                Layout.margins: 8
                 tableParam: parameters.transmissionTemperaturePressureCompensation
                 xLabel: "Temp"
                 valueLabel: "%"

@@ -46,11 +46,11 @@ RowLayout {
         EncodingParamEdit {
             metaParam: parameters.startInhibitRelayType
         }
-        ScalarParamCheckBox {
+        EncodingParamEdit {
             metaParam: parameters.shiftSelectorODCancelAtStartup
-            boxRight: true
         }
         TableParamEditButton {
+            Layout.margins: 8
             tableParam: parameters.shiftSelectorGearVoltages
             xLabel: "Gear"
             valueLabel: "Position"

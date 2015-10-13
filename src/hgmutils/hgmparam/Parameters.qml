@@ -1820,7 +1820,7 @@ QtObject {
     }
 
     property ScalarMetaParam transmissionHasLinePressureSensor: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_main_pressure_sensor_present, true, true, slots.booleanOnOff1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_main_pressure_sensor_present, true, true, slots.booleanYesNo1)
         name: qsTr("Trans Has Line Press Sensor")
     }
 
