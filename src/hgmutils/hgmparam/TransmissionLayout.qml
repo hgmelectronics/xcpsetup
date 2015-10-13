@@ -34,9 +34,6 @@ ColumnLayout {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
             EncodingParamEdit {
-                metaParam: parameters.transmissionType
-            }
-            EncodingParamEdit {
                 metaParam: parameters.transmissionHasAccumulatorControl
             }
             EncodingParamEdit {
