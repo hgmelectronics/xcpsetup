@@ -124,11 +124,11 @@ QVariant VarArrayParam::getSerializableRawValue(bool *allInRange, bool *anyInRan
         bool inRange = slot()->rawInRange(elem);
         allInRangeAccum &= inRange;
         anyInRangeAccum |= inRange;
-        ret.append(slot()->asString(elem));
+        ret.append(elem);
     }
-    for(ScalarMemoryRange *extRange : mExtRanges)
+    for(int i = 0, end = mActualDim.get() - mRange->count(); i < end; ++i)
     {
-        QVariant raw = extRange->value();
+        QVariant raw = mExtRanges[i]->value();
         bool inRange = slot()->rawInRange(raw);
         allInRangeAccum &= inRange;
         anyInRangeAccum |= inRange;
@@ -186,7 +186,7 @@ bool VarArrayParam::setSerializableRawValue(const QVariant &val)
     if(!mRange->setDataRange(list.mid(0, mRange->count()), 0))
         return false;
 
-    for(int i = 0; i < mExtRanges.size(); ++i)
+    for(int i = 0, end = std::min(mExtRanges.size(), list.size() - mRange->count()); i < end; ++i)
         mExtRanges[i]->setValue(list[i + mRange->count()]);
 
     mActualDim = list.size();
