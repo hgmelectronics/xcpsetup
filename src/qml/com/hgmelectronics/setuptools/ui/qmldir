@@ -10,3 +10,5 @@ TableParamEdit 1.0 TableParamEdit.qml
 EncodingTableParamEdit 1.0 EncodingTableParamEdit.qml
 EncodingParamEdit 1.0 EncodingParamEdit.qml
 ScalarListDialog 1.0 ScalarListDialog.qml
+XcpInterfaceChooser 1.0 XcpInterfaceChooser.qml
+BitRateChooser 1.0 BitRateChooser.qml

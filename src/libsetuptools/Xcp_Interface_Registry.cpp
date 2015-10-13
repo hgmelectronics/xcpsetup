@@ -5,24 +5,6 @@ namespace SetupTools {
 namespace Xcp {
 namespace Interface {
 
-Info::Info() {}
-
-Info::Info(QUrl uri, QString text, QObject *parent) :
-    QObject(parent),
-    mUri(uri),
-    mText(text)
-{}
-
-QUrl Info::uri()
-{
-    return mUri;
-}
-
-QString Info::text()
-{
-    return mText;
-}
-
 QList<QUrl> Registry::avail()
 {
     QList<QUrl> ret;
@@ -48,27 +30,104 @@ QString Registry::desc(QUrl uri)
     return ret;
 }
 
-QmlRegistry::QmlRegistry(QObject *parent) : QObject(parent)
+const QHash<int, QByteArray> QmlRegistry::ROLE_NAMES =
+        QHash<int, QByteArray>({
+                                   {Qt::DisplayRole, "display"},
+                                   {Qt::UserRole, "uri"}
+                               });
+
+QmlRegistry::QmlRegistry(QObject *parent) : QAbstractListModel(parent)
 {
-    for(QUrl uri : Registry::avail())
-        mAvail.append(new Info(uri, Registry::desc(uri)));
+    QList<QUrl> newUri = Registry::avail();
+
+    mAvail.reserve(newUri.size());
+
+    for(QUrl uri : newUri)
+        mAvail.append(QPair<QUrl, QString>(uri, Registry::desc(uri)));
 }
 
-QQmlListProperty<SetupTools::Xcp::Interface::Info> QmlRegistry::avail()
+int QmlRegistry::rowCount(const QModelIndex &parent) const
 {
-    return QQmlListProperty<SetupTools::Xcp::Interface::Info>(this, NULL, &listPropCount, &listPropAt);
+    if(parent.isValid())
+        return 0;
+
+    return mAvail.size();
 }
 
-Info *QmlRegistry::listPropAt(QQmlListProperty<SetupTools::Xcp::Interface::Info> *property, int index)
+QVariant QmlRegistry::data(const QModelIndex &index, int role) const
 {
-    QmlRegistry *registry = qobject_cast<QmlRegistry *>(property->object);
-    return registry->mAvail.at(index);
+    if(index.parent().isValid()
+            || index.column() != 0
+            || index.row() < 0
+            || index.row() >= int(mAvail.size()))
+        return QVariant();
+    else if(role == Qt::DisplayRole)
+        return mAvail[index.row()].second;
+    else if(role == Qt::UserRole)
+        return mAvail[index.row()].first;
+    else
+        return QVariant();
 }
 
-int QmlRegistry::listPropCount(QQmlListProperty<SetupTools::Xcp::Interface::Info> *property)
+QHash<int, QByteArray> QmlRegistry::roleNames() const
 {
-    QmlRegistry *registry = qobject_cast<QmlRegistry *>(property->object);
-    return registry->mAvail.size();
+    return ROLE_NAMES;
+}
+
+QString QmlRegistry::text(int index) const
+{
+    if(index < 0 || index >= mAvail.size())
+        return QString();
+    else
+        return mAvail[index].second;
+}
+
+QUrl QmlRegistry::uri(int index) const
+{
+    if(index < 0 || index >= mAvail.size())
+        return QUrl();
+    else
+        return mAvail[index].first;
+}
+
+void QmlRegistry::updateAvail()
+{
+    QList<QUrl> newUris = Registry::avail();
+
+    int newCount = newUris.count();
+    int oldCount = mAvail.size();
+
+    if(newCount == oldCount)
+    {
+        bool equal = true;
+        for(int i = newCount; i < newCount; ++i)
+        {
+            if(newUris[i] != mAvail[i].first)
+            {
+                equal = false;
+                break;
+            }
+        }
+        if(equal)
+            return;
+    }
+
+    if(newCount > oldCount)
+        beginInsertRows(QModelIndex(), oldCount, newCount - 1);
+    else if(newCount < oldCount)
+        beginRemoveRows(QModelIndex(), newCount, oldCount - 1);
+
+    mAvail.clear();
+
+    for(QUrl uri : newUris)
+        mAvail.append(QPair<QUrl, QString>(uri, Registry::desc(uri)));
+
+    if(newCount > oldCount)
+        endInsertRows();
+    else if(newCount < oldCount)
+        endRemoveRows();
+
+    emit dataChanged(index(0), index(newCount - 1), {Qt::DisplayRole, Qt::UserRole});
 }
 
 } // namespace Interface

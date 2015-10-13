@@ -31,7 +31,6 @@ void registerTypes()
     static constexpr int minor = 0;
 
     qmlRegisterType<SetupTools::Xcp::Interface::QmlRegistry>("com.hgmelectronics.setuptools.xcp", major, minor, "InterfaceRegistry");
-    qmlRegisterType<SetupTools::Xcp::Interface::Info>("com.hgmelectronics.setuptools.xcp", major, minor, "InterfaceInfo");
     qmlRegisterType<SetupTools::Xcp::Connection>("com.hgmelectronics.setuptools.xcp", major, minor, "ConnectionState");  // for State enum
     qmlRegisterSingletonType<SetupTools::ProgFile>("com.hgmelectronics.setuptools.xcp", major, minor, "ProgFile", &SetupTools::ProgFile::create);  // for its static functions
     qmlRegisterType<SetupTools::FlashProg>("com.hgmelectronics.setuptools", major, minor, "FlashProg");
