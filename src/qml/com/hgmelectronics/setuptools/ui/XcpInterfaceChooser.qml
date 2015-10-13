@@ -15,7 +15,6 @@ GroupBox {
         id: comboBox
         property string selectedUri
 
-        enabled: !paramLayer.intfcOk
         anchors.fill: parent
         model: registry
         textRole: "display"
@@ -37,10 +36,8 @@ GroupBox {
 
             onPressed: {
                 mouse.accepted = false
-                if(allowUpdate) {
+                if(allowUpdate)
                     registry.updateAvail()
-                    console.log("registry.updateAvail()")
-                }
             }
             onReleased: mouse.accepted = false
             onDoubleClicked: mouse.accepted = false
