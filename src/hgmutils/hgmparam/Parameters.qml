@@ -1882,72 +1882,11 @@ QtObject {
         name: qsTr("Vehicle Speed Sensor Pulses")
     }
 
-    property ScalarMetaParamList transmissionGearNumbers: ScalarMetaParamList {
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 0, false, false, slots.count2)
-            name: qsTr("Internal Gear 0 Number")
+    property TableMetaParam transmissionGearNumbersRatios: TableMetaParam {
+        param: TableParam {
+            x: registry.addVarArrayParam(MemoryRange.S32, paramId.transmission_gears, 3, 8, false, false, slots.gear1)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.transmission_ratios, 3, 8, false, false, slots.ratio1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 1, false, false, slots.count2)
-            name: qsTr("Internal Gear 1 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 2, false, false, slots.count2)
-            name: qsTr("Internal Gear 2 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 3, false, false, slots.count2)
-            name: qsTr("Internal Gear 3 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 4, false, false, slots.count2)
-            name: qsTr("Internal Gear 4 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 5, false, false, slots.count2)
-            name: qsTr("Internal Gear 5 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 6, false, false, slots.count2)
-            name: qsTr("Internal Gear 6 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 7, false, false, slots.count2)
-            name: qsTr("Internal Gear 7 Number")
-        }
-    }
-    property ScalarMetaParamList transmissionGearRatios: ScalarMetaParamList {
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 0, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 0 Ratio")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 1, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 1 Ratio")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 2, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 2 Ratio")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 3, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 3 Ratio")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 4, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 4 Ratio")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 5, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 5 Ratio")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 6, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 6 Ratio")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 7, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 7 Ratio")
-        }
+        name: "Gear Ratios"
     }
 }

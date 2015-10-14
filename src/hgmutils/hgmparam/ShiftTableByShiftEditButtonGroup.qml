@@ -11,8 +11,7 @@ GroupBox {
     property int count: repeater.model
     property var speedTableParams
     property var rpmTableParams
-    property var gearNumberParams
-    property var gearRatioParams
+    property TableParam gearNumberRatioParam
     property bool isDownshift
 
     Row {
@@ -24,10 +23,10 @@ GroupBox {
             ShiftTableParamEditButton {
                 id: tableButton
 
-                function findRatioIndex(numberParams, gearNum) {
-                    for(var i = 0; i < numberParams.length; ++i) {
-                        if(numberParams.params[i].param.floatVal === gearNum)
-                            return i
+                function findRatio(gearNum) {
+                    for(var i = 0; i < groupBox.gearNumberRatioParam.count; ++i) {
+                        if(groupBox.gearNumberRatioParam.x.get(i) === gearNum)
+                            return groupBox.gearNumberRatioParam.value.get(i)
                     }
                     // probably being instantiated before parameters are loaded - return something that at least does not cause an error
                     return 0
@@ -40,8 +39,8 @@ GroupBox {
                 name: qsTr("Shift %1-%2").arg(thisGearName).arg(nextGearName)
                 speedTableParam: groupBox.speedTableParams[index]
                 rpmTableParam: groupBox.rpmTableParams[index]
-                thisGearRatio: gearRatioParams.params[findRatioIndex(gearNumberParams, thisGearNum)]
-                nextGearRatio: gearRatioParams.params[findRatioIndex(gearNumberParams, nextGearNum)]
+                thisGearRatio: findRatio(thisGearNum)
+                nextGearRatio: findRatio(nextGearNum)
             }
         }
     }

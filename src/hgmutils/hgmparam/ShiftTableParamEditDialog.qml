@@ -27,8 +27,8 @@ Window {
     property string nextGearName
     property TableMetaParam speedTableParam
     property TableMetaParam rpmTableParam
-    property ScalarMetaParam thisGearRatio
-    property ScalarMetaParam nextGearRatio
+    property real thisGearRatio
+    property real nextGearRatio
 
     property var speedSlot: speedTableParam.param.value.slot
     property var tpsSlot: speedTableParam.param.x.slot
@@ -40,13 +40,13 @@ Window {
 
     property ScaleOffsetProxyModel beforeRpmModel: ScaleOffsetProxyModel {
         sourceModel: stringModelIfDefined(rpmTableParam.param.value)
-        scale: thisGearRatio.param.floatVal
+        scale: thisGearRatio
         formatSlot: rpmSlot
     }
 
     property ScaleOffsetProxyModel afterRpmModel: ScaleOffsetProxyModel {
         sourceModel: stringModelIfDefined(rpmTableParam.param.value)
-        scale: nextGearRatio.param.floatVal
+        scale: nextGearRatio
         formatSlot: rpmSlot
     }
 

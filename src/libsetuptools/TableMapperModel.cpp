@@ -64,6 +64,35 @@ bool TableMapperModel::tryUpdateMapping()
     int oldRowCount = mRowCount;
     int oldColumnCount = mColumnCount;
 
+    if(oldRowCount != newRowCount
+            && oldColumnCount != newColumnCount
+            && newRowCount > 0
+            && newColumnCount > 0)
+    {
+        // Qt does not seem to like changing both dimensions at the same time
+        // Work around by removing all rows, then changing column dimension to final, then proceeding as normal
+        if(oldRowCount > 0)
+        {
+            beginRemoveRows(QModelIndex(), 0, oldRowCount - 1);
+            mRowCount = 0;
+            endRemoveRows();
+        }
+
+        if(newColumnCount > oldColumnCount)
+            beginInsertColumns(QModelIndex(), oldColumnCount, newColumnCount - 1);
+        else if(newColumnCount < oldColumnCount)
+            beginRemoveColumns(QModelIndex(), newColumnCount, oldColumnCount - 1);
+        mColumnCount = newColumnCount;
+
+        if(newColumnCount > oldColumnCount)
+            endInsertColumns();
+        else if(newColumnCount < oldColumnCount)
+            endRemoveColumns();
+
+        oldRowCount = mRowCount;
+        oldColumnCount = mColumnCount;
+    }
+
     if(newRowCount > oldRowCount)
         beginInsertRows(QModelIndex(), oldRowCount, newRowCount - 1);
     else if(newRowCount < oldRowCount)

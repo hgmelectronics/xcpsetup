@@ -9,6 +9,7 @@ QtObject {
     property var xModel: (typeof x.stringModel !== "undefined") ? x.stringModel : x
     property var valueModel: (typeof value.stringModel !== "undefined") ? value.stringModel : value
     property bool valid: ((typeof x.valid !== "undefined") ? x.valid : true) && ((typeof value.valid !== "undefined") ? value.valid : true)
+    property int count: Math.min(x.count, value.count)
 
     signal downloadDone(OpResult result)
 
