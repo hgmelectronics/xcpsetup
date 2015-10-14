@@ -188,6 +188,14 @@ ColumnLayout {
                 Layout.minimumWidth: 60
             }
         }
+
+        TableParamView {
+            xLabel: "Gear"
+            valueLabel: "Ratio"
+            xColumnWidth: 60
+            valueColumnWidth: 60
+            model: parameters.transmissionGearNumbersRatios.param.stringModel
+        }
     }
 
     ShiftTableByShiftEditButtonGroup {

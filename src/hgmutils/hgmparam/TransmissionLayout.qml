@@ -70,14 +70,19 @@ ColumnLayout {
                 valueLabel: "%"
             }
         }
-    }
 
-    TableParamEditButton {
-        tableParam: parameters.transmissionGearNumbersRatios
-        xLabel: "Gear"
-        valueLabel: "Ratio"
-        hasPlot: false
-        hasShapers: false
+        ColumnLayout {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignTop
+            TableParamEditButton {
+                Layout.margins: 8
+                tableParam: parameters.transmissionGearNumbersRatios
+                xLabel: "Gear"
+                valueLabel: "Ratio"
+                hasPlot: false
+                hasShapers: false
+            }
+        }
     }
 
     TableByClutchEditButtonGroup {
