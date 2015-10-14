@@ -72,6 +72,14 @@ ColumnLayout {
         }
     }
 
+    TableParamEditButton {
+        tableParam: parameters.transmissionGearNumbersRatios
+        xLabel: "Gear"
+        valueLabel: "Ratio"
+        hasPlot: false
+        hasShapers: false
+    }
+
     TableByClutchEditButtonGroup {
         Layout.alignment: Qt.AlignLeft
         title: qsTr("Clutch Fill Time")
