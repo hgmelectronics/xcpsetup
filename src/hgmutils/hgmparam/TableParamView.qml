@@ -3,7 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 
 ColumnLayout {
-    property alias name: label.name
+    property alias name: label.text
     property alias xLabel: xColumn.title
     property alias valueLabel: valueColumn.title
     property alias model: tableView.model
