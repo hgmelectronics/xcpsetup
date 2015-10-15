@@ -16,16 +16,116 @@ RowLayout {
     ColumnLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
+        ScalarParamSpinBox {
+            metaParam: parameters.evTorqueFilterOrder
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.evSpeedFilterOrder
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.evMotorTorqueIdle
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.evMotorTorqueShift
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.evMotorSpeedMax
+        }
+        TableParamEditButton {
+            tableParam: parameters.evTorqueRampDownTime
+            xLabel: "Gear"
+            valueLabel: "Time"
+            hasPlot: false
+            hasShapers: false
+        }
+        TableParamEditButton {
+            tableParam: parameters.evTorqueRampUpTime
+            xLabel: "Gear"
+            valueLabel: "Time"
+            hasPlot: false
+            hasShapers: false
+        }
     }
 
     ColumnLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
+        TableParamEditButton {
+            tableParam: parameters.evMotorTorqueMaxA
+            xLabel: "Gear"
+            valueLabel: "Torque %"
+            hasPlot: false
+            hasShapers: false
+        }
+        TableParamEditButton {
+            tableParam: parameters.evRegenTorqueMaxA
+            xLabel: "Gear"
+            valueLabel: "Torque %"
+            hasPlot: false
+            hasShapers: false
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.evMaxRegenSpeedA
+        }
+        TableParamEditButton {
+            tableParam: parameters.evMotorTorqueMaxB
+            xLabel: "Gear"
+            valueLabel: "Torque %"
+            hasPlot: false
+            hasShapers: false
+        }
+        TableParamEditButton {
+            tableParam: parameters.evRegenTorqueMaxB
+            xLabel: "Gear"
+            valueLabel: "Torque %"
+            hasPlot: false
+            hasShapers: false
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.evMaxRegenSpeedB
+        }
     }
 
 
     ColumnLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
+        ScalarParamSpinBox {
+            metaParam: parameters.ebusShiftSyncTolerance
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.ebusShiftSyncDuration
+        }
+        TableParamEditButton {
+            tableParam: parameters.ebusClutchReleaseTime
+            xLabel: "Clutch"
+            valueLabel: "Time"
+            hasPlot: false
+            hasShapers: false
+        }
+        TableParamEditButton {
+            tableParam: parameters.ebusClutchPrefillTime
+            xLabel: "Clutch"
+            valueLabel: "Time"
+            hasPlot: false
+            hasShapers: false
+        }
+        TableParamEditButton {
+            tableParam: parameters.ebusClutchPrefillPressure
+            xLabel: "Clutch"
+            valueLabel: "Pressure"
+            hasPlot: false
+            hasShapers: false
+        }
+        TableParamEditButton {
+            tableParam: parameters.ebusClutchApplyPressure
+            xLabel: "Clutch"
+            valueLabel: "Pressure"
+            hasPlot: false
+            hasShapers: false
+        }
+        ScalarParamEdit {
+            metaParam: parameters.evJ1939CtlSourceAddress
+        }
     }
 }

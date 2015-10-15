@@ -94,11 +94,11 @@ Item {
             }
         }
 
-//        Tab {
-//            title: qsTr("EV")
-//            EvLayout {
-//                parameters: params
-//            }
-//        }
+        Tab {
+            title: qsTr("EV")
+            EvLayout {
+                parameters: params
+            }
+        }
     }
 }

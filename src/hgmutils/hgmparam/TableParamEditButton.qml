@@ -7,6 +7,7 @@ import com.hgmelectronics.setuptools 1.0
 
 Button {
     id: button
+    Layout.margins: 8
     property alias name: button.text
     property alias tableParam: table.tableParam
     property alias valueLabel: table.valueLabel
