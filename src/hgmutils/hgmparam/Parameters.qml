@@ -1750,7 +1750,7 @@ QtObject {
 
     property ScalarMetaParam vehicleVariation: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.variation, true, true, slots.variationTypes)
-        name: qsTr("Vehicle Variation")
+        name: qsTr("Engine Type")
         resetNeeded: true
     }
 
