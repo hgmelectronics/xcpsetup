@@ -39,9 +39,9 @@ Window {
         return n
     }
 
-    property int desiredHeight: 30 + (stalkingHorse.implicitHeight + 5) * rows
+    property int desiredHeight: 25 + (stalkingHorse.implicitHeight + 5) * rows
     property int columns: paramLists.length
-    maximumWidth: 25 + (stalkingHorse.implicitWidth + 5) * columns + scrollView.width - scrollView.viewport.width
+    maximumWidth: 15 + (stalkingHorse.implicitWidth + 5) * columns + scrollView.width - scrollView.viewport.width
     width: maximumWidth
 
     ScalarParamEdit {

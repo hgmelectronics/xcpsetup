@@ -487,19 +487,23 @@ Qt::ItemFlags VarArrayParamModel::flags(const QModelIndex &index) const
 
 void VarArrayParamModel::onValueParamChanged()
 {
-    emit dataChanged(createIndex(0, 0), createIndex(mParam->count() - 1, 0));
+    if(mPrevCount > 0)
+        emit dataChanged(createIndex(0, 0), createIndex(mPrevCount - 1, 0));
 }
 
 void VarArrayParamModel::onParamDataChanged(quint32 beginChanged, quint32 endChanged)
 {
-    emit dataChanged(createIndex(beginChanged, 0), createIndex(endChanged - 1, 0));   // convert from STL style (end = past-the-end) to Qt model style (end = last one)
+    int clampedBegin = std::max(int(beginChanged), 0);
+    int clampedEnd = std::min(int(endChanged), mPrevCount);
+    if(clampedEnd > clampedBegin && clampedBegin >= 0)
+    emit dataChanged(createIndex(clampedBegin, 0), createIndex(clampedEnd - 1, 0));   // convert from STL style (end = past-the-end) to Qt model style (end = last one)
 }
 
 void VarArrayParamModel::onParamCountChanged()
 {
     if(mParam->count() > mPrevCount)
     {
-        beginInsertRows(QModelIndex(), mPrevCount, mParam->count());
+        beginInsertRows(QModelIndex(), mPrevCount, mParam->count() - 1);
         endInsertRows();
     }
     else if(mParam->count() < mPrevCount)

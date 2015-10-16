@@ -7,9 +7,7 @@
         <file>hgmutils.ico</file>
         <file>Splash.qml</file>
         <file>qmldir</file>
-        <file>BitRateChooser.qml</file>
         <file>HexEntryField.qml</file>
-        <file>InterfaceChooser.qml</file>
         <file>CS2Defaults.qml</file>
         <file>ColumnEditDelegate.qml</file>
     </qresource>

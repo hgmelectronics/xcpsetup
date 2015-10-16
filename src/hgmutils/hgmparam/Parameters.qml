@@ -1750,7 +1750,7 @@ QtObject {
 
     property ScalarMetaParam vehicleVariation: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.variation, true, true, slots.variationTypes)
-        name: qsTr("Vehicle Variation")
+        name: qsTr("Engine Type")
         resetNeeded: true
     }
 
@@ -1820,7 +1820,7 @@ QtObject {
     }
 
     property ScalarMetaParam transmissionHasLinePressureSensor: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_main_pressure_sensor_present, true, true, slots.booleanOnOff1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_main_pressure_sensor_present, true, true, slots.booleanYesNo1)
         name: qsTr("Trans Has Line Press Sensor")
     }
 
@@ -1882,72 +1882,162 @@ QtObject {
         name: qsTr("Vehicle Speed Sensor Pulses")
     }
 
-    property ScalarMetaParamList transmissionGearNumbers: ScalarMetaParamList {
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 0, false, false, slots.count2)
-            name: qsTr("Internal Gear 0 Number")
+    property TableMetaParam transmissionGearNumbersRatios: TableMetaParam {
+        param: TableParam {
+            x: registry.addVarArrayParam(MemoryRange.S32, paramId.transmission_gears, 3, 8, false, false, slots.gear1)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.transmission_ratios, 3, 8, false, false, slots.ratio1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 1, false, false, slots.count2)
-            name: qsTr("Internal Gear 1 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 2, false, false, slots.count2)
-            name: qsTr("Internal Gear 2 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 3, false, false, slots.count2)
-            name: qsTr("Internal Gear 3 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 4, false, false, slots.count2)
-            name: qsTr("Internal Gear 4 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 5, false, false, slots.count2)
-            name: qsTr("Internal Gear 5 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 6, false, false, slots.count2)
-            name: qsTr("Internal Gear 6 Number")
-        }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_gears + 7, false, false, slots.count2)
-            name: qsTr("Internal Gear 7 Number")
-        }
+        name: qsTr("Gear Ratios")
     }
-    property ScalarMetaParamList transmissionGearRatios: ScalarMetaParamList {
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 0, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 0 Ratio")
+
+    property ScalarMetaParam evTorqueFilterOrder: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_torque_filter_order, true, true, slots.timeMilliseconds1)
+        name: qsTr("Torque Filter Length")
+    }
+    property ScalarMetaParam evSpeedFilterOrder: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_speed_filter_order, true, true, slots.timeMilliseconds1)
+        name: qsTr("Speed Filter Length")
+    }
+    property ScalarMetaParam evMotorTorqueIdle: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_motor_torque_idle, true, true, slots.percentage1)
+        name: qsTr("Motor Torque Idle")
+    }
+    property ScalarMetaParam evMotorTorqueShift: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_motor_torque_shift, true, true, slots.percentage1)
+        name: qsTr("Motor Torque Shift")
+    }
+    property ScalarMetaParam evMotorSpeedMax: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_motor_speed_max, true, true, slots.rpm1)
+        name: qsTr("Max Motor Speed")
+    }
+    property TableMetaParam evTorqueRampDownTime: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: evTorqueRampDownTime.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_torque_ramp_down_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 1, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 1 Ratio")
+        name: qsTr("Torque Ramp Down Time")
+    }
+    property TableMetaParam evTorqueRampUpTime: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: evTorqueRampUpTime.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_torque_ramp_up_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 2, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 2 Ratio")
+        name: qsTr("Torque Ramp Up Time")
+    }
+    property TableMetaParam evMotorTorqueMaxA: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: evMotorTorqueMaxA.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_motor_torque_max_a, 1, 8, true, true, slots.percentage1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 3, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 3 Ratio")
+        name: qsTr("Max Motoring Torque A")
+    }
+    property TableMetaParam evRegenTorqueMaxA: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: evRegenTorqueMaxA.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_regen_torque_max_a, 1, 8, true, true, slots.percentage1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 4, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 4 Ratio")
+        name: qsTr("Max Regen Torque A")
+    }
+    property ScalarMetaParam evMaxRegenSpeedA: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_max_regen_speed_a, true, true, slots.tossRPMAsSpeed)
+        name: qsTr("Full Regen Speed A")
+    }
+    property TableMetaParam evMotorTorqueMaxB: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: evMotorTorqueMaxB.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_motor_torque_max_b, 1, 8, true, true, slots.percentage1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 5, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 5 Ratio")
+        name: qsTr("Max Motoring Torque B")
+    }
+    property TableMetaParam evRegenTorqueMaxB: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: evRegenTorqueMaxB.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_regen_torque_max_b, 1, 8, true, true, slots.percentage1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 6, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 6 Ratio")
+        name: qsTr("Max Regen Torque B")
+    }
+    property ScalarMetaParam evMaxRegenSpeedB: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_max_regen_speed_b, true, true, slots.tossRPMAsSpeed)
+        name: qsTr("Full Regen Speed B")
+    }
+    property ScalarMetaParam ebusShiftSyncTolerance: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ebus_shift_synchronization_tolerance, true, true, slots.rpm1)
+        name: qsTr("Shift Sync Tolerance")
+    }
+    property ScalarMetaParam ebusShiftSyncDuration: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ebus_shift_synchronization_duration, true, true, slots.timeMilliseconds1)
+        name: qsTr("Shift Sync Duration")
+    }
+    property TableMetaParam ebusClutchReleaseTime: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: ebusClutchReleaseTime.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_release_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
-        ScalarMetaParam {
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ratios + 7, false, false, slots.ratio1)
-            name: qsTr("Internal Gear 7 Ratio")
+        name: qsTr("Clutch Release Time")
+    }
+    property TableMetaParam ebusClutchPrefillTime: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: ebusClutchPrefillTime.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_prefill_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
+        name: qsTr("Clutch Prefill Time")
+    }
+    property TableMetaParam ebusClutchPrefillPressure: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: ebusClutchPrefillPressure.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_prefill_pressure, 1, 8, true, true, slots.pressure)
+        }
+        name: qsTr("Clutch Prefill Pressure")
+    }
+    property TableMetaParam ebusClutchApplyPressure: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: ebusClutchApplyPressure.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_apply_pressure, 1, 8, true, true, slots.pressure)
+        }
+        name: qsTr("Clutch Apply Pressure")
+    }
+    property ScalarMetaParam evJ1939CtlSourceAddress: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_j1939_ctl_source_address, true, true, slots.hex32bit)
+        name: qsTr("J1939 CTL Source Address")
     }
 }

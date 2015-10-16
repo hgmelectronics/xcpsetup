@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.2
 import Qt.labs.settings 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 import com.hgmelectronics.utils 1.0
 
 ApplicationWindow {
@@ -45,10 +46,22 @@ ApplicationWindow {
         addrGran: 4
         slaveTimeout: 100
         slaveNvWriteTimeout: 200
-        onConnectSlaveDone: forceSlaveSupportCalPage()
+        onConnectSlaveDone: {
+            ParamResetNeeded.set = false
+            forceSlaveSupportCalPage()
+        }
+        onDisconnectSlaveDone: {
+            ParamResetNeeded.set = false
+        }
         onDownloadDone: {
             if(saveParametersOnWrite)
                 nvWrite()
+        }
+        onNvWriteDone: {
+            if(ParamResetNeeded.set) {
+                disconnectSlave()
+                resetNeededDialog.open()
+            }
         }
     }
 
@@ -85,6 +98,13 @@ ApplicationWindow {
                 saveParamFile()
             }
         }
+    }
+
+    MessageDialog {
+        id: resetNeededDialog
+        title: "Reset Needed"
+        text: "The CS2 needs to be restarted to apply the new settings. Please cycle power and then reconnect."
+        standardButtons: StandardButton.Ok
     }
 
     function saveParamFile() {
@@ -346,7 +366,7 @@ ApplicationWindow {
             Layout.rightMargin: 5
             spacing: 0
 
-            InterfaceChooser {
+            XcpInterfaceChooser {
                 id: interfaceChooser
                 Layout.fillWidth: true
                 enabled: !paramLayer.intfcOk

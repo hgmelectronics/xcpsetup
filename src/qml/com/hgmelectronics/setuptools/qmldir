@@ -4,3 +4,4 @@ TableParam 1.0 TableParam.qml
 ScalarMetaParam 1.0 ScalarMetaParam.qml
 TableMetaParam 1.0 TableMetaParam.qml
 ScalarMetaParamList 1.0 ScalarMetaParamList.qml
+singleton ParamResetNeeded 1.0 ParamResetNeeded.qml

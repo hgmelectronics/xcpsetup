@@ -11,12 +11,16 @@ GroupBox {
     property ScalarParam param: metaParam.param
     enabled: param.valid
     title: name
+    implicitWidth: Math.max(sizeHint.implicitWidth + 16, combo.implicitWidth + label.implicitWidth + 16)
+    width: implicitWidth
 
     RowLayout {
         id: row
         ComboBox {
             id: combo
             model: param.slot.encodingStringList
+            property int maxEncodingStringWidth
+            implicitWidth: Math.max(maxEncodingStringWidth + 40, 150)
             editable: true
             onActivated: {
                 if (index == -1)
@@ -28,10 +32,33 @@ GroupBox {
                 param.stringVal = editText
             }
             validator: param.slot.validator
+            function calcMaxEncodingStringWidth() {
+                var maxWidth = 0
+                for(var i = 0; i < model.length; ++i) {
+                    comboSizeHint.text = model[i]
+                    maxWidth = Math.max(maxWidth, comboSizeHint.implicitWidth)
+                }
+                maxEncodingStringWidth = maxWidth
+            }
+
+            Component.onCompleted: calcMaxEncodingStringWidth()
+            onModelChanged: calcMaxEncodingStringWidth()
+        }
+
+        Text {
+            id: comboSizeHint
+            visible: false
         }
 
         Label {
+            id: label
             text: param.slot.unit
+        }
+
+        Text {
+            id: sizeHint
+            visible: false
+            text: name
         }
     }
 

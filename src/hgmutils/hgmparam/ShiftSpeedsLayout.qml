@@ -188,14 +188,21 @@ ColumnLayout {
                 Layout.minimumWidth: 60
             }
         }
+
+        TableParamView {
+            xLabel: "Gear"
+            valueLabel: "Ratio"
+            xColumnWidth: 60
+            valueColumnWidth: 60
+            model: parameters.transmissionGearNumbersRatios.param.stringModel
+        }
     }
 
     ShiftTableByShiftEditButtonGroup {
         title: qsTr("Shift Tables A")
         speedTableParams: parameters.shiftTablesA
         rpmTableParams: parameters.rpmShiftTablesA
-        gearNumberParams: parameters.transmissionGearNumbers
-        gearRatioParams: parameters.transmissionGearRatios
+        gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
         Layout.minimumHeight: 40
     }
 
@@ -203,12 +210,11 @@ ColumnLayout {
         title: qsTr("Shift Tables B")
         speedTableParams: parameters.shiftTablesB
         rpmTableParams: parameters.rpmShiftTablesB
-        gearNumberParams: parameters.transmissionGearNumbers
-        gearRatioParams: parameters.transmissionGearRatios
+        gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
         Layout.minimumHeight: 40
     }
 
-    Row {
+    RowLayout {
         spacing: 5
         ScalarParamSpinBox {
             metaParam: parameters.shiftSpeedAdjustA
@@ -219,14 +225,13 @@ ColumnLayout {
         ScalarParamSpinBox {
             metaParam: parameters.shiftMaxEngineSpeedA
         }
-        ScalarParamCheckBox {
-            Layout.alignment: Qt.AlignVCenter
+        EncodingParamEdit {
             metaParam: parameters.shiftManualModeA
         }
 
         Layout.minimumHeight: 40
     }
-    Row {
+    RowLayout {
         spacing: 5
         ScalarParamSpinBox {
             metaParam: parameters.shiftSpeedAdjustB
@@ -237,8 +242,7 @@ ColumnLayout {
         ScalarParamSpinBox {
             metaParam: parameters.shiftMaxEngineSpeedB
         }
-        ScalarParamCheckBox {
-            Layout.alignment: Qt.AlignVCenter
+        EncodingParamEdit {
             metaParam: parameters.shiftManualModeB
         }
 

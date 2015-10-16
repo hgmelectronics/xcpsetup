@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.2
 import com.hgmelectronics.utils.cs2tool 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 import com.hgmelectronics.utils 1.0
 
 ApplicationWindow {
@@ -93,10 +94,10 @@ ApplicationWindow {
         text: qsTr("Open")
         enabled: !cs2Tool.intfcOk
         onTriggered: {
-            if (intfcComboBox.selectedUri !== "") {
-                application.intfcUri = intfcComboBox.selectedUri.replace(
+            if (interfaceChooser.uri !== "") {
+                application.intfcUri = interfaceChooser.uri.replace(
                             /bitrate=[0-9]*/,
-                            "bitrate=%1".arg(bitrateComboBox.bps))
+                            "bitrate=%1".arg(bitRateChooser.bps))
             }
         }
     }
@@ -158,70 +159,44 @@ ApplicationWindow {
             id: registry
         }
 
-        GroupBox {
-            title: qsTr("Interface")
+        ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
-            ColumnLayout {
-                anchors.fill: parent
 
-                RowLayout {
-                    id: intfcConfigRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: 5
-                    ComboBox {
-                        id: intfcComboBox
-                        property string selectedUri
-                        model: registry.avail
-                        textRole: "text"
-                        visible: true
-                        Layout.fillWidth: true
-                        selectedUri: (count > 0
-                                      && currentIndex < count) ? model[currentIndex].uri : ""
-                    }
-
-                    ComboBox {
-                        property int bps
-                        id: bitrateComboBox
-                        editable: true
-                        implicitWidth: 80
-                        model: ["125", "250", "500", "1000"]
-                        validator: IntValidator {
-                            bottom: 10
-                            top: 1000
-                        }
-                        onCurrentIndexChanged: {
-                            if (currentIndex >= 0)
-                                bps = parseFloat(model[currentIndex]) * 1000
-                        }
-                        onAccepted: {
-                            bps = parseFloat(editText) * 1000
-                        }
-                        Component.onCompleted: {
-                            currentIndex = find("500")
-                        }
-                    }
-
-                    Label {
-                        text: qsTr("kbps")
-                    }
+            RowLayout {
+                id: intfcConfigRow
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: 5
+                XcpInterfaceChooser {
+                    id: interfaceChooser
+                    Layout.fillWidth: true
+                    enabled: !cs2Tool.intfcOk
+                }
+                BitRateChooser {
+                    id: bitRateChooser
+                    width: 100
+                    enabled: !cs2Tool.intfcOk
                 }
 
-                RowLayout {
-                    id: intfcActionRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    Button {
-                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                        Layout.fillWidth: true
-                        action: intfcOpenAction
-                    }
-                    Button {
-                        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-                        Layout.fillWidth: true
-                        action: intfcCloseAction
-                    }
+                Label {
+                    text: qsTr("kbps")
+                }
+            }
+
+            RowLayout {
+                id: intfcActionRow
+                anchors.left: parent.left
+                anchors.right: parent.right
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    action: intfcOpenAction
+                }
+                Button {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    action: intfcCloseAction
                 }
             }
         }

@@ -23,30 +23,34 @@ ColumnLayout {
             EncodingParamEdit {
                 metaParam: parameters.transmissionType
             }
-            ScalarParamCheckBox {
-                metaParam: parameters.transmissionTempBiasEnable
-            }
-            ScalarParamCheckBox {
+            EncodingParamEdit {
                 metaParam: parameters.transmissionHasLinePressureSensor
             }
-            ScalarParamCheckBox {
+            EncodingParamEdit {
                 metaParam: parameters.transmissionHasLinePressureControl
             }
-            ScalarParamCheckBox {
+        }
+        ColumnLayout {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignTop
+            EncodingParamEdit {
                 metaParam: parameters.transmissionHasAccumulatorControl
             }
-            ScalarParamCheckBox {
+            EncodingParamEdit {
                 metaParam: parameters.transmissionHasPWMTCC
+            }
+            EncodingParamEdit {
+                metaParam: parameters.transmissionTempBiasEnable
             }
         }
 
         ColumnLayout {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
-            ScalarParamEdit {
+            ScalarParamSpinBox {
                 metaParam: parameters.transmissionTurbineShaftSpeedSensorPulseCount
             }
-            ScalarParamEdit {
+            ScalarParamSpinBox {
                 metaParam: parameters.transmissionInputShaftSpeedSensorPulseCount
             }
             ScalarListDialog {
@@ -56,8 +60,15 @@ ColumnLayout {
                 ]
             }
             Button {
+                Layout.margins: 8
                 text: "Other Shaft Speed Sensors"
                 onClicked: transShaftSpeedSensorDialog.visible = true
+            }
+            TableParamEditButton {
+                Layout.margins: 8
+                tableParam: parameters.transmissionTemperaturePressureCompensation
+                xLabel: "Temp"
+                valueLabel: "%"
             }
         }
 
@@ -65,9 +76,12 @@ ColumnLayout {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
             TableParamEditButton {
-                tableParam: parameters.transmissionTemperaturePressureCompensation
-                xLabel: "Temp"
-                valueLabel: "%"
+                Layout.margins: 8
+                tableParam: parameters.transmissionGearNumbersRatios
+                xLabel: "Gear"
+                valueLabel: "Ratio"
+                hasPlot: false
+                hasShapers: false
             }
         }
     }

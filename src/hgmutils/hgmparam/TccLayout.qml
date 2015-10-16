@@ -33,7 +33,7 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.tccMinThrottleA
         }
-        ScalarParamCheckBox {
+        EncodingParamEdit {
             metaParam: parameters.tccManualModeA
         }
     }
@@ -58,7 +58,7 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.tccMinThrottleB
         }
-        ScalarParamCheckBox {
+        EncodingParamEdit {
             metaParam: parameters.tccManualModeB
         }
     }
