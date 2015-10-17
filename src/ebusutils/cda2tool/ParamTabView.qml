@@ -215,10 +215,21 @@ Item {
                             font.bold: true
                         }
                         TablePlot {
+                            id: cellVoltPlot
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+                            chartOptions: ({
+                                pointDot: false,
+                                bezierCurve: false,
+                                xScaleOverride: true,
+                                xScaleSteps: cellVoltTrace.valueList.length / 8,
+                                xScaleStepWidth: 8,
+                                xScaleStartValue: 0
+                            })
+
                             plots: [
                                 XYTrace {
+                                    id: cellVoltTrace
                                     tableModel: parameters.cbtmCellVolt.stringModel
                                     valid: parameters.cbtmCellVolt.value.valid
                                 }
@@ -232,8 +243,17 @@ Item {
                         TablePlot {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+                            chartOptions: ({
+                                pointDot: false,
+                                bezierCurve: false,
+                                xScaleOverride: true,
+                                xScaleSteps: tabTempTrace.valueList.length / 9,
+                                xScaleStepWidth: 9,
+                                xScaleStartValue: 0
+                            })
                             plots: [
                                 XYTrace {
+                                    id: tabTempTrace
                                     tableModel: parameters.cbtmTabTemp.stringModel
                                     valid: parameters.cbtmTabTemp.value.valid
                                 }
