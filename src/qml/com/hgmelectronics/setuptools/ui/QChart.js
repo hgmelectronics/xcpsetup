@@ -251,10 +251,14 @@ var Chart = function(canvas, context) {
 
         chart.Scatter.defaults = {
             scaleOverlay: false,
-            scaleOverride: false,
-            scaleSteps: null,
-            scaleStepWidth: null,
-            scaleStartValue: null,
+            xScaleOverride: false,
+            xScaleSteps: null,
+            xScaleStepWidth: null,
+            xScaleStartValue: null,
+            yScaleOverride: false,
+            yScaleSteps: null,
+            yScaleStepWidth: null,
+            yScaleStartValue: null,
             scaleLineColor: "rgba(0,0,0,.1)",
             scaleLineWidth: 1,
             scaleShowLabels: true,
@@ -1387,6 +1391,7 @@ var Chart = function(canvas, context) {
                     labels: []
                 }
                 populateLabels(labelTemplateString, calculatedXScale.labels, calculatedXScale.steps, config.xScaleStartValue, config.xScaleStepWidth);
+                widestXLabel = calculateWidestLabel(calculatedXScale.labels)
             }
             calculateXAxisSize();   // sets xAxisLength, xScaleHop, yAxisPosX, xAxisPosY
         }

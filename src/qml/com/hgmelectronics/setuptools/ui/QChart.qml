@@ -86,6 +86,11 @@ Canvas {
       requestPaint();
   }
 
+  onChartOptionsChanged: {
+      chart = false
+      requestPaint()
+  }
+
   onChartDataChanged: {
       chart = false
       requestPaint()
