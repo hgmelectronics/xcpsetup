@@ -11,6 +11,7 @@
 namespace SetupTools {
 namespace Xcp {
 
+class ParamRegistry;
 class VarArrayParamModel;
 
 class VarArrayParam : public SetupTools::Xcp::Param
@@ -30,7 +31,7 @@ class VarArrayParam : public SetupTools::Xcp::Param
 
 public:
     VarArrayParam(QObject *parent = nullptr);
-    VarArrayParam(ArrayMemoryRange *range, QList<ScalarMemoryRange *> extRanges, Slot *slot, QObject *parent = nullptr);
+    VarArrayParam(ArrayMemoryRange *range, QList<ScalarMemoryRange *> extRanges, Slot *slot, ParamRegistry *registry);
 
     // gets the value in enginering units
     Q_INVOKABLE QVariant get(int row) const;

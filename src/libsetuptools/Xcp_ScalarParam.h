@@ -10,6 +10,8 @@ namespace SetupTools {
 
 namespace Xcp {
 
+class ParamRegistry;
+
 class ScalarParam : public Param
 {
     Q_OBJECT
@@ -20,7 +22,7 @@ class ScalarParam : public Param
 
 public:
     ScalarParam(QObject *parent = nullptr);
-    ScalarParam(ScalarMemoryRange *range, Slot *slot, QObject *parent = nullptr);
+    ScalarParam(ScalarMemoryRange *range, Slot *slot, ParamRegistry *registry);
 
     double floatVal() const;
     void setFloatVal(double);

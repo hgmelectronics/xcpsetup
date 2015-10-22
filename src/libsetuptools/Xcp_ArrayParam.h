@@ -10,6 +10,7 @@ namespace SetupTools {
 namespace Xcp {
 
 class ArrayParamModel;
+class ParamRegistry;
 
 class ArrayParam : public SetupTools::Xcp::Param
 {
@@ -25,7 +26,7 @@ class ArrayParam : public SetupTools::Xcp::Param
 
 public:
     ArrayParam(QObject *parent = nullptr);
-    ArrayParam(ArrayMemoryRange* range, Slot* slot, QObject *parent = nullptr);
+    ArrayParam(ArrayMemoryRange* range, Slot* slot, ParamRegistry *parent);
 
     // gets the value in enginering units
     Q_INVOKABLE QVariant get(int row) const;

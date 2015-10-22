@@ -10,7 +10,7 @@ ScalarParam::ScalarParam(QObject *parent) :
 {
 }
 
-ScalarParam::ScalarParam(ScalarMemoryRange *range, Slot *slot, QObject *parent) :
+ScalarParam::ScalarParam(ScalarMemoryRange *range, Slot *slot, ParamRegistry *parent) :
     Param(range, slot, parent),
     mRange(range)
 {

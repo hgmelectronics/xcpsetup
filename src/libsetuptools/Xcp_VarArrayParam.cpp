@@ -1,4 +1,5 @@
 #include "Xcp_VarArrayParam.h"
+#include "Xcp_ParamRegistry.h"
 
 namespace SetupTools {
 namespace Xcp {
@@ -21,7 +22,7 @@ QList<Tto> QListCast(const QList<Tfrom> &from)
     return to;
 }
 
-VarArrayParam::VarArrayParam(ArrayMemoryRange *range, QList<ScalarMemoryRange *> extRanges, Slot *slot, QObject *parent) :
+VarArrayParam::VarArrayParam(ArrayMemoryRange *range, QList<ScalarMemoryRange *> extRanges, Slot *slot, ParamRegistry *parent) :
     Param(range, QListCast<MemoryRange *>(extRanges), false, slot, parent),
     mRange(range),
     mExtRanges(extRanges),

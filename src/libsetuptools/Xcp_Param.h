@@ -10,6 +10,8 @@
 namespace SetupTools {
 namespace Xcp {
 
+class ParamRegistry;
+
 class Param : public QObject
 {
     Q_OBJECT
@@ -22,8 +24,8 @@ class Param : public QObject
 
 public:
     explicit Param(QObject *parent = nullptr);
-    explicit Param(MemoryRange *baseRange, Slot* slot, QObject *parent = nullptr);
-    explicit Param(MemoryRange *baseRange, QList<MemoryRange *> extRanges, bool requireExtRangesValid, Slot* slot, QObject *parent = nullptr);
+    explicit Param(MemoryRange *baseRange, Slot* slot, ParamRegistry *parent);
+    explicit Param(MemoryRange *baseRange, QList<MemoryRange *> extRanges, bool requireExtRangesValid, Slot* slot, ParamRegistry *parent);
 
     void setSaveable(bool newSaveable);
     void setKey(QString newKey);

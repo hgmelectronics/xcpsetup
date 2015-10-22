@@ -13,7 +13,7 @@ ArrayParam::ArrayParam(QObject *parent) :
 
 }
 
-ArrayParam::ArrayParam(ArrayMemoryRange* range, Slot* slot, QObject* parent) :
+ArrayParam::ArrayParam(ArrayMemoryRange* range, Slot* slot, ParamRegistry* parent) :
     Param(range, slot, parent),
     mRange(range),
     mStringModel(new ArrayParamModel(true, false, this)),

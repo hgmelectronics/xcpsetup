@@ -1,4 +1,5 @@
 #include "Xcp_Param.h"
+#include "Xcp_ParamRegistry.h"
 
 namespace SetupTools {
 namespace Xcp {
@@ -17,7 +18,7 @@ Param::Param(QObject *parent) :
 
 }
 
-Param::Param(MemoryRange *baseRange, Slot *slot, QObject *parent) :
+Param::Param(MemoryRange *baseRange, Slot *slot, ParamRegistry *parent) :
     QObject(parent),
     saveable(false),
     mBaseRange(baseRange),
@@ -33,7 +34,7 @@ Param::Param(MemoryRange *baseRange, Slot *slot, QObject *parent) :
     connect(mBaseRange, &MemoryRange::writeCacheDirtyChanged, this, &Param::onRangeWriteCacheDirtyChanged);
 }
 
-Param::Param(MemoryRange *baseRange, QList<MemoryRange *> extRanges, bool requireExtRangesValid, Slot *slot, QObject *parent) :
+Param::Param(MemoryRange *baseRange, QList<MemoryRange *> extRanges, bool requireExtRangesValid, Slot *slot, ParamRegistry *parent) :
     QObject(parent),
     saveable(false),
     mBaseRange(baseRange),
