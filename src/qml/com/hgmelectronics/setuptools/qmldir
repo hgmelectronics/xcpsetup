@@ -5,3 +5,4 @@ ScalarMetaParam 1.0 ScalarMetaParam.qml
 TableMetaParam 1.0 TableMetaParam.qml
 ScalarMetaParamList 1.0 ScalarMetaParamList.qml
 singleton ParamResetNeeded 1.0 ParamResetNeeded.qml
+singleton AutoRefreshSelector 1.0 AutoRefreshSelector.qml

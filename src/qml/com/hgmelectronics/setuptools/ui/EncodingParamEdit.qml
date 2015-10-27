@@ -6,8 +6,11 @@ import com.hgmelectronics.setuptools 1.0
 
 GroupBox {
     id: groupBox
+
     property ScalarMetaParam metaParam
     property string name: metaParam.name
+    property bool enableAutoRefreshOverlay: true
+
     property ScalarParam param: metaParam.param
     enabled: param.valid
     title: name
@@ -74,4 +77,10 @@ GroupBox {
     }
 
     Component.onCompleted: updateCombo()
+
+    AutoRefreshOverlay {
+        key: param.key
+        visible: enableAutoRefreshOverlay
+        enabled: enableAutoRefreshOverlay
+    }
 }

@@ -12,6 +12,7 @@ Rectangle {
     property alias tableView: tableView
     width: tableView.implicitWidth
     height: tableView.implicitHeight
+    property bool enableAutoRefreshOverlay: true
 
     Component {
         id: valueEditDelegate
@@ -75,4 +76,10 @@ Rectangle {
             title: valueLabel
         }
     }
+
+//    AutoRefreshOverlay {
+//        key: param.key
+//        visible: enableAutoRefreshOverlay
+//        enabled: enableAutoRefreshOverlay
+//    }
 }

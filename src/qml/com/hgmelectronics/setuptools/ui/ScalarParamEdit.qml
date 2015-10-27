@@ -6,10 +6,13 @@ import com.hgmelectronics.setuptools 1.0
 
 GroupBox {
     id: groupBox
-    enabled: param.valid
-    property alias horizontalAlignment: textField.horizontalAlignment
+
     property ScalarMetaParam metaParam
     property string name: metaParam.name
+    property alias horizontalAlignment: textField.horizontalAlignment
+    property bool enableAutoRefreshOverlay: true
+
+    enabled: param.valid
     property ScalarParam param: metaParam.param
     title: name
     implicitWidth: Math.max(sizeHint.implicitWidth + 16, textField.implicitWidth + label.implicitWidth + 16)
@@ -38,5 +41,10 @@ GroupBox {
             visible: false
             text: name
         }
+    }
+    AutoRefreshOverlay {
+        key: param.key
+        visible: enableAutoRefreshOverlay
+        enabled: enableAutoRefreshOverlay
     }
 }

@@ -180,6 +180,13 @@ ApplicationWindow {
         }
     }
 
+    Action {
+        id: autoRefreshSelectModeAction
+        text: qsTr("Auto-Refresh Select Mode")
+        checkable: true
+        onToggled: AutoRefreshSelector.selectMode = checked
+    }
+
     ExclusiveGroup {
         id: useUnitsGroup
         Action {
@@ -294,6 +301,12 @@ ApplicationWindow {
         onTriggered: paramLayer.registry.setValidAll(false)
     }
 
+    Action {
+        id: dumpAutoRefreshAction
+        text: qsTr("Dump Auto-Refresh")
+        onTriggered: console.log(JSON.stringify(AutoRefreshSelector.keys))
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -320,6 +333,12 @@ ApplicationWindow {
             }
             MenuItem {
                 action: disableAllParametersAction
+            }
+            MenuItem {
+                action: autoRefreshSelectModeAction
+            }
+            MenuItem {
+                action: dumpAutoRefreshAction
             }
         }
 
