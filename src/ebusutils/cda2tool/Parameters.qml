@@ -53,8 +53,8 @@ QtObject {
 
     readonly property ScalarParam canAuxBattCnvtCmdOn: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtCmdOn, false, false, slots.bool01)
     readonly property ScalarParam canAuxBattCnvtCmdVolt: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtCmdVolt, false, false, slots.voltage1)
-    readonly property ScalarParam canCtlMaxMotoringTorque: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxMotoringTorque, false, false, slots.saePc05)
-    readonly property ScalarParam canCtlMaxRegenTorque: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxRegenTorque, false, false, slots.saePc05)
+    readonly property ScalarParam canCtlMaxMotoringTorque: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxMotoringTorque, false, false, slots.saePc06Ext)
+    readonly property ScalarParam canCtlMaxRegenTorque: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxRegenTorque, false, false, slots.saePc06Ext)
     readonly property ScalarParam canTracMotorSpeed: registry.addScalarParam(MemoryRange.S32, paramId.canTracMotorSpeed, false, false, slots.saeVr01)
     readonly property ScalarParam canLimpHomeCmdOn: registry.addScalarParam(MemoryRange.S32, paramId.canLimpHomeCmdOn, false, false, slots.bool01)
     readonly property ScalarParam canBattMaxDischCurrCmd: registry.addScalarParam(MemoryRange.S32, paramId.canBattMaxDischCurrCmd, false, false, slots.current1)
