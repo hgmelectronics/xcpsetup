@@ -1,10 +1,11 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 
-Row {
+RowLayout {
     id: root
 
     property ScalarMetaParam metaParam
@@ -24,12 +25,15 @@ Row {
         visible: indicatorRight
     }
 
-    StatusIndicator {
-        id: indicator
+    Rectangle {
         height: leftLabel.implicitHeight
         width: leftLabel.implicitHeight
-        active: (param.floatVal & bitMask)
-        enabled: param.valid
+        StatusIndicator {
+            id: indicator
+            anchors.fill: parent
+            active: (param.floatVal & bitMask)
+            enabled: param.valid
+        }
     }
 
     Label {
