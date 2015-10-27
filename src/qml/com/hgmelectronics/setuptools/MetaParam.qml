@@ -5,4 +5,5 @@ QtObject {
     property string description: name
     property bool resetNeeded: false
     property bool immediateWrite: false
+    property bool isLiveData: false
 }

@@ -2,6 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 Rectangle {
     id: root
@@ -12,7 +13,7 @@ Rectangle {
     property alias tableView: tableView
     width: tableView.implicitWidth
     height: tableView.implicitHeight
-    property bool enableAutoRefreshOverlay: true
+    property bool enableAutoRefreshOverlay: false // FIXME tableMetaParam.isLiveData
 
     Component {
         id: valueEditDelegate

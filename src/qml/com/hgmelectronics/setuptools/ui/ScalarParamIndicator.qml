@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 RowLayout {
     id: root
@@ -13,7 +14,7 @@ RowLayout {
     property double bitMask: 0x00000001
     property alias color: indicator.color
     property bool indicatorRight: false
-    property bool enableAutoRefreshOverlay: true
+    property bool enableAutoRefreshOverlay: metaParam.isLiveData
 
     property ScalarParam param: metaParam.param
     spacing: 10

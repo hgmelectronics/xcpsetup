@@ -24,17 +24,38 @@ Rectangle {
         onPositionChanged: mouse.accepted = false
         onPressAndHold: mouse.accepted = false
         onClicked: {
-            if(AutoRefreshSelector.selectMode) {
+            if(AutoRefreshSelector.selectMode)
                 AutoRefreshSelector.toggleKey(key)
-                console.log(AutoRefreshSelector.keys)
-            }
             else
                 mouse.accepted = false
         }
     }
-    Connections {
-        target: AutoRefreshSelector
-        onKeyChange: selected = AutoRefreshSelector.keySelected(key)
+
+    function setSelected(on) {
+        if(!enabled) {
+            if(on)
+                AutoRefreshSelector.addKey(key)
+            else
+                AutoRefreshSelector.removeKey(key)
+        }
+    }
+
+    function selectedFromSelector() {
+        selected = AutoRefreshSelector.keySelected(key)
+    }
+    function updateSelectorConnection() {
+        if(enabled)
+            AutoRefreshSelector.keyChange.connect(selectedFromSelector)
+        else
+            AutoRefreshSelector.keyChange.disconnect(selectedFromSelector)
+    }
+
+    Component.onCompleted: updateSelectorConnection()
+
+    onEnabledChanged: {
+        updateSelectorConnection()
+        if(!enabled)
+            AutoRefreshSelector.removeKey(key)
     }
 }
 

@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 RowLayout {
     id: root
@@ -13,7 +14,7 @@ RowLayout {
     property bool boxRight: false
     property alias textTop: leftLabel.top
     property int textTopMargin: leftLabel.y - root.y
-    property bool enableAutoRefreshOverlay: true
+    property bool enableAutoRefreshOverlay: metaParam.isLiveData
 
     property ScalarParam param: metaParam.param
     implicitWidth: checkBox.implicitWidth + rightLabel.implicitWidth + spacing
