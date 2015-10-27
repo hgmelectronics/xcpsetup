@@ -30,6 +30,13 @@ QUrl ParamLayer::intfcUri()
 void ParamLayer::setIntfcUri(QUrl uri)
 {
     mConn->setIntfcUri(uri);
+    if(mConn->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mConn->intfc()->setPacketLog(true);
+        else
+            mConn->intfc()->setPacketLog(false);
+    }
     emit intfcChanged();
 }
 
@@ -41,6 +48,13 @@ Interface::Interface *ParamLayer::intfc()
 void ParamLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
     mConn->setIntfc(intfc, uri);
+    if(mConn->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mConn->intfc()->setPacketLog(true);
+        else
+            mConn->intfc()->setPacketLog(false);
+    }
     emit intfcChanged();
 }
 
