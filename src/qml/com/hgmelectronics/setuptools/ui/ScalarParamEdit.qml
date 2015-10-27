@@ -42,10 +42,10 @@ GroupBox {
             visible: false
             text: name
         }
-    }
-    AutoRefreshOverlay {
-        key: param.key
-        visible: enableAutoRefreshOverlay
-        enabled: enableAutoRefreshOverlay
+        AutoRefreshOverlay {
+            key: param.key
+            visible: enableAutoRefreshOverlay
+            enabled: enableAutoRefreshOverlay
+        }
     }
 }
