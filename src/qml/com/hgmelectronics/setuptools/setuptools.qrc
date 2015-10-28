@@ -25,6 +25,8 @@
         <file>AutoRefreshSelector.qml</file>
         <file>ui/AutoRefreshOverlay.qml</file>
         <file>ui/AutoRefreshArea.qml</file>
+        <file>AutoRefreshManager.qml</file>
+        <file>ui/AutoRefreshIntervalDialog.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

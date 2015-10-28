@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 Item {
     property var base: parent
@@ -23,6 +24,12 @@ Item {
         MenuItem {
             action: AutoRefreshSelector.modeAction
             text: qsTr("Auto-Refresh Select Mode")
+        }
+        MenuItem {
+            action: AutoRefreshManager.runningAction
+        }
+        MenuItem {
+            action: AutoRefreshIntervalDialog.openAction
         }
     }
 
