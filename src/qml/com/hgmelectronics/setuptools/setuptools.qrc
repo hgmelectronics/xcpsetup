@@ -24,6 +24,7 @@
         <file>ParamResetNeeded.qml</file>
         <file>AutoRefreshSelector.qml</file>
         <file>ui/AutoRefreshOverlay.qml</file>
+        <file>ui/AutoRefreshArea.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

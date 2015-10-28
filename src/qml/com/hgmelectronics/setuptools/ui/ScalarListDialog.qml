@@ -5,6 +5,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 Window {
     id: root
@@ -50,34 +51,42 @@ Window {
         visible: false
     }
 
-    ScrollView {
-        id: scrollView
+    ColumnLayout {
+        id: columnLayout
         anchors.fill: parent
-        verticalScrollBarPolicy: (desiredHeight > maxInitialHeight) ? Qt.ScrollBarAlwaysOn : Qt.ScrollBarAlwaysOff
-        Item {
-            height: rowLayout.implicitHeight + 20
-            Row {
-                id: rowLayout
-                spacing: 5
-                anchors.fill: parent
-                anchors.margins: 10
-                Repeater {
-                    model: columns
-                    Column {
-                        id: column
-                        spacing: 5
-                        property ScalarMetaParamList paramList: paramLists[index]
-                        Repeater {
-                            model: paramList.length
-                            ScalarParamEdit {
-                                id: edit
-                                metaParam: paramList.params[index]
-                                enabled: paramList.params[index].param.valid
+        ScrollView {
+            id: scrollView
+            anchors.fill: parent
+            verticalScrollBarPolicy: (desiredHeight > maxInitialHeight) ? Qt.ScrollBarAlwaysOn : Qt.ScrollBarAlwaysOff
+            Item {
+                height: rowLayout.implicitHeight + 20
+                Row {
+                    id: rowLayout
+                    spacing: 5
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    Repeater {
+                        model: columns
+                        Column {
+                            id: column
+                            spacing: 5
+                            property ScalarMetaParamList paramList: paramLists[index]
+                            Repeater {
+                                model: paramList.length
+                                ScalarParamEdit {
+                                    id: edit
+                                    metaParam: paramList.params[index]
+                                    enabled: paramList.params[index].param.valid
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    AutoRefreshArea {
+        base: columnLayout
     }
 }

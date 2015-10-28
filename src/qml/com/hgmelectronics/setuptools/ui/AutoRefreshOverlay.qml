@@ -7,6 +7,7 @@ Rectangle {
     property color selectedColor: "#20FF0000"
     property bool selected: false
     property string key
+    readonly property string typeName: "AutoRefreshOverlay"
     radius: 2
 
     anchors.fill: parent
@@ -32,7 +33,7 @@ Rectangle {
     }
 
     function setSelected(on) {
-        if(!enabled) {
+        if(enabled) {
             if(on)
                 AutoRefreshSelector.addKey(key)
             else

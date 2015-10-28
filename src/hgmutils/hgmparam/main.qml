@@ -180,13 +180,6 @@ ApplicationWindow {
         }
     }
 
-    Action {
-        id: autoRefreshSelectModeAction
-        text: qsTr("Auto-Refresh Select Mode")
-        checkable: true
-        onToggled: AutoRefreshSelector.selectMode = checked
-    }
-
     ExclusiveGroup {
         id: useUnitsGroup
         Action {
@@ -335,7 +328,7 @@ ApplicationWindow {
                 action: disableAllParametersAction
             }
             MenuItem {
-                action: autoRefreshSelectModeAction
+                action: AutoRefreshSelector.modeAction
             }
             MenuItem {
                 action: dumpAutoRefreshAction

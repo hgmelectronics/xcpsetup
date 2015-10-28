@@ -1,5 +1,6 @@
 pragma Singleton
 import QtQuick 2.0
+import QtQuick.Controls 1.4
 
 QtObject {
     property var keys: []
@@ -35,6 +36,12 @@ QtObject {
     }
     function keySelected(key) {
         return (keys.indexOf(key) !== -1)
+    }
+
+    property Action modeAction: Action {
+        text: qsTr("Auto-Refresh Select Mode")
+        checkable: true
+        onToggled: selectMode = checked
     }
 }
 
