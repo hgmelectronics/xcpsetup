@@ -13,45 +13,7 @@ Rectangle {
     width: tableView.implicitWidth
     height: tableView.implicitHeight
 
-    Component {
-        id: valueEditDelegate
-        TextInput {
-            id: input
-            color: styleData.textColor
-            anchors.margins: 4
-            text: styleData.value !== undefined ? styleData.value : ""
-            validator: tableParam.value.slot.validator
 
-            onEditingFinished: {
-                if(model[styleData.role] != text)
-                    model[styleData.role] = text
-            }
-            onAccepted: {
-                if (styleData.selected)
-                    selectAll()
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    tableView.currentRow = styleData.row
-                    tableView.selection.clear()
-                    tableView.selection.select(styleData.row, styleData.row)
-                    selectAll()
-                    forceActiveFocus(Qt.MouseFocusReason)
-                }
-            }
-
-            Connections {
-                target: styleData
-                onSelectedChanged: {
-                    if(!styleData.selected) {
-                        deselect()
-                    }
-                }
-            }
-        }
-    }
 
     TableView {
         id: tableView
@@ -60,17 +22,161 @@ Rectangle {
         enabled: tableParam.valid
 
         model: root.tableParam.stringModel
+        selectionMode: SelectionMode.ContiguousSelection
 
         TableViewColumn {
             id: xColumn
             role: "x"
+            delegate: Component {
+                Loader {
+                    sourceComponent: (styleData.selected && (tableParam.xModel.flags(0) & Qt.ItemIsEditable)) ? xEditDelegate : xDisplayDelegate
+                    Component {
+                        id: xDisplayDelegate
+                        Item {
+                            property int implicitWidth: label.implicitWidth + 16
+
+                            Text {
+                                id: label
+                                visible: !(tableParam.xModel.flags & Qt.ItemIsEditable)
+                                height: Math.max(16, label.implicitHeight)
+                                objectName: "label"
+                                width: parent.width
+                                //font: __styleitem.font
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.leftMargin: styleData["depth"] && styleData.column === 0 ? 0 : 8
+                                horizontalAlignment: styleData.textAlignment
+                                anchors.verticalCenter: parent.verticalCenter
+                                elide: styleData.elideMode
+                                text: styleData.value !== undefined ? styleData.value : ""
+                                color: styleData.textColor
+                                renderType: Text.NativeRendering
+                            }
+                        }
+                    }
+                    Component {
+                        id: xEditDelegate
+                        Item {
+                            TextInput {
+                                id: input
+                                color: styleData.textColor
+                                anchors.leftMargin: 7
+                                anchors.fill: parent
+                                horizontalAlignment: styleData.textAlignment
+                                text: styleData.value !== undefined ? styleData.value : ""
+                                validator: tableParam.x.slot.validator
+
+                                onEditingFinished: {
+                                    if(model[styleData.role] != text)
+                                        model[styleData.role] = text
+                                }
+                                onAccepted: {
+                                    if (styleData.selected)
+                                        selectAll()
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        forceActiveFocus(Qt.MouseFocusReason)
+                                    }
+                                    onActiveFocusChanged: {
+                                        if(activeFocus)
+                                            input.selectAll()
+                                        else
+                                            input.deselect()
+                                    }
+                                }
+
+                                Connections {
+                                    target: styleData
+                                    onSelectedChanged: {
+                                        if(!styleData.selected) {
+                                            input.deselect()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             width: tableView.columnWidth
             title: xLabel
         }
         TableViewColumn {
             id: valueColumn
             role: "value"
-            delegate: valueEditDelegate
+            delegate: Loader {
+                sourceComponent: (styleData.selected && (tableParam.valueModel.flags(0) & Qt.ItemIsEditable)) ? valueEditDelegate : valueDisplayDelegate
+                Component {
+                    id: valueDisplayDelegate
+                    Item {
+                        property int implicitWidth: label.implicitWidth + 16
+
+                        Text {
+                            id: label
+                            visible: !(tableParam.xModel.flags & Qt.ItemIsEditable)
+                            height: Math.max(16, label.implicitHeight)
+                            objectName: "label"
+                            width: parent.width
+                            //font: __styleitem.font
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.leftMargin: styleData["depth"] && styleData.column === 0 ? 0 : 8
+                            horizontalAlignment: styleData.textAlignment
+                            anchors.verticalCenter: parent.verticalCenter
+                            elide: styleData.elideMode
+                            text: styleData.value !== undefined ? styleData.value : ""
+                            color: styleData.textColor
+                            renderType: Text.NativeRendering
+                        }
+                    }
+                }
+                Component {
+                    id: valueEditDelegate
+                    TextInput {
+                        id: input
+                        color: styleData.textColor
+                        anchors.leftMargin: 7
+                        anchors.fill: parent
+                        text: styleData.value !== undefined ? styleData.value : ""
+                        validator: tableParam.value.slot.validator
+
+                        onEditingFinished: {
+                            if(model[styleData.role] != text)
+                                model[styleData.role] = text
+                        }
+                        onAccepted: {
+                            if (styleData.selected)
+                                selectAll()
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                forceActiveFocus(Qt.MouseFocusReason)
+                            }
+                            onActiveFocusChanged: {
+                                if(activeFocus)
+                                    input.selectAll()
+                                else
+                                    input.deselect()
+                            }
+                        }
+
+                        Connections {
+                            target: styleData
+                            onSelectedChanged: {
+                                if(!styleData.selected) {
+                                    input.deselect()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             width: tableView.columnWidth
             title: valueLabel
         }
