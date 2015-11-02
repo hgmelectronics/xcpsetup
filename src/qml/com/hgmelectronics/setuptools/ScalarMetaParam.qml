@@ -12,4 +12,5 @@ MetaParam {
                 ParamResetNeeded.set = true
         }
     }
+    isLiveData: !param.saveable
 }

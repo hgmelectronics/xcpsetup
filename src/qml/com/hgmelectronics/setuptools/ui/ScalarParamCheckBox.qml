@@ -3,18 +3,21 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 RowLayout {
     id: root
 
     property ScalarMetaParam metaParam
-    property string name: metaParam.name
-    property ScalarParam param: metaParam.param
     property double bitMask: 0x00000001
-    implicitWidth: checkBox.implicitWidth + rightLabel.implicitWidth + spacing
+    property string name: metaParam.name
     property bool boxRight: false
     property alias textTop: leftLabel.top
     property int textTopMargin: leftLabel.y - root.y
+    property bool enableAutoRefreshOverlay: metaParam.isLiveData
+
+    property ScalarParam param: metaParam.param
+    implicitWidth: checkBox.implicitWidth + rightLabel.implicitWidth + spacing
 
     spacing: 10
 
@@ -44,5 +47,10 @@ RowLayout {
         enabled: param.valid
         Layout.alignment: Qt.AlignVCenter
         visible: !boxRight
+    }
+    AutoRefreshOverlay {
+        key: param.key
+        visible: enableAutoRefreshOverlay
+        enabled: enableAutoRefreshOverlay
     }
 }

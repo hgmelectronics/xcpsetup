@@ -12,3 +12,5 @@ EncodingParamEdit 1.0 EncodingParamEdit.qml
 ScalarListDialog 1.0 ScalarListDialog.qml
 XcpInterfaceChooser 1.0 XcpInterfaceChooser.qml
 BitRateChooser 1.0 BitRateChooser.qml
+AutoRefreshArea 1.0 AutoRefreshArea.qml
+singleton AutoRefreshIntervalDialog 1.0 AutoRefreshIntervalDialog.qml

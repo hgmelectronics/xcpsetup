@@ -63,6 +63,18 @@ SetupTools::Slot *Param::slot() const
     return mSlot;
 }
 
+void Param::setSaveable(bool newSaveable)
+{
+    if(updateDelta<>(saveable, newSaveable))
+        emit saveableChanged();
+}
+
+void Param::setKey(QString newKey)
+{
+    if(updateDelta<>(key, newKey))
+        emit keyChanged();
+}
+
 bool Param::valid() const
 {
     if(!mBaseRange)

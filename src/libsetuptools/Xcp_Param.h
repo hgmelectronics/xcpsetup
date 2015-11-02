@@ -14,8 +14,8 @@ class Param : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool saveable MEMBER saveable)
-    Q_PROPERTY(QString key MEMBER key)
+    Q_PROPERTY(bool saveable MEMBER saveable WRITE setSaveable NOTIFY saveableChanged)
+    Q_PROPERTY(QString key MEMBER key WRITE setKey NOTIFY keyChanged)
     Q_PROPERTY(bool valid READ valid WRITE setValid NOTIFY validChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty WRITE setWriteCacheDirty NOTIFY writeCacheDirtyChanged)
     Q_PROPERTY(Slot* slot READ slot CONSTANT)
@@ -24,6 +24,9 @@ public:
     explicit Param(QObject *parent = nullptr);
     explicit Param(MemoryRange *baseRange, Slot* slot, QObject *parent = nullptr);
     explicit Param(MemoryRange *baseRange, QList<MemoryRange *> extRanges, bool requireExtRangesValid, Slot* slot, QObject *parent = nullptr);
+
+    void setSaveable(bool newSaveable);
+    void setKey(QString newKey);
 
     bool valid() const;
     void setValid(bool valid);
@@ -44,6 +47,8 @@ public:
     QString key;
 
 signals:
+    void saveableChanged();
+    void keyChanged();
     void uploadDone(SetupTools::Xcp::OpResult result);
     void downloadDone(SetupTools::Xcp::OpResult result);
     void writeCacheDirtyChanged(QString key);
