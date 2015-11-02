@@ -1899,11 +1899,11 @@ QtObject {
         name: qsTr("Speed Filter Length")
     }
     property ScalarMetaParam evMotorTorqueIdle: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_motor_torque_idle, true, true, slots.percentage1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_motor_torque_idle, true, true, slots.percentage2)
         name: qsTr("Motor Torque Idle")
     }
     property ScalarMetaParam evMotorTorqueShift: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_motor_torque_shift, true, true, slots.percentage1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_motor_torque_shift, true, true, slots.percentage2)
         name: qsTr("Motor Torque Shift")
     }
     property ScalarMetaParam evMotorSpeedMax: ScalarMetaParam {

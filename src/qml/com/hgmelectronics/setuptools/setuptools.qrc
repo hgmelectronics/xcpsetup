@@ -22,6 +22,11 @@
         <file>ui/XcpInterfaceChooser.qml</file>
         <file>ui/BitRateChooser.qml</file>
         <file>ParamResetNeeded.qml</file>
+        <file>AutoRefreshSelector.qml</file>
+        <file>ui/AutoRefreshOverlay.qml</file>
+        <file>ui/AutoRefreshArea.qml</file>
+        <file>AutoRefreshManager.qml</file>
+        <file>ui/AutoRefreshIntervalDialog.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

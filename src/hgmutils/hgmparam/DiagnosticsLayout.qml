@@ -108,6 +108,7 @@ Flow {
         width: 450
         height: Math.max(inputColumn.implicitHeight, outputColumn.implicitHeight) + 40
         RowLayout {
+            id: rowLayout
             anchors.fill: parent
             anchors.margins: 10
             spacing: 5
@@ -165,6 +166,10 @@ Flow {
                 }
             }
         }
+
+        AutoRefreshArea {
+            base: rowLayout
+        }
     }
 
     Button {
@@ -194,6 +199,10 @@ Flow {
         PWMDriversWindow {
             id: pwmDriversWindow
             model: parameters.controllerPWMDriverModel
+
+            AutoRefreshArea {
+                base: pwmDriversWindow
+            }
         }
     }
 }

@@ -63,6 +63,7 @@ ApplicationWindow {
                 resetNeededDialog.open()
             }
         }
+        Component.onCompleted: AutoRefreshManager.paramLayer = this
     }
 
     JSONParamFile {
@@ -284,13 +285,13 @@ ApplicationWindow {
 
     Action {
         id: enableAllParametersAction
-        text: qsTr("Enable all parameters")
+        text: qsTr("Enable All Parameters")
         onTriggered: paramLayer.registry.setValidAll(true)
     }
 
     Action {
         id: disableAllParametersAction
-        text: qsTr("Disable all parameters")
+        text: qsTr("Disable All Parameters")
         onTriggered: paramLayer.registry.setValidAll(false)
     }
 
@@ -320,6 +321,15 @@ ApplicationWindow {
             }
             MenuItem {
                 action: disableAllParametersAction
+            }
+            MenuItem {
+                action: AutoRefreshSelector.modeAction
+            }
+            MenuItem {
+                action: AutoRefreshManager.runningAction
+            }
+            MenuItem {
+                action: AutoRefreshIntervalDialog.openAction
             }
         }
 
