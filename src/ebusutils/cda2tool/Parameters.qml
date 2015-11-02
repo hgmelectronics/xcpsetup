@@ -237,24 +237,24 @@ QtObject {
     readonly property ScalarParam packBalDischAllCyc: registry.addScalarParam(MemoryRange.S32, paramId.packBalDischAllCyc, true, true, slots.timeCycle)
 
     property TableParam packMaxCurrDisch: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_DischCellTemp, 6, false, false, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_DischCurr, 6, false, false, slots.current1)
+        x: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_DischCellTemp, 6, true, true, slots.saeTp02)
+        value: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_DischCurr, 6, true, true, slots.current1)
     }
     property TableParam packMaxCurrChg: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_ChgCellTemp, 6, false, false, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_ChgCurr, 6, false, false, slots.current1)
+        x: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_ChgCellTemp, 6, true, true, slots.saeTp02)
+        value: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_ChgCurr, 6, true, true, slots.current1)
     }
     property TableParam packCellVLimitMax: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MaxTemp, 4, false, false, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MaxVolt, 4, false, false, slots.ltcCellv)
+        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MaxTemp, 4, true, true, slots.saeTp02)
+        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MaxVolt, 4, true, true, slots.ltcCellv)
     }
     property TableParam packCellVLimitMin: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MinTemp, 4, false, false, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MinVolt, 4, false, false, slots.ltcCellv)
+        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MinTemp, 4, true, true, slots.saeTp02)
+        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MinVolt, 4, true, true, slots.ltcCellv)
     }
     property TableParam packCellProtResTable: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellProtRes_Temp, 4, false, false, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellProtRes_Res, 4, false, false, slots.cellProtRes)
+        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellProtRes_Temp, 4, true, true, slots.saeTp02)
+        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellProtRes_Res, 4, true, true, slots.cellProtRes)
     }
 
     readonly property ScalarParam packString1Volt: registry.addScalarParam(MemoryRange.S32, paramId.packString1Volt, false, false, slots.voltage1)

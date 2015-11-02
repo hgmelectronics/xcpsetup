@@ -52,6 +52,17 @@ ApplicationWindow {
             }
         }
         Menu {
+            id: toolsMenu
+            title: qsTr("&Tools")
+            MenuItem {
+                action: enableAllParametersAction
+            }
+            MenuItem {
+                action: disableAllParametersAction
+            }
+        }
+
+        Menu {
             id: helpMenu
             title: qsTr("&Help")
             MenuItem {
@@ -64,6 +75,18 @@ ApplicationWindow {
                 onTriggered: { aboutDialog.show() }
             }
         }
+    }
+
+    Action {
+        id: enableAllParametersAction
+        text: qsTr("Enable all parameters")
+        onTriggered: paramLayer.registry.setValidAll(true)
+    }
+
+    Action {
+        id: disableAllParametersAction
+        text: qsTr("Disable all parameters")
+        onTriggered: paramLayer.registry.setValidAll(false)
     }
 
     MainForm {
