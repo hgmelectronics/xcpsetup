@@ -3,7 +3,8 @@ import QtQuick.Controls 1.4
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
-Item {
+Rectangle {
+    color: "transparent"
     property var base: parent
 
     anchors.fill: parent
