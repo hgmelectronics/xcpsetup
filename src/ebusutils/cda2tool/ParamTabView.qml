@@ -24,16 +24,20 @@ Item {
         Tab {
             title: "Analog I/O"
             active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                TableParamEdit {
-                    tableParam: parameters.aioAiCts
-                }
-                ScalarParamEdit {
-                    name: "VBat"
-                    param: parameters.aioVbatEv01
+            AutoRefreshArea {
+                base: this
+                ColumnLayout {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.margins: 10
+                    spacing: 10
+                    TableParamEdit {
+                        tableParam: parameters.aioAiCts
+                    }
+                    ScalarParamEdit {
+                        name: "VBat"
+                        metaParam: parameters.aioVbatEv01
+                    }
                 }
             }
         }
@@ -41,89 +45,102 @@ Item {
         Tab {
             title: "CAN"
             active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                ScalarParamEdit {
-                    name: "AuxBattCnvtCmdOn"
-                    param: parameters.canAuxBattCnvtCmdOn
-                }
-                ScalarParamEdit {
-                    name: "AuxBattCnvtCmdVolt"
-                    param: parameters.canAuxBattCnvtCmdVolt
-                }
-                ScalarParamEdit {
-                    name: "CtlMaxMotoringTorque"
-                    param: parameters.canCtlMaxMotoringTorque
-                }
-                ScalarParamEdit {
-                    name: "CtlMaxRegenTorque"
-                    param: parameters.canCtlMaxRegenTorque
-                }
-                ScalarParamEdit {
-                    name: "TracMotorSpeed"
-                    param: parameters.canTracMotorSpeed
-                }
-                ScalarParamEdit {
-                    name: "LimpHomeCmdOn"
-                    param: parameters.canLimpHomeCmdOn
-                }
-                ScalarParamEdit {
-                    name: "BattMaxDischCurrCmd"
-                    param: parameters.canBattMaxDischCurrCmd
-                }
-                ScalarParamEdit {
-                    name: "BattMaxChgCurrCmd"
-                    param: parameters.canBattMaxChgCurrCmd
-                }
-                ScalarParamEdit {
-                    name: "AuxBattCnvtState"
-                    param: parameters.canAuxBattCnvtState
-                }
-                ScalarParamEdit {
-                    name: "AuxBattCnvtTemp"
-                    param: parameters.canAuxBattCnvtTemp
-                }
-                ScalarParamEdit {
-                    name: "AuxBattCnvtInputVolt"
-                    param: parameters.canAuxBattCnvtInputVolt
-                }
-                ScalarParamEdit {
-                    name: "AuxBattCnvtOutputVolt"
-                    param: parameters.canAuxBattCnvtOutputVolt
-                }
-                ScalarParamEdit {
-                    name: "AuxBattCnvtOutputCurr"
-                    param: parameters.canAuxBattCnvtOutputCurr
-                }
-                ScalarParamEdit {
-                    name: "ExtChgCtcRqst"
-                    param: parameters.canExtChgCtcRqst
-                }
-                ScalarParamEdit {
-                    name: "AuxCtcRqrd"
-                    param: parameters.canAuxCtcRqrd
-                }
-                ScalarParamEdit {
-                    name: "XcpProgramRequested"
-                    param: parameters.canXcpProgramRequested
-                }
-                ScalarParamEdit {
-                    name: "Can1RxErrCount"
-                    param: parameters.canCan1RxErrCount
-                }
-                ScalarParamEdit {
-                    name: "Can1TxErrCount"
-                    param: parameters.canCan1TxErrCount
-                }
-                ScalarParamEdit {
-                    name: "Can2RxErrCount"
-                    param: parameters.canCan2RxErrCount
-                }
-                ScalarParamEdit {
-                    name: "Can2TxErrCount"
-                    param: parameters.canCan2TxErrCount
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "AuxBattCnvtCmdOn"
+                            metaParam: parameters.canAuxBattCnvtCmdOn
+                        }
+                        ScalarParamEdit {
+                            name: "AuxBattCnvtCmdVolt"
+                            metaParam: parameters.canAuxBattCnvtCmdVolt
+                        }
+                        ScalarParamEdit {
+                            name: "CtlMaxMotoringTorque"
+                            metaParam: parameters.canCtlMaxMotoringTorque
+                        }
+                        ScalarParamEdit {
+                            name: "CtlMaxRegenTorque"
+                            metaParam: parameters.canCtlMaxRegenTorque
+                        }
+                        ScalarParamEdit {
+                            name: "TracMotorSpeed"
+                            metaParam: parameters.canTracMotorSpeed
+                        }
+                        ScalarParamEdit {
+                            name: "LimpHomeCmdOn"
+                            metaParam: parameters.canLimpHomeCmdOn
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "BattMaxDischCurrCmd"
+                            metaParam: parameters.canBattMaxDischCurrCmd
+                        }
+                        ScalarParamEdit {
+                            name: "BattMaxChgCurrCmd"
+                            metaParam: parameters.canBattMaxChgCurrCmd
+                        }
+                        ScalarParamEdit {
+                            name: "AuxBattCnvtState"
+                            metaParam: parameters.canAuxBattCnvtState
+                        }
+                        ScalarParamEdit {
+                            name: "AuxBattCnvtTemp"
+                            metaParam: parameters.canAuxBattCnvtTemp
+                        }
+                        ScalarParamEdit {
+                            name: "AuxBattCnvtInputVolt"
+                            metaParam: parameters.canAuxBattCnvtInputVolt
+                        }
+                        ScalarParamEdit {
+                            name: "AuxBattCnvtOutputVolt"
+                            metaParam: parameters.canAuxBattCnvtOutputVolt
+                        }
+                        ScalarParamEdit {
+                            name: "AuxBattCnvtOutputCurr"
+                            metaParam: parameters.canAuxBattCnvtOutputCurr
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "ExtChgCtcRqst"
+                            metaParam: parameters.canExtChgCtcRqst
+                        }
+                        ScalarParamEdit {
+                            name: "AuxCtcRqrd"
+                            metaParam: parameters.canAuxCtcRqrd
+                        }
+                        ScalarParamEdit {
+                            name: "XcpProgramRequested"
+                            metaParam: parameters.canXcpProgramRequested
+                        }
+                        ScalarParamEdit {
+                            name: "Can1RxErrCount"
+                            metaParam: parameters.canCan1RxErrCount
+                        }
+                        ScalarParamEdit {
+                            name: "Can1TxErrCount"
+                            metaParam: parameters.canCan1TxErrCount
+                        }
+                        ScalarParamEdit {
+                            name: "Can2RxErrCount"
+                            metaParam: parameters.canCan2RxErrCount
+                        }
+                        ScalarParamEdit {
+                            name: "Can2TxErrCount"
+                            metaParam: parameters.canCan2TxErrCount
+                        }
+                    }
                 }
             }
         }
@@ -131,8 +148,10 @@ Item {
         Tab {
             title: "CBTM"
             active: true
-            Item {
+            AutoRefreshArea {
+                base: this
                 RowLayout {
+                    Layout.alignment: Qt.AlignLeft
                     anchors.fill: parent
                     anchors.margins: 10
                     spacing: 10
@@ -140,43 +159,43 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "Fault Decay"
-                            param: parameters.cbtmFaultDecayCyc
+                            metaParam: parameters.cbtmFaultDecayCyc
                         }
                         ScalarParamEdit {
                             name: "Non-Quiescent Trip"
-                            param: parameters.cbtmNonQuiescentTripCyc
+                            metaParam: parameters.cbtmNonQuiescentTripCyc
                         }
                         ScalarParamEdit {
                             name: "Non-Quiescent Decay"
-                            param: parameters.cbtmNonQuiescentDecayCyc
+                            metaParam: parameters.cbtmNonQuiescentDecayCyc
                         }
                         ScalarParamEdit {
                             name: "Balance Open Delta-V"
-                            param: parameters.cbtmBalanceOpenDeltaVThresh
+                            metaParam: parameters.cbtmBalanceOpenDeltaVThresh
                         }
                         ScalarParamEdit {
                             name: "Balance Short Delta-V"
-                            param: parameters.cbtmBalanceShortDeltaVThresh
+                            metaParam: parameters.cbtmBalanceShortDeltaVThresh
                         }
                         ScalarParamEdit {
                             name: "Quiescent Delta-V"
-                            param: parameters.cbtmQuiescentDeltaVThresh
+                            metaParam: parameters.cbtmQuiescentDeltaVThresh
                         }
                         ScalarParamEdit {
                             name: "IsoSPI #1 First ID"
-                            param: parameters.cbtmIsospi1FirstBoard
+                            metaParam: parameters.cbtmIsospi1FirstBoard
                         }
                         ScalarParamEdit {
                             name: "IsoSPI #1 Last ID"
-                            param: parameters.cbtmIsospi1LastBoard
+                            metaParam: parameters.cbtmIsospi1LastBoard
                         }
                         ScalarParamEdit {
                             name: "IsoSPI #2 First ID"
-                            param: parameters.cbtmIsospi2FirstBoard
+                            metaParam: parameters.cbtmIsospi2FirstBoard
                         }
                         ScalarParamEdit {
                             name: "IsoSPI #2 Last ID"
-                            param: parameters.cbtmIsospi2LastBoard
+                            metaParam: parameters.cbtmIsospi2LastBoard
                         }
                     }
                     ColumnLayout {
@@ -267,38 +286,41 @@ Item {
         Tab {
             title: "Contactor"
             active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                ScalarParamEdit {
-                    name: "Max Simul Pickups"
-                    param: parameters.ctcMaxSimulPickup
-                }
-                TableParamEdit {
-                    xLabel: "Ctc #"
-                    valueLabel: "Has B"
-                    tableParam: parameters.ctcHasBInput
-                }
-                TableParamEdit {
-                    xLabel: "Ctc #"
-                    valueLabel: "On"
-                    tableParam: parameters.ctcOn
-                }
-                TableParamEdit {
-                    xLabel: "Ctc #"
-                    valueLabel: "OK"
-                    tableParam: parameters.ctcOk
-                }
-                TableParamEdit {
-                    xLabel: "Ctc #"
-                    valueLabel: "A Closed"
-                    tableParam: parameters.ctcAClosed
-                }
-                TableParamEdit {
-                    xLabel: "Ctc #"
-                    valueLabel: "B Closed"
-                    tableParam: parameters.ctcBClosed
+            AutoRefreshArea {
+                base: this
+                Flow {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ScalarParamEdit {
+                        name: "Max Simul Pickups"
+                        metaParam: parameters.ctcMaxSimulPickup
+                    }
+                    TableParamEdit {
+                        xLabel: "Ctc #"
+                        valueLabel: "Feedback Inputs"
+                        tableParam: parameters.ctcNFeedbackInput
+                    }
+                    TableParamEdit {
+                        xLabel: "Ctc #"
+                        valueLabel: "On"
+                        tableParam: parameters.ctcOn
+                    }
+                    TableParamEdit {
+                        xLabel: "Ctc #"
+                        valueLabel: "OK"
+                        tableParam: parameters.ctcOk
+                    }
+                    TableParamEdit {
+                        xLabel: "Ctc #"
+                        valueLabel: "A Closed"
+                        tableParam: parameters.ctcAClosed
+                    }
+                    TableParamEdit {
+                        xLabel: "Ctc #"
+                        valueLabel: "B Closed"
+                        tableParam: parameters.ctcBClosed
+                    }
                 }
             }
         }
@@ -306,19 +328,23 @@ Item {
         Tab {
             title: "DIO"
             active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                TableParamEdit {
-                    xLabel: "DI #"
-                    valueLabel: "On"
-                    tableParam: parameters.dioDi
-                }
-                TableParamEdit {
-                    xLabel: "DO #"
-                    valueLabel: "On"
-                    tableParam: parameters.dioDo
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    TableParamEdit {
+                        xLabel: "DI #"
+                        valueLabel: "On"
+                        tableParam: parameters.dioDi
+                    }
+                    TableParamEdit {
+                        xLabel: "DO #"
+                        valueLabel: "On"
+                        tableParam: parameters.dioDo
+                    }
                 }
             }
         }
@@ -326,34 +352,38 @@ Item {
         Tab {
             title: "IAI"
             active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                TableParamEdit {
-                    xLabel: "IAI #"
-                    tableParam: parameters.iaiDiffCts
-                }
-                TableParamEdit {
-                    xLabel: "IAI #"
-                    valueLabel: "OK"
-                    tableParam: parameters.iaiOk
-                }
-                ScalarParamEdit {
-                    name: "IAI #4 Pos"
-                    param: parameters.iai4PosCts
-                }
-                ScalarParamEdit {
-                    name: "IAI #4 Neg"
-                    param: parameters.iai4NegCts
-                }
-                ScalarParamEdit {
-                    name: "IAI #4 Pullup"
-                    param: parameters.iai4Pullup
-                }
-                ScalarParamEdit {
-                    name: "IAI #4 Pulldown"
-                    param: parameters.iai4Pulldown
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    TableParamEdit {
+                        xLabel: "IAI #"
+                        tableParam: parameters.iaiDiffCts
+                    }
+                    TableParamEdit {
+                        xLabel: "IAI #"
+                        valueLabel: "OK"
+                        tableParam: parameters.iaiOk
+                    }
+                    ScalarParamEdit {
+                        name: "IAI #4 Pos"
+                        metaParam: parameters.iai4PosCts
+                    }
+                    ScalarParamEdit {
+                        name: "IAI #4 Neg"
+                        metaParam: parameters.iai4NegCts
+                    }
+                    ScalarParamEdit {
+                        name: "IAI #4 Pullup"
+                        metaParam: parameters.iai4Pullup
+                    }
+                    ScalarParamEdit {
+                        name: "IAI #4 Pulldown"
+                        metaParam: parameters.iai4Pulldown
+                    }
                 }
             }
         }
@@ -361,117 +391,136 @@ Item {
         Tab {
             title: "Aux Batt"
             active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                EncodingParamEdit {
-                    name: "CnvtType"
-                    param: parameters.auxBattCnvtType
-                }
-                ScalarParamEdit {
-                    name: "CnvtInputVoltMin"
-                    param: parameters.auxBattCnvtInputVoltMin
-                }
-                ScalarParamEdit {
-                    name: "CnvtStartTemp"
-                    param: parameters.auxBattCnvtStartTemp
-                }
-                ScalarParamEdit {
-                    name: "CnvtStopTemp"
-                    param: parameters.auxBattCnvtStopTemp
-                }
-                ScalarParamEdit {
-                    name: "FloatVolt"
-                    param: parameters.auxBattFloatVolt
-                }
-                ScalarParamEdit {
-                    name: "FloatVoltTempCoeff"
-                    param: parameters.auxBattFloatVoltTempCoeff
-                }
-                ScalarParamEdit {
-                    name: "FloatVoltMin"
-                    param: parameters.auxBattFloatVoltMin
-                }
-                ScalarParamEdit {
-                    name: "FloatVoltMax"
-                    param: parameters.auxBattFloatVoltMax
-                }
-                ScalarParamEdit {
-                    name: "FloatVoltFailsafe"
-                    param: parameters.auxBattFloatVoltFailsafe
-                }
-                ScalarParamEdit {
-                    name: "RestartVoltHysteresis"
-                    param: parameters.auxBattRestartVoltHysteresis
-                }
-                ScalarParamEdit {
-                    name: "RestartVoltTime"
-                    param: parameters.auxBattRestartVoltTime
-                }
-                ScalarParamEdit {
-                    name: "RestartAlwaysTime"
-                    param: parameters.auxBattRestartAlwaysTime
-                }
-                ScalarParamEdit {
-                    name: "StopOutCurr"
-                    param: parameters.auxBattStopOutCurr
-                }
-                ScalarParamEdit {
-                    name: "StopOutCurrTime"
-                    param: parameters.auxBattStopOutCurrTime
-                }
-                ScalarParamEdit {
-                    name: "BattOkTemp"
-                    param: parameters.auxBattBattOkTemp
-                }
-                ScalarParamEdit {
-                    name: "BattWarmTemp"
-                    param: parameters.auxBattBattWarmTemp
-                }
-                ScalarParamEdit {
-                    name: "BattHotTemp"
-                    param: parameters.auxBattBattHotTemp
-                }
-                ScalarParamEdit {
-                    name: "BattTemp0AiChan"
-                    param: parameters.auxBattBattTemp0AiChan
-                }
-                ScalarParamEdit {
-                    name: "BattTemp1AiChan"
-                    param: parameters.auxBattBattTemp1AiChan
-                }
-                EncodingParamEdit {
-                    name: "BattTemp0Curve"
-                    param: parameters.auxBattBattTemp0Curve
-                }
-                EncodingParamEdit {
-                    name: "BattTemp1Curve"
-                    param: parameters.auxBattBattTemp1Curve
-                }
-                ScalarParamEdit {
-                    name: "RestartVoltTimeCount"
-                    param: parameters.auxBattRestartVoltTimeCount
-                }
-                ScalarParamEdit {
-                    name: "RestartAlwaysTimeCount"
-                    param: parameters.auxBattRestartAlwaysTimeCount
-                }
-                ScalarParamEdit {
-                    name: "StopOutCurrTimeCount"
-                    param: parameters.auxBattStopOutCurrTimeCount
-                }
-                ScalarParamEdit {
-                    name: "BattTemp0"
-                    param: parameters.auxBattBattTemp0
-                }
-                ScalarParamEdit {
-                    name: "BattTemp1"
-                    param: parameters.auxBattBattTemp1
-                }
-                ScalarParamEdit {
-                    name: "Status"
-                    param: parameters.auxBattStatus
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        EncodingParamEdit {
+                            name: "CnvtType"
+                            metaParam: parameters.auxBattCnvtType
+                        }
+                        ScalarParamEdit {
+                            name: "CnvtInputVoltMin"
+                            metaParam: parameters.auxBattCnvtInputVoltMin
+                        }
+                        ScalarParamEdit {
+                            name: "CnvtStartTemp"
+                            metaParam: parameters.auxBattCnvtStartTemp
+                        }
+                        ScalarParamEdit {
+                            name: "CnvtStopTemp"
+                            metaParam: parameters.auxBattCnvtStopTemp
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "FloatVolt"
+                            metaParam: parameters.auxBattFloatVolt
+                        }
+                        ScalarParamEdit {
+                            name: "FloatVoltTempCoeff"
+                            metaParam: parameters.auxBattFloatVoltTempCoeff
+                        }
+                        ScalarParamEdit {
+                            name: "FloatVoltMin"
+                            metaParam: parameters.auxBattFloatVoltMin
+                        }
+                        ScalarParamEdit {
+                            name: "FloatVoltMax"
+                            metaParam: parameters.auxBattFloatVoltMax
+                        }
+                        ScalarParamEdit {
+                            name: "FloatVoltFailsafe"
+                            metaParam: parameters.auxBattFloatVoltFailsafe
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "RestartVoltHysteresis"
+                            metaParam: parameters.auxBattRestartVoltHysteresis
+                        }
+                        ScalarParamEdit {
+                            name: "RestartVoltTime"
+                            metaParam: parameters.auxBattRestartVoltTime
+                        }
+                        ScalarParamEdit {
+                            name: "RestartAlwaysTime"
+                            metaParam: parameters.auxBattRestartAlwaysTime
+                        }
+                        ScalarParamEdit {
+                            name: "StopOutCurr"
+                            metaParam: parameters.auxBattStopOutCurr
+                        }
+                        ScalarParamEdit {
+                            name: "StopOutCurrTime"
+                            metaParam: parameters.auxBattStopOutCurrTime
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "BattOkTemp"
+                            metaParam: parameters.auxBattBattOkTemp
+                        }
+                        ScalarParamEdit {
+                            name: "BattWarmTemp"
+                            metaParam: parameters.auxBattBattWarmTemp
+                        }
+                        ScalarParamEdit {
+                            name: "BattHotTemp"
+                            metaParam: parameters.auxBattBattHotTemp
+                        }
+                        ScalarParamEdit {
+                            name: "BattTemp0AiChan"
+                            metaParam: parameters.auxBattBattTemp0AiChan
+                        }
+                        ScalarParamEdit {
+                            name: "BattTemp1AiChan"
+                            metaParam: parameters.auxBattBattTemp1AiChan
+                        }
+                        EncodingParamEdit {
+                            name: "BattTemp0Curve"
+                            metaParam: parameters.auxBattBattTemp0Curve
+                        }
+                        EncodingParamEdit {
+                            name: "BattTemp1Curve"
+                            metaParam: parameters.auxBattBattTemp1Curve
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "RestartVoltTimeCount"
+                            metaParam: parameters.auxBattRestartVoltTimeCount
+                        }
+                        ScalarParamEdit {
+                            name: "RestartAlwaysTimeCount"
+                            metaParam: parameters.auxBattRestartAlwaysTimeCount
+                        }
+                        ScalarParamEdit {
+                            name: "StopOutCurrTimeCount"
+                            metaParam: parameters.auxBattStopOutCurrTimeCount
+                        }
+                        ScalarParamEdit {
+                            name: "BattTemp0"
+                            metaParam: parameters.auxBattBattTemp0
+                        }
+                        ScalarParamEdit {
+                            name: "BattTemp1"
+                            metaParam: parameters.auxBattBattTemp1
+                        }
+                        ScalarParamEdit {
+                            name: "Status"
+                            metaParam: parameters.auxBattStatus
+                        }
+                    }
                 }
             }
         }
@@ -479,49 +528,59 @@ Item {
         Tab {
             title: "Motor"
             active: true
-            Flow {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                ScalarParamEdit {
-                    name: "FailsafeSpeed"
-                    param: parameters.motorFailsafeSpeed
-                }
-                ScalarParamEdit {
-                    name: "MinEffSpeed"
-                    param: parameters.motorMinEffSpeed
-                }
-                ScalarParamEdit {
-                    name: "RatedTorque"
-                    param: parameters.motorRatedTorque
-                }
-                ScalarParamEdit {
-                    name: "CurrRegPropCoeff"
-                    param: parameters.motorCurrRegPropCoeff
-                }
-                ScalarParamEdit {
-                    name: "CurrRegIntCoeff"
-                    param: parameters.motorCurrRegIntCoeff
-                }
-                ScalarParamEdit {
-                    name: "MaxTorqueRefErr"
-                    param: parameters.motorMaxTorqueRefErr
-                }
-                ScalarParamEdit {
-                    name: "MotoringIntegrator"
-                    param: parameters.motorMotoringIntegrator
-                }
-                ScalarParamEdit {
-                    name: "RegenIntegrator"
-                    param: parameters.motorRegenIntegrator
-                }
-                ScalarParamEdit {
-                    name: "AdjMaxMotoringCurr"
-                    param: parameters.motorAdjMaxMotoringCurr
-                }
-                ScalarParamEdit {
-                    name: "AdjMaxRegenCurr"
-                    param: parameters.motorAdjMaxRegenCurr
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "FailsafeSpeed"
+                            metaParam: parameters.motorFailsafeSpeed
+                        }
+                        ScalarParamEdit {
+                            name: "MinEffSpeed"
+                            metaParam: parameters.motorMinEffSpeed
+                        }
+                        ScalarParamEdit {
+                            name: "RatedTorque"
+                            metaParam: parameters.motorRatedTorque
+                        }
+                        ScalarParamEdit {
+                            name: "CurrRegPropCoeff"
+                            metaParam: parameters.motorCurrRegPropCoeff
+                        }
+                        ScalarParamEdit {
+                            name: "CurrRegIntCoeff"
+                            metaParam: parameters.motorCurrRegIntCoeff
+                        }
+                        ScalarParamEdit {
+                            name: "MaxTorqueRefErr"
+                            metaParam: parameters.motorMaxTorqueRefErr
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "MotoringIntegrator"
+                            metaParam: parameters.motorMotoringIntegrator
+                        }
+                        ScalarParamEdit {
+                            name: "RegenIntegrator"
+                            metaParam: parameters.motorRegenIntegrator
+                        }
+                        ScalarParamEdit {
+                            name: "AdjMaxMotoringCurr"
+                            metaParam: parameters.motorAdjMaxMotoringCurr
+                        }
+                        ScalarParamEdit {
+                            name: "AdjMaxRegenCurr"
+                            metaParam: parameters.motorAdjMaxRegenCurr
+                        }
+                    }
                 }
             }
         }
@@ -530,6 +589,7 @@ Item {
             title: "Pack Setup"
             active: true
             RowLayout {
+                Layout.alignment: Qt.AlignLeft
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
@@ -539,39 +599,39 @@ Item {
                     ColumnLayout {
                         EncodingParamEdit {
                             name: "Mapping"
-                            param: parameters.packIaiFunc
+                            metaParam: parameters.packIaiFunc
                         }
                         ScalarParamEdit {
                             name: "#1 Scale"
-                            param: parameters.packIai1Scale
+                            metaParam: parameters.packIai1Scale
                         }
                         ScalarParamEdit {
                             name: "#2 Scale"
-                            param: parameters.packIai2Scale
+                            metaParam: parameters.packIai2Scale
                         }
                         ScalarParamEdit {
                             name: "#3 Scale"
-                            param: parameters.packIai3Scale
+                            metaParam: parameters.packIai3Scale
                         }
                         ScalarParamEdit {
                             name: "#4 Scale"
-                            param: parameters.packIai4Scale
+                            metaParam: parameters.packIai4Scale
                         }
                         ScalarParamEdit {
                             name: "#1 Zero"
-                            param: parameters.packIai1Zero
+                            metaParam: parameters.packIai1Zero
                         }
                         ScalarParamEdit {
                             name: "#2 Zero"
-                            param: parameters.packIai2Zero
+                            metaParam: parameters.packIai2Zero
                         }
                         ScalarParamEdit {
                             name: "#3 Zero"
-                            param: parameters.packIai3Zero
+                            metaParam: parameters.packIai3Zero
                         }
                         ScalarParamEdit {
                             name: "#4 Zero"
-                            param: parameters.packIai4Zero
+                            metaParam: parameters.packIai4Zero
                         }
                     }
                 }
@@ -581,23 +641,23 @@ Item {
                     ColumnLayout {
                         ScalarParamEdit {
                             name: "Limp Home Disch"
-                            param: parameters.packLimpHomeDischCurr
+                            metaParam: parameters.packLimpHomeDischCurr
                         }
                         ScalarParamEdit {
                             name: "Limp Home Chg"
-                            param: parameters.packLimpHomeChgCurr
+                            metaParam: parameters.packLimpHomeChgCurr
                         }
                         ScalarParamEdit {
                             name: "Safety Margin"
-                            param: parameters.packCellProtMarginCurr
+                            metaParam: parameters.packCellProtMarginCurr
                         }
                         ScalarParamEdit {
                             name: "Current Reg Fault Trip"
-                            param: parameters.packCurrRegFltTripCyc
+                            metaParam: parameters.packCurrRegFltTripCyc
                         }
                         ScalarParamEdit {
                             name: "Current Reg Fault Decay"
-                            param: parameters.packCurrRegFltDecayCyc
+                            metaParam: parameters.packCurrRegFltDecayCyc
                         }
                         SimpleTableParamEditButton {
                             name: "Max Disch Current"
@@ -627,23 +687,23 @@ Item {
                     ColumnLayout {
                         ScalarParamEdit {
                             name: "Active Band"
-                            param: parameters.packBalBandVolt
+                            metaParam: parameters.packBalBandVolt
                         }
                         ScalarParamEdit {
                             name: "Minimum Difference"
-                            param: parameters.packBalDiffVolt
+                            metaParam: parameters.packBalDiffVolt
                         }
                         ScalarParamEdit {
                             name: "Sample Wait Time"
-                            param: parameters.packBalSampleWaitCyc
+                            metaParam: parameters.packBalSampleWaitCyc
                         }
                         ScalarParamEdit {
                             name: "High Cell Disch Time"
-                            param: parameters.packBalDischHighCyc
+                            metaParam: parameters.packBalDischHighCyc
                         }
                         ScalarParamEdit {
                             name: "All Cell Disch Time"
-                            param: parameters.packBalDischAllCyc
+                            metaParam: parameters.packBalDischAllCyc
                         }
                     }
                 }
@@ -653,23 +713,23 @@ Item {
                     ColumnLayout {
                         ScalarParamEdit {
                             name: "Sample Time"
-                            param: parameters.packGndFltDetectAvgCyc
+                            metaParam: parameters.packGndFltDetectAvgCyc
                         }
                         ScalarParamEdit {
                             name: "Cycle Period"
-                            param: parameters.packGndFltDetectPeriodCyc
+                            metaParam: parameters.packGndFltDetectPeriodCyc
                         }
                         ScalarParamEdit {
                             name: "Fault Threshold"
-                            param: parameters.packGndFltTripConduct
+                            metaParam: parameters.packGndFltTripConduct
                         }
                         ScalarParamEdit {
                             name: "Fault Trip Cycles"
-                            param: parameters.packGndFltTripCyc
+                            metaParam: parameters.packGndFltTripCyc
                         }
                         ScalarParamEdit {
                             name: "Fault Decay Cycles"
-                            param: parameters.packGndFltDecayCyc
+                            metaParam: parameters.packGndFltDecayCyc
                         }
                     }
                 }
@@ -679,23 +739,23 @@ Item {
                     ColumnLayout {
                         ScalarParamEdit {
                             name: "Traction Current Decay Time"
-                            param: parameters.packTracCurrDecayCyc
+                            metaParam: parameters.packTracCurrDecayCyc
                         }
                         ScalarParamEdit {
                             name: "Charge Current Decay Time"
-                            param: parameters.packChgCurrDecayCyc
+                            metaParam: parameters.packChgCurrDecayCyc
                         }
                         ScalarParamEdit {
                             name: "Max Traction Precharge Time"
-                            param: parameters.packMaxTracPrechgCyc
+                            metaParam: parameters.packMaxTracPrechgCyc
                         }
                         ScalarParamEdit {
                             name: "Low Voltage Trip"
-                            param: parameters.packLowStringVoltTrip
+                            metaParam: parameters.packLowStringVoltTrip
                         }
                         ScalarParamEdit {
                             name: "Low Voltage Reset"
-                            param: parameters.packLowStringVoltReset
+                            metaParam: parameters.packLowStringVoltReset
                         }
                     }
                 }
@@ -705,318 +765,323 @@ Item {
         Tab {
             title: "Pack Data"
             active: true
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                GroupBox {
-                    Layout.alignment: Qt.AlignTop
-                    title: "Voltages && Currents"
-                    ColumnLayout {
-                        ScalarParamEdit {
-                            name: "Battery Voltage"
-                            param: parameters.packString1Volt
-                        }
-                        ScalarParamEdit {
-                            name: "Battery Current"
-                            param: parameters.packString1Curr
-                        }
-                        ScalarParamEdit {
-                            name: "Traction Motor"
-                            param: parameters.packTracMtrCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Traction Aux"
-                            param: parameters.packTracAuxCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Traction Total"
-                            param: parameters.packTracTotalCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Hybrid"
-                            param: parameters.packHybrCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Non-Traction Aux"
-                            param: parameters.packNonTracAuxCurr
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+
+                    GroupBox {
+                        Layout.alignment: Qt.AlignTop
+                        title: "Voltages && Currents"
+                        ColumnLayout {
+                            ScalarParamEdit {
+                                name: "Battery Voltage"
+                                metaParam: parameters.packString1Volt
+                            }
+                            ScalarParamEdit {
+                                name: "Battery Current"
+                                metaParam: parameters.packString1Curr
+                            }
+                            ScalarParamEdit {
+                                name: "Traction Motor"
+                                metaParam: parameters.packTracMtrCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Traction Aux"
+                                metaParam: parameters.packTracAuxCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Traction Total"
+                                metaParam: parameters.packTracTotalCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Hybrid"
+                                metaParam: parameters.packHybrCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Non-Traction Aux"
+                                metaParam: parameters.packNonTracAuxCurr
+                            }
                         }
                     }
-                }
 
-                GroupBox {
-                    Layout.alignment: Qt.AlignTop
-                    title: "Ground Fault"
-                    ColumnLayout {
-                        ScalarParamEdit {
-                            name: "Pulldown Pos Voltage"
-                            param: parameters.packGndFltDetectPulldownPosVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Pulldown Neg Voltage"
-                            param: parameters.packGndFltDetectPulldownNegVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Pullup Pos Voltage"
-                            param: parameters.packGndFltDetectPullupPosVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Pullup Neg Voltage"
-                            param: parameters.packGndFltDetectPullupNegVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Center Voltage"
-                            param: parameters.packGndFltCenterVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Location In Pack"
-                            param: parameters.packGndFltFrac
-                        }
-                        ScalarParamEdit {
-                            name: "Conductance"
-                            param: parameters.packGndFltConduct
+                    GroupBox {
+                        Layout.alignment: Qt.AlignTop
+                        title: "Ground Fault"
+                        ColumnLayout {
+                            ScalarParamEdit {
+                                name: "Pulldown Pos Voltage"
+                                metaParam: parameters.packGndFltDetectPulldownPosVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Pulldown Neg Voltage"
+                                metaParam: parameters.packGndFltDetectPulldownNegVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Pullup Pos Voltage"
+                                metaParam: parameters.packGndFltDetectPullupPosVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Pullup Neg Voltage"
+                                metaParam: parameters.packGndFltDetectPullupNegVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Center Voltage"
+                                metaParam: parameters.packGndFltCenterVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Location In Pack"
+                                metaParam: parameters.packGndFltFrac
+                            }
+                            ScalarParamEdit {
+                                name: "Conductance"
+                                metaParam: parameters.packGndFltConduct
+                            }
                         }
                     }
-                }
 
-                GroupBox {
-                    Layout.alignment: Qt.AlignTop
-                    title: "Cell Statistics"
-                    ColumnLayout {
-                        ScalarParamEdit {
-                            name: "Max Voltage"
-                            param: parameters.packMaxCellVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Mean Voltage"
-                            param: parameters.packMeanCellVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Min Voltage"
-                            param: parameters.packMinCellVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Max Temp"
-                            param: parameters.packMaxCellTemp
-                        }
-                        ScalarParamEdit {
-                            name: "Mean Temp"
-                            param: parameters.packMeanCellTemp
-                        }
-                        ScalarParamEdit {
-                            name: "Min Temp"
-                            param: parameters.packMinCellTemp
+                    GroupBox {
+                        Layout.alignment: Qt.AlignTop
+                        title: "Cell Statistics"
+                        ColumnLayout {
+                            ScalarParamEdit {
+                                name: "Max Voltage"
+                                metaParam: parameters.packMaxCellVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Mean Voltage"
+                                metaParam: parameters.packMeanCellVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Min Voltage"
+                                metaParam: parameters.packMinCellVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Max Temp"
+                                metaParam: parameters.packMaxCellTemp
+                            }
+                            ScalarParamEdit {
+                                name: "Mean Temp"
+                                metaParam: parameters.packMeanCellTemp
+                            }
+                            ScalarParamEdit {
+                                name: "Min Temp"
+                                metaParam: parameters.packMinCellTemp
+                            }
                         }
                     }
-                }
 
-                GroupBox {
-                    Layout.alignment: Qt.AlignTop
-                    title: "Cell Protection"
-                    ColumnLayout {
-                        ScalarParamEdit {
-                            name: "Max Voltage"
-                            param: parameters.packCellProtMaxVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Min Voltage"
-                            param: parameters.packCellProtMinVolt
-                        }
-                        ScalarParamEdit {
-                            name: "Resistance For Calc"
-                            param: parameters.packCellProtRes
-                        }
-                        ScalarParamEdit {
-                            name: "Max Disch (Voltage)"
-                            param: parameters.packCellProtVoltageMaxDischCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Max Chg (Voltage)"
-                            param: parameters.packCellProtVoltageMaxChgCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Max Disch (Thermal)"
-                            param: parameters.packCellProtThermalMaxDischCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Max Chg (Thermal)"
-                            param: parameters.packCellProtThermalMaxChgCurr
+                    GroupBox {
+                        Layout.alignment: Qt.AlignTop
+                        title: "Cell Protection"
+                        ColumnLayout {
+                            ScalarParamEdit {
+                                name: "Max Voltage"
+                                metaParam: parameters.packCellProtMaxVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Min Voltage"
+                                metaParam: parameters.packCellProtMinVolt
+                            }
+                            ScalarParamEdit {
+                                name: "Resistance For Calc"
+                                metaParam: parameters.packCellProtRes
+                            }
+                            ScalarParamEdit {
+                                name: "Max Disch (Voltage)"
+                                metaParam: parameters.packCellProtVoltageMaxDischCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Max Chg (Voltage)"
+                                metaParam: parameters.packCellProtVoltageMaxChgCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Max Disch (Thermal)"
+                                metaParam: parameters.packCellProtThermalMaxDischCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Max Chg (Thermal)"
+                                metaParam: parameters.packCellProtThermalMaxChgCurr
+                            }
                         }
                     }
-                }
 
-                GroupBox {
-                    title: "Current Limits"
-                    Layout.alignment: Qt.AlignTop
-                    ColumnLayout {
-                        ScalarParamEdit {
-                            name: "String Max Disch"
-                            param: parameters.packString1MaxDischCurr
-                        }
-                        ScalarParamEdit {
-                            name: "String Max Chg"
-                            param: parameters.packString1MaxChgCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Trac Max Disch"
-                            param: parameters.packTracMaxDischCurr
-                        }
-                        ScalarParamEdit {
-                            name: "Trac Max Chg"
-                            param: parameters.packTracMaxChgCurr
+                    GroupBox {
+                        title: "Current Limits"
+                        Layout.alignment: Qt.AlignTop
+                        ColumnLayout {
+                            ScalarParamEdit {
+                                name: "String Max Disch"
+                                metaParam: parameters.packString1MaxDischCurr
+                            }
+                            ScalarParamEdit {
+                                name: "String Max Chg"
+                                metaParam: parameters.packString1MaxChgCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Trac Max Disch"
+                                metaParam: parameters.packTracMaxDischCurr
+                            }
+                            ScalarParamEdit {
+                                name: "Trac Max Chg"
+                                metaParam: parameters.packTracMaxChgCurr
+                            }
                         }
                     }
-                }
 
-                GroupBox {
-                    title: "State"
-                    Layout.alignment: Qt.AlignTop
-                    ColumnLayout {
-                        ScalarParamEdit {
-                            name: "Ctc Ctrl State"
-                            param: parameters.packCtcCtrlStateCode
-                        }
-                        ScalarParamEdit {
-                            name: "Balancer State"
-                            param: parameters.packBalancerStateCode
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM Open Wire"
-                            param: parameters.packStatus
-                            bitMask: 0x00000001
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM Thermistor Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00000002
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM Balance Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00000004
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM Internal Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00000008
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM Power Supply Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00000010
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM I2C Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00000020
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM Overtemp"
-                            param: parameters.packStatus
-                            bitMask: 0x00000040
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM Comm Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00000100
-                        }
-                        ScalarParamIndicator {
-                            name: "CBTM Open Wire"
-                            param: parameters.packStatus
-                            bitMask: 0x00000100
-                        }
-                        ScalarParamIndicator {
-                            name: "Cell Voltage Sense Lost"
-                            param: parameters.packStatus
-                            bitMask: 0x00000200
-                        }
-                        ScalarParamIndicator {
-                            name: "Cell Temp Sense Lost"
-                            param: parameters.packStatus
-                            bitMask: 0x00000400
-                        }
-                        ScalarParamIndicator {
-                            name: "Adjacent Cell Temp Sense Lost"
-                            param: parameters.packStatus
-                            bitMask: 0x00000800
-                        }
-                        ScalarParamIndicator {
-                            name: "Ground Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00001000
-                        }
-                        ScalarParamIndicator {
-                            name: "Limp Home Engaged"
-                            param: parameters.packStatus
-                            bitMask: 0x00002000
-                        }
-                        ScalarParamIndicator {
-                            name: "String Current Reg Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00004000
-                        }
-                        ScalarParamIndicator {
-                            name: "CDA2 Vbat (12/24V) Low"
-                            param: parameters.packStatus
-                            bitMask: 0x00008000
-                        }
-                        ScalarParamIndicator {
-                            name: "Contactor Inoperative"
-                            param: parameters.packStatus
-                            bitMask: 0x00010000
-                        }
-                        ScalarParamIndicator {
-                            name: "Traction Precharge Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00020000
-                        }
-                        ScalarParamIndicator {
-                            name: "Aux Precharge Fault"
-                            param: parameters.packStatus
-                            bitMask: 0x00040000
-                        }
-                        ScalarParamIndicator {
-                            name: "String Voltage Low"
-                            param: parameters.packStatus
-                            bitMask: 0x00080000
-                        }
+                    GroupBox {
+                        title: "State"
+                        Layout.alignment: Qt.AlignTop
+                        ColumnLayout {
+                            ScalarParamEdit {
+                                name: "Ctc Ctrl State"
+                                metaParam: parameters.packCtcCtrlStateCode
+                            }
+                            ScalarParamEdit {
+                                name: "Balancer State"
+                                metaParam: parameters.packBalancerStateCode
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM Open Wire"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000001
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM Thermistor Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000002
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM Balance Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000004
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM Internal Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000008
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM Power Supply Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000010
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM I2C Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000020
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM Overtemp"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000040
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM Comm Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000100
+                            }
+                            ScalarParamIndicator {
+                                name: "CBTM Open Wire"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000100
+                            }
+                            ScalarParamIndicator {
+                                name: "Cell Voltage Sense Lost"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000200
+                            }
+                            ScalarParamIndicator {
+                                name: "Cell Temp Sense Lost"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000400
+                            }
+                            ScalarParamIndicator {
+                                name: "Adjacent Cell Temp Sense Lost"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00000800
+                            }
+                            ScalarParamIndicator {
+                                name: "Ground Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00001000
+                            }
+                            ScalarParamIndicator {
+                                name: "Limp Home Engaged"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00002000
+                            }
+                            ScalarParamIndicator {
+                                name: "String Current Reg Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00004000
+                            }
+                            ScalarParamIndicator {
+                                name: "CDA2 Vbat (12/24V) Low"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00008000
+                            }
+                            ScalarParamIndicator {
+                                name: "Contactor Inoperative"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00010000
+                            }
+                            ScalarParamIndicator {
+                                name: "Traction Precharge Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00020000
+                            }
+                            ScalarParamIndicator {
+                                name: "Aux Precharge Fault"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00040000
+                            }
+                            ScalarParamIndicator {
+                                name: "String Voltage Low"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x00080000
+                            }
 
 
-                        ScalarParamIndicator {
-                            name: "CBTM Non-Quiescent"
-                            param: parameters.packStatus
-                            bitMask: 0x40000000
-                            color: "yellow"
-                        }
-                        ScalarParamIndicator {
-                            name: "Batt Contactor Closed"
-                            param: parameters.packStatus
-                            bitMask: 0x20000000
-                            color: "yellow"
-                        }
-                        ScalarParamIndicator {
-                            name: "Pos Trac Contactor Closed"
-                            param: parameters.packStatus
-                            bitMask: 0x10000000
-                            color: "yellow"
-                        }
-                        ScalarParamIndicator {
-                            name: "Pos Aux Contactor Closed"
-                            param: parameters.packStatus
-                            bitMask: 0x08000000
-                            color: "yellow"
-                        }
-                        ScalarParamIndicator {
-                            name: "Neg Contactor Closed"
-                            param: parameters.packStatus
-                            bitMask: 0x04000000
-                            color: "yellow"
-                        }
-                        ScalarParamIndicator {
-                            name: "HV Present"
-                            param: parameters.packStatus
-                            bitMask: 0x02000000
-                            color: "yellow"
+                            ScalarParamIndicator {
+                                name: "CBTM Non-Quiescent"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x40000000
+                                color: "yellow"
+                            }
+                            ScalarParamIndicator {
+                                name: "Batt Contactor Closed"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x20000000
+                                color: "yellow"
+                            }
+                            ScalarParamIndicator {
+                                name: "Pos Trac Contactor Closed"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x10000000
+                                color: "yellow"
+                            }
+                            ScalarParamIndicator {
+                                name: "Pos Aux Contactor Closed"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x08000000
+                                color: "yellow"
+                            }
+                            ScalarParamIndicator {
+                                name: "Neg Contactor Closed"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x04000000
+                                color: "yellow"
+                            }
+                            ScalarParamIndicator {
+                                name: "HV Present"
+                                metaParam: parameters.packStatus
+                                bitMask: 0x02000000
+                                color: "yellow"
+                            }
                         }
                     }
                 }
@@ -1026,39 +1091,70 @@ Item {
         Tab {
             title: "System"
             active: true
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-                ColumnLayout {
-                    Layout.alignment: Qt.AlignTop
-                    ScalarParamEdit {
-                        name: "Idle Time"
-                        param: parameters.sysCycleIdleTicks
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "Idle Time"
+                            metaParam: parameters.sysCycleIdleTicks
+                        }
+                        ScalarParamEdit {
+                            name: "CBTM Input"
+                            metaParam: parameters.sysCycleDrvCbtmInTicks
+                        }
+                        ScalarParamEdit {
+                            name: "IAI Input"
+                            metaParam: parameters.sysCycleDrvIaiInTicks
+                        }
+                        ScalarParamEdit {
+                            name: "Aux Batt Ctrl"
+                            metaParam: parameters.sysCycleCtlAuxBattTicks
+                        }
+                        ScalarParamEdit {
+                            name: "Lamp Ctrl"
+                            metaParam: parameters.sysCycleCtlLampTicks
+                        }
+                        ScalarParamEdit {
+                            name: "Motor Ctrl"
+                            metaParam: parameters.sysCycleCtlMotorTicks
+                        }
+                        ScalarParamEdit {
+                            name: "Pack Ctrl"
+                            metaParam: parameters.sysCycleCtlPackTicks
+                        }
                     }
-                    ScalarParamEdit {
-                        name: "CBTM Input"
-                        param: parameters.sysCycleDrvCbtmInTicks
-                    }
-                    ScalarParamEdit {
-                        name: "IAI Input"
-                        param: parameters.sysCycleDrvIaiInTicks
-                    }
-                    ScalarParamEdit {
-                        name: "Aux Batt Ctrl"
-                        param: parameters.sysCycleCtlAuxBattTicks
-                    }
-                    ScalarParamEdit {
-                        name: "Lamp Ctrl"
-                        param: parameters.sysCycleCtlLampTicks
-                    }
-                    ScalarParamEdit {
-                        name: "Motor Ctrl"
-                        param: parameters.sysCycleCtlMotorTicks
-                    }
-                    ScalarParamEdit {
-                        name: "Pack Ctrl"
-                        param: parameters.sysCycleCtlPackTicks
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "Cycle Time Violation"
+                            metaParam: parameters.sysCycleTimeViolation
+                        }
+                        ScalarParamEdit {
+                            name: "Watchdog Reset"
+                            metaParam: parameters.sysWatchdogReset
+                        }
+                        ScalarParamEdit {
+                            name: "Heap Alloc Bytes"
+                            metaParam: parameters.sysHeapAllocBytes
+                        }
+                        ScalarParamEdit {
+                            name: "Heap Avail Bytes"
+                            metaParam: parameters.sysHeapFreeBytes
+                        }
+                        ScalarParamEdit {
+                            name: "Heap Free Count"
+                            metaParam: parameters.sysHeapNFrees
+                        }
+                        ScalarParamEdit {
+                            name: "RTDB rows"
+                            metaParam: parameters.sysRtDbRows
+                        }
                     }
                 }
             }

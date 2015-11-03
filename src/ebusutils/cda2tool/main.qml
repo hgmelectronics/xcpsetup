@@ -60,6 +60,15 @@ ApplicationWindow {
             MenuItem {
                 action: disableAllParametersAction
             }
+            MenuItem {
+                action: AutoRefreshSelector.modeAction
+            }
+            MenuItem {
+                action: AutoRefreshManager.runningAction
+            }
+            MenuItem {
+                action: AutoRefreshIntervalDialog.openAction
+            }
         }
 
         Menu {
@@ -118,6 +127,7 @@ ApplicationWindow {
         addrGran: 1
         slaveTimeout: 100
         slaveNvWriteTimeout: 200
+        Component.onCompleted: AutoRefreshManager.paramLayer = this
     }
 
     JSONParamFile {

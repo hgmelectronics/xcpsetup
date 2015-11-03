@@ -45,43 +45,137 @@ QtObject {
         count: 4
     }
 
-    property ScalarParam aioVbatEv01: registry.addScalarParam(MemoryRange.S32, paramId.aioVbatEv01, false, false, slots.voltage1)
+    property ScalarMetaParam aioVbatEv01: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.aioVbatEv01, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+
     property TableParam aioAiCts: TableParam {
         x: aiAxisModel
         value: registry.addArrayParam(MemoryRange.S32, paramId.aioAiCts, aiAxisModel.count, false, false, slots.stAiVolts)
     }
 
-    readonly property ScalarParam canAuxBattCnvtCmdOn: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtCmdOn, false, false, slots.bool01)
-    readonly property ScalarParam canAuxBattCnvtCmdVolt: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtCmdVolt, false, false, slots.voltage1)
-    readonly property ScalarParam canCtlMaxMotoringTorque: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxMotoringTorque, false, false, slots.saePc06Ext)
-    readonly property ScalarParam canCtlMaxRegenTorque: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxRegenTorque, false, false, slots.saePc06Ext)
-    readonly property ScalarParam canTracMotorSpeed: registry.addScalarParam(MemoryRange.S32, paramId.canTracMotorSpeed, false, false, slots.saeVr01)
-    readonly property ScalarParam canLimpHomeCmdOn: registry.addScalarParam(MemoryRange.S32, paramId.canLimpHomeCmdOn, false, false, slots.bool01)
-    readonly property ScalarParam canBattMaxDischCurrCmd: registry.addScalarParam(MemoryRange.S32, paramId.canBattMaxDischCurrCmd, false, false, slots.current1)
-    readonly property ScalarParam canBattMaxChgCurrCmd: registry.addScalarParam(MemoryRange.S32, paramId.canBattMaxChgCurrCmd, false, false, slots.current1)
-    readonly property ScalarParam canAuxBattCnvtState: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtState, false, false, slots.auxBattCnvtState)
-    readonly property ScalarParam canAuxBattCnvtTemp: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtTemp, false, false, slots.saeTp02)
-    readonly property ScalarParam canAuxBattCnvtInputVolt: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtInputVolt, false, false, slots.voltage1)
-    readonly property ScalarParam canAuxBattCnvtOutputVolt: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtOutputVolt, false, false, slots.voltage1)
-    readonly property ScalarParam canAuxBattCnvtOutputCurr: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtOutputCurr, false, false, slots.current1)
-    readonly property ScalarParam canExtChgCtcRqst: registry.addScalarParam(MemoryRange.S32, paramId.canExtChgCtcRqst, false, false, slots.bool01)
-    readonly property ScalarParam canAuxCtcRqrd: registry.addScalarParam(MemoryRange.S32, paramId.canAuxCtcRqrd, false, false, slots.bool01)
-    readonly property ScalarParam canXcpProgramRequested: registry.addScalarParam(MemoryRange.S32, paramId.canXcpProgramRequested, false, false, slots.bool01)
-    readonly property ScalarParam canCan1RxErrCount: registry.addScalarParam(MemoryRange.S32, paramId.canCan1RxErrCount, false, false, slots.raw32)
-    readonly property ScalarParam canCan1TxErrCount: registry.addScalarParam(MemoryRange.S32, paramId.canCan1TxErrCount, false, false, slots.raw32)
-    readonly property ScalarParam canCan2RxErrCount: registry.addScalarParam(MemoryRange.S32, paramId.canCan2RxErrCount, false, false, slots.raw32)
-    readonly property ScalarParam canCan2TxErrCount: registry.addScalarParam(MemoryRange.S32, paramId.canCan2TxErrCount, false, false, slots.raw32)
+    property ScalarMetaParam canAuxBattCnvtCmdOn: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtCmdOn, false, false, slots.bool01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canAuxBattCnvtCmdVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtCmdVolt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canCtlMaxMotoringTorque: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxMotoringTorque, false, false, slots.saePc06Ext)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canCtlMaxRegenTorque: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxRegenTorque, false, false, slots.saePc06Ext)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canTracMotorSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canTracMotorSpeed, false, false, slots.saeVr01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canLimpHomeCmdOn: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canLimpHomeCmdOn, false, false, slots.bool01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canBattMaxDischCurrCmd: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canBattMaxDischCurrCmd, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canBattMaxChgCurrCmd: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canBattMaxChgCurrCmd, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canAuxBattCnvtState: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtState, false, false, slots.auxBattCnvtState)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canAuxBattCnvtTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtTemp, false, false, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canAuxBattCnvtInputVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtInputVolt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canAuxBattCnvtOutputVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtOutputVolt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canAuxBattCnvtOutputCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtOutputCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canExtChgCtcRqst: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canExtChgCtcRqst, false, false, slots.bool01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canAuxCtcRqrd: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxCtcRqrd, false, false, slots.bool01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canXcpProgramRequested: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canXcpProgramRequested, false, false, slots.bool01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canCan1RxErrCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan1RxErrCount, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canCan1TxErrCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan1TxErrCount, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canCan2RxErrCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan2RxErrCount, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canCan2TxErrCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan2TxErrCount, false, false, slots.raw32)
+        name: qsTr("")
+    }
 
-    readonly property ScalarParam cbtmFaultDecayCyc: registry.addScalarParam(MemoryRange.S32, paramId.cbtmFaultDecayCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam cbtmNonQuiescentTripCyc: registry.addScalarParam(MemoryRange.S32, paramId.cbtmNonQuiescentTripCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam cbtmNonQuiescentDecayCyc: registry.addScalarParam(MemoryRange.S32, paramId.cbtmNonQuiescentDecayCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam cbtmBalanceOpenDeltaVThresh: registry.addScalarParam(MemoryRange.S32, paramId.cbtmBalanceOpenDeltaVThresh, true, true, slots.ltcCellvExt)
-    readonly property ScalarParam cbtmBalanceShortDeltaVThresh: registry.addScalarParam(MemoryRange.S32, paramId.cbtmBalanceShortDeltaVThresh, true, true, slots.ltcCellvExt)
-    readonly property ScalarParam cbtmQuiescentDeltaVThresh: registry.addScalarParam(MemoryRange.S32, paramId.cbtmQuiescentDeltaVThresh, true, true, slots.ltcCellvExt)
-    readonly property ScalarParam cbtmIsospi1FirstBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi1FirstBoard, true, true, slots.raw32)
-    readonly property ScalarParam cbtmIsospi1LastBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi1LastBoard, true, true, slots.raw32)
-    readonly property ScalarParam cbtmIsospi2FirstBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2FirstBoard, true, true, slots.raw32)
-    readonly property ScalarParam cbtmIsospi2LastBoard: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2LastBoard, true, true, slots.raw32)
+    property ScalarMetaParam cbtmFaultDecayCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmFaultDecayCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmNonQuiescentTripCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmNonQuiescentTripCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmNonQuiescentDecayCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmNonQuiescentDecayCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmBalanceOpenDeltaVThresh: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmBalanceOpenDeltaVThresh, true, true, slots.ltcCellvExt)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmBalanceShortDeltaVThresh: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmBalanceShortDeltaVThresh, true, true, slots.ltcCellvExt)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmQuiescentDeltaVThresh: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmQuiescentDeltaVThresh, true, true, slots.ltcCellvExt)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmIsospi1FirstBoard: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi1FirstBoard, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmIsospi1LastBoard: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi1LastBoard, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmIsospi2FirstBoard: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2FirstBoard, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmIsospi2LastBoard: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2LastBoard, true, true, slots.raw32)
+        name: qsTr("")
+    }
 
     property TableParam cbtmCellVolt: TableParam {
         x: SlotArrayModel {
@@ -115,12 +209,15 @@ QtObject {
         value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmStatus, 1, cbtmBoardAxisModel.count, false, false, slots.raw32hex)
     }
 
-    readonly property ScalarParam ctcMaxSimulPickup: registry.addScalarParam(MemoryRange.S32, paramId.ctcMaxSimulPickup, true, true, slots.raw32)
+    property ScalarMetaParam ctcMaxSimulPickup: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ctcMaxSimulPickup, true, true, slots.raw32)
+        name: qsTr("")
+    }
 
 
-    property TableParam ctcHasBInput: TableParam {
+    property TableParam ctcNFeedbackInput: TableParam {
         x: ctcAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.ctcHasBInput, ctcAxisModel.count, false, false, slots.bool01)
+        value: registry.addArrayParam(MemoryRange.S32, paramId.ctcNFeedbackInput, ctcAxisModel.count, true, true, slots.ctcFeedback)
     }
 
     property TableParam ctcOn: TableParam {
@@ -160,81 +257,294 @@ QtObject {
         value: registry.addArrayParam(MemoryRange.S32, paramId.iaiOk, iaiAxisModel.count, false, false, slots.bool01)
     }
 
-    readonly property ScalarParam iai4PosCts: registry.addScalarParam(MemoryRange.S32, paramId.iai4PosCts, false, false, slots.iaiMvScale)
-    readonly property ScalarParam iai4NegCts: registry.addScalarParam(MemoryRange.S32, paramId.iai4NegCts, false, false, slots.iaiMvScale)
-    readonly property ScalarParam iai4Pullup: registry.addScalarParam(MemoryRange.S32, paramId.iai4Pullup, true, false, slots.bool01)
-    readonly property ScalarParam iai4Pulldown: registry.addScalarParam(MemoryRange.S32, paramId.iai4Pulldown, true, false, slots.bool01)
+    property ScalarMetaParam iai4PosCts: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.iai4PosCts, false, false, slots.iaiMvScale)
+        name: qsTr("")
+    }
+    property ScalarMetaParam iai4NegCts: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.iai4NegCts, false, false, slots.iaiMvScale)
+        name: qsTr("")
+    }
+    property ScalarMetaParam iai4Pullup: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.iai4Pullup, true, false, slots.bool01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam iai4Pulldown: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.iai4Pulldown, true, false, slots.bool01)
+        name: qsTr("")
+    }
 
-    readonly property ScalarParam auxBattCnvtType: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtType, true, true, slots.auxBattCnvtType)
-    readonly property ScalarParam auxBattCnvtInputVoltMin: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtInputVoltMin, true, true, slots.voltage1)
-    readonly property ScalarParam auxBattCnvtStartTemp: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtStartTemp, true, true, slots.saeTp02)
-    readonly property ScalarParam auxBattCnvtStopTemp: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtStopTemp, true, true, slots.saeTp02)
-    readonly property ScalarParam auxBattFloatVolt: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVolt, true, true, slots.voltage1)
-    readonly property ScalarParam auxBattFloatVoltTempCoeff: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltTempCoeff, true, true, slots.auxBattFloatCoeff)
-    readonly property ScalarParam auxBattFloatVoltMin: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltMin, true, true, slots.voltage1)
-    readonly property ScalarParam auxBattFloatVoltMax: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltMax, true, true, slots.voltage1)
-    readonly property ScalarParam auxBattFloatVoltFailsafe: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltFailsafe, true, true, slots.voltage1)
-    readonly property ScalarParam auxBattRestartVoltHysteresis: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltHysteresis, true, true, slots.voltage1)
-    readonly property ScalarParam auxBattRestartVoltTime: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltTime, true, true, slots.timeCycle)
-    readonly property ScalarParam auxBattRestartAlwaysTime: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartAlwaysTime, true, true, slots.timeCycle)
-    readonly property ScalarParam auxBattStopOutCurr: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurr, true, true, slots.current1)
-    readonly property ScalarParam auxBattStopOutCurrTime: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurrTime, true, true, slots.timeCycle)
-    readonly property ScalarParam auxBattBattOkTemp: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattOkTemp, true, true, slots.saeTp02)
-    readonly property ScalarParam auxBattBattWarmTemp: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattWarmTemp, true, true, slots.saeTp02)
-    readonly property ScalarParam auxBattBattHotTemp: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattHotTemp, true, true, slots.saeTp02)
-    readonly property ScalarParam auxBattBattTemp0AiChan: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0AiChan, true, true, slots.raw32)
-    readonly property ScalarParam auxBattBattTemp1AiChan: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1AiChan, true, true, slots.raw32)
-    readonly property ScalarParam auxBattBattTemp0Curve: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0Curve, true, true, slots.thermistorCurve)
-    readonly property ScalarParam auxBattBattTemp1Curve: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1Curve, true, true, slots.thermistorCurve)
-    readonly property ScalarParam auxBattRestartVoltTimeCount: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltTimeCount, true, true, slots.timeCycle)
-    readonly property ScalarParam auxBattRestartAlwaysTimeCount: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartAlwaysTimeCount, true, true, slots.timeCycle)
-    readonly property ScalarParam auxBattStopOutCurrTimeCount: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurrTimeCount, true, true, slots.timeCycle)
+    property ScalarMetaParam auxBattCnvtType: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtType, true, true, slots.auxBattCnvtType)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattCnvtInputVoltMin: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtInputVoltMin, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattCnvtStartTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtStartTemp, true, true, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattCnvtStopTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtStopTemp, true, true, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattFloatVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVolt, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattFloatVoltTempCoeff: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltTempCoeff, true, true, slots.auxBattFloatCoeff)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattFloatVoltMin: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltMin, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattFloatVoltMax: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltMax, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattFloatVoltFailsafe: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltFailsafe, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattRestartVoltHysteresis: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltHysteresis, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattRestartVoltTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltTime, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattRestartAlwaysTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartAlwaysTime, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattStopOutCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurr, true, true, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattStopOutCurrTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurrTime, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattBattOkTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattOkTemp, true, true, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattBattWarmTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattWarmTemp, true, true, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattBattHotTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattHotTemp, true, true, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattBattTemp0AiChan: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0AiChan, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattBattTemp1AiChan: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1AiChan, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattBattTemp0Curve: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0Curve, true, true, slots.thermistorCurve)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattBattTemp1Curve: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1Curve, true, true, slots.thermistorCurve)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattRestartVoltTimeCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltTimeCount, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattRestartAlwaysTimeCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartAlwaysTimeCount, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattStopOutCurrTimeCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurrTimeCount, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
 
-    readonly property ScalarParam auxBattBattTemp0: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0, false, false, slots.saeTp02)
-    readonly property ScalarParam auxBattBattTemp1: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1, false, false, slots.saeTp02)
-    readonly property ScalarParam auxBattStatus: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStatus, false, false, slots.raw32hex)
+    property ScalarMetaParam auxBattBattTemp0: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0, false, false, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattBattTemp1: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1, false, false, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam auxBattStatus: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStatus, false, false, slots.raw32hex)
+        name: qsTr("")
+    }
 
-    readonly property ScalarParam motorFailsafeSpeed: registry.addScalarParam(MemoryRange.S32, paramId.motorFailsafeSpeed, true, true, slots.saeVr01)
-    readonly property ScalarParam motorMinEffSpeed: registry.addScalarParam(MemoryRange.S32, paramId.motorMinEffSpeed, true, true, slots.saeVr01)
-    readonly property ScalarParam motorRatedTorque: registry.addScalarParam(MemoryRange.S32, paramId.motorRatedTorque, true, true, slots.torque1)
-    readonly property ScalarParam motorCurrRegPropCoeff: registry.addScalarParam(MemoryRange.S32, paramId.motorCurrRegPropCoeff, true, true, slots.motorCurrRegPropCoeff)
-    readonly property ScalarParam motorCurrRegIntCoeff: registry.addScalarParam(MemoryRange.S32, paramId.motorCurrRegIntCoeff, true, true, slots.motorCurrRegIntCoeff)
-    readonly property ScalarParam motorMaxTorqueRefErr: registry.addScalarParam(MemoryRange.S32, paramId.motorMaxTorqueRefErr, true, true, slots.saePc06Ext)
-    readonly property ScalarParam motorMotoringIntegrator: registry.addScalarParam(MemoryRange.S32, paramId.motorMotoringIntegrator, true, true, slots.current1)
-    readonly property ScalarParam motorRegenIntegrator: registry.addScalarParam(MemoryRange.S32, paramId.motorRegenIntegrator, true, true, slots.current1)
-    readonly property ScalarParam motorAdjMaxMotoringCurr: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxMotoringCurr, true, true, slots.current1)
-    readonly property ScalarParam motorAdjMaxRegenCurr: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxRegenCurr, true, true, slots.current1)
+    property ScalarMetaParam motorFailsafeSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorFailsafeSpeed, true, true, slots.saeVr01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorMinEffSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorMinEffSpeed, true, true, slots.saeVr01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorRatedTorque: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorRatedTorque, true, true, slots.torque1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorCurrRegPropCoeff: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorCurrRegPropCoeff, true, true, slots.motorCurrRegPropCoeff)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorCurrRegIntCoeff: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorCurrRegIntCoeff, true, true, slots.motorCurrRegIntCoeff)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorMaxTorqueRefErr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorMaxTorqueRefErr, true, true, slots.saePc06Ext)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorMotoringIntegrator: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorMotoringIntegrator, true, true, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorRegenIntegrator: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorRegenIntegrator, true, true, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorAdjMaxMotoringCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxMotoringCurr, true, true, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam motorAdjMaxRegenCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxRegenCurr, true, true, slots.current1)
+        name: qsTr("")
+    }
 
-    readonly property ScalarParam packBoardsPerString: registry.addScalarParam(MemoryRange.S32, paramId.packBoardsPerString, false, false, slots.raw32)
-    readonly property ScalarParam packIaiFunc: registry.addScalarParam(MemoryRange.S32, paramId.packIaiFunc, true, true, slots.iaiFunc)
-    readonly property ScalarParam packIai1Scale: registry.addScalarParam(MemoryRange.S32, paramId.packIai1Scale, true, true, slots.iaiScaleShunt)
-    readonly property ScalarParam packIai2Scale: registry.addScalarParam(MemoryRange.S32, paramId.packIai2Scale, true, true, slots.iaiScaleShunt)
-    readonly property ScalarParam packIai3Scale: registry.addScalarParam(MemoryRange.S32, paramId.packIai3Scale, true, true, slots.iaiScaleShunt)
-    readonly property ScalarParam packIai4Scale: registry.addScalarParam(MemoryRange.S32, paramId.packIai4Scale, true, true, slots.voltage1)
-    readonly property ScalarParam packIai1Zero: registry.addScalarParam(MemoryRange.S32, paramId.packIai1Zero, true, true, slots.raw32)
-    readonly property ScalarParam packIai2Zero: registry.addScalarParam(MemoryRange.S32, paramId.packIai2Zero, true, true, slots.raw32)
-    readonly property ScalarParam packIai3Zero: registry.addScalarParam(MemoryRange.S32, paramId.packIai3Zero, true, true, slots.raw32)
-    readonly property ScalarParam packIai4Zero: registry.addScalarParam(MemoryRange.S32, paramId.packIai4Zero, true, true, slots.raw32)
-    readonly property ScalarParam packLimpHomeDischCurr: registry.addScalarParam(MemoryRange.S32, paramId.packLimpHomeDischCurr, true, true, slots.current1)
-    readonly property ScalarParam packLimpHomeChgCurr: registry.addScalarParam(MemoryRange.S32, paramId.packLimpHomeChgCurr, true, true, slots.current1)
-    readonly property ScalarParam packCellProtMarginCurr: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMarginCurr, true, true, slots.current1)
-    readonly property ScalarParam packCurrRegFltTripCyc: registry.addScalarParam(MemoryRange.S32, paramId.packCurrRegFltTripCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packCurrRegFltDecayCyc: registry.addScalarParam(MemoryRange.S32, paramId.packCurrRegFltDecayCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packGndFltDetectAvgCyc: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectAvgCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packGndFltDetectPeriodCyc: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPeriodCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packGndFltTripConduct: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripConduct, true, true, slots.conductance1)
-    readonly property ScalarParam packGndFltTripCyc: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripCyc, true, true, slots.raw32)
-    readonly property ScalarParam packGndFltDecayCyc: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDecayCyc, true, true, slots.raw32)
-    readonly property ScalarParam packTracCurrDecayCyc: registry.addScalarParam(MemoryRange.S32, paramId.packTracCurrDecayCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packChgCurrDecayCyc: registry.addScalarParam(MemoryRange.S32, paramId.packChgCurrDecayCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packMaxTracPrechgCyc: registry.addScalarParam(MemoryRange.S32, paramId.packMaxTracPrechgCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packLowStringVoltTrip: registry.addScalarParam(MemoryRange.S32, paramId.packLowStringVoltTrip, true, true, slots.voltage1)
-    readonly property ScalarParam packLowStringVoltReset: registry.addScalarParam(MemoryRange.S32, paramId.packLowStringVoltReset, true, true, slots.voltage1)
-    readonly property ScalarParam packBalBandVolt: registry.addScalarParam(MemoryRange.S32, paramId.packBalBandVolt, true, true, slots.ltcCellv)
-    readonly property ScalarParam packBalDiffVolt: registry.addScalarParam(MemoryRange.S32, paramId.packBalDiffVolt, true, true, slots.ltcCellv)
-    readonly property ScalarParam packBalSampleWaitCyc: registry.addScalarParam(MemoryRange.S32, paramId.packBalSampleWaitCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packBalDischHighCyc: registry.addScalarParam(MemoryRange.S32, paramId.packBalDischHighCyc, true, true, slots.timeCycle)
-    readonly property ScalarParam packBalDischAllCyc: registry.addScalarParam(MemoryRange.S32, paramId.packBalDischAllCyc, true, true, slots.timeCycle)
+    property ScalarMetaParam packBoardsPerString: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packBoardsPerString, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIaiFunc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIaiFunc, true, true, slots.iaiFunc)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIai1Scale: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai1Scale, true, true, slots.iaiScaleShunt)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIai2Scale: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai2Scale, true, true, slots.iaiScaleShunt)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIai3Scale: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai3Scale, true, true, slots.iaiScaleShunt)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIai4Scale: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai4Scale, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIai1Zero: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai1Zero, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIai2Zero: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai2Zero, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIai3Zero: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai3Zero, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packIai4Zero: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai4Zero, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packLimpHomeDischCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packLimpHomeDischCurr, true, true, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packLimpHomeChgCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packLimpHomeChgCurr, true, true, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCellProtMarginCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMarginCurr, true, true, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCurrRegFltTripCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCurrRegFltTripCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCurrRegFltDecayCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCurrRegFltDecayCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltDetectAvgCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectAvgCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltDetectPeriodCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPeriodCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltTripConduct: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripConduct, true, true, slots.conductance1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltTripCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripCyc, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltDecayCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDecayCyc, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packTracCurrDecayCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracCurrDecayCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packChgCurrDecayCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packChgCurrDecayCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packMaxTracPrechgCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packMaxTracPrechgCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packLowStringVoltTrip: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packLowStringVoltTrip, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packLowStringVoltReset: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packLowStringVoltReset, true, true, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packBalBandVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalBandVolt, true, true, slots.ltcCellv)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packBalDiffVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalDiffVolt, true, true, slots.ltcCellv)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packBalSampleWaitCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalSampleWaitCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packBalDischHighCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalDischHighCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packBalDischAllCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalDischAllCyc, true, true, slots.timeCycle)
+        name: qsTr("")
+    }
 
     property TableParam packMaxCurrDisch: TableParam {
         x: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_DischCellTemp, 6, true, true, slots.saeTp02)
@@ -257,46 +567,195 @@ QtObject {
         value: registry.addArrayParam(MemoryRange.S32, paramId.packCellProtRes_Res, 4, true, true, slots.cellProtRes)
     }
 
-    readonly property ScalarParam packString1Volt: registry.addScalarParam(MemoryRange.S32, paramId.packString1Volt, false, false, slots.voltage1)
-    readonly property ScalarParam packString1Curr: registry.addScalarParam(MemoryRange.S32, paramId.packString1Curr, false, false, slots.current1)
-    readonly property ScalarParam packTracMtrCurr: registry.addScalarParam(MemoryRange.S32, paramId.packTracMtrCurr, false, false, slots.current1)
-    readonly property ScalarParam packTracAuxCurr: registry.addScalarParam(MemoryRange.S32, paramId.packTracAuxCurr, false, false, slots.current1)
-    readonly property ScalarParam packTracTotalCurr: registry.addScalarParam(MemoryRange.S32, paramId.packTracTotalCurr, false, false, slots.current1)
-    readonly property ScalarParam packHybrCurr: registry.addScalarParam(MemoryRange.S32, paramId.packHybrCurr, false, false, slots.current1)
-    readonly property ScalarParam packNonTracAuxCurr: registry.addScalarParam(MemoryRange.S32, paramId.packNonTracAuxCurr, false, false, slots.current1)
-    readonly property ScalarParam packString1MaxDischCurr: registry.addScalarParam(MemoryRange.S32, paramId.packString1MaxDischCurr, false, false, slots.current1)
-    readonly property ScalarParam packString1MaxChgCurr: registry.addScalarParam(MemoryRange.S32, paramId.packString1MaxChgCurr, false, false, slots.current1)
-    readonly property ScalarParam packTracMaxDischCurr: registry.addScalarParam(MemoryRange.S32, paramId.packTracMaxDischCurr, false, false, slots.current1)
-    readonly property ScalarParam packTracMaxChgCurr: registry.addScalarParam(MemoryRange.S32, paramId.packTracMaxChgCurr, false, false, slots.current1)
-    readonly property ScalarParam packCellProtMaxVolt: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMaxVolt, false, false, slots.ltcCellv)
-    readonly property ScalarParam packCellProtMinVolt: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMinVolt, false, false, slots.ltcCellv)
-    readonly property ScalarParam packCellProtRes: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtRes, false, false, slots.cellProtRes)
-    readonly property ScalarParam packCellProtVoltageMaxDischCurr: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtVoltageMaxDischCurr, false, false, slots.current1)
-    readonly property ScalarParam packCellProtVoltageMaxChgCurr: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtVoltageMaxChgCurr, false, false, slots.current1)
-    readonly property ScalarParam packCellProtThermalMaxDischCurr: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtThermalMaxDischCurr, false, false, slots.current1)
-    readonly property ScalarParam packCellProtThermalMaxChgCurr: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtThermalMaxChgCurr, false, false, slots.current1)
-    readonly property ScalarParam packStatus: registry.addScalarParam(MemoryRange.S32, paramId.packStatus, false, false, slots.raw32hex)
-    readonly property ScalarParam packMaxCellVolt: registry.addScalarParam(MemoryRange.S32, paramId.packMaxCellVolt, false, false, slots.ltcCellv)
-    readonly property ScalarParam packMeanCellVolt: registry.addScalarParam(MemoryRange.S32, paramId.packMeanCellVolt, false, false, slots.ltcCellv)
-    readonly property ScalarParam packMinCellVolt: registry.addScalarParam(MemoryRange.S32, paramId.packMinCellVolt, false, false, slots.ltcCellv)
-    readonly property ScalarParam packMaxCellTemp: registry.addScalarParam(MemoryRange.S32, paramId.packMaxCellTemp, false, false, slots.saeTp02)
-    readonly property ScalarParam packMeanCellTemp: registry.addScalarParam(MemoryRange.S32, paramId.packMeanCellTemp, false, false, slots.saeTp02)
-    readonly property ScalarParam packMinCellTemp: registry.addScalarParam(MemoryRange.S32, paramId.packMinCellTemp, false, false, slots.saeTp02)
-    readonly property ScalarParam packGndFltDetectPulldownPosVolt: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPulldownPosVolt, false, false, slots.voltage1)
-    readonly property ScalarParam packGndFltDetectPulldownNegVolt: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPulldownNegVolt, false, false, slots.voltage1)
-    readonly property ScalarParam packGndFltDetectPullupPosVolt: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPullupPosVolt, false, false, slots.voltage1)
-    readonly property ScalarParam packGndFltDetectPullupNegVolt: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPullupNegVolt, false, false, slots.voltage1)
-    readonly property ScalarParam packGndFltCenterVolt: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltCenterVolt, false, false, slots.voltage1)
-    readonly property ScalarParam packGndFltFrac: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltFrac, false, false, slots.saePc01)
-    readonly property ScalarParam packGndFltConduct: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltConduct, false, false, slots.conductance1)
-    readonly property ScalarParam packCtcCtrlStateCode: registry.addScalarParam(MemoryRange.S32, paramId.packCtcCtrlStateCode, false, false, slots.ctcCtrlState)
-    readonly property ScalarParam packBalancerStateCode: registry.addScalarParam(MemoryRange.S32, paramId.packBalancerStateCode, false, false, slots.balancerState)
+    property ScalarMetaParam packString1Volt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packString1Volt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packString1Curr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packString1Curr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packTracMtrCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracMtrCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packTracAuxCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracAuxCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packTracTotalCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracTotalCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packHybrCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packHybrCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packNonTracAuxCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packNonTracAuxCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packString1MaxDischCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packString1MaxDischCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packString1MaxChgCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packString1MaxChgCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packTracMaxDischCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracMaxDischCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packTracMaxChgCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracMaxChgCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCellProtMaxVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMaxVolt, false, false, slots.ltcCellv)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCellProtMinVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMinVolt, false, false, slots.ltcCellv)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCellProtRes: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtRes, false, false, slots.cellProtRes)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCellProtVoltageMaxDischCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtVoltageMaxDischCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCellProtVoltageMaxChgCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtVoltageMaxChgCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCellProtThermalMaxDischCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtThermalMaxDischCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCellProtThermalMaxChgCurr: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtThermalMaxChgCurr, false, false, slots.current1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packStatus: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packStatus, false, false, slots.raw32hex)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packMaxCellVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packMaxCellVolt, false, false, slots.ltcCellv)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packMeanCellVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packMeanCellVolt, false, false, slots.ltcCellv)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packMinCellVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packMinCellVolt, false, false, slots.ltcCellv)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packMaxCellTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packMaxCellTemp, false, false, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packMeanCellTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packMeanCellTemp, false, false, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packMinCellTemp: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packMinCellTemp, false, false, slots.saeTp02)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltDetectPulldownPosVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPulldownPosVolt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltDetectPulldownNegVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPulldownNegVolt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltDetectPullupPosVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPullupPosVolt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltDetectPullupNegVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPullupNegVolt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltCenterVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltCenterVolt, false, false, slots.voltage1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltFrac: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltFrac, false, false, slots.saePc01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packGndFltConduct: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltConduct, false, false, slots.conductance1)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packCtcCtrlStateCode: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packCtcCtrlStateCode, false, false, slots.ctcCtrlState)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packBalancerStateCode: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalancerStateCode, false, false, slots.balancerState)
+        name: qsTr("")
+    }
 
-    readonly property ScalarParam sysCycleIdleTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleIdleTicks, false, false, slots.timeSysTick)
-    readonly property ScalarParam sysCycleDrvCbtmInTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleDrvCbtmInTicks, false, false, slots.timeSysTick)
-    readonly property ScalarParam sysCycleDrvIaiInTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleDrvIaiInTicks, false, false, slots.timeSysTick)
-    readonly property ScalarParam sysCycleCtlAuxBattTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlAuxBattTicks, false, false, slots.timeSysTick)
-    readonly property ScalarParam sysCycleCtlLampTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlLampTicks, false, false, slots.timeSysTick)
-    readonly property ScalarParam sysCycleCtlMotorTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlMotorTicks, false, false, slots.timeSysTick)
-    readonly property ScalarParam sysCycleCtlPackTicks: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlPackTicks, false, false, slots.timeSysTick)
+    property ScalarMetaParam sysCycleIdleTicks: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleIdleTicks, false, false, slots.timeSysTick)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysCycleDrvCbtmInTicks: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleDrvCbtmInTicks, false, false, slots.timeSysTick)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysCycleDrvIaiInTicks: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleDrvIaiInTicks, false, false, slots.timeSysTick)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysCycleCtlAuxBattTicks: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlAuxBattTicks, false, false, slots.timeSysTick)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysCycleCtlLampTicks: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlLampTicks, false, false, slots.timeSysTick)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysCycleCtlMotorTicks: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlMotorTicks, false, false, slots.timeSysTick)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysCycleCtlPackTicks: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlPackTicks, false, false, slots.timeSysTick)
+        name: qsTr("")
+    }
+
+    property ScalarMetaParam sysCycleTimeViolation: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleTimeViolation, false, false, slots.bool01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysWatchdogReset: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysWatchdogReset, false, false, slots.bool01)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysHeapAllocBytes: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysHeapAllocBytes, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysHeapFreeBytes: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysHeapFreeBytes, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysHeapNFrees: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysHeapNFrees, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam sysRtDbRows: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysRtDbRows, false, false, slots.raw32)
+        name: qsTr("")
+    }
+
 }
