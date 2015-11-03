@@ -47,7 +47,7 @@ QtObject {
     readonly property double ctcMaxSimulPickup:                 4*0x00040000
     readonly property double ctcLowVbatTripVolt:                4*0x00040001
     readonly property double ctcLowVbatOkVolt:                  4*0x00040002
-    readonly property double ctcHasBInput:                      4*0x00040010
+    readonly property double ctcNFeedbackInput:                 4*0x00040010
     readonly property double ctcOn:                             4*0x00041010
     readonly property double ctcOk:                             4*0x00041020
     readonly property double ctcAClosed:                        4*0x00041030
@@ -205,4 +205,8 @@ QtObject {
     readonly property double sysCycleCtlPackTicks:              4*0x000A1010
     readonly property double sysCycleTimeViolation:             4*0x000A1011
     readonly property double sysWatchdogReset:                  4*0x000A1012
+    readonly property double sysHeapAllocBytes:                 4*0x000A1013
+    readonly property double sysHeapFreeBytes:                  4*0x000A1014
+    readonly property double sysHeapNFrees:                     4*0x000A1015
+    readonly property double sysRtDbRows:                       4*0x000A1016
 }

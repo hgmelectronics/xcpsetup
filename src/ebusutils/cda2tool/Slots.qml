@@ -136,6 +136,13 @@ Item {
             { raw: 3, engr: "Disch All" }
         ]
     }
+    property EncodingSlot ctcFeedback: EncodingSlot {
+        encodingList: [
+            { raw: 0, engr: "None" },
+            { raw: 1, engr: "A" },
+            { raw: 2, engr: "A+B" }
+        ]
+    }
     property LinearSlot conductance1: LinearSlot {
         rawA: 0
         engrA: 0

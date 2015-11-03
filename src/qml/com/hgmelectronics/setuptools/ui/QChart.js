@@ -1431,6 +1431,7 @@ var Chart = function(canvas, context) {
             for (iDataset = 0; iDataset < data.length; iDataset++) {
                 ctx.strokeStyle = data[iDataset].strokeColor;
                 ctx.lineWidth = config.datasetStrokeWidth;
+                ctx.lineJoin = "round"
                 ctx.beginPath();
                 ctx.moveTo(yAxisPosX, xAxisPosY - animPc * calculateOffset(data[iDataset].yData[0],calculatedYScale,yScaleHop))
 
@@ -1854,11 +1855,15 @@ var Chart = function(canvas, context) {
     }
 
     function getDecimalPlaces (num) {
-        var numberOfDecimalPlaces;
-        if (num%1!=0) {
-            return num.toString().split(".")[1].length
-        } else {
-            return 0;
+        var places = 0
+        while(1) {
+            var scaled = num * Math.pow(10, places)
+            var err = Math.round(scaled) - scaled
+            var relErr = err / scaled
+            if(Math.abs(relErr) < 0.0000001)
+                return places
+
+            ++places
         }
     }
 
