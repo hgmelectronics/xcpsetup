@@ -20,9 +20,12 @@ GroupBox {
     width: implicitWidth
 
     RowLayout {
+        id: rowLayout
         anchors.fill: parent
         TextField {
             id: textField
+            //width: 150
+            Layout.fillWidth: true
             text: param.stringVal
             readOnly: !param.range.writable
             horizontalAlignment: TextInput.AlignRight
@@ -31,7 +34,11 @@ GroupBox {
                     param.stringVal = text
             }
             validator: param.slot.validator
-            Layout.fillWidth: true
+            AutoRefreshOverlay {
+                key: param.key
+                visible: enableAutoRefreshOverlay
+                enabled: enableAutoRefreshOverlay
+            }
         }
         Label {
             id: label
@@ -41,11 +48,6 @@ GroupBox {
             id: sizeHint
             visible: false
             text: name
-        }
-        AutoRefreshOverlay {
-            key: param.key
-            visible: enableAutoRefreshOverlay
-            enabled: enableAutoRefreshOverlay
         }
     }
 }
