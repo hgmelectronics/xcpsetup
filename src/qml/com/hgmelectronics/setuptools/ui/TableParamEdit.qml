@@ -16,6 +16,9 @@ Rectangle {
     property bool enableAutoRefreshOverlay: false // FIXME tableMetaParam.isLiveData
 
 
+    property bool valueOnly: !(tableParam.xModel.flags(0) & Qt.ItemIsEditable) && (tableParam.valueModel.flags(0) & Qt.ItemIsEditable)
+    property bool valueSelected: valueOnly
+    property bool xSelected: false
 
     TableView {
         id: tableView
@@ -81,6 +84,8 @@ Rectangle {
                                     anchors.fill: parent
                                     onClicked: {
                                         forceActiveFocus(Qt.MouseFocusReason)
+                                        valueSelected = false
+                                        xSelected = true
                                     }
                                     onActiveFocusChanged: {
                                         if(activeFocus)
@@ -96,6 +101,13 @@ Rectangle {
                                         if(!styleData.selected) {
                                             input.deselect()
                                         }
+                                    }
+                                }
+
+                                Component.onCompleted: {
+                                    if(xSelected) {
+                                        forceActiveFocus(Qt.MouseFocusReason)
+                                        input.selectAll()
                                     }
                                 }
                             }
@@ -158,6 +170,8 @@ Rectangle {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
+                                valueSelected = true
+                                xSelected = false
                                 forceActiveFocus(Qt.MouseFocusReason)
                             }
                             onActiveFocusChanged: {
@@ -174,6 +188,13 @@ Rectangle {
                                 if(!styleData.selected) {
                                     input.deselect()
                                 }
+                            }
+                        }
+
+                        Component.onCompleted: {
+                            if(valueSelected) {
+                                forceActiveFocus(Qt.MouseFocusReason)
+                                input.selectAll()
                             }
                         }
                     }
