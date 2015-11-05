@@ -76,6 +76,11 @@ Window {
             return val
     }
 
+    function checkImmediateWrite() {
+        if(speedTableParam.immediateWrite)
+            ImmediateWrite.trigger(speedTableParam.param.value.key)
+    }
+
     function clampWeakOrderingFromSelection() {
         var selectionFirst = speedTableParam.param.value.count
         var selectionLast = -1
@@ -137,13 +142,17 @@ Window {
         onTriggered: {
             scaleAbout(steeperFlatterRatio, selectionAverage())
             clampWeakOrderingFromSelection()
+            checkImmediateWrite()
         }
     }
     Action {
         id: makeFlatter
         text: qsTr("Flatter")
         enabled: tableView.selection.count > 0
-        onTriggered: scaleAbout(1 / steeperFlatterRatio, selectionAverage())
+        onTriggered: {
+            scaleAbout(1 / steeperFlatterRatio, selectionAverage())
+            checkImmediateWrite()
+        }
     }
     Action {
         id: increaseSelected
@@ -152,6 +161,7 @@ Window {
         onTriggered: {
             offset(increaseDecreaseDelta)
             clampWeakOrderingFromSelection()
+            checkImmediateWrite()
         }
     }
     Action {
@@ -161,6 +171,7 @@ Window {
         onTriggered: {
             offset(-increaseDecreaseDelta)
             clampWeakOrderingFromSelection()
+            checkImmediateWrite()
         }
     }
 
@@ -188,6 +199,7 @@ Window {
                                        speedTableParam.param.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
                                    }
                                )
+            checkImmediateWrite()
         }
     }
 

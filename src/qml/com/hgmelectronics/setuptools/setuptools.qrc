@@ -27,6 +27,7 @@
         <file>ui/AutoRefreshArea.qml</file>
         <file>AutoRefreshManager.qml</file>
         <file>ui/AutoRefreshIntervalDialog.qml</file>
+        <file>ImmediateWrite.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

@@ -43,6 +43,11 @@ Window {
             return val
     }
 
+    function checkImmediateWrite() {
+        if(tableParam.immediateWrite)
+            ImmediateWrite.trigger(tableParam.param.value.key)
+    }
+
     function scaleAbout(scale, zero) {
         tableView.selection.forEach( function(rowIndex) {
             var oldDelta = tableParam.param.value.get(rowIndex) - zero
@@ -89,25 +94,37 @@ Window {
         id: makeSteeper
         text: qsTr("Steeper")
         enabled: tableView.selection.count > 0
-        onTriggered: scaleAbout(steeperFlatterRatio, selectionAverage())
+        onTriggered: {
+            scaleAbout(steeperFlatterRatio, selectionAverage())
+            checkImmediateWrite()
+        }
     }
     Action {
         id: makeFlatter
         text: qsTr("Flatter")
         enabled: tableView.selection.count > 0
-        onTriggered: scaleAbout(1 / steeperFlatterRatio, selectionAverage())
+        onTriggered: {
+            scaleAbout(1 / steeperFlatterRatio, selectionAverage())
+            checkImmediateWrite()
+        }
     }
     Action {
         id: increaseSelected
         text: qsTr("Increase Selected (+)")
         enabled: tableView.selection.count > 0
-        onTriggered: offset(increaseDecreaseDelta)
+        onTriggered: {
+            offset(increaseDecreaseDelta)
+            checkImmediateWrite()
+        }
     }
     Action {
         id: decreaseSelected
         text: qsTr("Decrease Selected (-)")
         enabled: tableView.selection.count > 0
-        onTriggered: offset(-increaseDecreaseDelta)
+        onTriggered: {
+            offset(-increaseDecreaseDelta)
+            checkImmediateWrite()
+        }
     }
     Action {
         id: linearizeSelected
@@ -133,6 +150,7 @@ Window {
                                        tableParam.param.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
                                    }
                                )
+            checkImmediateWrite()
         }
     }
 
@@ -208,7 +226,7 @@ Window {
                 id: regularTableParamEdit
                 xLabel: root.xLabel
                 valueLabel: root.valueLabel
-                tableParam: root.tableParam.param
+                tableMetaParam: root.tableParam
                 visible: !encodingValue
                 Layout.margins: 10
                 Layout.fillHeight: true
@@ -218,7 +236,7 @@ Window {
                 id: encodingTableParamEdit
                 xLabel: root.xLabel
                 valueLabel: root.valueLabel
-                tableParam: root.tableParam.param
+                tableMetaParam: root.tableParam
                 visible: encodingValue
                 Layout.margins: 10
                 Layout.fillHeight: true
