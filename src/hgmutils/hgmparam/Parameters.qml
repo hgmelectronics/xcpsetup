@@ -1812,6 +1812,7 @@ QtObject {
     property ScalarMetaParam transmissionType: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_type, true, true, slots.transmissionType1)
         name: qsTr("Trans Type")
+        resetNeeded: true
     }
 
     property ScalarMetaParam transmissionTempBiasEnable: ScalarMetaParam {
