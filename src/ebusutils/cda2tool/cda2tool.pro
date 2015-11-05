@@ -40,3 +40,5 @@ INCLUDEPATH += $$PWD/../../libsetuptools
 DEPENDPATH += $$PWD/../../libsetuptools
 
 HEADERS +=
+
+include($$PWD/../../winmacdeploy.pri)

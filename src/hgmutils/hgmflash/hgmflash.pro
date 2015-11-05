@@ -47,3 +47,5 @@ HEADERS += \
     Cs2Tool.h
 
 win32:RC_ICONS += ../qml/com/hgmelectronics/utils/hgmutils.ico
+
+include($$PWD/../../winmacdeploy.pri)

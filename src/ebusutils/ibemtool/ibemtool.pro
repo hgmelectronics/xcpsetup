@@ -40,3 +40,5 @@ DEPENDPATH += $$PWD/../ebussetuptools
 
 HEADERS += \
     IbemTool.h
+
+include($$PWD/../../winmacdeploy.pri)
