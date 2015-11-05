@@ -14,6 +14,7 @@ ApplicationWindow {
     property string programName: qsTr("COMPUSHIFT Parameter Editor")
     property string programVersion: "1.1"
     property alias useMetricUnits: paramTabView.useMetricUnits
+    property alias readParametersOnConnect: readParametersOnConnectAction.checked
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property CS2Defaults cs2Defaults:  CS2Defaults {
@@ -49,6 +50,8 @@ ApplicationWindow {
         onConnectSlaveDone: {
             ParamResetNeeded.set = false
             forceSlaveSupportCalPage()
+            if(slaveConnected && idle && readParametersOnConnect)
+                upload()
         }
         onDisconnectSlaveDone: {
             ParamResetNeeded.set = false
@@ -104,7 +107,9 @@ ApplicationWindow {
     MessageDialog {
         id: resetNeededDialog
         title: qsTr("Reset Needed")
-        text: qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+        text: readParametersOnConnect
+                ? qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power and reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+                : qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
         standardButtons: StandardButton.Ok
     }
 
@@ -200,6 +205,14 @@ ApplicationWindow {
             checked: !useMetricUnits
             onTriggered: useMetricUnits = false
         }
+    }
+
+    Action {
+        id: readParametersOnConnectAction
+        text: qsTr("Read parameters after connect")
+        tooltip: qsTr("Automatically reads parameters from the controller after connecting.")
+        checkable: true
+        checked: true
     }
 
     Action {
@@ -343,6 +356,9 @@ ApplicationWindow {
                 MenuItem {
                     action: useUSUnitsAction
                 }
+            }
+            MenuItem {
+                action: readParametersOnConnectAction
             }
             MenuItem {
                 action: saveReadOnlyParametersAction
