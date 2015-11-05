@@ -136,7 +136,6 @@ Rectangle {
 
                         Text {
                             id: label
-                            visible: !(tableParam.xModel.flags & Qt.ItemIsEditable)
                             height: Math.max(16, label.implicitHeight)
                             objectName: "label"
                             width: parent.width
