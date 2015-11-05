@@ -110,6 +110,10 @@ Rectangle {
                                         input.selectAll()
                                     }
                                 }
+                                Component.onDestruction: {
+                                    if(model[styleData.role] != text)
+                                        model[styleData.role] = text
+                                }
                             }
                         }
                     }
@@ -124,6 +128,7 @@ Rectangle {
             role: "value"
             delegate: Loader {
                 sourceComponent: (styleData.selected && (tableParam.valueModel.flags(0) & Qt.ItemIsEditable)) ? valueEditDelegate : valueDisplayDelegate
+
                 Component {
                     id: valueDisplayDelegate
                     Item {
@@ -196,6 +201,10 @@ Rectangle {
                                 forceActiveFocus(Qt.MouseFocusReason)
                                 input.selectAll()
                             }
+                        }
+                        Component.onDestruction: {
+                            if(model[styleData.role] != text)
+                                model[styleData.role] = text
                         }
                     }
                 }
