@@ -103,8 +103,8 @@ ApplicationWindow {
 
     MessageDialog {
         id: resetNeededDialog
-        title: "Reset Needed"
-        text: "The CS2 needs to be restarted to apply the new settings. Please cycle power and then reconnect."
+        title: qsTr("Reset Needed")
+        text: qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
         standardButtons: StandardButton.Ok
     }
 
