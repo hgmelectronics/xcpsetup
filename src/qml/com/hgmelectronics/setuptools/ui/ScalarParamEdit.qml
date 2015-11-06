@@ -30,8 +30,11 @@ GroupBox {
             readOnly: !param.range.writable
             horizontalAlignment: TextInput.AlignRight
             onEditingFinished: {
-                if(param.stringVal != text)
+                if(param.stringVal != text) {
                     param.stringVal = text
+                    if(metaParam.immediateWrite)
+                        ImmediateWrite.trigger(param.key)
+                }
             }
             validator: param.slot.validator
             AutoRefreshOverlay {

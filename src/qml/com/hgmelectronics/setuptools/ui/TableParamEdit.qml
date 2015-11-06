@@ -34,7 +34,7 @@ Rectangle {
             role: "x"
             delegate: Component {
                 Loader {
-                    sourceComponent: (styleData.selected && (tableParam.xModel.flags(0) & Qt.ItemIsEditable)) ? xEditDelegate : xDisplayDelegate
+                    sourceComponent: (styleData.selected && (root.tableParam.xModel.flags(0) & Qt.ItemIsEditable)) ? xEditDelegate : xDisplayDelegate
                     Component {
                         id: xDisplayDelegate
                         Item {
@@ -42,7 +42,6 @@ Rectangle {
 
                             Text {
                                 id: label
-                                visible: !(tableParam.xModel.flags & Qt.ItemIsEditable)
                                 height: Math.max(16, label.implicitHeight)
                                 objectName: "label"
                                 width: parent.width
@@ -69,12 +68,16 @@ Rectangle {
                                 anchors.fill: parent
                                 horizontalAlignment: styleData.textAlignment
                                 text: styleData.value !== undefined ? styleData.value : ""
-                                validator: tableParam.x.slot.validator
+                                validator: root.tableParam.x.slot.validator
 
-                                onEditingFinished: {
+                                function updateValue() {
                                     if(model[styleData.role] != text)
                                         model[styleData.role] = text
+                                    if(root.tableMetaParam.immediateWrite)
+                                        ImmediateWrite.trigger(root.tableParam.x.key)
                                 }
+
+                                onEditingFinished: updateValue()
                                 onAccepted: {
                                     if (styleData.selected)
                                         selectAll()
@@ -110,10 +113,7 @@ Rectangle {
                                         input.selectAll()
                                     }
                                 }
-                                Component.onDestruction: {
-                                    if(model[styleData.role] != text)
-                                        model[styleData.role] = text
-                                }
+                                Component.onDestruction: updateValue()
                             }
                         }
                     }
@@ -127,7 +127,7 @@ Rectangle {
             id: valueColumn
             role: "value"
             delegate: Loader {
-                sourceComponent: (styleData.selected && (tableParam.valueModel.flags(0) & Qt.ItemIsEditable)) ? valueEditDelegate : valueDisplayDelegate
+                sourceComponent: (styleData.selected && (root.tableParam.valueModel.flags(0) & Qt.ItemIsEditable)) ? valueEditDelegate : valueDisplayDelegate
 
                 Component {
                     id: valueDisplayDelegate
@@ -160,12 +160,15 @@ Rectangle {
                         anchors.leftMargin: 7
                         anchors.fill: parent
                         text: styleData.value !== undefined ? styleData.value : ""
-                        validator: tableParam.value.slot.validator
+                        validator: root.tableParam.value.slot.validator
 
-                        onEditingFinished: {
+                        function updateValue() {
                             if(model[styleData.role] != text)
                                 model[styleData.role] = text
+                            if(root.tableMetaParam.immediateWrite)
+                                ImmediateWrite.trigger(root.tableParam.value.key)
                         }
+                        onEditingFinished: updateValue()
                         onAccepted: {
                             if (styleData.selected)
                                 selectAll()
@@ -201,10 +204,7 @@ Rectangle {
                                 input.selectAll()
                             }
                         }
-                        Component.onDestruction: {
-                            if(model[styleData.role] != text)
-                                model[styleData.role] = text
-                        }
+                        Component.onDestruction: updateValue()
                     }
                 }
             }

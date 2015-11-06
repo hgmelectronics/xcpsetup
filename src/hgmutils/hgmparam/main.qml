@@ -47,6 +47,15 @@ ApplicationWindow {
         addrGran: 4
         slaveTimeout: 100
         slaveNvWriteTimeout: 200
+
+        function checkImmediateWrite() {
+            if(slaveConnected && idle && ImmediateWrite.keys.length > 0) {
+                var keys = ImmediateWrite.keys
+                ImmediateWrite.clear()
+                download(keys)
+            }
+        }
+
         onConnectSlaveDone: {
             ParamResetNeeded.set = false
             forceSlaveSupportCalPage()
@@ -66,7 +75,18 @@ ApplicationWindow {
                 resetNeededDialog.open()
             }
         }
+        onIdleChanged: checkImmediateWrite()
+        onSlaveConnectedChanged: checkImmediateWrite()
+
         Component.onCompleted: AutoRefreshManager.paramLayer = this
+    }
+
+    Connections {
+        target: ImmediateWrite
+        onTriggered: {
+            if(paramLayer.idle && paramLayer.slaveConnected)
+                paramLayer.checkImmediateWrite()
+        }
     }
 
     JSONParamFile {
