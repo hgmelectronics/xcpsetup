@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
@@ -22,9 +23,9 @@ Window {
 
     title: name
     width: (hasShapers || hasPlot) ? 420 : 240
-    height: 290 + chartBox.height
+    height: 350 + chartBox.height
     minimumWidth: (hasShapers || hasPlot) ? 420 : 240
-    minimumHeight: 290 + chartBox.height
+    minimumHeight: 350 + chartBox.height
 
     function arrayAverage() {
         var sum = 0.0
@@ -135,6 +136,48 @@ Window {
                                )
         }
     }
+    Action {
+        id: copyTable
+        text: qsTr("Copy Table")
+        onTriggered: {
+            tabSeparated.rows = tableParam.param.value.count
+            tabSeparated.columns = tableColumns
+            for(var i = 0; i < tabSeparated.rows; ++i) {
+                tabSeparated.set(i, 0, tableParam.param.x.get(i))
+                tabSeparated.set(i, 1, tableParam.param.value.get(i))
+            }
+            Clipboard.setText(tabSeparated.text)
+        }
+    }
+    Action {
+        id: pasteTable
+        text: qsTr("Paste Table")
+        onTriggered: {
+            tabSeparated.text = Clipboard.text
+            if(tabSeparated.rows == tableParam.param.value.count && tabSeparated.columns == tableColumns) {
+                for(var i = 0; i < tabSeparated.rows; ++i) {
+                    if(tableParam.param.xModel.flags(i) & Qt.ItemIsEditable)
+                        tableParam.param.x.set(i, tabSeparated.get(i, 0));
+                    if(tableParam.param.valueModel.flags(i) & Qt.ItemIsEditable)
+                        tableParam.param.value.set(i, tabSeparated.get(i, 1));
+                }
+            }
+            else {
+                pasteNoFitDialog.open()
+            }
+        }
+    }
+    readonly property int tableColumns: 2
+    MessageDialog {
+        id: pasteNoFitDialog
+        title: qsTr("Error")
+        text: qsTr("The data on the clipboard does not fit the table. The clipboard has %1 rows and %2 columns, but the table has %3 rows and %4 columns.".arg(tabSeparated.rows).arg(tabSeparated.columns).arg(tableParam.param.value.count).arg(tableColumns))
+        standardButtons: StandardButton.Ok
+    }
+
+    TabSeparated {
+        id: tabSeparated
+    }
 
     property TableView tableView: encodingValue ? encodingTableParamEdit.tableView : regularTableParamEdit.tableView
 
@@ -164,6 +207,10 @@ Window {
                 selectAll.trigger()
             else if(event.key === Qt.Key_A && event.modifiers === (Qt.ShiftModifier | Qt.ControlModifier))
                 deselect.trigger()
+            else if(event.key === Qt.Key_C && event.modifiers === Qt.ControlModifier)
+                copyTable.trigger()
+            else if(event.key === Qt.Key_V && event.modifiers === Qt.ControlModifier)
+                pasteTable.trigger()
             else
                 event.accepted = false
         }
@@ -256,6 +303,14 @@ Window {
                 Button {
                     Layout.fillWidth: true
                     action: linearizeSelected
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: copyTable
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: pasteTable
                 }
             }
         }
