@@ -20,6 +20,9 @@ RowLayout {
         EncodingParamEdit {
             metaParam: parameters.vehicleVariation
         }
+        EncodingParamEdit {
+            metaParam: parameters.transmissionType
+        }
         ScalarParamSpinBox {
             metaParam: parameters.vehicleMass
         }
