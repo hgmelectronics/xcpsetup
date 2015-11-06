@@ -36,7 +36,9 @@ void registerTypes()
     qmlRegisterType<SetupTools::FlashProg>("com.hgmelectronics.setuptools", major, minor, "FlashProg");
     qmlRegisterSingletonType<SetupTools::Xcp::OpResultWrapper>("com.hgmelectronics.setuptools.xcp", major, minor, "OpResult", &SetupTools::Xcp::OpResultWrapper::create);
     qmlRegisterSingletonType<SetupTools::UrlUtil>("com.hgmelectronics.setuptools.xcp", major, minor, "UrlUtil", &SetupTools::UrlUtil::create);
+    qmlRegisterSingletonType<SetupTools::Clipboard>("com.hgmelectronics.setuptools", major, minor, "Clipboard", &SetupTools::Clipboard::create);
     qmlRegisterType<SetupTools::Xcp::ParamLayer>("com.hgmelectronics.setuptools.xcp", major, minor, "ParamLayer");
+    qmlRegisterType<SetupTools::TabSeparated>("com.hgmelectronics.setuptools", major, minor, "TabSeparated");
 
     qmlRegisterType<SetupTools::Xcp::ParamRegistry>("com.hgmelectronics.setuptools.xcp", major, minor, "ParamRegistry");
     qmlRegisterType<SetupTools::JSONParamFile>("com.hgmelectronics.setuptools", major, minor, "JSONParamFile");
