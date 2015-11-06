@@ -2,6 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
+import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
@@ -190,6 +191,48 @@ Window {
                                )
         }
     }
+    Action {
+        id: copyTable
+        text: qsTr("Copy Table")
+        onTriggered: {
+            tabSeparated.rows = speedTableParam.param.value.count
+            tabSeparated.columns = tableColumns
+            for(var i = 0; i < tabSeparated.rows; ++i) {
+                tabSeparated.set(i, 0, speedTableParam.param.x.get(i))
+                tabSeparated.set(i, 1, speedTableParam.param.value.get(i))
+            }
+            Clipboard.setText(tabSeparated.text)
+        }
+    }
+    Action {
+        id: pasteTable
+        text: qsTr("Paste Table")
+        onTriggered: {
+            tabSeparated.text = Clipboard.text
+            if(tabSeparated.rows == speedTableParam.param.value.count && tabSeparated.columns == tableColumns) {
+                for(var i = 0; i < tabSeparated.rows; ++i) {
+                    if(speedTableParam.param.xModel.flags(i) & Qt.ItemIsEditable)
+                        speedTableParam.param.x.set(i, tabSeparated.get(i, 0));
+                    if(speedTableParam.param.valueModel.flags(i) & Qt.ItemIsEditable)
+                        speedTableParam.param.value.set(i, tabSeparated.get(i, 1));
+                }
+            }
+            else {
+                pasteNoFitDialog.open()
+            }
+        }
+    }
+    readonly property int tableColumns: 2
+    MessageDialog {
+        id: pasteNoFitDialog
+        title: qsTr("Error")
+        text: qsTr("The data on the clipboard does not fit the table. The clipboard has %1 rows and %2 columns, but the table has %3 rows and %4 columns.".arg(tabSeparated.rows).arg(tabSeparated.columns).arg(speedTableParam.param.value.count).arg(tableColumns))
+        standardButtons: StandardButton.Ok
+    }
+
+    TabSeparated {
+        id: tabSeparated
+    }
 
     SplitView {
         id: splitView
@@ -217,6 +260,10 @@ Window {
                 selectAll.trigger()
             else if(event.key === Qt.Key_A && event.modifiers === (Qt.ShiftModifier | Qt.ControlModifier))
                 deselect.trigger()
+            else if(event.key === Qt.Key_C && event.modifiers === Qt.ControlModifier)
+                copyTable.trigger()
+            else if(event.key === Qt.Key_V && event.modifiers === Qt.ControlModifier)
+                pasteTable.trigger()
             else
                 event.accepted = false
         }
@@ -389,6 +436,14 @@ Window {
                 Button {
                     Layout.fillWidth: true
                     action: linearizeSelected
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: copyTable
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: pasteTable
                 }
             }
         }

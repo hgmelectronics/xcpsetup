@@ -1,5 +1,6 @@
 #include "util.h"
 #include <QUrl>
+#include <QGuiApplication>
 
 namespace SetupTools
 {
@@ -143,6 +144,183 @@ QObject *UrlUtil::create(QQmlEngine *engine, QJSEngine *scriptEngine)
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);
     return new UrlUtil();
+}
+
+Clipboard::Clipboard() : mClipboard(QGuiApplication::clipboard())
+{
+    connect(mClipboard, &QClipboard::changed, this, &Clipboard::onChanged);
+}
+
+void Clipboard::clear()
+{
+    mClipboard->clear(QClipboard::Clipboard);
+}
+
+bool Clipboard::ownsClipboard() const
+{
+    return mClipboard->ownsClipboard();
+}
+
+QString Clipboard::text() const
+{
+    return mClipboard->text();
+}
+
+QString Clipboard::text(QString &subtype) const
+{
+    return mClipboard->text(subtype);
+}
+
+void Clipboard::setText(const QString &val)
+{
+    mClipboard->setText(val);
+}
+
+QObject *Clipboard::create(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+    return new Clipboard();
+}
+
+void Clipboard::onChanged(QClipboard::Mode mode)
+{
+    if(mode == QClipboard::Clipboard)
+        emit changed();
+}
+
+TabSeparated::TabSeparated(QObject *parent) : QObject(parent) {}
+
+int TabSeparated::rows() const
+{
+    return mArray.size();
+}
+
+int TabSeparated::columns() const
+{
+    if(mArray.size() == 0)
+        return 0;
+    else
+        return mArray[0].size();
+}
+
+void TabSeparated::setRows(int newRows)
+{
+    int clampedNewRows = std::max(newRows, 0);
+    int deltaRows = clampedNewRows - rows();
+    if(deltaRows < 0)
+    {
+        mArray.erase(mArray.begin() + clampedNewRows, mArray.end());
+    }
+    else if(deltaRows > 0)
+    {
+        QStringList blank;
+        blank.reserve(columns());
+        for(int i = 0, end = columns(); i < end; ++i)
+            blank.append(QString());
+        mArray.reserve(clampedNewRows);
+        for(int i = 0, end = deltaRows; i < end; ++i)
+            mArray.append(blank);
+    }
+
+    if(deltaRows != 0)
+    {
+        emit textChanged();
+        emit rowsChanged();
+    }
+}
+
+void TabSeparated::setColumns(int newColumns)
+{
+    int clampedNewColumns = std::max(newColumns, 0);
+    int deltaColumns = clampedNewColumns - columns();
+
+    if(deltaColumns < 0)
+    {
+        for(QStringList &arrayRow : mArray)
+            arrayRow.erase(arrayRow.begin() + clampedNewColumns, arrayRow.end());
+    }
+    else if(deltaColumns > 0)
+    {
+        for(QStringList &arrayRow : mArray)
+        {
+            arrayRow.reserve(clampedNewColumns);
+            for(int i = 0; i < deltaColumns; ++i)
+                arrayRow.append(QString());
+        }
+    }
+
+    if(deltaColumns != 0)
+    {
+        emit textChanged();
+        emit columnsChanged();
+    }
+}
+
+QVariant TabSeparated::get(int row, int column)
+{
+    if(row >= rows() || column >= columns())
+        return QVariant();
+
+    return mArray[row][column];
+}
+
+bool TabSeparated::set(int row, int column, QString value)
+{
+    if(row >= rows() || column >= columns())
+        return false;
+
+    if(updateDelta<>(mArray[row][column], value))
+        emit textChanged();
+
+    return true;
+}
+
+QString TabSeparated::text() const
+{
+    QString out;
+    for(const QStringList &arrayRow : mArray)
+    {
+        out.append(arrayRow.join(QChar('\t')));
+        out.append(QChar('\n'));
+    }
+    return out;
+}
+
+void TabSeparated::setText(QString newText)
+{
+    int oldRows = rows();
+    int oldColumns = columns();
+
+    mArray.clear();
+
+    QStringList rowStrings = newText.split(QChar('\n'));
+    mArray.reserve(rowStrings.length());
+
+    int newColumns = 0;
+    for(int i = 0; i < rowStrings.length(); ++i)
+    {
+        if(rowStrings[i].length() != 0 || i < rowStrings.length() - 1)
+        {
+            QStringList row = rowStrings[i].split(QChar('\t'));
+            newColumns = std::max(newColumns, row.length());
+            mArray.append(row);
+        }
+    }
+
+    for(QStringList &arrayRow : mArray)
+    {
+        int fieldsDelta = newColumns - arrayRow.length();
+
+        arrayRow.reserve(newColumns);
+        for(int i = 0; i < fieldsDelta; ++i)
+            arrayRow.append(QString());
+    }
+    emit textChanged();
+    if(rows() != oldRows)
+        emit rowsChanged();
+    if(columns() != oldColumns)
+        emit columnsChanged();
 }
 
 bool inRange(double val, double a, double b)
