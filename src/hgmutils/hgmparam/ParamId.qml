@@ -433,9 +433,16 @@ QtObject {
     readonly property double tcc_max_throttle_b: 0x06450000
     readonly property double tcc_min_throttle_b: 0x06460000
 
-    readonly property double tcc_prefill_pressure: 0x06500000
+    readonly property double tcc_prefill_pressure: 0x06490000
+    readonly property double tcc_prefill_percentage: 0x06500000
     readonly property double tcc_prefill_time: 0x06510000
     readonly property double tcc_apply_pressure: 0x06520000
+
+    readonly property double tcc_proportional_constant: 0x06600000
+    readonly property double engine_inertia: 0x06600000
+    readonly property double tcc_proportional_constant: 0x06600000
+    readonly property double tcc_proportional_constant: 0x06600000
+    readonly property double tcc_proportional_constant: 0x06600000
 
     // 8600 tcc data
     readonly property double tcc_current_state: 0x86000000
