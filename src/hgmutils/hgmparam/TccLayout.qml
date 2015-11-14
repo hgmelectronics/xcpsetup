@@ -77,4 +77,26 @@ RowLayout {
             valueLabel: "%"
         }
     }
+    ColumnLayout {
+        Layout.fillHeight: true
+        Layout.alignment: Qt.AlignTop
+        ScalarParamSpinBox {
+            metaParam: parameters.tccPrefillPercentage
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccProportionalConstant
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccEngineInertia
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccEngineRatedTorque
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccClutchScaling
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccSlipCommand
+        }
+    }
 }

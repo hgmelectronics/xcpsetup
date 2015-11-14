@@ -693,4 +693,49 @@ QtObject {
         unit: useMetricUnits ? "KPH" : "MPH"
         precision: 1
     }
+
+    property LinearSlot torquePerRpm: LinearSlot {
+        rawA: -1E9
+        engrA: useMetricUnits ? -1E6 : -7.37562E6
+        rawB: 1E9
+        engrB: useMetricUnits ? 1E6 : 7.37562E6
+        unit: useMetricUnits ? "Nm/RPM" : "ft-lbf/RPM"
+        precision: 2
+    }
+
+    property LinearSlot percentagePerTorque: LinearSlot {
+        rawA: -1E9
+        engrA: useMetricUnits ? -1E6 : -1.355818E6
+        rawB: 1E9
+        engrB: useMetricUnits ? 1E6 : 1.355818E6
+        unit: useMetricUnits ? "%/Nm" : "%/ft-lbf"
+        precision: 3
+    }
+
+    property LinearSlot percentagePerRpmSec: LinearSlot {
+        rawA: -1E9
+        engrA: -1E8
+        rawB: 1E9
+        engrB: 1E8
+        unit: "%/kRPM-s"
+        precision: 1
+    }
+
+    property LinearSlot percentagePerRpm: LinearSlot {
+        rawA: -1E9
+        engrA: -1E6
+        rawB: 1E9
+        engrB: 1E6
+        unit: "%/kRPM"
+        precision: 3
+    }
+
+    property LinearSlot percentagePerRpmPerSec: LinearSlot {
+        rawA: -1E9
+        engrA: -1E6
+        rawB: 1E9
+        engrB: 1E6
+        unit: "%/kRPM/s"
+        precision: 3
+    }
 }

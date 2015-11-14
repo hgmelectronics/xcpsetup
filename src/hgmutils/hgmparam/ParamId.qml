@@ -439,10 +439,10 @@ QtObject {
     readonly property double tcc_apply_pressure: 0x06520000
 
     readonly property double tcc_proportional_constant: 0x06600000
-    readonly property double engine_inertia: 0x06600000
-    readonly property double tcc_proportional_constant: 0x06600000
-    readonly property double tcc_proportional_constant: 0x06600000
-    readonly property double tcc_proportional_constant: 0x06600000
+    readonly property double tcc_engine_inertia: 0x06610000
+    readonly property double tcc_engine_rated_torque: 0x06620000
+    readonly property double tcc_clutch_scaling: 0x06630000
+    readonly property double tcc_slip_command: 0x06640000
 
     // 8600 tcc data
     readonly property double tcc_current_state: 0x86000000

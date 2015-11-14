@@ -1732,8 +1732,14 @@ QtObject {
     }
 
     property ScalarMetaParam tccPrefillPressure: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_pressure, true, true, slots.percentage1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_pressure, true, true, slots.pressure)
         name: qsTr("TCC Prefill Pressure")
+    }
+
+    property ScalarMetaParam tccPrefillPercentage: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_percentage, true, true, slots.percentage2)
+        name: qsTr("TCC Prefill Percentage")
+        immediateWrite: true
     }
 
     property ScalarMetaParam tccPrefillTime: ScalarMetaParam {
@@ -1747,6 +1753,36 @@ QtObject {
             value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_apply_pressure, slipAxisModel.count, true, true, slots.percentage1)
         }
         name: qsTr("TCC Apply Pressure")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tccProportionalConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_proportional_constant, true, true, slots.torquePerRpm)
+        name: qsTr("TCC P Coeff")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tccEngineInertia: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_engine_inertia, true, true, slots.count)
+        name: qsTr("TCC Engine Inertia")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tccEngineRatedTorque: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_engine_rated_torque, true, true, slots.torque)
+        name: qsTr("TCC Engine Rated Torque")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tccClutchScaling: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_clutch_scaling, true, true, slots.percentagePerTorque)
+        name: qsTr("TCC Clutch Scaling")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tccSlipCommand: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_slip_command, true, true, slots.rpm1)
+        name: qsTr("TCC Slip Command")
         immediateWrite: true
     }
 
