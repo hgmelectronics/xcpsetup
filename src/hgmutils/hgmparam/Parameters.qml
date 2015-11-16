@@ -1742,6 +1742,12 @@ QtObject {
         immediateWrite: true
     }
 
+    property ScalarMetaParam tccMaxPercentage: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_percentage, true, true, slots.percentage2)
+        name: qsTr("TCC Max Percentage")
+        immediateWrite: true
+    }
+
     property ScalarMetaParam tccPrefillTime: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_time, true, true, slots.timeMilliseconds1)
         name: qsTr("TCC Prefill Time")
@@ -1757,8 +1763,20 @@ QtObject {
     }
 
     property ScalarMetaParam tccProportionalConstant: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_proportional_constant, true, true, slots.torquePerRpm)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_proportional_constant, true, true, slots.percentagePerRpm)
         name: qsTr("TCC P Coeff")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tccIntegralConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_integral_constant, true, true, slots.percentagePerRpmSec)
+        name: qsTr("TCC I Coeff")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tccDerivativeConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_derivative_constant, true, true, slots.percentagePerRpmPerSec)
+        name: qsTr("TCC D Coeff")
         immediateWrite: true
     }
 

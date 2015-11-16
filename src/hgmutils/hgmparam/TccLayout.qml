@@ -84,19 +84,20 @@ RowLayout {
             metaParam: parameters.tccPrefillPercentage
         }
         ScalarParamSpinBox {
+            metaParam: parameters.tccMaxPercentage
+        }
+        ScalarParamSpinBox {
             metaParam: parameters.tccProportionalConstant
         }
         ScalarParamSpinBox {
-            metaParam: parameters.tccEngineInertia
+            metaParam: parameters.tccIntegralConstant
         }
         ScalarParamSpinBox {
-            metaParam: parameters.tccEngineRatedTorque
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccClutchScaling
+            metaParam: parameters.tccDerivativeConstant
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccSlipCommand
+            stepSize: 20
         }
     }
 }
