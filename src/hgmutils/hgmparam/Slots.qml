@@ -473,6 +473,15 @@ QtObject {
         ]
     }
 
+    property LinearSlot torque: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1E9
+        engrB: useMetricUnits ? 1E9 : 7.37562E8
+        unit: useMetricUnits ? "Nm" : "ft-lbf"
+        precision: 0
+    }
+
     property EncodingSlot transferCaseRangeGauge: EncodingSlot {
         encodingList: [
             { raw: 0, engr: " " },

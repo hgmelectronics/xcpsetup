@@ -199,6 +199,11 @@ Flow {
         PWMDriversWindow {
             id: pwmDriversWindow
             model: parameters.controllerPWMDriverModel
+            roleKeys: {
+                "frequency": parameters.controllerPWMDriverFrequency.key,
+                "dutyCycle": parameters.controllerPWMDriverDutyCycle.key,
+                "mode": parameters.controllerPWMDriverMode.key
+            }
 
             AutoRefreshArea {
                 base: pwmDriversWindow

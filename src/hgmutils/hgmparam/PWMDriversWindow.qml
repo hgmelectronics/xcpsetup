@@ -2,10 +2,12 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
+import com.hgmelectronics.setuptools 1.0
 
 Window {
     id: root
     property alias model: tableView.model
+    property var roleKeys
     title: qsTr("PWM Drivers")
     width: 400
     height: 400
@@ -19,7 +21,10 @@ Window {
             text: styleData.value !== undefined ? styleData.value : ""
 
             onEditingFinished: {
-                model[styleData.role] = text
+                if(model[styleData.role] != text)
+                    model[styleData.role] = text
+                if(typeof(roleKeys[styleData.role]) != "undefined")
+                    ImmediateWrite.trigger(roleKeys[styleData.role])
             }
 
             onFocusChanged: {

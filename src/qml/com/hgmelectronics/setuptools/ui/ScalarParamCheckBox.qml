@@ -36,7 +36,11 @@ RowLayout {
 //        width: label.implicitHeight
         checked: (param.floatVal & bitMask)
         enabled: param.valid
-        onClicked: param.floatVal = (param.floatVal & ~bitMask) | (checked ? bitMask : 0)
+        onClicked: {
+            param.floatVal = (param.floatVal & ~bitMask) | (checked ? bitMask : 0)
+            if(metaParam.immediateWrite)
+                ImmediateWrite.trigger(param.key)
+        }
         Layout.alignment: Qt.AlignVCenter
     }
 

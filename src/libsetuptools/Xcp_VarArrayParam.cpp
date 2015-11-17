@@ -468,15 +468,19 @@ bool VarArrayParamModel::setData(const QModelIndex &index, const QVariant &value
 
     QVariant toSet = mRaw ? value : mParam->slot()->asRaw(value);
 
+    bool result = false;
     if(index.row() < mParam->range()->count())
     {
-        return mParam->range()->set(index.row(), toSet);
+        result = mParam->range()->set(index.row(), toSet);
     }
     else
     {
         mParam->mExtRanges[(index.row() - mParam->range()->count())]->setValue(toSet);
-        return true;
+        result = true;
     }
+    if(result)
+        mParam->emitDataChanged();  // No further changes are guaranteed to happen, so tell param to emit signal if appropriate
+    return result;
 }
 
 Qt::ItemFlags VarArrayParamModel::flags(const QModelIndex &index) const

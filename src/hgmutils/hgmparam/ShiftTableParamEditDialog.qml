@@ -2,6 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
+import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
@@ -76,6 +77,11 @@ Window {
             return val
     }
 
+    function checkImmediateWrite() {
+        if(speedTableParam.immediateWrite)
+            ImmediateWrite.trigger(speedTableParam.param.value.key)
+    }
+
     function clampWeakOrderingFromSelection() {
         var selectionFirst = speedTableParam.param.value.count
         var selectionLast = -1
@@ -137,13 +143,17 @@ Window {
         onTriggered: {
             scaleAbout(steeperFlatterRatio, selectionAverage())
             clampWeakOrderingFromSelection()
+            checkImmediateWrite()
         }
     }
     Action {
         id: makeFlatter
         text: qsTr("Flatter")
         enabled: tableView.selection.count > 0
-        onTriggered: scaleAbout(1 / steeperFlatterRatio, selectionAverage())
+        onTriggered: {
+            scaleAbout(1 / steeperFlatterRatio, selectionAverage())
+            checkImmediateWrite()
+        }
     }
     Action {
         id: increaseSelected
@@ -152,6 +162,7 @@ Window {
         onTriggered: {
             offset(increaseDecreaseDelta)
             clampWeakOrderingFromSelection()
+            checkImmediateWrite()
         }
     }
     Action {
@@ -161,6 +172,7 @@ Window {
         onTriggered: {
             offset(-increaseDecreaseDelta)
             clampWeakOrderingFromSelection()
+            checkImmediateWrite()
         }
     }
 
@@ -188,7 +200,50 @@ Window {
                                        speedTableParam.param.value.set(rowIndex, (x - minIndexX) * dYdX + minIndexY)
                                    }
                                )
+            checkImmediateWrite()
         }
+    }
+    Action {
+        id: copyTable
+        text: qsTr("Copy Table")
+        onTriggered: {
+            tabSeparated.rows = speedTableParam.param.value.count
+            tabSeparated.columns = tableColumns
+            for(var i = 0; i < tabSeparated.rows; ++i) {
+                tabSeparated.set(i, 0, speedTableParam.param.x.get(i))
+                tabSeparated.set(i, 1, speedTableParam.param.value.get(i))
+            }
+            Clipboard.setText(tabSeparated.text)
+        }
+    }
+    Action {
+        id: pasteTable
+        text: qsTr("Paste Table")
+        onTriggered: {
+            tabSeparated.text = Clipboard.text
+            if(tabSeparated.rows == speedTableParam.param.value.count && tabSeparated.columns == tableColumns) {
+                for(var i = 0; i < tabSeparated.rows; ++i) {
+                    if(speedTableParam.param.xModel.flags(i) & Qt.ItemIsEditable)
+                        speedTableParam.param.x.set(i, tabSeparated.get(i, 0));
+                    if(speedTableParam.param.valueModel.flags(i) & Qt.ItemIsEditable)
+                        speedTableParam.param.value.set(i, tabSeparated.get(i, 1));
+                }
+            }
+            else {
+                pasteNoFitDialog.open()
+            }
+        }
+    }
+    readonly property int tableColumns: 2
+    MessageDialog {
+        id: pasteNoFitDialog
+        title: qsTr("Error")
+        text: qsTr("The data on the clipboard does not fit the table. The clipboard has %1 rows and %2 columns, but the table has %3 rows and %4 columns.".arg(tabSeparated.rows).arg(tabSeparated.columns).arg(speedTableParam.param.value.count).arg(tableColumns))
+        standardButtons: StandardButton.Ok
+    }
+
+    TabSeparated {
+        id: tabSeparated
     }
 
     SplitView {
@@ -217,6 +272,10 @@ Window {
                 selectAll.trigger()
             else if(event.key === Qt.Key_A && event.modifiers === (Qt.ShiftModifier | Qt.ControlModifier))
                 deselect.trigger()
+            else if(event.key === Qt.Key_C && event.modifiers === Qt.ControlModifier)
+                copyTable.trigger()
+            else if(event.key === Qt.Key_V && event.modifiers === Qt.ControlModifier)
+                pasteTable.trigger()
             else
                 event.accepted = false
         }
@@ -248,43 +307,6 @@ Window {
             Layout.minimumWidth: 450
             Layout.minimumHeight: 250
             spacing: 10
-            Component {
-                id: valueEditDelegate
-                TextInput {
-                    color: styleData.textColor
-                    anchors.margins: 4
-                    text: styleData.value !== undefined ? styleData.value : ""
-                    onEditingFinished: {
-                        if(model[styleData.role] != text)
-                            model[styleData.role] = text
-                    }
-                    validator: root.speedTableParam.param.value.slot.validator
-                    onAccepted: {
-                        if (styleData.selected)
-                            selectAll()
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            tableView.currentRow = styleData.row
-                            tableView.selection.clear()
-                            tableView.selection.select(styleData.row, styleData.row)
-                            selectAll()
-                            forceActiveFocus(Qt.MouseFocusReason)
-                        }
-                    }
-
-                    Connections {
-                        target: styleData
-                        onSelectedChanged: {
-                            if(!styleData.selected) {
-                                deselect()
-                            }
-                        }
-                    }
-                }
-            }
 
             TableView {
                 id: tableView
@@ -299,7 +321,84 @@ Window {
                 TableViewColumn {
                     role: "speed"
                     title: speedSlot.unit
-                    delegate: valueEditDelegate
+                    delegate: Loader {
+                        sourceComponent: (styleData.selected) ? valueEditDelegate : valueDisplayDelegate
+
+                        Component {
+                            id: valueDisplayDelegate
+                            Item {
+                                property int implicitWidth: label.implicitWidth + 16
+
+                                Text {
+                                    id: label
+                                    height: Math.max(16, label.implicitHeight)
+                                    objectName: "label"
+                                    width: parent.width
+                                    //font: __styleitem.font
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.leftMargin: styleData["depth"] && styleData.column === 0 ? 0 : 8
+                                    horizontalAlignment: styleData.textAlignment
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    elide: styleData.elideMode
+                                    text: styleData.value !== undefined ? styleData.value : ""
+                                    color: styleData.textColor
+                                    renderType: Text.NativeRendering
+                                }
+                            }
+                        }
+                        Component {
+                            id: valueEditDelegate
+                            TextInput {
+                                id: input
+                                color: styleData.textColor
+                                anchors.leftMargin: 7
+                                anchors.fill: parent
+                                text: styleData.value !== undefined ? styleData.value : ""
+                                validator: root.speedTableParam.param.value.slot.validator
+
+                                onEditingFinished: {
+                                    if(model[styleData.role] != text)
+                                        model[styleData.role] = text
+                                }
+                                onAccepted: {
+                                    if (styleData.selected)
+                                        selectAll()
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        forceActiveFocus(Qt.MouseFocusReason)
+                                    }
+                                    onActiveFocusChanged: {
+                                        if(activeFocus)
+                                            input.selectAll()
+                                        else
+                                            input.deselect()
+                                    }
+                                }
+
+                                Connections {
+                                    target: styleData
+                                    onSelectedChanged: {
+                                        if(!styleData.selected) {
+                                            input.deselect()
+                                        }
+                                    }
+                                }
+
+                                Component.onCompleted: {
+                                    forceActiveFocus(Qt.MouseFocusReason)
+                                    input.selectAll()
+                                }
+                                Component.onDestruction: {
+                                    if(model[styleData.role] != text)
+                                        model[styleData.role] = text
+                                }
+                            }
+                        }
+                    }
                     width: tableView.viewport.width / tableView.columnCount
                 }
                 TableViewColumn {
@@ -349,6 +448,14 @@ Window {
                 Button {
                     Layout.fillWidth: true
                     action: linearizeSelected
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: copyTable
+                }
+                Button {
+                    Layout.fillWidth: true
+                    action: pasteTable
                 }
             }
         }

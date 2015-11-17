@@ -1372,6 +1372,7 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_1, percentage1AxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift Pressure 1 A")
+            immediateWrite: true
         },
         TableMetaParam {
             param: TableParam {
@@ -1746,6 +1747,7 @@ QtObject {
             value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_apply_pressure, slipAxisModel.count, true, true, slots.percentage1)
         }
         name: qsTr("TCC Apply Pressure")
+        immediateWrite: true
     }
 
     property ScalarMetaParam vehicleVariation: ScalarMetaParam {
@@ -1812,6 +1814,7 @@ QtObject {
     property ScalarMetaParam transmissionType: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_type, true, true, slots.transmissionType1)
         name: qsTr("Trans Type")
+        resetNeeded: true
     }
 
     property ScalarMetaParam transmissionTempBiasEnable: ScalarMetaParam {
