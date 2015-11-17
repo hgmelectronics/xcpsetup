@@ -135,7 +135,14 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.canCan2TxErrCount, false, false, slots.raw32)
         name: qsTr("")
     }
-
+    property ScalarMetaParam canCan1BufferFull: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan1BufferFull, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam canCan2BufferFull: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan2BufferFull, false, false, slots.raw32)
+        name: qsTr("")
+    }
     property ScalarMetaParam cbtmFaultDecayCyc: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmFaultDecayCyc, true, true, slots.timeCycle)
         name: qsTr("")
@@ -497,6 +504,10 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripConduct, true, true, slots.conductance1)
         name: qsTr("")
     }
+    property ScalarMetaParam packGndFltTripConductExtChg: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripConductExtChg, true, true, slots.conductance1)
+        name: qsTr("")
+    }
     property ScalarMetaParam packGndFltTripCyc: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripCyc, true, true, slots.raw32)
         name: qsTr("")
@@ -531,6 +542,10 @@ QtObject {
     }
     property ScalarMetaParam packBalDiffVolt: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.packBalDiffVolt, true, true, slots.ltcCellv)
+        name: qsTr("")
+    }
+    property ScalarMetaParam packBalMinVolt: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalMinVolt, true, true, slots.ltcCellv)
         name: qsTr("")
     }
     property ScalarMetaParam packBalSampleWaitCyc: ScalarMetaParam {
@@ -733,12 +748,8 @@ QtObject {
         name: qsTr("")
     }
 
-    property ScalarMetaParam sysCycleTimeViolation: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleTimeViolation, false, false, slots.bool01)
-        name: qsTr("")
-    }
-    property ScalarMetaParam sysWatchdogReset: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysWatchdogReset, false, false, slots.bool01)
+    property ScalarMetaParam sysFlags: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.sysFlags, false, false, slots.raw32)
         name: qsTr("")
     }
     property ScalarMetaParam sysHeapAllocBytes: ScalarMetaParam {

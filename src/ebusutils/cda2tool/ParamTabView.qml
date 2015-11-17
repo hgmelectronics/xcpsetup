@@ -133,12 +133,20 @@ Item {
                             metaParam: parameters.canCan1TxErrCount
                         }
                         ScalarParamEdit {
+                            name: "Can1BufferFull"
+                            metaParam: parameters.canCan1BufferFull
+                        }
+                        ScalarParamEdit {
                             name: "Can2RxErrCount"
                             metaParam: parameters.canCan2RxErrCount
                         }
                         ScalarParamEdit {
                             name: "Can2TxErrCount"
                             metaParam: parameters.canCan2TxErrCount
+                        }
+                        ScalarParamEdit {
+                            name: "Can2BufferFull"
+                            metaParam: parameters.canCan2BufferFull
                         }
                     }
                 }
@@ -694,6 +702,10 @@ Item {
                             metaParam: parameters.packBalDiffVolt
                         }
                         ScalarParamEdit {
+                            name: "Minimum Voltage"
+                            metaParam: parameters.packBalMinVolt
+                        }
+                        ScalarParamEdit {
                             name: "Sample Wait Time"
                             metaParam: parameters.packBalSampleWaitCyc
                         }
@@ -722,6 +734,10 @@ Item {
                         ScalarParamEdit {
                             name: "Fault Threshold"
                             metaParam: parameters.packGndFltTripConduct
+                        }
+                        ScalarParamEdit {
+                            name: "Fault Threshold Ext Chg"
+                            metaParam: parameters.packGndFltTripConductExtChg
                         }
                         ScalarParamEdit {
                             name: "Fault Trip Cycles"
@@ -1131,13 +1147,20 @@ Item {
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
-                        ScalarParamEdit {
-                            name: "Cycle Time Violation"
-                            metaParam: parameters.sysCycleTimeViolation
-                        }
-                        ScalarParamEdit {
+                        ScalarParamIndicator {
                             name: "Watchdog Reset"
-                            metaParam: parameters.sysWatchdogReset
+                            metaParam: parameters.sysFlags
+                            bitMask: 0x00000001
+                        }
+                        ScalarParamIndicator {
+                            name: "Stack Overflow"
+                            metaParam: parameters.sysFlags
+                            bitMask: 0x00000004
+                        }
+                        ScalarParamIndicator {
+                            name: "Cycle Time Violation"
+                            metaParam: parameters.sysFlags
+                            bitMask: 0x00000002
                         }
                         ScalarParamEdit {
                             name: "Heap Alloc Bytes"

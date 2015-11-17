@@ -26,6 +26,8 @@ QtObject {
     readonly property double canCan1TxErrCount:                 4*0x0002200D
     readonly property double canCan2RxErrCount:                 4*0x0002200E
     readonly property double canCan2TxErrCount:                 4*0x0002200F
+    readonly property double canCan1BufferFull:                 4*0x00022010
+    readonly property double canCan2BufferFull:                 4*0x00022011
 
 
     readonly property double cbtmFaultDecayCyc:                 4*0x00030000
@@ -139,6 +141,8 @@ QtObject {
     readonly property double packBalSampleWaitCyc:              4*0x0009001B
     readonly property double packBalDischHighCyc:               4*0x0009001C
     readonly property double packBalDischAllCyc:                4*0x0009001D
+    readonly property double packBalMinVolt:                    4*0x0009001E
+    readonly property double packGndFltTripConductExtChg:       4*0x0009001F
     readonly property double packMaxCurr_DischCellTemp:         4*0x00090110
     readonly property double packMaxCurr_DischCurr:             4*0x00090120
     readonly property double packMaxCurr_ChgCellTemp:           4*0x00090130
@@ -203,10 +207,9 @@ QtObject {
     readonly property double sysCycleCtlLampTicks:              4*0x000A100E
     readonly property double sysCycleCtlMotorTicks:             4*0x000A100F
     readonly property double sysCycleCtlPackTicks:              4*0x000A1010
-    readonly property double sysCycleTimeViolation:             4*0x000A1011
-    readonly property double sysWatchdogReset:                  4*0x000A1012
-    readonly property double sysHeapAllocBytes:                 4*0x000A1013
-    readonly property double sysHeapFreeBytes:                  4*0x000A1014
-    readonly property double sysHeapNFrees:                     4*0x000A1015
-    readonly property double sysRtDbRows:                       4*0x000A1016
+    readonly property double sysFlags:                          4*0x000A1011
+    readonly property double sysHeapAllocBytes:                 4*0x000A1012
+    readonly property double sysHeapFreeBytes:                  4*0x000A1013
+    readonly property double sysHeapNFrees:                     4*0x000A1014
+    readonly property double sysRtDbRows:                       4*0x000A1015
 }
