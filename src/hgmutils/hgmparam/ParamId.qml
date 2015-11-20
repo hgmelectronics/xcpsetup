@@ -288,14 +288,15 @@ QtObject {
 
     readonly property double transmission_pressure_temperature_compensation: 0x3a00000
 
-    readonly property double garage_shift_time: 0x03f00000
-    readonly property double garage_shift_prefill_pressure: 0x03f10000
-    readonly property double garage_shift_prefill_percentage: 0x03f20000
-    readonly property double garage_shift_max_pressure: 0x03f30000
-    readonly property double garage_shift_max_percentage: 0x03f40000
-    readonly property double garage_shift_p_const: 0x03f50000
-    readonly property double garage_shift_i_const: 0x03f60000
-    readonly property double garage_shift_d_const: 0x03f70000
+    readonly property double garage_shift_prefill_time: 0x03f00000
+    readonly property double garage_shift_apply_time: 0x03f10000
+    readonly property double garage_shift_prefill_pressure: 0x03f20000
+    readonly property double garage_shift_prefill_percentage: 0x03f30000
+    readonly property double garage_shift_max_pressure: 0x03f40000
+    readonly property double garage_shift_max_percentage: 0x03f50000
+    readonly property double garage_shift_p_const: 0x03f60000
+    readonly property double garage_shift_i_const: 0x03f70000
+    readonly property double garage_shift_d_const: 0x03f80000
 
     // 8300 transmission data
     readonly property double transmission_gears: 0x83000000
