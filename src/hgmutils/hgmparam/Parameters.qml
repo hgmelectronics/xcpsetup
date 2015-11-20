@@ -1870,13 +1870,13 @@ QtObject {
 
     property ScalarMetaParam tccMaxPressure: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_pressure, true, true, slots.pressure)
-        name: qsTr("TCC Max Pressure")
+        name: qsTr("TCC Apply Max Pressure")
         immediateWrite: true
     }
 
     property ScalarMetaParam tccMaxPercentage: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_percentage, true, true, slots.percentage2)
-        name: qsTr("TCC Max Percentage")
+        name: qsTr("TCC Apply Max Percentage")
         immediateWrite: true
     }
 

@@ -34,18 +34,6 @@ RowLayout {
         EncodingParamEdit {
             metaParam: parameters.cs2EngineTempBiasEnable
         }
-        TableParamEditButton {
-            Layout.margins: 8
-            tableParam: parameters.engineMotoringMaxTorque
-            xLabel: "RPM"
-            valueLabel: parameters.slots.torque.unit
-        }
-        TableParamEditButton {
-            Layout.margins: 8
-            tableParam: parameters.engineBrakingMaxTorque
-            xLabel: "RPM"
-            valueLabel: parameters.slots.torque.unit
-        }
     }
 
     ColumnLayout {
@@ -80,6 +68,18 @@ RowLayout {
         }
         EncodingParamEdit {
             metaParam: parameters.voltageMAPSensorGroundEnable
+        }
+        TableParamEditButton {
+            Layout.margins: 8
+            tableParam: parameters.engineMotoringMaxTorque
+            xLabel: "RPM"
+            valueLabel: parameters.slots.torque.unit
+        }
+        TableParamEditButton {
+            Layout.margins: 8
+            tableParam: parameters.engineBrakingMaxTorque
+            xLabel: "RPM"
+            valueLabel: parameters.slots.torque.unit
         }
     }
 }
