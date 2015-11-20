@@ -1762,6 +1762,12 @@ QtObject {
         immediateWrite: true
     }
 
+    property ScalarMetaParam tccApplyTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_apply_time, true, true, slots.timeMilliseconds1)
+        name: qsTr("TCC Apply Time")
+        immediateWrite: true
+    }
+
     property ScalarMetaParam tccProportionalConstant: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_proportional_constant, true, true, slots.percentagePerRpm)
         name: qsTr("TCC P Coeff")

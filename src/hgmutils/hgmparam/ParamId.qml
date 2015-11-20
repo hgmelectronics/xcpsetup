@@ -437,6 +437,7 @@ QtObject {
     readonly property double tcc_prefill_percentage: 0x06500000
     readonly property double tcc_prefill_time: 0x06510000
     readonly property double tcc_apply_pressure: 0x06520000
+    readonly property double tcc_apply_time: 0x06530000
 
     readonly property double tcc_proportional_constant: 0x06600000
     readonly property double tcc_engine_inertia: 0x06610000

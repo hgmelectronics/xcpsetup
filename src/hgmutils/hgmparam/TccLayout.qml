@@ -96,6 +96,9 @@ RowLayout {
             metaParam: parameters.tccDerivativeConstant
         }
         ScalarParamSpinBox {
+            metaParam: parameters.tccApplyTime
+        }
+        ScalarParamSpinBox {
             metaParam: parameters.tccSlipCommand
             stepSize: 20
         }
