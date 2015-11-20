@@ -637,6 +637,15 @@ QtObject {
         precision: useMetricUnits ? 0 : 1
     }
 
+    property LinearSlot current: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1E9
+        engrB: 1E9
+        unit: "mA"
+        precision: 0
+    }
+
     property LinearSlot temperature1: LinearSlot {
         rawA: -2730
         engrA: useMetricUnits ? -273 : -459.4

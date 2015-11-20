@@ -471,8 +471,8 @@ QtObject {
     readonly property double tcc_integral_constant: 0x06570000
     readonly property double tcc_derivative_constant: 0x06580000
 
-    readonly property double tcc_mult_speedratio: 0x06700000
-    readonly property double tcc_mult_torqueratio: 0x06710000
+    readonly property double tc_mult_speedratio: 0x06700000
+    readonly property double tc_mult_torqueratio: 0x06710000
 
     // 8600 tcc data
     readonly property double tcc_current_state: 0x86000000

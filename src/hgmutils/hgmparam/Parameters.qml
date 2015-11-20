@@ -636,6 +636,54 @@ QtObject {
         name: qsTr("Trans Temp Pressure Compensation")
     }
 
+    property ScalarMetaParam garageShiftApplyTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_time, true, true, slots.timeMilliseconds1)
+        name: qsTr("Garage Shift Apply Time")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftPrefillPressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_prefill_pressure, true, true, slots.pressure)
+        name: qsTr("Garage Shift Prefill Pressure")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftPrefillPercentage: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_prefill_percentage, true, true, slots.percentage2)
+        name: qsTr("Garage Shift Prefill Percentage")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftMaxPressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_max_pressure, true, true, slots.pressure)
+        name: qsTr("Garage Shift Max Pressure")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftMaxPercentage: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_max_percentage, true, true, slots.percentage2)
+        name: qsTr("Garage Shift Max Percentage")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftProportionalConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_p_const, true, true, slots.percentagePerRpm)
+        name: qsTr("Garage Shift P Coeff")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftIntegralConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_i_const, true, true, slots.percentagePerRpmSec)
+        name: qsTr("Garage Shift I Coeff")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftDerivativeConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_d_const, true, true, slots.percentagePerRpmPerSec)
+        name: qsTr("Garage Shift D Coeff")
+        immediateWrite: true
+    }
+
     property
     list<TableMetaParam> transmissionUpshiftApplyPressure: [
         TableMetaParam {
@@ -1451,6 +1499,66 @@ QtObject {
         }
     ]
 
+    property
+    list<TableMetaParam> clutchSolenoidPressureMap: [
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Clutch 1 Solenoid Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Clutch 2 Solenoid Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Clutch 3 Solenoid Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Clutch 4 Solenoid Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Clutch 5 Solenoid Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Clutch 6 Solenoid Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Clutch 7 Solenoid Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Clutch 8 Solenoid Map")
+        }
+    ]
+
     property ScalarMetaParam reverseLockoutSpeed: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.reverse_lockout_speed, true, true, slots.tossRPMAsSpeed)
         name: qsTr("Reverse Lockout Speed")
@@ -1782,6 +1890,14 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_derivative_constant, true, true, slots.percentagePerRpmPerSec)
         name: qsTr("TCC D Coeff")
         immediateWrite: true
+    }
+
+    property TableMetaParam torqueConverterMult: TableMetaParam {
+        param: TableParam {
+            x: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_speedratio, 16, true, true, slots.ratio1)
+            value: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_torqueratio, 16, true, true, slots.ratio1)
+        }
+        name: qsTr("Torque Converter Multiplication")
     }
 
     property ScalarMetaParam vehicleVariation: ScalarMetaParam {
