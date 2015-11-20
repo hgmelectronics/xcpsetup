@@ -48,5 +48,48 @@ ColumnLayout {
             parameters.transmissionShiftPrefillTime
         ]
     }
+
+    GroupBox {
+        title: "Garage Shift"
+        Button {
+            text: "Edit"
+            onClicked: garageShiftDialog.visible = true
+            enabled: parameters.garageShiftPrefillPressure.param.valid
+        }
+    }
+    Window {
+        id: garageShiftDialog
+
+        height: 25 + (stalkingHorse.implicitHeight + 5) * 7
+        width: 35 + stalkingHorse.implicitWidth + 5
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 10
+
+            ScalarParamSpinBox {
+                id: stalkingHorse
+                metaParam: parameters.garageShiftPrefillTime
+            }
+            ScalarParamSpinBox {
+                metaParam: parameters.garageShiftApplyTime
+            }
+            ScalarParamSpinBox {
+                metaParam: parameters.garageShiftPrefillPressure
+            }
+            ScalarParamSpinBox {
+                metaParam: parameters.garageShiftMaxPressure
+            }
+            ScalarParamSpinBox {
+                metaParam: parameters.garageShiftProportionalConstant
+            }
+            ScalarParamSpinBox {
+                metaParam: parameters.garageShiftIntegralConstant
+            }
+            ScalarParamSpinBox {
+                metaParam: parameters.garageShiftDerivativeConstant
+            }
+        }
+    }
 }
 

@@ -198,21 +198,31 @@ ColumnLayout {
         }
     }
 
-    ShiftTableByShiftEditButtonGroup {
-        title: qsTr("Shift Tables A")
-        speedTableParams: parameters.shiftTablesA
-        rpmTableParams: parameters.rpmShiftTablesA
-        gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-        Layout.minimumHeight: 40
+    RowLayout {
+        ColumnLayout {
+            ShiftTableByShiftEditButtonGroup {
+                title: qsTr("Shift Tables A")
+                speedTableParams: parameters.shiftTablesA
+                rpmTableParams: parameters.rpmShiftTablesA
+                gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                Layout.minimumHeight: 40
+            }
+
+            ShiftTableByShiftEditButtonGroup {
+                title: qsTr("Shift Tables B")
+                speedTableParams: parameters.shiftTablesB
+                rpmTableParams: parameters.rpmShiftTablesB
+                gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                Layout.minimumHeight: 40
+            }
+        }
+
+        ScalarParamSpinBox {
+            Layout.alignment: Qt.AlignTop
+            metaParam: parameters.reverseLockoutSpeed
+        }
     }
 
-    ShiftTableByShiftEditButtonGroup {
-        title: qsTr("Shift Tables B")
-        speedTableParams: parameters.shiftTablesB
-        rpmTableParams: parameters.rpmShiftTablesB
-        gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-        Layout.minimumHeight: 40
-    }
 
     RowLayout {
         spacing: 5

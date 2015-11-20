@@ -96,5 +96,11 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.tccDerivativeConstant
         }
+        TableParamEditButton {
+            Layout.margins: 8
+            tableParam: parameters.torqueConverterMult
+            xLabel: "Speed Ratio"
+            valueLabel: "Torque Ratio"
+        }
     }
 }

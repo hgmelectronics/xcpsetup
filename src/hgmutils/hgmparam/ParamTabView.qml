@@ -67,8 +67,8 @@ Item {
         }
 
         Tab {
-            title: qsTr("TCC")
-            TccLayout {
+            title: qsTr("TC")
+            TcLayout {
                 parameters: params
             }
         }

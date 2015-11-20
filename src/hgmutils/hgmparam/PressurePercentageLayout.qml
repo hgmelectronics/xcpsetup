@@ -45,20 +45,64 @@ ColumnLayout {
         valueLabel: qsTr("%")
         tableParam: parameters.transmissionMainPercentage
     }
-    GroupBox {
-        title: "Prefill"
-        Button {
-            text: "Edit"
-            onClicked: prefillDialog.visible = true
-            enabled: prefillDialog.allListsAnyValid
-        }
-    }
 
-    ScalarListDialog {
-        id: prefillDialog
-        paramLists: [
-            parameters.transmissionShiftPrefillPercentage,
-            parameters.transmissionShiftPrefillTime
-        ]
+    RowLayout {
+        GroupBox {
+            title: "Prefill"
+            Button {
+                text: "Edit"
+                onClicked: prefillDialog.visible = true
+                enabled: prefillDialog.allListsAnyValid
+            }
+        }
+        ScalarListDialog {
+            id: prefillDialog
+            paramLists: [
+                parameters.transmissionShiftPrefillPercentage,
+                parameters.transmissionShiftPrefillTime
+            ]
+        }
+        GroupBox {
+            title: "Garage Shift"
+            Button {
+                text: "Edit"
+                onClicked: garageShiftDialog.visible = true
+                enabled: parameters.garageShiftPrefillPercentage.param.valid
+            }
+        }
+        Window {
+            id: garageShiftDialog
+
+            height: 25 + (stalkingHorse.implicitHeight + 5) * 7
+            width: 35 + stalkingHorse.implicitWidth + 5
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+
+                ScalarParamSpinBox {
+                    id: stalkingHorse
+                    metaParam: parameters.garageShiftPrefillTime
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.garageShiftApplyTime
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.garageShiftPrefillPercentage
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.garageShiftMaxPercentage
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.garageShiftProportionalConstant
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.garageShiftIntegralConstant
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.garageShiftDerivativeConstant
+                }
+            }
+        }
     }
 }

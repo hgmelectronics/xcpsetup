@@ -636,8 +636,14 @@ QtObject {
         name: qsTr("Trans Temp Pressure Compensation")
     }
 
+    property ScalarMetaParam garageShiftPrefillTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_prefill_time, true, true, slots.timeMilliseconds1)
+        name: qsTr("Garage Shift Prefill Time")
+        immediateWrite: true
+    }
+
     property ScalarMetaParam garageShiftApplyTime: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_time, true, true, slots.timeMilliseconds1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_apply_time, true, true, slots.timeMilliseconds1)
         name: qsTr("Garage Shift Apply Time")
         immediateWrite: true
     }
