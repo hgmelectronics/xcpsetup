@@ -66,26 +66,27 @@ RowLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         ScalarParamSpinBox {
+            metaParam: parameters.tccPrefillTime
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccApplyTime
+        }
+        ScalarParamSpinBox {
             metaParam: parameters.tccPrefillPressure
         }
         ScalarParamSpinBox {
-            metaParam: parameters.tccPrefillTime
+            metaParam: parameters.tccPrefillPercentage
         }
-        TableParamEditButton {
-            tableParam: parameters.tccApplyPressure
-            xLabel: "Slip"
-            valueLabel: "%"
+        ScalarParamSpinBox {
+            metaParam: parameters.tccMaxPressure
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccMaxPercentage
         }
     }
     ColumnLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
-        ScalarParamSpinBox {
-            metaParam: parameters.tccPrefillPercentage
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccMaxPercentage
-        }
         ScalarParamSpinBox {
             metaParam: parameters.tccProportionalConstant
         }
@@ -94,13 +95,6 @@ RowLayout {
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccDerivativeConstant
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccApplyTime
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccSlipCommand
-            stepSize: 20
         }
     }
 }

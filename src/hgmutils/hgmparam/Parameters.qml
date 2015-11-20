@@ -1260,28 +1260,22 @@ QtObject {
         name: qsTr("Engine Idle Shutdown Time")
     }
 
-    readonly property ArrayParam engineTorqueMapSpeedsArray: registry.addArrayParam(MemoryRange.S32, paramId.engine_torque_map_speeds, 11, true, true, slots.rpm1)
-    property TableMetaParam engineMotorTorqueMap: TableMetaParam {
+    property TableMetaParam engineMotoringMaxTorque: TableMetaParam {
         param: TableParam {
-            x: engineTorqueMapSpeedsArray
-            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_motor_torque_map, 11, true, true, slots.percentage2)
+            x: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_speed, 16, true, true, slots.rpm1)
+            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_max_torque, 16, true, true, slots.torque)
         }
         name: qsTr("Engine Motoring Torque")
-    }
-    property TableMetaParam engineBrakeTorqueMap: TableMetaParam {
-        param: TableParam {
-            x: engineTorqueMapSpeedsArray
-            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_torque_map, 11, true, true, slots.percentage2)
-        }
-        name: qsTr("Engine Braking Torque")
+        immediateWrite: true
     }
 
-    property TableMapperModel engineTorqueMap: TableMapperModel {
-        mapping: {
-            "rpm": engineTorqueMapSpeedsArray.stringModel,
-            "motoring": engineMotorTorqueMap.param.value.stringModel,
-            "braking": engineBrakeTorqueMap.param.value.stringModel
+    property TableMetaParam engineBrakingMaxTorque: TableMetaParam {
+        param: TableParam {
+            x: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_speed, 16, true, true, slots.rpm1)
+            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_max_torque, 16, true, true, slots.torque)
         }
+        name: qsTr("Engine Braking Torque")
+        immediateWrite: true
     }
 
     property ScalarMetaParam finalDriveRatio: ScalarMetaParam {
@@ -1456,6 +1450,11 @@ QtObject {
             name: qsTr("Shift Pressure 6 B")
         }
     ]
+
+    property ScalarMetaParam reverseLockoutSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.reverse_lockout_speed, true, true, slots.tossRPMAsSpeed)
+        name: qsTr("Reverse Lockout Speed")
+    }
 
     property ScalarMetaParam shiftSpeedAdjustA: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.shift_speed_adjust_a, true, true, slots.percentage1)

@@ -366,6 +366,8 @@ QtObject {
     readonly property double transmission_main_pressure_sensor_voltage: 0x83300000
 
     // 0400 starts shift adjustments..
+    readonly property double reverse_lockout_speed: 0x04100000
+
     readonly property double shift_speed_adjust_a: 0x04200000
     readonly property double shift_downshift_offset_a: 0x04210000
     readonly property double shift_manual_mode_a: 0x04220000
@@ -420,6 +422,23 @@ QtObject {
     readonly property double pressure_tables_b_5: 0x05460000
     readonly property double pressure_tables_b_6: 0x05470000
 
+    readonly property double clutch_1_solenoid_pressure: 0x05a00000
+    readonly property double clutch_1_solenoid_current: 0x05a10000
+    readonly property double clutch_2_solenoid_pressure: 0x05a20000
+    readonly property double clutch_2_solenoid_current: 0x05a30000
+    readonly property double clutch_3_solenoid_pressure: 0x05a40000
+    readonly property double clutch_3_solenoid_current: 0x05a50000
+    readonly property double clutch_4_solenoid_pressure: 0x05a60000
+    readonly property double clutch_4_solenoid_current: 0x05a70000
+    readonly property double clutch_5_solenoid_pressure: 0x05a80000
+    readonly property double clutch_5_solenoid_current: 0x05a90000
+    readonly property double clutch_6_solenoid_pressure: 0x05aa0000
+    readonly property double clutch_6_solenoid_current: 0x05ab0000
+    readonly property double clutch_7_solenoid_pressure: 0x05ac0000
+    readonly property double clutch_7_solenoid_current: 0x05ad0000
+    readonly property double clutch_8_solenoid_pressure: 0x05ae0000
+    readonly property double clutch_8_solenoid_current: 0x05af0000
+
     // 8500 pressure data
     readonly property double pressure_current_percentage: 0x85000000
     readonly property double pressure_selected_percentage: 0x85010000
@@ -452,6 +471,9 @@ QtObject {
     readonly property double tcc_integral_constant: 0x06570000
     readonly property double tcc_derivative_constant: 0x06580000
 
+    readonly property double tcc_mult_speedratio: 0x06700000
+    readonly property double tcc_mult_torqueratio: 0x06710000
+
     // 8600 tcc data
     readonly property double tcc_current_state: 0x86000000
     readonly property double tcc_selected_state: 0x86010000
@@ -477,9 +499,10 @@ QtObject {
 
     readonly property double engine_idle_shutdown_time: 0x07400000
 
-    readonly property double engine_torque_map_speeds: 0x07500000
-    readonly property double engine_motor_torque_map: 0x07510000
-    readonly property double engine_braking_torque_map: 0x07520000
+    readonly property double engine_motoring_speed: 0x07500000
+    readonly property double engine_motoring_max_torque: 0x07510000
+    readonly property double engine_braking_speed: 0x07520000
+    readonly property double engine_braking_max_torque: 0x07530000
 
     // 8700 engine data
     readonly property double engine_speed: 0x87000000

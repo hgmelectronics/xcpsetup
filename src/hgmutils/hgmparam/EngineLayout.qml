@@ -36,15 +36,15 @@ RowLayout {
         }
         TableParamEditButton {
             Layout.margins: 8
-            tableParam: parameters.engineMotorTorqueMap
+            tableParam: parameters.engineMotoringMaxTorque
             xLabel: "RPM"
-            valueLabel: "%"
+            valueLabel: parameters.slots.torque.unit
         }
         TableParamEditButton {
             Layout.margins: 8
-            tableParam: parameters.engineBrakeTorqueMap
+            tableParam: parameters.engineBrakingMaxTorque
             xLabel: "RPM"
-            valueLabel: "%"
+            valueLabel: parameters.slots.torque.unit
         }
     }
 
