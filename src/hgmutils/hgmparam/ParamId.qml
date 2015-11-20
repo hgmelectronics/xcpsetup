@@ -288,6 +288,15 @@ QtObject {
 
     readonly property double transmission_pressure_temperature_compensation: 0x3a00000
 
+    readonly property double garage_shift_time: 0x03f00000
+    readonly property double garage_shift_prefill_pressure: 0x03f10000
+    readonly property double garage_shift_prefill_percentage: 0x03f20000
+    readonly property double garage_shift_max_pressure: 0x03f30000
+    readonly property double garage_shift_max_percentage: 0x03f40000
+    readonly property double garage_shift_p_const: 0x03f50000
+    readonly property double garage_shift_i_const: 0x03f60000
+    readonly property double garage_shift_d_const: 0x03f70000
+
     // 8300 transmission data
     readonly property double transmission_gears: 0x83000000
     readonly property double transmission_ratios: 0x83010000
@@ -433,20 +442,15 @@ QtObject {
     readonly property double tcc_max_throttle_b: 0x06450000
     readonly property double tcc_min_throttle_b: 0x06460000
 
-    readonly property double tcc_prefill_pressure: 0x06490000
-    readonly property double tcc_prefill_percentage: 0x06500000
-    readonly property double tcc_prefill_time: 0x06510000
-    readonly property double tcc_apply_pressure: 0x06520000
-    readonly property double tcc_apply_time: 0x06530000
-
-    readonly property double tcc_proportional_constant: 0x06600000
-    readonly property double tcc_engine_inertia: 0x06610000
-    readonly property double tcc_engine_rated_torque: 0x06620000
-    readonly property double tcc_clutch_scaling: 0x06630000
-    readonly property double tcc_slip_command: 0x06640000
-    readonly property double tcc_integral_constant: 0x06650000
-    readonly property double tcc_derivative_constant: 0x06660000
-    readonly property double tcc_max_percentage: 0x06670000
+    readonly property double tcc_prefill_time: 0x06500000
+    readonly property double tcc_apply_time: 0x06510000
+    readonly property double tcc_prefill_pressure: 0x06520000
+    readonly property double tcc_prefill_percentage: 0x06530000
+    readonly property double tcc_max_pressure: 0x06540000
+    readonly property double tcc_max_percentage: 0x06550000
+    readonly property double tcc_proportional_constant: 0x06560000
+    readonly property double tcc_integral_constant: 0x06570000
+    readonly property double tcc_derivative_constant: 0x06580000
 
     // 8600 tcc data
     readonly property double tcc_current_state: 0x86000000

@@ -1731,9 +1731,22 @@ QtObject {
         name: qsTr("TCC Min Throttle B")
     }
 
+    property ScalarMetaParam tccPrefillTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_time, true, true, slots.timeMilliseconds1)
+        name: qsTr("TCC Prefill Time")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tccApplyTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_apply_time, true, true, slots.timeMilliseconds1)
+        name: qsTr("TCC Apply Time")
+        immediateWrite: true
+    }
+
     property ScalarMetaParam tccPrefillPressure: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_pressure, true, true, slots.pressure)
         name: qsTr("TCC Prefill Pressure")
+        immediateWrite: true
     }
 
     property ScalarMetaParam tccPrefillPercentage: ScalarMetaParam {
@@ -1742,29 +1755,15 @@ QtObject {
         immediateWrite: true
     }
 
+    property ScalarMetaParam tccMaxPressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_pressure, true, true, slots.pressure)
+        name: qsTr("TCC Max Pressure")
+        immediateWrite: true
+    }
+
     property ScalarMetaParam tccMaxPercentage: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_percentage, true, true, slots.percentage2)
         name: qsTr("TCC Max Percentage")
-        immediateWrite: true
-    }
-
-    property ScalarMetaParam tccPrefillTime: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_time, true, true, slots.timeMilliseconds1)
-        name: qsTr("TCC Prefill Time")
-    }
-
-    property TableMetaParam tccApplyPressure: TableMetaParam {
-        param: TableParam {
-            x: slipAxisModel
-            value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_apply_pressure, slipAxisModel.count, true, true, slots.percentage1)
-        }
-        name: qsTr("TCC Apply Pressure")
-        immediateWrite: true
-    }
-
-    property ScalarMetaParam tccApplyTime: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_apply_time, true, true, slots.timeMilliseconds1)
-        name: qsTr("TCC Apply Time")
         immediateWrite: true
     }
 
@@ -1783,30 +1782,6 @@ QtObject {
     property ScalarMetaParam tccDerivativeConstant: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_derivative_constant, true, true, slots.percentagePerRpmPerSec)
         name: qsTr("TCC D Coeff")
-        immediateWrite: true
-    }
-
-    property ScalarMetaParam tccEngineInertia: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_engine_inertia, true, true, slots.count)
-        name: qsTr("TCC Engine Inertia")
-        immediateWrite: true
-    }
-
-    property ScalarMetaParam tccEngineRatedTorque: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_engine_rated_torque, true, true, slots.torque)
-        name: qsTr("TCC Engine Rated Torque")
-        immediateWrite: true
-    }
-
-    property ScalarMetaParam tccClutchScaling: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_clutch_scaling, true, true, slots.percentagePerTorque)
-        name: qsTr("TCC Clutch Scaling")
-        immediateWrite: true
-    }
-
-    property ScalarMetaParam tccSlipCommand: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_slip_command, true, true, slots.rpm1)
-        name: qsTr("TCC Slip Command")
         immediateWrite: true
     }
 
