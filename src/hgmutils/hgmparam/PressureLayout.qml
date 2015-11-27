@@ -93,6 +93,21 @@ RowLayout {
             }
 
             GroupBox {
+                title: "Release"
+                RowLayout {
+                    spacing: 8
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Time"
+                        xLabel: "Clutch"
+                        tableParam: parameters.clutchReleaseTime
+                        hasPlot: false
+                        hasShapers: false
+                    }
+                }
+            }
+
+            GroupBox {
                 title: "Garage Shift"
                 Button {
                     text: "Edit"
@@ -112,15 +127,6 @@ RowLayout {
 
                     ScalarParamSpinBox {
                         id: stalkingHorse
-                        metaParam: parameters.garageShiftPrefillTime
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftApplyTime
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftPrefillPressure
-                    }
-                    ScalarParamSpinBox {
                         metaParam: parameters.garageShiftMaxPressure
                     }
                     ScalarParamSpinBox {
@@ -249,15 +255,6 @@ RowLayout {
 
                     ScalarParamSpinBox {
                         id: stalkingHorse2
-                        metaParam: parameters.garageShiftPrefillTime
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftApplyTime
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftPrefillPercentage
-                    }
-                    ScalarParamSpinBox {
                         metaParam: parameters.garageShiftMaxPercentage
                     }
                     ScalarParamSpinBox {
