@@ -1512,56 +1512,56 @@ QtObject {
                 x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_pressure, 16, true, true, slots.pressure)
                 value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_current, 16, true, true, slots.current)
             }
-            name: qsTr("Solenoid 1 Map")
+            name: qsTr("Sol 1 Map")
         },
         TableMetaParam {
             param: TableParam {
                 x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_pressure, 16, true, true, slots.pressure)
                 value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_current, 16, true, true, slots.current)
             }
-            name: qsTr("Solenoid 2 Map")
+            name: qsTr("Sol 2 Map")
         },
         TableMetaParam {
             param: TableParam {
                 x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_pressure, 16, true, true, slots.pressure)
                 value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_current, 16, true, true, slots.current)
             }
-            name: qsTr("Solenoid 3 Map")
+            name: qsTr("Sol 3 Map")
         },
         TableMetaParam {
             param: TableParam {
                 x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_pressure, 16, true, true, slots.pressure)
                 value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_current, 16, true, true, slots.current)
             }
-            name: qsTr("Solenoid 4 Map")
+            name: qsTr("Sol 4 Map")
         },
         TableMetaParam {
             param: TableParam {
                 x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_pressure, 16, true, true, slots.pressure)
                 value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_current, 16, true, true, slots.current)
             }
-            name: qsTr("Solenoid 5 Map")
+            name: qsTr("Sol 5 Map")
         },
         TableMetaParam {
             param: TableParam {
                 x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_pressure, 16, true, true, slots.pressure)
                 value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_current, 16, true, true, slots.current)
             }
-            name: qsTr("Solenoid 6 Map")
+            name: qsTr("Sol 6 Map")
         },
         TableMetaParam {
             param: TableParam {
                 x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_pressure, 16, true, true, slots.pressure)
                 value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_current, 16, true, true, slots.current)
             }
-            name: qsTr("Solenoid 7 Map")
+            name: qsTr("Sol 7 Map")
         },
         TableMetaParam {
             param: TableParam {
                 x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_pressure, 16, true, true, slots.pressure)
                 value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_current, 16, true, true, slots.current)
             }
-            name: qsTr("Solenoid 8 Map")
+            name: qsTr("Sol 8 Map")
         }
     ]
 
