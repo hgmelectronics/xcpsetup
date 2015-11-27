@@ -21,5 +21,7 @@ MenuItem {
 
     property TableParamEditDialog dialog: TableParamEditDialog {
         id: table
+        xLabel: tableParam.param.x.slot.unit
+        valueLabel: tableParam.param.value.slot.unit
     }
 }
