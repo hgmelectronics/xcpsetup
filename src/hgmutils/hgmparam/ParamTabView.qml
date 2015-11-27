@@ -53,15 +53,8 @@ Item {
         }
 
         Tab {
-            title: qsTr("Shift Pressures %")
-            PressurePercentageLayout {
-                parameters: params
-            }
-        }
-
-        Tab {
-            title: qsTr("Shift Pressures")
-            PressureAbsoluteLayout {
+            title: qsTr("Pressures")
+            PressureLayout {
                 parameters: params
             }
         }

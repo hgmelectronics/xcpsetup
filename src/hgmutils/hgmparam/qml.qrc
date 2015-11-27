@@ -19,8 +19,7 @@
         <file>EngineLayout.qml</file>
         <file>ShiftSpeedsLayout.qml</file>
         <file>VehicleLayout.qml</file>
-        <file>PressureAbsoluteLayout.qml</file>
-        <file>PressurePercentageLayout.qml</file>
+        <file>PressureLayout.qml</file>
         <file>KeypadDisplayLayout.qml</file>
         <file>TcLayout.qml</file>
         <file>CanLayout.qml</file>
