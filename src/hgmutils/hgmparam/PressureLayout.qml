@@ -70,19 +70,26 @@ RowLayout {
 
             GroupBox {
                 title: "Prefill"
-                Button {
-                    text: "Edit"
-                    onClicked: prefillDialog.visible = true
-                    enabled: prefillDialog.allListsAnyValid
-                }
-            }
+                RowLayout {
+                    spacing: 8
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Time"
+                        xLabel: "Clutch"
+                        tableParam: parameters.clutchPrefillTime
+                        hasPlot: false
+                        hasShapers: false
+                    }
 
-            ScalarListDialog {
-                id: prefillDialog
-                paramLists: [
-                    parameters.transmissionShiftPrefillPressure,
-                    parameters.transmissionShiftPrefillTime
-                ]
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Pressure"
+                        xLabel: "Clutch"
+                        tableParam: parameters.clutchPrefillPressure
+                        hasPlot: false
+                        hasShapers: false
+                    }
+                }
             }
 
             GroupBox {

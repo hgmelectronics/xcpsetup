@@ -570,9 +570,9 @@ QtObject {
 
     readonly property double ebus_shift_synchronization_tolerance: 0x0b500000
     readonly property double ebus_shift_synchronization_duration: 0x0b510000
-    readonly property double ebus_clutch_release_time: 0x0b520000
-    readonly property double ebus_clutch_prefill_time: 0x0b530000
-    readonly property double ebus_clutch_prefill_pressure: 0x0b540000
+    readonly property double clutch_release_time: 0x0b520000
+    readonly property double clutch_prefill_time: 0x0b530000
+    readonly property double clutch_prefill_pressure: 0x0b540000
     readonly property double ebus_clutch_apply_pressure: 0x0b550000
 
     readonly property double ev_j1939_ctl_source_address: 0x0b600000

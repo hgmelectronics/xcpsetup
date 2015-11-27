@@ -2151,36 +2151,36 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ebus_shift_synchronization_duration, true, true, slots.timeMilliseconds1)
         name: qsTr("Shift Sync Duration")
     }
-    property TableMetaParam ebusClutchReleaseTime: TableMetaParam {
+    property TableMetaParam clutchReleaseTime: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
                 slot: slots.count
                 min: 1
-                count: ebusClutchReleaseTime.param.value.count
+                count: clutchReleaseTime.param.value.count
             }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_release_time, 1, 8, true, true, slots.timeMilliseconds1)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_release_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
         name: qsTr("Clutch Release Time")
     }
-    property TableMetaParam ebusClutchPrefillTime: TableMetaParam {
+    property TableMetaParam clutchPrefillTime: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
                 slot: slots.count
                 min: 1
-                count: ebusClutchPrefillTime.param.value.count
+                count: clutchPrefillTime.param.value.count
             }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_prefill_time, 1, 8, true, true, slots.timeMilliseconds1)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
         name: qsTr("Clutch Prefill Time")
     }
-    property TableMetaParam ebusClutchPrefillPressure: TableMetaParam {
+    property TableMetaParam clutchPrefillPressure: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
                 slot: slots.count
                 min: 1
-                count: ebusClutchPrefillPressure.param.value.count
+                count: clutchPrefillPressure.param.value.count
             }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_prefill_pressure, 1, 8, true, true, slots.pressure)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_pressure, 1, 8, true, true, slots.pressure)
         }
         name: qsTr("Clutch Prefill Pressure")
     }

@@ -29,5 +29,6 @@
         <file>TableByGearEditMenuButton.qml</file>
         <file>TableParamEditMenuItem.qml</file>
         <file>TableByShiftEditMenuButton.qml</file>
+        <file>TableByClutchEditMenuButton.qml</file>
     </qresource>
 </RCC>

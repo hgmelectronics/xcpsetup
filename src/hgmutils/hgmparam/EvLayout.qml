@@ -97,27 +97,6 @@ RowLayout {
             metaParam: parameters.ebusShiftSyncDuration
         }
         TableParamEditButton {
-            tableParam: parameters.ebusClutchReleaseTime
-            xLabel: "Clutch"
-            valueLabel: "Time"
-            hasPlot: false
-            hasShapers: false
-        }
-        TableParamEditButton {
-            tableParam: parameters.ebusClutchPrefillTime
-            xLabel: "Clutch"
-            valueLabel: "Time"
-            hasPlot: false
-            hasShapers: false
-        }
-        TableParamEditButton {
-            tableParam: parameters.ebusClutchPrefillPressure
-            xLabel: "Clutch"
-            valueLabel: "Pressure"
-            hasPlot: false
-            hasShapers: false
-        }
-        TableParamEditButton {
             tableParam: parameters.ebusClutchApplyPressure
             xLabel: "Clutch"
             valueLabel: "Pressure"
