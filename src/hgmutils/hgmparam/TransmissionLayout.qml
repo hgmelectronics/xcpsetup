@@ -101,9 +101,9 @@ ColumnLayout {
 
     TableByClutchEditButtonGroup {
         Layout.alignment: Qt.AlignLeft
-        title: qsTr("Clutch Solenoid Pressure Curves")
+        title: qsTr("Solenoid PI Curves")
         xLabel: qsTr("Pressure")
         valueLabel: qsTr("Current")
-        tableParam: parameters.clutchSolenoidPressureMap
+        tableParam: parameters.solenoidPIMap
     }
 }
