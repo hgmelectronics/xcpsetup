@@ -533,8 +533,10 @@ QtObject {
             { raw: 902, engr: "Mercedes W5A330 Remote Control" },
             { raw: 903, engr: "Mercedes W5A580 Remote Control" },
             { raw: 1000, engr: "Mercedes W5A330" },
-            { raw: 1001, engr: "Mercedes W5A580" }
+            { raw: 1001, engr: "Mercedes W5A580" },
+            { raw: 1100, engr: "PSI A61FM" }
         ]
+        unencodedSlot: count
     }
 
     property EncodingSlot transmissionOilLevelMeasurementStatus: EncodingSlot {
@@ -577,8 +579,10 @@ QtObject {
             { raw: 14, engr: "Toyota 1URFE" },
             { raw: 15, engr: "Ebus Yaskawa F7" },
             { raw: 16, engr: "Ebus Yaskawa A1000" },
-            { raw: 17, engr: "AEM Series 2 CAN" }
+            { raw: 17, engr: "AEM Series 2 CAN" },
+            { raw: 18, engr: "VW GTI MKV" }
         ]
+        unencodedSlot: count
     }
 
     property LinearSlot voltage1: LinearSlot {
