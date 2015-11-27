@@ -85,22 +85,6 @@ ColumnLayout {
 
     TableByClutchEditButtonGroup {
         Layout.alignment: Qt.AlignLeft
-        title: qsTr("Clutch Fill Time")
-        xLabel: qsTr("Pressure")
-        valueLabel: qsTr("Time")
-        tableParam: parameters.transmissionClutchFillTime
-    }
-
-    TableByClutchEditButtonGroup {
-        Layout.alignment: Qt.AlignLeft
-        title: qsTr("Clutch Empty Time")
-        xLabel: qsTr("Pressure")
-        valueLabel: qsTr("Time")
-        tableParam: parameters.transmissionClutchEmptyTime
-    }
-
-    TableByClutchEditButtonGroup {
-        Layout.alignment: Qt.AlignLeft
         title: qsTr("Solenoid PI Curves")
         xLabel: qsTr("Pressure")
         valueLabel: qsTr("Current")

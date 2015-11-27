@@ -79,6 +79,7 @@ RowLayout {
                         tableParam: parameters.clutchPrefillTime
                         hasPlot: false
                         hasShapers: false
+                        enabled: parameters.clutchPrefillPressure.param.valid
                     }
 
                     TableParamEditButton {
@@ -112,7 +113,7 @@ RowLayout {
                 Button {
                     text: "Edit"
                     onClicked: garageShiftDialog.visible = true
-                    enabled: parameters.garageShiftPrefillPressure.param.valid
+                    enabled: parameters.garageShiftMaxPressure.param.valid
                 }
             }
             Window {
@@ -220,19 +221,28 @@ RowLayout {
 
             GroupBox {
                 title: "Prefill"
-                Button {
-                    text: "Edit"
-                    onClicked: prefillDialogPct.visible = true
-                    enabled: prefillDialogPct.allListsAnyValid
-                }
-            }
+                RowLayout {
+                    spacing: 8
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Time"
+                        xLabel: "Clutch"
+                        tableParam: parameters.clutchPrefillTime
+                        hasPlot: false
+                        hasShapers: false
+                        enabled: parameters.clutchPrefillPercentage.param.valid
+                    }
 
-            ScalarListDialog {
-                id: prefillDialogPct
-                paramLists: [
-                    parameters.transmissionShiftPrefillPercentage,
-                    parameters.transmissionShiftPrefillTime
-                ]
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Pressure"
+                        xLabel: "Clutch"
+                        valueLabel: qsTr("%")
+                        tableParam: parameters.clutchPrefillPercentage
+                        hasPlot: false
+                        hasShapers: false
+                    }
+                }
             }
 
             GroupBox {
@@ -240,7 +250,7 @@ RowLayout {
                 Button {
                     text: "Edit"
                     onClicked: garageShiftDialogPct.visible = true
-                    enabled: parameters.garageShiftPrefillPercentage.param.valid
+                    enabled: parameters.garageShiftMaxPercentage.param.valid
                 }
             }
             Window {
