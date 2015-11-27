@@ -27,5 +27,8 @@
         <file>EvLayout.qml</file>
         <file>TransmissionLayout.qml</file>
         <file>TableByClutchEditButtonGroup.qml</file>
+        <file>TableByGearEditMenuButton.qml</file>
+        <file>TableParamEditMenuItem.qml</file>
+        <file>TableByShiftEditMenuButton.qml</file>
     </qresource>
 </RCC>
