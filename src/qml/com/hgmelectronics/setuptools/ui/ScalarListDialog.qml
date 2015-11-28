@@ -42,7 +42,10 @@ Window {
 
     property int desiredHeight: 25 + (stalkingHorse.implicitHeight + 5) * rows
     property int columns: paramLists.length
-    maximumWidth: 15 + (stalkingHorse.implicitWidth + 5) * columns + scrollView.width - scrollView.viewport.width
+    property int calcWidth: 15 + (stalkingHorse.implicitWidth + 5) * columns + scrollView.width - scrollView.viewport.width
+    property int minimumUsableWidth: 250
+    minimumWidth: Math.min(minimumUsableWidth, calcWidth)
+    maximumWidth: Math.max(minimumUsableWidth, calcWidth)
     width: maximumWidth
 
     ScalarParamEdit {
@@ -85,7 +88,6 @@ Window {
             }
         }
     }
-
     AutoRefreshArea {
         base: columnLayout
     }
