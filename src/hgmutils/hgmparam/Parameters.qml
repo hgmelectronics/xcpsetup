@@ -988,6 +988,16 @@ QtObject {
         name: qsTr("Engine Running Detect Speed")
     }
 
+    property ScalarMetaParam engineMaxTorqueDuringShift: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.engine_max_torque_during_shift, true, true, slots.percentage1)
+        name: qsTr("Engine Max Shift Torque")
+    }
+
+    property ScalarMetaParam engineMaxTorqueDuringDriving: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.engine_max_torque_during_driving, true, true, slots.percentage1)
+        name: qsTr("Engine Max Driving Torque")
+    }
+
     property ScalarMetaParam engineIdleShutdownTime: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.engine_idle_shutdown_time, true, true, slots.timeInSecondsZeroIsDisabled)
         name: qsTr("Engine Idle Shutdown Time")
@@ -1874,16 +1884,27 @@ QtObject {
         }
         name: qsTr("Clutch Prefill Pressure %")
     }
-    property TableMetaParam ebusClutchApplyPressure: TableMetaParam {
+    property TableMetaParam clutchStrokeTime: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
                 slot: slots.count
                 min: 1
-                count: ebusClutchApplyPressure.param.value.count
+                count: clutchStrokeTime.param.value.count
             }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_apply_pressure, 1, 8, true, true, slots.pressure)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_stroke_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
-        name: qsTr("Clutch Apply Pressure")
+        name: qsTr("Clutch Stroke Time")
+    }
+    property TableMetaParam clutchStrokePressure: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: clutchStrokeTime.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_stroke_pressure, 1, 8, true, true, slots.pressure)
+        }
+        name: qsTr("Clutch Stroke Pressure")
     }
     property ScalarMetaParam evJ1939CtlSourceAddress: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_j1939_ctl_source_address, true, true, slots.hex32bit)

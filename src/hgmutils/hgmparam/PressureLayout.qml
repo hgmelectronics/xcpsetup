@@ -74,7 +74,25 @@ RowLayout {
                     spacing: 8
                     TableParamEditButton {
                         Layout.margins: 0
-                        text: "Time"
+                        text: "Stroke Time"
+                        xLabel: "Clutch"
+                        tableParam: parameters.clutchStrokeTime
+                        hasPlot: false
+                        hasShapers: false
+                        enabled: parameters.clutchStrokePressure.param.valid
+                    }
+
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Stroke Pressure"
+                        xLabel: "Clutch"
+                        tableParam: parameters.clutchStrokePressure
+                        hasPlot: false
+                        hasShapers: false
+                    }
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Prefill Time"
                         xLabel: "Clutch"
                         tableParam: parameters.clutchPrefillTime
                         hasPlot: false
@@ -84,7 +102,7 @@ RowLayout {
 
                     TableParamEditButton {
                         Layout.margins: 0
-                        text: "Pressure"
+                        text: "Prefill Pressure"
                         xLabel: "Clutch"
                         tableParam: parameters.clutchPrefillPressure
                         hasPlot: false

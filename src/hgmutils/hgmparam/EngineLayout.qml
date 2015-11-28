@@ -81,5 +81,11 @@ RowLayout {
             xLabel: "RPM"
             valueLabel: parameters.slots.torque.unit
         }
+        ScalarParamSpinBox {
+            metaParam: parameters.engineMaxTorqueDuringShift
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.engineMaxTorqueDuringDriving
+        }
     }
 }

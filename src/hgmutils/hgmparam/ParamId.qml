@@ -408,6 +408,8 @@ QtObject {
     readonly property double engine_cylinders: 0x07000000
 
     readonly property double engine_running_detection_speed: 0x07010000
+    readonly property double engine_max_torque_during_shift: 0x07020000
+    readonly property double engine_max_torque_during_driving: 0x07030000
 
     readonly property double voltage_tps_ground_enable: 0x07100000
     readonly property double voltage_tps_is_reversed: 0x07110000
@@ -496,8 +498,9 @@ QtObject {
     readonly property double clutch_release_time: 0x0b520000
     readonly property double clutch_prefill_time: 0x0b530000
     readonly property double clutch_prefill_pressure: 0x0b540000
-    readonly property double ebus_clutch_apply_pressure: 0x0b550000
-    readonly property double clutch_prefill_percentage: 0xDEADBEEF
+    readonly property double clutch_prefill_percentage: 0x0b550000
+    readonly property double clutch_stroke_time: 0x0b560000
+    readonly property double clutch_stroke_pressure: 0x0b570000
 
     readonly property double ev_j1939_ctl_source_address: 0x0b600000
 

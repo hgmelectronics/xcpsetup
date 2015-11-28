@@ -96,13 +96,6 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.ebusShiftSyncDuration
         }
-        TableParamEditButton {
-            tableParam: parameters.ebusClutchApplyPressure
-            xLabel: "Clutch"
-            valueLabel: "Pressure"
-            hasPlot: false
-            hasShapers: false
-        }
         ScalarParamEdit {
             metaParam: parameters.evJ1939CtlSourceAddress
         }
