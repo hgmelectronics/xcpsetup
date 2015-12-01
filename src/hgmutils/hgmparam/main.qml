@@ -20,9 +20,7 @@ ApplicationWindow {
     property CS2Defaults cs2Defaults:  CS2Defaults {
                                       }
 
-    title: paramFileIo.name.length === 0 ? programName : "%1 - %2".arg(
-                                               paramFileIo.name).arg(
-                                               programName)
+    title: programName
     width: 800
     height: 600
     visible: true
@@ -151,20 +149,6 @@ ApplicationWindow {
                 paramOverwriteDialog.open()
             } else {
                 paramFileDialog.load()
-            }
-        }
-    }
-
-    Action {
-        id: fileSaveAction
-        text: qsTr("&Save Parameter File")
-        iconName: "document-save"
-        shortcut: StandardKey.Save
-        onTriggered: {
-            if (paramFileIo.exists) {
-                saveParamFile()
-            } else {
-                paramFileDialog.save()
             }
         }
     }
@@ -333,9 +317,6 @@ ApplicationWindow {
             title: qsTr("&File")
             MenuItem {
                 action: fileOpenAction
-            }
-            MenuItem {
-                action: fileSaveAction
             }
             MenuItem {
                 action: fileSaveAsAction
