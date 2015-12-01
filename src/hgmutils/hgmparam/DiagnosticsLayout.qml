@@ -143,25 +143,25 @@ Flow {
                     text: "Outputs"
                     font.bold: true
                 }
-                ScalarParamIndicator {
+                ScalarParamCheckBox {
                     metaParam: parameters.controllerGreenLED
                 }
-                ScalarParamIndicator {
+                ScalarParamCheckBox {
                     metaParam: parameters.controllerRedLED
                 }
-                ScalarParamIndicator {
+                ScalarParamCheckBox {
                     metaParam: parameters.controllerUSBConnect
                 }
-                ScalarParamIndicator {
+                ScalarParamCheckBox {
                     metaParam: parameters.controllerTransmissionTemperatureSensorBias
                 }
-                ScalarParamIndicator {
+                ScalarParamCheckBox {
                     metaParam: parameters.controllerEngineTemperatureSensorBias
                 }
-                ScalarParamIndicator {
+                ScalarParamCheckBox {
                     metaParam: parameters.controllerThrottlePositionSensorGround
                 }
-                ScalarParamIndicator {
+                ScalarParamCheckBox {
                     metaParam: parameters.controllerMAPSensorGround
                 }
             }

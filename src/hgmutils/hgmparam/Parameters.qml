@@ -154,11 +154,13 @@ QtObject {
     property ScalarMetaParam controllerSpeedTimer1Frequency: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_1_frequency, true, false, slots.frequency)
         name: qsTr("Speed 1")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerSpeedTimer2Frequency: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_2_frequency, true, false, slots.frequency)
         name: qsTr("Speed 2")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerSDCardWriteProtect: ScalarMetaParam {
@@ -184,36 +186,43 @@ QtObject {
     property ScalarMetaParam controllerUSBConnect: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_usb_connect, false, false, slots.booleanOnOff1)
         name: qsTr("USB Connect")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerGreenLED: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_green_led, false, false, slots.booleanOnOff1)
         name: qsTr("Green LED")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerRedLED: ScalarMetaParam {
         param: registry.addScalarParam( MemoryRange.S32, paramId.controller_red_led, false, false, slots.booleanOnOff1)
         name: qsTr("Red LED")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerTransmissionTemperatureSensorBias: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_transmission_temperature_sensor_bias, false, false, slots.booleanOnOff1)
         name: qsTr("Trans Temperature Sensor Bias")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerEngineTemperatureSensorBias: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_engine_temperature_sensor_bias, false, false, slots.booleanOnOff1)
         name: qsTr("Engine Temperature Sensor Bias")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerThrottlePositionSensorGround: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_throttle_position_sensor_ground, false, false, slots.booleanOnOff1)
         name: qsTr("Throttle Position Sensor Ground")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerMAPSensorGround: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_map_ground, false, false, slots.booleanOnOff1)
         name: qsTr("MAP Sensor Ground")
+        immediateWrite: true
     }
 
     readonly property ArrayParam controllerPWMDriverFrequency: registry.addArrayParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency, 12, true, false, slots.frequency)
@@ -1009,7 +1018,6 @@ QtObject {
             value: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_max_torque, 16, true, true, slots.torque)
         }
         name: qsTr("Engine Motoring Torque")
-        immediateWrite: true
     }
 
     property TableMetaParam engineBrakingMaxTorque: TableMetaParam {
@@ -1018,7 +1026,6 @@ QtObject {
             value: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_max_torque, 16, true, true, slots.torque)
         }
         name: qsTr("Engine Braking Torque")
-        immediateWrite: true
     }
 
     property ScalarMetaParam finalDriveRatio: ScalarMetaParam {
@@ -1109,7 +1116,6 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_1, percentage1AxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift Pressure 1 A")
-            immediateWrite: true
         },
         TableMetaParam {
             param: TableParam {
@@ -1536,55 +1542,46 @@ QtObject {
     property ScalarMetaParam tccPrefillTime: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_time, true, true, slots.timeMilliseconds1)
         name: qsTr("TCC Prefill Time")
-        immediateWrite: true
     }
 
     property ScalarMetaParam tccApplyTime: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_apply_time, true, true, slots.timeMilliseconds1)
         name: qsTr("TCC Apply Time")
-        immediateWrite: true
     }
 
     property ScalarMetaParam tccPrefillPressure: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_pressure, true, true, slots.pressure)
         name: qsTr("TCC Prefill Pressure")
-        immediateWrite: true
     }
 
     property ScalarMetaParam tccPrefillPercentage: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_percentage, true, true, slots.percentage2)
         name: qsTr("TCC Prefill Percentage")
-        immediateWrite: true
     }
 
     property ScalarMetaParam tccMaxPressure: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_pressure, true, true, slots.pressure)
         name: qsTr("TCC Apply Max Pressure")
-        immediateWrite: true
     }
 
     property ScalarMetaParam tccMaxPercentage: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_percentage, true, true, slots.percentage2)
         name: qsTr("TCC Apply Max Percentage")
-        immediateWrite: true
     }
 
     property ScalarMetaParam tccProportionalConstant: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_proportional_constant, true, true, slots.percentagePerRpm)
         name: qsTr("TCC P Coeff")
-        immediateWrite: true
     }
 
     property ScalarMetaParam tccIntegralConstant: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_integral_constant, true, true, slots.percentagePerRpmSec)
         name: qsTr("TCC I Coeff")
-        immediateWrite: true
     }
 
     property ScalarMetaParam tccDerivativeConstant: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_derivative_constant, true, true, slots.percentagePerRpmPerSec)
         name: qsTr("TCC D Coeff")
-        immediateWrite: true
     }
 
     property TableMetaParam torqueConverterMult: TableMetaParam {
