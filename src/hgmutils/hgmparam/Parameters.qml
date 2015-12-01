@@ -154,11 +154,13 @@ QtObject {
     property ScalarMetaParam controllerSpeedTimer1Frequency: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_1_frequency, true, false, slots.frequency)
         name: qsTr("Speed 1")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerSpeedTimer2Frequency: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_2_frequency, true, false, slots.frequency)
         name: qsTr("Speed 2")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerSDCardWriteProtect: ScalarMetaParam {
@@ -184,36 +186,43 @@ QtObject {
     property ScalarMetaParam controllerUSBConnect: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_usb_connect, false, false, slots.booleanOnOff1)
         name: qsTr("USB Connect")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerGreenLED: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_green_led, false, false, slots.booleanOnOff1)
         name: qsTr("Green LED")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerRedLED: ScalarMetaParam {
         param: registry.addScalarParam( MemoryRange.S32, paramId.controller_red_led, false, false, slots.booleanOnOff1)
         name: qsTr("Red LED")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerTransmissionTemperatureSensorBias: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_transmission_temperature_sensor_bias, false, false, slots.booleanOnOff1)
         name: qsTr("Trans Temperature Sensor Bias")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerEngineTemperatureSensorBias: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_engine_temperature_sensor_bias, false, false, slots.booleanOnOff1)
         name: qsTr("Engine Temperature Sensor Bias")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerThrottlePositionSensorGround: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_throttle_position_sensor_ground, false, false, slots.booleanOnOff1)
         name: qsTr("Throttle Position Sensor Ground")
+        immediateWrite: true
     }
 
     property ScalarMetaParam controllerMAPSensorGround: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_map_ground, false, false, slots.booleanOnOff1)
         name: qsTr("MAP Sensor Ground")
+        immediateWrite: true
     }
 
     readonly property ArrayParam controllerPWMDriverFrequency: registry.addArrayParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency, 12, true, false, slots.frequency)
@@ -1372,7 +1381,6 @@ QtObject {
                 value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_1, percentage1AxisModel.count, true, true, slots.percentage1)
             }
             name: qsTr("Shift Pressure 1 A")
-            immediateWrite: true
         },
         TableMetaParam {
             param: TableParam {
@@ -1747,7 +1755,6 @@ QtObject {
             value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_apply_pressure, slipAxisModel.count, true, true, slots.percentage1)
         }
         name: qsTr("TCC Apply Pressure")
-        immediateWrite: true
     }
 
     property ScalarMetaParam vehicleVariation: ScalarMetaParam {
