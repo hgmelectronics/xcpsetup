@@ -192,17 +192,22 @@ Flow {
 
     Button {
         text: "PWM Drivers"
-        enabled: parameters.controllerPWMDriverFrequency.range.valid
+        enabled: parameters.controllerPWMDrivers.param.valid
         onClicked: {
             pwmDriversWindow.visible = true
         }
-        PWMDriversWindow {
+        Window {
             id: pwmDriversWindow
-            model: parameters.controllerPWMDriverModel
-            roleKeys: {
-                "frequency": parameters.controllerPWMDriverFrequency.key,
-                "dutyCycle": parameters.controllerPWMDriverDutyCycle.key,
-                "mode": parameters.controllerPWMDriverMode.key
+            title: qsTr("PWM Drivers")
+            width: 480
+            height: 400
+
+            MultiroleTableParamEdit {
+                anchors.fill: parent
+                anchors.margins: 10
+
+                tableMetaParam: parameters.controllerPWMDrivers
+                roleNames: ["x", "frequency", "dutyCycle", "mode"]
             }
 
             AutoRefreshArea {

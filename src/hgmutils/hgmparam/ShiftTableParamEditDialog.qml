@@ -313,6 +313,25 @@ Window {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.margins: 10
+
+                rowDelegate: Rectangle {
+                    height: 16
+                    property TableView control: tableView
+                    property color selectedColor: control.activeFocus ? "#07c" : "#999"
+                    property SystemPalette palette: SystemPalette {
+                        colorGroup: control.enabled ?
+                                        SystemPalette.Active :
+                                        SystemPalette.Disabled
+                    }
+
+                    property color backgroundColor: control.backgroundVisible ? palette.base : "transparent"
+                    property color alternateBackgroundColor: "#f5f5f5"
+                    color: styleData.selected ?
+                               selectedColor :
+                               (!styleData.alternate ?
+                                   alternateBackgroundColor :
+                                   backgroundColor)
+                }
                 TableViewColumn {
                     role: "tps"
                     title: qsTr("Throttle %1").arg(tpsSlot.unit)
@@ -352,7 +371,8 @@ Window {
                             TextInput {
                                 id: input
                                 color: styleData.textColor
-                                anchors.leftMargin: 7
+                                Layout.alignment: Qt.AlignVCenter
+                                anchors.leftMargin: 8
                                 anchors.fill: parent
                                 text: styleData.value !== undefined ? styleData.value : ""
                                 validator: root.speedTableParam.param.value.slot.validator
