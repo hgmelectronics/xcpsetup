@@ -28,6 +28,9 @@
         <file>AutoRefreshManager.qml</file>
         <file>ui/AutoRefreshIntervalDialog.qml</file>
         <file>ImmediateWrite.qml</file>
+        <file>ui/MultiroleTableParamEdit.qml</file>
+        <file>MultiroleTableParam.qml</file>
+        <file>MultiroleTableMetaParam.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

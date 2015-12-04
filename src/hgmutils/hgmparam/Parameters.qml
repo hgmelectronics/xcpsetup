@@ -246,6 +246,17 @@ QtObject {
         }
     }
 
+    property MultiroleTableMetaParam controllerPWMDrivers: MultiroleTableMetaParam {
+        param: MultiroleTableParam {
+            roleMapping: {
+                "x": controllerPWMDriverIdModel,
+                "frequency": controllerPWMDriverFrequency,
+                "dutyCycle": controllerPWMDriverDutyCycle,
+                "mode": controllerPWMDriverMode
+            }
+        }
+    }
+
 //    property ScalarMetaParam controllerAccelerometer: ScalarMetaParam {
 //        param: registry.addScalarParam(MemoryRange.S32, paramId.controller_acclerometer, false, false, slots)
 //        name: qsTr("")
