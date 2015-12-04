@@ -207,6 +207,7 @@ Rectangle {
                                 id: modelForwarder
                                 property var dataModel: model[styleData.role]
                                 ComboBox {
+                                    anchors.verticalCenter: parent.verticalCenter
                                     id: combo
                                     model: tableParam.roleMapping[styleData.role].slot.encodingStringList
                                     editable: true
