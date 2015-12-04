@@ -504,6 +504,10 @@ QtObject {
 
     readonly property double ev_j1939_ctl_source_address: 0x0b600000
 
+    // 8b00 ev data
+    readonly property double ev_drive_fault_count: 0x8b000000
+    readonly property double ev_drive_last_fault_type: 0x8b010000
+
     // 0c00 can bus settings
     readonly property double can0_baud_rate: 0x0c000000
     readonly property double can1_baud_rate: 0x0c100000

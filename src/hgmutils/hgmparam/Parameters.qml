@@ -1907,4 +1907,12 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_j1939_ctl_source_address, true, true, slots.hex32bit)
         name: qsTr("J1939 CTL Source Address")
     }
+    property ScalarMetaParam evDriveFaultCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_drive_fault_count, false, false, slots.count)
+        name: qsTr("EV Drive Fault Count")
+    }
+    property ScalarMetaParam evDriveLastFaultType: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_drive_last_fault_type, false, false, slots.evDriveFault)
+        name: qsTr("EV Drive Last Fault")
+    }
 }

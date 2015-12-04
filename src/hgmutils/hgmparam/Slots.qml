@@ -129,6 +129,17 @@ QtObject {
         ]
     }
 
+    property EncodingSlot evDriveFault: EncodingSlot {
+        encodingList: [
+            { raw: 0, engr: "None"},
+            { raw: 1, engr: "Reply timeout"},
+            { raw: 2, engr: "Character timeout"},
+            { raw: 3, engr: "CRC error" },
+            { raw: 4, engr: "MODBUS exception" },
+            { raw: 5, engr: "Unspecified" }
+        ]
+    }
+
     property EncodingSlot failureModeIndicator: EncodingSlot {
         encodingList: [
             { raw: 0, engr: "Above normal"},

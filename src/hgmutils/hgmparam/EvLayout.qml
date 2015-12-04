@@ -99,5 +99,11 @@ RowLayout {
         ScalarParamEdit {
             metaParam: parameters.evJ1939CtlSourceAddress
         }
+        ScalarParamEdit {
+            metaParam: parameters.evDriveFaultCount
+        }
+        ScalarParamEdit {
+            metaParam: parameters.evDriveLastFaultType
+        }
     }
 }
