@@ -19,7 +19,7 @@ Rectangle {
     property alias tableView: tableView
     width: tableView.implicitWidth
     height: tableView.implicitHeight
-    property bool enableAutoRefreshOverlay: false // FIXME tableMetaParam.isLiveData
+    property bool enableAutoRefreshOverlay: tableMetaParam !== null && typeof(tableMetaParam) !== "undefined" && tableMetaParam.isLiveData
     property var roleNames: tableParam.roleNames
     property int scalarColumnWidth: 100
     property int encodingColumnWidth: 150
@@ -231,9 +231,9 @@ Rectangle {
         }
     }
 
-//    AutoRefreshOverlay {
-//        key: param.key
-//        visible: enableAutoRefreshOverlay
-//        enabled: enableAutoRefreshOverlay
-//    }
+    AutoRefreshOverlay {
+        keys: tableParam.keys
+        visible: enableAutoRefreshOverlay
+        enabled: enableAutoRefreshOverlay
+    }
 }
