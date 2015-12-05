@@ -197,7 +197,7 @@ Window {
         id: tabSeparated
     }
 
-    property TableView tableView: encodingValue ? encodingTableParamEdit.tableView : regularTableParamEdit.tableView
+    property TableView tableView: regularTableParamEdit.tableView
 
     SplitView {
         id: splitView
@@ -268,23 +268,13 @@ Window {
             Layout.fillHeight: true
             Layout.minimumHeight: 250
             spacing: 10
+            id: rowLayout
 
             TableParamEdit {
                 id: regularTableParamEdit
                 xLabel: root.xLabel
                 valueLabel: root.valueLabel
                 tableMetaParam: root.tableParam
-                visible: !encodingValue
-                Layout.margins: 10
-                Layout.fillHeight: true
-            }
-
-            EncodingTableParamEdit {
-                id: encodingTableParamEdit
-                xLabel: root.xLabel
-                valueLabel: root.valueLabel
-                tableMetaParam: root.tableParam
-                visible: encodingValue
                 Layout.margins: 10
                 Layout.fillHeight: true
             }
@@ -332,5 +322,8 @@ Window {
                 }
             }
         }
+    }
+    AutoRefreshArea {
+        base: rowLayout
     }
 }
