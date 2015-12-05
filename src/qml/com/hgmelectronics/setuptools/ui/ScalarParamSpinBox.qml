@@ -13,6 +13,8 @@ GroupBox {
     property ScalarMetaParam metaParam
     property string name: metaParam.name
     property bool enableAutoRefreshOverlay: metaParam.isLiveData
+    property alias minimumValue: spinBox.minimumValue
+    property alias maximumValue: spinBox.maximumValue
 
     property ScalarParam param: metaParam.param
     title: name
@@ -26,13 +28,13 @@ GroupBox {
             implicitWidth: 150
             horizontalAlignment: Qt.AlignRight
             stepSize: Math.pow(10,-param.slot.precision)
-            minimumValue: Math.min(param.slot.engrA, param.slot.engrB)
-            maximumValue: Math.max(param.slot.engrA, param.slot.engrB)
+            minimumValue: !isNaN(parseFloat(param.slot.engrMin)) ? isNaN(parseFloat(param.slot.engrMin)) : -Number.MAX_VALUE
+            maximumValue: !isNaN(parseFloat(param.slot.engrMax)) ? isNaN(parseFloat(param.slot.engrMax)) : Number.MAX_VALUE
             decimals: param.slot.precision
             suffix: param.slot.unit.length != 0 ? " %1".arg(param.slot.unit) : ""
             value: param.floatVal
             onEditingFinished: {
-                if(param.floatVal != value) {
+                if(param.floatVal != value || isNaN(param.floatVal)) {
                     param.floatVal = value
                     if(metaParam.immediateWrite)
                         ImmediateWrite.trigger(param.key)

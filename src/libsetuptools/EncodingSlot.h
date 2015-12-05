@@ -61,6 +61,11 @@ public:
     Q_INVOKABLE void append(double raw, QString engr);
     virtual QValidator *validator();
 
+    virtual QVariant rawMin() const;
+    virtual QVariant rawMax() const;
+    virtual QVariant engrMin() const;
+    virtual QVariant engrMax() const;
+
     double oorFloat;
     QString oorString;
     QVariant oorRaw;
@@ -77,6 +82,8 @@ private:
     QMap<double, QString> mRawToEngr;
     QMap<QString, double> mEngrToRaw;
     QMap<QString, int> mEngrToIndex;
+    double mRawMin;
+    double mRawMax;
 
     EncodingValidator *mValidator;
 };

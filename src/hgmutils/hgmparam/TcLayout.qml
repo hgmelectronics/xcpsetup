@@ -23,6 +23,8 @@ RowLayout {
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccEnableGearA
+            minimumValue: 1
+            maximumValue: 8
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccEnableTOSSA
@@ -48,6 +50,8 @@ RowLayout {
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccEnableGearB
+            minimumValue: 1
+            maximumValue: 8
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccEnableTOSSB

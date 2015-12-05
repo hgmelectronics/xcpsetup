@@ -52,6 +52,9 @@ void EncodingSlot::setEncodingList(QVariant listVar)
     mEngrToRaw.clear();
     mEngrToIndex.clear();
 
+    mRawMin = std::numeric_limits<double>::max();
+    mRawMax = std::numeric_limits<double>::lowest();
+
     QVariantList list = listVar.toList();
     for(QVariant listElem : list)
     {
@@ -69,6 +72,8 @@ void EncodingSlot::setEncodingList(QVariant listVar)
                 mRawToEngr[raw] = engr;
                 mEngrToRaw[engr] = raw;
                 mEngrToIndex[engr] = mList.size() - 1;
+                mRawMin = std::min(mRawMin, raw);
+                mRawMax = std::max(mRawMax, raw);
             }
         }
     }
@@ -186,6 +191,32 @@ void EncodingSlot::append(double raw, QString engr)
 QValidator *EncodingSlot::validator()
 {
     return mValidator;
+}
+
+QVariant EncodingSlot::rawMin() const
+{
+    if(mUnencodedSlot)
+        return std::min(mUnencodedSlot->rawMin().toDouble(), mRawMin);
+    else
+        return mRawMin;
+}
+
+QVariant EncodingSlot::rawMax() const
+{
+    if(mUnencodedSlot)
+        return std::max(mUnencodedSlot->rawMax().toDouble(), mRawMax);
+    else
+        return mRawMax;
+}
+
+QVariant EncodingSlot::engrMin() const
+{
+    return asString(rawMin());
+}
+
+QVariant EncodingSlot::engrMax() const
+{
+    return asString(rawMax());
 }
 
 void EncodingSlot::onUnencodedSlotUnitChanged()
