@@ -24,13 +24,18 @@ Item {
         repeat: true
         interval: Math.max(root.interval, 16)
         onTriggered: {
-            if(inProgress) {
+            if(!paramLayer.slaveConnected) {
+                inProgress = false
+                deferredTrigger = false
+            }
+            else if(inProgress) {
                 deferredTrigger = true
             }
             else {
-                if(paramLayer.slaveConnected && paramLayer.idle)
+                if(paramLayer.idle && AutoRefreshSelector.keys.length > 0) {
                     paramLayer.upload(AutoRefreshSelector.keys)
-                inProgress = true
+                    inProgress = true
+                }
                 deferredTrigger = false
             }
         }
@@ -41,9 +46,13 @@ Item {
 
         onUploadDone: {
             inProgress = false
+
+            if(!paramLayer.slaveConnected)
+                deferredTrigger = false
+
             if(deferredTrigger) {
                 deferredTrigger = false
-                if(paramLayer.slaveConnected && paramLayer.idle)
+                if(paramLayer.slaveConnected && paramLayer.idle && AutoRefreshSelector.keys.length > 0)
                     paramLayer.upload(AutoRefreshSelector.keys)
             }
         }
