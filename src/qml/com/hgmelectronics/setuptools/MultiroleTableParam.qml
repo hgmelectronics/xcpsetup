@@ -8,31 +8,41 @@ QtObject {
 
     property var roleNames: {
         var ret = ([])
-        for(var key in roleMapping) {
-            if(roleMapping.hasOwnProperty(key)) {
-                ret.push(key)
+        for(var role in roleMapping) {
+            if(roleMapping.hasOwnProperty(role)) {
+                ret.push(role)
             }
+        }
+        return ret
+    }
+
+    property var keys: {
+        var ret = ([])
+        for(var role in roleMapping) {
+            if(roleMapping.hasOwnProperty(role)
+                    && typeof(roleMapping[role].key) !== "undefined")
+                ret.push(roleMapping[role].key)
         }
         return ret
     }
 
     property var model: {
         var ret = ({})
-        for(var key in roleMapping) {
-            if(roleMapping.hasOwnProperty(key)) {
-                if(typeof(roleMapping[key].stringModel) !== "undefined")
-                    ret[key] = roleMapping[key].stringModel
+        for(var role in roleMapping) {
+            if(roleMapping.hasOwnProperty(role)) {
+                if(typeof(roleMapping[role].stringModel) !== "undefined")
+                    ret[role] = roleMapping[role].stringModel
                 else
-                    ret[key] = roleMapping[key]
+                    ret[role] = roleMapping[role]
             }
         }
         return ret
     }
 
     property bool valid: {
-        for(var key in roleMapping) {
-            if(roleMapping.hasOwnProperty(key)) {
-                if(typeof(roleMapping[key].valid) !== "undefined" && !roleMapping[key].valid)
+        for(var role in roleMapping) {
+            if(roleMapping.hasOwnProperty(role)) {
+                if(typeof(roleMapping[role].valid) !== "undefined" && !roleMapping[role].valid)
                     return false
             }
         }
@@ -41,10 +51,10 @@ QtObject {
 
     property int count: {
         var ret = 0x7FFFFFFF
-        for(var key in roleMapping) {
-            if(roleMapping.hasOwnProperty(key)) {
-                if(typeof(roleMapping[key].count) !== "undefined")
-                    ret = Math.min(ret, roleMapping[key].count)
+        for(var role in roleMapping) {
+            if(roleMapping.hasOwnProperty(role)) {
+                if(typeof(roleMapping[role].count) !== "undefined")
+                    ret = Math.min(ret, roleMapping[role].count)
                 else
                     ret = 0
             }
