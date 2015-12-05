@@ -202,16 +202,21 @@ Flow {
             width: 480
             height: 400
 
-            MultiroleTableParamEdit {
+            RowLayout {
+                id: pwmRowLayout
                 anchors.fill: parent
-                anchors.margins: 10
+                MultiroleTableParamEdit {
+                    Layout.margins: 10
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
 
-                tableMetaParam: parameters.controllerPWMDrivers
-                roleNames: ["x", "frequency", "dutyCycle", "mode"]
+                    tableMetaParam: parameters.controllerPWMDrivers
+                    roleNames: ["x", "frequency", "dutyCycle", "mode"]
+                }
             }
 
             AutoRefreshArea {
-                base: pwmDriversWindow
+                base: pwmRowLayout
             }
         }
     }

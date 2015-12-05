@@ -62,8 +62,9 @@ Rectangle {
         findAROChildren(base)
     }
     function findAROChildren(obj) {
-        if(obj.typeName === "AutoRefreshOverlay")
+        if(obj.typeName === "AutoRefreshOverlay") {
             autoRefreshOverlays.push(obj)
+        }
         else if(typeof(obj.children) !== "undefined") {
             for(var i = 0; i < obj.children.length; ++i)
                 findAROChildren(obj.children[i])

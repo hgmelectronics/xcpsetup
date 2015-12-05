@@ -23,6 +23,7 @@ Rectangle {
     property var roleNames: tableParam.roleNames
     property int scalarColumnWidth: 100
     property int encodingColumnWidth: 150
+    children: [tableView, autoRefreshOverlay]   // hack to make autoRefreshOverlay work with AutoRefreshArea
 
     property var editableRoleNames: {
         var ret = []
@@ -232,6 +233,7 @@ Rectangle {
     }
 
     AutoRefreshOverlay {
+        id: autoRefreshOverlay
         keys: tableParam.keys
         visible: enableAutoRefreshOverlay
         enabled: enableAutoRefreshOverlay

@@ -236,16 +236,6 @@ QtObject {
         count: 12
     }
 
-
-    property TableMapperModel controllerPWMDriverModel: TableMapperModel {
-        mapping: {
-            "x": controllerPWMDriverIdModel,
-            "frequency": controllerPWMDriverFrequency.stringModel,
-            "dutyCycle": controllerPWMDriverDutyCycle.stringModel,
-            "mode": controllerPWMDriverMode.stringModel
-        }
-    }
-
     property MultiroleTableMetaParam controllerPWMDrivers: MultiroleTableMetaParam {
         param: MultiroleTableParam {
             roleMapping: {
@@ -255,6 +245,7 @@ QtObject {
                 "mode": controllerPWMDriverMode
             }
         }
+        isLiveData: true
     }
 
 //    property ScalarMetaParam controllerAccelerometer: ScalarMetaParam {
