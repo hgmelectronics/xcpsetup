@@ -21,6 +21,8 @@ Rectangle {
     height: tableView.implicitHeight
     property bool enableAutoRefreshOverlay: false // FIXME tableMetaParam.isLiveData
     property var roleNames: tableParam.roleNames
+    property int scalarColumnWidth: 100
+    property int encodingColumnWidth: 150
 
     property var editableRoleNames: {
         var ret = []
@@ -32,6 +34,14 @@ Rectangle {
     }
     property string selectedRoleName: editableRoleNames.length > 0 ? editableRoleNames[0] : ""
 
+    property bool hasEncoding: {
+        for(var i = 0; i < tableParam.roleNames.length; ++i) {
+            if(typeof(tableParam.roleMapping[roleNames[i]].slot.encodingStringList) !== "undefined")
+                return true
+        }
+        return false
+    }
+
     TableView {
         id: tableView
         anchors.fill: parent
@@ -40,6 +50,25 @@ Rectangle {
 
         model: root.tableParam.stringModel
         selectionMode: SelectionMode.ContiguousSelection
+
+        rowDelegate: Rectangle {
+            height: hasEncoding ? 24 : 16
+            property TableView control: tableView
+            property color selectedColor: control.activeFocus ? "#07c" : "#999"
+            property SystemPalette palette: SystemPalette {
+                colorGroup: control.enabled ?
+                                SystemPalette.Active :
+                                SystemPalette.Disabled
+            }
+
+            property color backgroundColor: control.backgroundVisible ? palette.base : "transparent"
+            property color alternateBackgroundColor: "#f5f5f5"
+            color: styleData.selected ?
+                       selectedColor :
+                       (!styleData.alternate ?
+                           alternateBackgroundColor :
+                           backgroundColor)
+        }
 
         Instantiator {
             model: roleNames.length
@@ -50,9 +79,22 @@ Rectangle {
             TableViewColumn {
                 id: col
                 role: root.roleNames[index]
+                width: (typeof(root.tableParam.roleMapping[role].slot.encodingStringList) !== "undefined") ? encodingColumnWidth : scalarColumnWidth
                 delegate: Component {
                     Loader {
-                        sourceComponent: (styleData.selected && (root.tableParam.model[styleData.role].flags(0) & Qt.ItemIsEditable)) ? editDelegate : displayDelegate
+                        sourceComponent: {
+                            if(typeof(root.tableParam.roleMapping[styleData.role].slot.encodingStringList) == "undefined") {
+                                // Not encoding
+                                if(styleData.selected
+                                        && (root.tableParam.model[styleData.role].flags(0) & Qt.ItemIsEditable))
+                                    return editDelegate
+                                else
+                                    return displayDelegate
+                            }
+                            else {
+                                return encodingDelegate
+                            }
+                        }
                         Component {
                             id: displayDelegate
                             Item {
@@ -94,11 +136,13 @@ Rectangle {
                         Component {
                             id: editDelegate
                             Item {
+                                property int implicitWidth: input.implicitWidth + 16
                                 TextInput {
                                     id: input
                                     color: styleData.textColor
-                                    anchors.leftMargin: 7
+                                    anchors.leftMargin: 8
                                     anchors.fill: parent
+                                    verticalAlignment: Qt.AlignVCenter
                                     horizontalAlignment: styleData.textAlignment
                                     text: styleData.value !== undefined ? styleData.value : ""
                                     validator: root.tableParam.roleMapping[styleData.role].slot.validator
@@ -156,10 +200,32 @@ Rectangle {
                                 }
                             }
                         }
+                        Component {
+                            id: encodingDelegate
+                            Item {
+                                property int implicitWidth: combo.implicitWidth + 16
+                                id: modelForwarder
+                                property var dataModel: model[styleData.role]
+                                ComboBox {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    id: combo
+                                    model: tableParam.roleMapping[styleData.role].slot.encodingStringList
+                                    editable: true
+                                    onActivated: {
+                                        if (index == -1)
+                                            modelForwarder.dataModel = editText
+                                        else
+                                            modelForwarder.dataModel = model[index]
+                                    }
+                                    onAccepted: {
+                                        modelForwarder.dataModel = editText
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
-                width: tableView.columnWidth
                 title: label[role]
             }
         }
