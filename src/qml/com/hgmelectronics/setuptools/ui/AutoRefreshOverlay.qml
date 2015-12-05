@@ -7,6 +7,7 @@ Rectangle {
     property color selectedColor: "#20FF0000"
     property bool selected: false
     property string key
+    property var keys: [key]
     readonly property string typeName: "AutoRefreshOverlay"
     radius: 2
 
@@ -26,7 +27,7 @@ Rectangle {
         onPressAndHold: mouse.accepted = false
         onClicked: {
             if(AutoRefreshSelector.selectMode)
-                AutoRefreshSelector.toggleKey(key)
+                setSelected(!isAnySelected())
             else
                 mouse.accepted = false
         }
@@ -34,15 +35,25 @@ Rectangle {
 
     function setSelected(on) {
         if(enabled) {
-            if(on)
-                AutoRefreshSelector.addKey(key)
-            else
-                AutoRefreshSelector.removeKey(key)
+            keys.forEach(function(k) {
+                if(on)
+                    AutoRefreshSelector.addKey(k)
+                else
+                    AutoRefreshSelector.removeKey(k)
+            })
         }
     }
 
     function selectedFromSelector() {
-        selected = AutoRefreshSelector.keySelected(key)
+        selected = isAnySelected()
+    }
+    function isAnySelected() {
+        var isSelected = false
+        keys.forEach(function(k) {
+            if(AutoRefreshSelector.keySelected(k))
+                isSelected = true
+        })
+        return isSelected
     }
     function updateSelectorConnection() {
         if(enabled)
@@ -56,7 +67,7 @@ Rectangle {
     onEnabledChanged: {
         updateSelectorConnection()
         if(!enabled)
-            AutoRefreshSelector.removeKey(key)
+            setSelected(false)
     }
 }
 

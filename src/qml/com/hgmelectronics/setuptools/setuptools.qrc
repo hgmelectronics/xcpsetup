@@ -11,7 +11,6 @@
         <file>ui/ScalarParamSpinBox.qml</file>
         <file>ui/ScalarParamCheckBox.qml</file>
         <file>ui/TableParamEdit.qml</file>
-        <file>ui/EncodingTableParamEdit.qml</file>
         <file>ui/ScalarParamIndicator.qml</file>
         <file>ui/EncodingParamEdit.qml</file>
         <file>ScalarMetaParam.qml</file>
@@ -28,6 +27,9 @@
         <file>AutoRefreshManager.qml</file>
         <file>ui/AutoRefreshIntervalDialog.qml</file>
         <file>ImmediateWrite.qml</file>
+        <file>ui/MultiroleTableParamEdit.qml</file>
+        <file>MultiroleTableParam.qml</file>
+        <file>MultiroleTableMetaParam.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
