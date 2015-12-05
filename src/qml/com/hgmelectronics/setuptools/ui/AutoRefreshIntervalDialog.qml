@@ -16,8 +16,9 @@ Dialog {
     standardButtons: StandardButton.Ok | StandardButton.Cancel
 
     SpinBox {
+        anchors.horizontalCenter: parent.horizontalCenter
         id: spinBox
-        width: 200
+        width: 150
         value: AutoRefreshManager.interval
         maximumValue: 1000000
         minimumValue: 0
