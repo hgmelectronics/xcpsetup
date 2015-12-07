@@ -16,9 +16,6 @@ RowLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         ScalarParamSpinBox {
-            metaParam: parameters.tccDownshiftOffsetA
-        }
-        ScalarParamSpinBox {
             metaParam: parameters.tccDisableTOSSPercentA
         }
         ScalarParamSpinBox {
@@ -42,9 +39,6 @@ RowLayout {
     ColumnLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
-        ScalarParamSpinBox {
-            metaParam: parameters.tccDownshiftOffsetB
-        }
         ScalarParamSpinBox {
             metaParam: parameters.tccDisableTOSSPercentB
         }

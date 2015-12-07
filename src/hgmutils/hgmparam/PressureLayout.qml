@@ -70,45 +70,63 @@ RowLayout {
 
             GroupBox {
                 title: "Prefill"
-                RowLayout {
-                    spacing: 8
-                    TableParamEditButton {
-                        Layout.margins: 0
-                        text: "Stroke Time"
-                        xLabel: "Clutch"
-                        tableParam: parameters.clutchStrokeTime
-                        hasPlot: false
-                        hasShapers: false
-                        enabled: parameters.clutchStrokePressure.param.valid
-                    }
+                ColumnLayout {
+                    RowLayout {
+                        spacing: 8
+                        TableParamEditButton {
+                            Layout.margins: 0
+                            text: "Stroke Time"
+                            xLabel: "Clutch"
+                            tableParam: parameters.clutchStrokeTime
+                            hasPlot: false
+                            hasShapers: false
+                            enabled: parameters.clutchStrokePressure.param.valid
+                        }
 
-                    TableParamEditButton {
-                        Layout.margins: 0
-                        text: "Stroke Pressure"
-                        xLabel: "Clutch"
-                        tableParam: parameters.clutchStrokePressure
-                        hasPlot: false
-                        hasShapers: false
+                        TableParamEditButton {
+                            Layout.margins: 0
+                            text: "Stroke Pressure"
+                            xLabel: "Clutch"
+                            tableParam: parameters.clutchStrokePressure
+                            hasPlot: false
+                            hasShapers: false
+                        }
                     }
-                    TableParamEditButton {
-                        Layout.margins: 0
-                        text: "Prefill Time"
-                        xLabel: "Clutch"
-                        tableParam: parameters.clutchPrefillTime
-                        hasPlot: false
-                        hasShapers: false
-                        enabled: parameters.clutchPrefillPressure.param.valid
-                    }
+                    RowLayout {
+                        spacing: 8
+                        TableParamEditButton {
+                            Layout.margins: 0
+                            text: "Prefill Time"
+                            xLabel: "Clutch"
+                            tableParam: parameters.clutchPrefillTime
+                            hasPlot: false
+                            hasShapers: false
+                            enabled: parameters.clutchPrefillPressure.param.valid
+                        }
 
-                    TableParamEditButton {
-                        Layout.margins: 0
-                        text: "Prefill Pressure"
-                        xLabel: "Clutch"
-                        tableParam: parameters.clutchPrefillPressure
-                        hasPlot: false
-                        hasShapers: false
+                        TableParamEditButton {
+                            Layout.margins: 0
+                            text: "Prefill Pressure"
+                            xLabel: "Clutch"
+                            tableParam: parameters.clutchPrefillPressure
+                            hasPlot: false
+                            hasShapers: false
+                        }
+                        Button {
+                            text: "By Shift"
+                            onClicked: prefillDialogPress.visible = true
+                            enabled: prefillDialogPress.allListsAnyValid
+                        }
                     }
                 }
+            }
+
+            ScalarListDialog {
+                id: prefillDialogPress
+                paramLists: [
+                    parameters.transmissionShiftPrefillPressure,
+                    parameters.transmissionShiftPrefillTime
+                ]
             }
 
             GroupBox {
@@ -260,7 +278,21 @@ RowLayout {
                         hasPlot: false
                         hasShapers: false
                     }
+                    
+                    Button {
+                        text: "By Shift"
+                        onClicked: prefillDialogPct.visible = true
+                        enabled: prefillDialogPct.allListsAnyValid
+                    }
                 }
+            }
+
+            ScalarListDialog {
+                id: prefillDialogPct
+                paramLists: [
+                    parameters.transmissionShiftPrefillPercentage,
+                    parameters.transmissionShiftPrefillTime
+                ]
             }
 
             GroupBox {

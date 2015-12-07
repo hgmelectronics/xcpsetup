@@ -30,5 +30,7 @@
         <file>TableParamEditMenuItem.qml</file>
         <file>TableByShiftEditMenuButton.qml</file>
         <file>TableByClutchEditMenuButton.qml</file>
+        <file>ShiftTableByShiftEditMenuButton.qml</file>
+        <file>ShiftTableParamEditMenuItem.qml</file>
     </qresource>
 </RCC>

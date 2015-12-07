@@ -198,23 +198,82 @@ QtObject {
     readonly property double transmission_shift_7_6_release_percentage: 0x38d0000
     readonly property double transmission_shift_8_7_release_percentage: 0x38e0000
 
-    readonly property double transmission_shift_r_n_overlap_pressure:   0x03e00000
-    readonly property double transmission_shift_n_r_overlap_pressure:   0x03e00001
-    readonly property double transmission_shift_n_1_overlap_pressure:   0x03e00002
-    readonly property double transmission_shift_1_n_overlap_pressure:   0x03e00003
-    readonly property double transmission_shift_1_2_overlap_pressure:   0x03e00004
-    readonly property double transmission_shift_2_1_overlap_pressure:   0x03e00005
-    readonly property double transmission_shift_2_3_overlap_pressure:   0x03e00006
-    readonly property double transmission_shift_3_2_overlap_pressure:   0x03e00007
-    readonly property double transmission_shift_3_4_overlap_pressure:   0x03e00008
-    readonly property double transmission_shift_4_3_overlap_pressure:   0x03e00009
-    readonly property double transmission_shift_4_5_overlap_pressure:   0x03e0000a
-    readonly property double transmission_shift_5_4_overlap_pressure:   0x03e0000b
-    readonly property double transmission_shift_5_6_overlap_pressure:   0x03e0000c
-    readonly property double transmission_shift_6_5_overlap_pressure:   0x03e0000d
-
     readonly property double transmission_pressure_temperature_compensation: 0x3a00000
 
+    readonly property double transmission_shift_r_n_prefill_time:       0x03b00000
+    readonly property double transmission_shift_r_n_prefill_pressure:   0x03c00000
+    readonly property double transmission_shift_r_n_prefill_percentage: 0x03d00000
+
+    readonly property double transmission_shift_n_r_prefill_time:       0x03b00001
+    readonly property double transmission_shift_n_r_prefill_pressure:   0x03c00001
+    readonly property double transmission_shift_n_r_prefill_percentage: 0x03d00001
+
+    readonly property double transmission_shift_n_1_prefill_time:       0x03b00002
+    readonly property double transmission_shift_n_1_prefill_pressure:   0x03c00002
+    readonly property double transmission_shift_n_1_prefill_percentage: 0x03d00002
+
+    readonly property double transmission_shift_1_n_prefill_time:       0x03b00003
+    readonly property double transmission_shift_1_n_prefill_pressure:   0x03c00003
+    readonly property double transmission_shift_1_n_prefill_percentage: 0x03d00003
+
+    readonly property double transmission_shift_1_2_prefill_time:       0x03b00004
+    readonly property double transmission_shift_1_2_prefill_pressure:   0x03c00004
+    readonly property double transmission_shift_1_2_prefill_percentage: 0x03d00004
+
+    readonly property double transmission_shift_2_1_prefill_time:       0x03b00005
+    readonly property double transmission_shift_2_1_prefill_pressure:   0x03c00005
+    readonly property double transmission_shift_2_1_prefill_percentage: 0x03d00005
+
+    readonly property double transmission_shift_2_3_prefill_time:       0x03b00006
+    readonly property double transmission_shift_2_3_prefill_pressure:   0x03c00006
+    readonly property double transmission_shift_2_3_prefill_percentage: 0x03d00006
+
+    readonly property double transmission_shift_3_2_prefill_time:       0x03b00007
+    readonly property double transmission_shift_3_2_prefill_pressure:   0x03c00007
+    readonly property double transmission_shift_3_2_prefill_percentage: 0x03d00007
+
+    readonly property double transmission_shift_3_4_prefill_time:       0x03b00008
+    readonly property double transmission_shift_3_4_prefill_pressure:   0x03c00008
+    readonly property double transmission_shift_3_4_prefill_percentage: 0x03d00008
+
+    readonly property double transmission_shift_4_3_prefill_time:       0x03b00009
+    readonly property double transmission_shift_4_3_prefill_pressure:   0x03c00009
+    readonly property double transmission_shift_4_3_prefill_percentage: 0x03d00009
+
+    readonly property double transmission_shift_4_5_prefill_time:       0x03b0000a
+    readonly property double transmission_shift_4_5_prefill_pressure:   0x03c0000a
+    readonly property double transmission_shift_4_5_prefill_percentage: 0x03d0000a
+
+    readonly property double transmission_shift_5_4_prefill_time:       0x03b0000b
+    readonly property double transmission_shift_5_4_prefill_pressure:   0x03c0000b
+    readonly property double transmission_shift_5_4_prefill_percentage: 0x03d0000b
+
+    readonly property double transmission_shift_5_6_prefill_time:       0x03b0000c
+    readonly property double transmission_shift_5_6_prefill_pressure:   0x03c0000c
+    readonly property double transmission_shift_5_6_prefill_percentage: 0x03d0000c
+
+    readonly property double transmission_shift_6_5_prefill_time:       0x03b0000d
+    readonly property double transmission_shift_6_5_prefill_pressure:   0x03c0000d
+    readonly property double transmission_shift_6_5_prefill_percentage: 0x03d0000d
+
+    readonly property double transmission_downshift_type_torque_threshold: 0x03e00000
+
+    readonly property double transmission_shift_r_n_torque_transfer_time: 0x03e10000
+    readonly property double transmission_shift_n_r_torque_transfer_time: 0x03e10001
+    readonly property double transmission_shift_n_1_torque_transfer_time: 0x03e10002
+    readonly property double transmission_shift_1_n_torque_transfer_time: 0x03e10003
+    readonly property double transmission_shift_1_2_torque_transfer_time: 0x03e10004
+    readonly property double transmission_shift_2_1_torque_transfer_time: 0x03e10005
+    readonly property double transmission_shift_2_3_torque_transfer_time: 0x03e10006
+    readonly property double transmission_shift_3_2_torque_transfer_time: 0x03e10007
+    readonly property double transmission_shift_3_4_torque_transfer_time: 0x03e10008
+    readonly property double transmission_shift_4_3_torque_transfer_time: 0x03e10009
+    readonly property double transmission_shift_4_5_torque_transfer_time: 0x03e1000a
+    readonly property double transmission_shift_5_4_torque_transfer_time: 0x03e1000b
+    readonly property double transmission_shift_5_6_torque_transfer_time: 0x03e1000c
+    readonly property double transmission_shift_6_5_torque_transfer_time: 0x03e1000d
+
+    readonly property double garage_shift_time: 0x03f00000
     readonly property double garage_shift_max_pressure: 0x03f40000
     readonly property double garage_shift_max_percentage: 0x03f50000
     readonly property double garage_shift_p_const: 0x03f60000
@@ -312,6 +371,24 @@ QtObject {
     readonly property double shift_tables_b_4: 0x04470000
     readonly property double shift_tables_b_5: 0x04480000
 
+    readonly property double shift_torque_limit_1_2: 0x04500000
+    readonly property double shift_torque_limit_2_3: 0x04510000
+    readonly property double shift_torque_limit_3_4: 0x04520000
+    readonly property double shift_torque_limit_4_5: 0x04530000
+    readonly property double shift_torque_limit_5_6: 0x04540000
+    readonly property double shift_torque_limit_6_7: 0x04550000
+    readonly property double shift_torque_limit_7_8: 0x04560000
+
+    readonly property double shift_torque_limit_2_1: 0x04600000
+    readonly property double shift_torque_limit_3_2: 0x04610000
+    readonly property double shift_torque_limit_4_3: 0x04620000
+    readonly property double shift_torque_limit_5_4: 0x04630000
+    readonly property double shift_torque_limit_6_5: 0x04640000
+    readonly property double shift_torque_limit_7_6: 0x04650000
+    readonly property double shift_torque_limit_8_7: 0x04660000
+
+    readonly property double shift_torque_limit_garage_shift: 0x04700000
+
     // 8400 shift data
     readonly property double shift_current_gear: 0x84000000
     readonly property double shift_selected_gear: 0x84010000
@@ -408,8 +485,6 @@ QtObject {
     readonly property double engine_cylinders: 0x07000000
 
     readonly property double engine_running_detection_speed: 0x07010000
-    readonly property double engine_max_torque_during_shift: 0x07020000
-    readonly property double engine_max_torque_during_driving: 0x07030000
 
     readonly property double voltage_tps_ground_enable: 0x07100000
     readonly property double voltage_tps_is_reversed: 0x07110000
