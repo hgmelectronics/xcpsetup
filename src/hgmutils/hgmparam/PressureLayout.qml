@@ -149,7 +149,7 @@ RowLayout {
                 Button {
                     text: "Edit"
                     onClicked: garageShiftDialog.visible = true
-                    enabled: parameters.garageShiftMaxPressure.param.valid
+                    enabled: parameters.garageShiftMaxPressure.param.valid || parameters.garageShiftProportionalConstant.param.valid
                 }
             }
             Window {
@@ -300,7 +300,7 @@ RowLayout {
                 Button {
                     text: "Edit"
                     onClicked: garageShiftDialogPct.visible = true
-                    enabled: parameters.garageShiftMaxPercentage.param.valid
+                    enabled: parameters.garageShiftMaxPercentage.param.valid || parameters.garageShiftProportionalConstant.param.valid
                 }
             }
             Window {
