@@ -11,7 +11,7 @@ GroupBox {
     property string valueLabel
     property var tableParam
 
-    title: tableParam[0].name.replace(/Shift [1-9RN]-[1-9RN] (.*)/, "$1")
+    title: tableParam[0].name.replace(/Shift [1-9RN]-[1-9RN]( .*)/, "$1")
 
     Row {
         spacing: 5

@@ -16,13 +16,12 @@ RowLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         ScalarParamSpinBox {
-            metaParam: parameters.tccDownshiftOffsetA
-        }
-        ScalarParamSpinBox {
             metaParam: parameters.tccDisableTOSSPercentA
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccEnableGearA
+            minimumValue: 1
+            maximumValue: 8
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccEnableTOSSA
@@ -41,13 +40,12 @@ RowLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         ScalarParamSpinBox {
-            metaParam: parameters.tccDownshiftOffsetB
-        }
-        ScalarParamSpinBox {
             metaParam: parameters.tccDisableTOSSPercentB
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccEnableGearB
+            minimumValue: 1
+            maximumValue: 8
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccEnableTOSSB
@@ -66,15 +64,41 @@ RowLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         ScalarParamSpinBox {
+            metaParam: parameters.tccPrefillTime
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccApplyTime
+        }
+        ScalarParamSpinBox {
             metaParam: parameters.tccPrefillPressure
         }
         ScalarParamSpinBox {
-            metaParam: parameters.tccPrefillTime
+            metaParam: parameters.tccPrefillPercentage
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccMaxPressure
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccMaxPercentage
+        }
+    }
+    ColumnLayout {
+        Layout.fillHeight: true
+        Layout.alignment: Qt.AlignTop
+        ScalarParamSpinBox {
+            metaParam: parameters.tccProportionalConstant
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccIntegralConstant
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccDerivativeConstant
         }
         TableParamEditButton {
-            tableParam: parameters.tccApplyPressure
-            xLabel: "Slip"
-            valueLabel: "%"
+            Layout.margins: 8
+            tableParam: parameters.torqueConverterMult
+            xLabel: "Speed Ratio"
+            valueLabel: "Torque Ratio"
         }
     }
 }

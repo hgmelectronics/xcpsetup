@@ -129,6 +129,17 @@ QtObject {
         ]
     }
 
+    property EncodingSlot evDriveFault: EncodingSlot {
+        encodingList: [
+            { raw: 0, engr: "None"},
+            { raw: 1, engr: "Reply timeout"},
+            { raw: 2, engr: "Character timeout"},
+            { raw: 3, engr: "CRC error" },
+            { raw: 4, engr: "MODBUS exception" },
+            { raw: 5, engr: "Unspecified" }
+        ]
+    }
+
     property EncodingSlot failureModeIndicator: EncodingSlot {
         encodingList: [
             { raw: 0, engr: "Above normal"},
@@ -533,8 +544,10 @@ QtObject {
             { raw: 902, engr: "Mercedes W5A330 Remote Control" },
             { raw: 903, engr: "Mercedes W5A580 Remote Control" },
             { raw: 1000, engr: "Mercedes W5A330" },
-            { raw: 1001, engr: "Mercedes W5A580" }
+            { raw: 1001, engr: "Mercedes W5A580" },
+            { raw: 1100, engr: "PSI A61FM" }
         ]
+        unencodedSlot: count
     }
 
     property EncodingSlot transmissionOilLevelMeasurementStatus: EncodingSlot {
@@ -577,8 +590,10 @@ QtObject {
             { raw: 14, engr: "Toyota 1URFE" },
             { raw: 15, engr: "Ebus Yaskawa F7" },
             { raw: 16, engr: "Ebus Yaskawa A1000" },
-            { raw: 17, engr: "AEM Series 2 CAN" }
+            { raw: 17, engr: "AEM Series 2 CAN" },
+            { raw: 18, engr: "VW GTI MKV" }
         ]
+        unencodedSlot: count
     }
 
     property LinearSlot voltage1: LinearSlot {
@@ -637,6 +652,15 @@ QtObject {
         precision: useMetricUnits ? 0 : 1
     }
 
+    property LinearSlot current: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1E9
+        engrB: 1E9
+        unit: "mA"
+        precision: 0
+    }
+
     property LinearSlot temperature1: LinearSlot {
         rawA: -2730
         engrA: useMetricUnits ? -273 : -459.4
@@ -692,5 +716,50 @@ QtObject {
         engrB: 1E9 * speedPerTossRpm
         unit: useMetricUnits ? "KPH" : "MPH"
         precision: 1
+    }
+
+    property LinearSlot torquePerRpm: LinearSlot {
+        rawA: -1E9
+        engrA: useMetricUnits ? -1E6 : -7.37562E6
+        rawB: 1E9
+        engrB: useMetricUnits ? 1E6 : 7.37562E6
+        unit: useMetricUnits ? "Nm/RPM" : "ft-lbf/RPM"
+        precision: 2
+    }
+
+    property LinearSlot percentagePerTorque: LinearSlot {
+        rawA: -1E9
+        engrA: useMetricUnits ? -1E6 : -1.355818E6
+        rawB: 1E9
+        engrB: useMetricUnits ? 1E6 : 1.355818E6
+        unit: useMetricUnits ? "%/Nm" : "%/ft-lbf"
+        precision: 3
+    }
+
+    property LinearSlot percentagePerRpmSec: LinearSlot {
+        rawA: -1E9
+        engrA: -1E8
+        rawB: 1E9
+        engrB: 1E8
+        unit: "%/kRPM-s"
+        precision: 1
+    }
+
+    property LinearSlot percentagePerRpm: LinearSlot {
+        rawA: -1E9
+        engrA: -1E6
+        rawB: 1E9
+        engrB: 1E6
+        unit: "%/kRPM"
+        precision: 3
+    }
+
+    property LinearSlot percentagePerRpmPerSec: LinearSlot {
+        rawA: -1E9
+        engrA: -1E6
+        rawB: 1E9
+        engrB: 1E6
+        unit: "%/kRPM/s"
+        precision: 3
     }
 }

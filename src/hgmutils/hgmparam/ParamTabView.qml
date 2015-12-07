@@ -24,6 +24,7 @@ Item {
         anchors.fill: parent
 
         Tab {
+            active: true
             title: qsTr("Vehicle")
             VehicleLayout {
                 parameters: params
@@ -32,6 +33,7 @@ Item {
         }
 
         Tab {
+            active: true
             title: qsTr("Engine")
             EngineLayout {
                 parameters: params
@@ -39,6 +41,7 @@ Item {
         }
 
         Tab {
+            active: true
             title: qsTr("Trans")
             TransmissionLayout {
                 parameters: params
@@ -46,6 +49,7 @@ Item {
         }
 
         Tab {
+            active: true
             title: qsTr("Shift Speeds")
             ShiftSpeedsLayout {
                 parameters: params
@@ -53,27 +57,23 @@ Item {
         }
 
         Tab {
-            title: qsTr("Shift Pressures %")
-            PressurePercentageLayout {
+            active: true
+            title: qsTr("Pressures")
+            PressureLayout {
                 parameters: params
             }
         }
 
         Tab {
-            title: qsTr("Shift Pressures")
-            PressureAbsoluteLayout {
+            active: true
+            title: qsTr("TC")
+            TcLayout {
                 parameters: params
             }
         }
 
         Tab {
-            title: qsTr("TCC")
-            TccLayout {
-                parameters: params
-            }
-        }
-
-        Tab {
+            active: true
             title: qsTr("Diagnostics")
             DiagnosticsLayout {
                 parameters: params
@@ -81,6 +81,7 @@ Item {
         }
 
         Tab {
+            active: true
             title: qsTr("Keypad")
             KeypadDisplayLayout {
                 parameters: params
@@ -88,6 +89,7 @@ Item {
         }
 
         Tab {
+            active: true
             title: qsTr("CAN")
             CanLayout {
                 parameters: params
@@ -95,6 +97,7 @@ Item {
         }
 
         Tab {
+            active: true
             title: qsTr("EV")
             EvLayout {
                 parameters: params

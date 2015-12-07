@@ -198,21 +198,37 @@ ColumnLayout {
         }
     }
 
-    ShiftTableByShiftEditButtonGroup {
-        title: qsTr("Shift Tables A")
-        speedTableParams: parameters.shiftTablesA
-        rpmTableParams: parameters.rpmShiftTablesA
-        gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-        Layout.minimumHeight: 40
+    RowLayout {
+        ShiftTableByShiftEditMenuButton {
+            Layout.margins: 8
+            text: qsTr("Shift Tables A")
+            speedTableParams: parameters.shiftTablesA
+            rpmTableParams: parameters.rpmShiftTablesA
+            gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+        }
+
+        ShiftTableByShiftEditMenuButton {
+            Layout.margins: 8
+            text: qsTr("Shift Tables B")
+            speedTableParams: parameters.shiftTablesB
+            rpmTableParams: parameters.rpmShiftTablesB
+            gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+        }
+
+        TableByShiftEditMenuButton {
+            Layout.margins: 8
+            text: qsTr("Shift Torque Limits")
+            xLabel: qsTr("Driver Torque")
+            valueLabel: qsTr("Limit")
+            tableParam: parameters.shiftTorqueLimits
+        }
+
+        ScalarParamSpinBox {
+            Layout.alignment: Qt.AlignTop
+            metaParam: parameters.reverseLockoutSpeed
+        }
     }
 
-    ShiftTableByShiftEditButtonGroup {
-        title: qsTr("Shift Tables B")
-        speedTableParams: parameters.shiftTablesB
-        rpmTableParams: parameters.rpmShiftTablesB
-        gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-        Layout.minimumHeight: 40
-    }
 
     RowLayout {
         spacing: 5

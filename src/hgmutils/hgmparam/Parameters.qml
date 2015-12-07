@@ -283,126 +283,6 @@ QtObject {
         }
     }
 
-    property
-    list<TableMetaParam> transmissionClutchFillTime: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_1_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 1 Fill")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_2_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 2 Fill")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_3_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 3 Fill")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_4_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 4 Fill")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_5_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 5 Fill")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_6_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 6 Fill")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_7_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 7 Fill")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_8_fill_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 8 Fill")
-        }
-    ]
-
-    property
-    list<TableMetaParam> transmissionClutchEmptyTime: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_1_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 1 Empty")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_2_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 2 Empty")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_3_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 3 Empty")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_4_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 4 Empty")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_5_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 5 Empty")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_6_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 6 Empty")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_7_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 7 Empty")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_clutch_8_empty_time, pressureAxisModel.count, true, true, slots.timeMilliseconds1)
-            }
-            name: qsTr("Clutch 8 Empty")
-        }
-    ]
-
     property ScalarMetaParamList transmissionShiftPrefillTime: ScalarMetaParamList {
         ScalarMetaParam {
             name: qsTr("Prefill Time R-N")
@@ -580,62 +460,67 @@ QtObject {
         }
     }
 
-    property ScalarMetaParamList transmissionShiftOverlapPressure: ScalarMetaParamList {
+    property ScalarMetaParam transmissionDownshiftTypeTorqueThreshold: ScalarMetaParam {
+        name: qsTr("Downshift Type Torque Threshold")
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_downshift_type_torque_threshold, true, true, slots.percentage1)
+    }
+
+    property ScalarMetaParamList transmissionShiftTorqueTransferTime: ScalarMetaParamList {
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure R-N")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time R-N")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure N-R")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time N-R")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure N-1")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time N-1")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 1-N")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 1-N")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 1-2")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 1-2")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 2-1")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 2-1")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 2-3")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 2-3")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 3-2")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 3-2")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 3-4")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 3-4")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 4-3")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 4-3")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 4-5")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 4-5")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 5-4")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 5-4")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 5-6")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 5-6")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Overlap Pressure 6-5")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_overlap_pressure, true, true, slots.percentage1)
+            name: qsTr("Torque Transfer Time 6-5")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_torque_transfer_time, true, true, slots.timeMilliseconds1)
         }
     }
 
@@ -645,6 +530,36 @@ QtObject {
             value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_pressure_temperature_compensation, tempAxisModel.count, true, true, slots.percentage1)
         }
         name: qsTr("Trans Temp Pressure Compensation")
+    }
+
+    property ScalarMetaParam garageShiftMaxPressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_max_pressure, true, true, slots.pressure)
+        name: qsTr("Garage Shift Max Pressure")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftMaxPercentage: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_max_percentage, true, true, slots.percentage2)
+        name: qsTr("Garage Shift Max Percentage")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftProportionalConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_p_const, true, true, slots.percentagePerRpm)
+        name: qsTr("Garage Shift P Coeff")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftIntegralConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_i_const, true, true, slots.percentagePerRpmSec)
+        name: qsTr("Garage Shift I Coeff")
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam garageShiftDerivativeConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_d_const, true, true, slots.percentagePerRpmPerSec)
+        name: qsTr("Garage Shift D Coeff")
+        immediateWrite: true
     }
 
     property
@@ -1271,28 +1186,20 @@ QtObject {
         name: qsTr("Engine Idle Shutdown Time")
     }
 
-    readonly property ArrayParam engineTorqueMapSpeedsArray: registry.addArrayParam(MemoryRange.S32, paramId.engine_torque_map_speeds, 11, true, true, slots.rpm1)
-    property TableMetaParam engineMotorTorqueMap: TableMetaParam {
+    property TableMetaParam engineMotoringMaxTorque: TableMetaParam {
         param: TableParam {
-            x: engineTorqueMapSpeedsArray
-            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_motor_torque_map, 11, true, true, slots.percentage2)
+            x: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_speed, 16, true, true, slots.rpm1)
+            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_max_torque, 16, true, true, slots.torque)
         }
         name: qsTr("Engine Motoring Torque")
     }
-    property TableMetaParam engineBrakeTorqueMap: TableMetaParam {
+
+    property TableMetaParam engineBrakingMaxTorque: TableMetaParam {
         param: TableParam {
-            x: engineTorqueMapSpeedsArray
-            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_torque_map, 11, true, true, slots.percentage2)
+            x: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_speed, 16, true, true, slots.rpm1)
+            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_max_torque, 16, true, true, slots.torque)
         }
         name: qsTr("Engine Braking Torque")
-    }
-
-    property TableMapperModel engineTorqueMap: TableMapperModel {
-        mapping: {
-            "rpm": engineTorqueMapSpeedsArray.stringModel,
-            "motoring": engineMotorTorqueMap.param.value.stringModel,
-            "braking": engineBrakeTorqueMap.param.value.stringModel
-        }
     }
 
     property ScalarMetaParam finalDriveRatio: ScalarMetaParam {
@@ -1466,6 +1373,71 @@ QtObject {
             name: qsTr("Shift Pressure 6 B")
         }
     ]
+
+    property
+    list<TableMetaParam> solenoidPIMap: [
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Sol 1 Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Sol 2 Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Sol 3 Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Sol 4 Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Sol 5 Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Sol 6 Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Sol 7 Map")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_pressure, 16, true, true, slots.pressure)
+                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_current, 16, true, true, slots.current)
+            }
+            name: qsTr("Sol 8 Map")
+        }
+    ]
+
+    property ScalarMetaParam reverseLockoutSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.reverse_lockout_speed, true, true, slots.tossRPMAsSpeed)
+        name: qsTr("Reverse Lockout Speed")
+    }
 
     property ScalarMetaParam shiftSpeedAdjustA: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.shift_speed_adjust_a, true, true, slots.percentage1)
@@ -1681,14 +1653,164 @@ QtObject {
         }
     }
 
-    property ScalarMetaParam tccDownshiftOffsetA: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_downshift_offset_a, true, true, slots.percentage1)
-        name: qsTr("TCC Downshift Offset A")
-    }
+    property
+    list<TableMetaParam> shiftTorqueLimits: [
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_1_2, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 1-2 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_3, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 2-3 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_4, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 3-4 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_5, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 4-5 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_6, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 5-6 Torque Limit")
+        },/*
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_6_7, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 6-7 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_7_8, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 7-8 Torque Limit")
+        },*/
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_1, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 2-1 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_2, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 3-2 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_3, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 4-3 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_4, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 5-4 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_6_5, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 6-5 Torque Limit")
+        }/*,
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_7_6, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 7-6 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_8_7, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 8-7 Torque Limit")
+        }*/
+    ]
 
-    property ScalarMetaParam tccDownshiftOffsetB: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_downshift_offset_b, true, true, slots.percentage1)
-        name: qsTr("TCC Downshift Offset B")
+    property
+    list<TableMetaParam> downshiftTorqueLimit: [
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_1, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 2-1 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_2, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 3-2 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_3, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 4-3 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_4, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 5-4 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_6_5, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 6-5 Torque Limit")
+        }/*,
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_7_6, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 7-6 Torque Limit")
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: pressureAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_8_7, pressureAxisModel.count, true, true, slots.percentage1)
+            }
+            name: qsTr("Shift 8-7 Torque Limit")
+        }*/
+    ]
+
+    property ScalarMetaParam shiftTorqueLimitGarageShift: ScalarMetaParam {
+        name: qsTr("Garage Shift Torque Limit")
+        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_torque_limit_garage_shift, true, true, slots.percentage1)
     }
 
     property ScalarMetaParam tccDisableTOSSPercentA: ScalarMetaParam {
@@ -1741,22 +1863,57 @@ QtObject {
         name: qsTr("TCC Min Throttle B")
     }
 
-    property ScalarMetaParam tccPrefillPressure: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_pressure, true, true, slots.percentage1)
-        name: qsTr("TCC Prefill Pressure")
-    }
-
     property ScalarMetaParam tccPrefillTime: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_time, true, true, slots.timeMilliseconds1)
         name: qsTr("TCC Prefill Time")
     }
 
-    property TableMetaParam tccApplyPressure: TableMetaParam {
+    property ScalarMetaParam tccApplyTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_apply_time, true, true, slots.timeMilliseconds1)
+        name: qsTr("TCC Apply Time")
+    }
+
+    property ScalarMetaParam tccPrefillPressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_pressure, true, true, slots.pressure)
+        name: qsTr("TCC Prefill Pressure")
+    }
+
+    property ScalarMetaParam tccPrefillPercentage: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_prefill_percentage, true, true, slots.percentage2)
+        name: qsTr("TCC Prefill Percentage")
+    }
+
+    property ScalarMetaParam tccMaxPressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_pressure, true, true, slots.pressure)
+        name: qsTr("TCC Apply Max Pressure")
+    }
+
+    property ScalarMetaParam tccMaxPercentage: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_max_percentage, true, true, slots.percentage2)
+        name: qsTr("TCC Apply Max Percentage")
+    }
+
+    property ScalarMetaParam tccProportionalConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_proportional_constant, true, true, slots.percentagePerRpm)
+        name: qsTr("TCC P Coeff")
+    }
+
+    property ScalarMetaParam tccIntegralConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_integral_constant, true, true, slots.percentagePerRpmSec)
+        name: qsTr("TCC I Coeff")
+    }
+
+    property ScalarMetaParam tccDerivativeConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_derivative_constant, true, true, slots.percentagePerRpmPerSec)
+        name: qsTr("TCC D Coeff")
+    }
+
+    property TableMetaParam torqueConverterMult: TableMetaParam {
         param: TableParam {
-            x: slipAxisModel
-            value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_apply_pressure, slipAxisModel.count, true, true, slots.percentage1)
+            x: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_speedratio, 16, true, true, slots.ratio1)
+            value: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_torqueratio, 16, true, true, slots.ratio1)
         }
-        name: qsTr("TCC Apply Pressure")
+        name: qsTr("Torque Converter Multiplication")
     }
 
     property ScalarMetaParam vehicleVariation: ScalarMetaParam {
@@ -2004,52 +2161,82 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ebus_shift_synchronization_duration, true, true, slots.timeMilliseconds1)
         name: qsTr("Shift Sync Duration")
     }
-    property TableMetaParam ebusClutchReleaseTime: TableMetaParam {
+    property TableMetaParam clutchReleaseTime: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
                 slot: slots.count
                 min: 1
-                count: ebusClutchReleaseTime.param.value.count
+                count: clutchReleaseTime.param.value.count
             }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_release_time, 1, 8, true, true, slots.timeMilliseconds1)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_release_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
         name: qsTr("Clutch Release Time")
     }
-    property TableMetaParam ebusClutchPrefillTime: TableMetaParam {
+    property TableMetaParam clutchPrefillTime: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
                 slot: slots.count
                 min: 1
-                count: ebusClutchPrefillTime.param.value.count
+                count: clutchPrefillTime.param.value.count
             }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_prefill_time, 1, 8, true, true, slots.timeMilliseconds1)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_time, 1, 8, true, true, slots.timeMilliseconds1)
         }
         name: qsTr("Clutch Prefill Time")
     }
-    property TableMetaParam ebusClutchPrefillPressure: TableMetaParam {
+    property TableMetaParam clutchPrefillPressure: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
                 slot: slots.count
                 min: 1
-                count: ebusClutchPrefillPressure.param.value.count
+                count: clutchPrefillPressure.param.value.count
             }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_prefill_pressure, 1, 8, true, true, slots.pressure)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_pressure, 1, 8, true, true, slots.pressure)
         }
         name: qsTr("Clutch Prefill Pressure")
     }
-    property TableMetaParam ebusClutchApplyPressure: TableMetaParam {
+    property TableMetaParam clutchPrefillPercentage: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
                 slot: slots.count
                 min: 1
-                count: ebusClutchApplyPressure.param.value.count
+                count: clutchPrefillPercentage.param.value.count
             }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ebus_clutch_apply_pressure, 1, 8, true, true, slots.pressure)
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_percentage, 1, 8, true, true, slots.percentage2)
         }
-        name: qsTr("Clutch Apply Pressure")
+        name: qsTr("Clutch Prefill Pressure %")
+    }
+    property TableMetaParam clutchStrokeTime: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: clutchStrokeTime.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_stroke_time, 1, 8, true, true, slots.timeMilliseconds1)
+        }
+        name: qsTr("Clutch Stroke Time")
+    }
+    property TableMetaParam clutchStrokePressure: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+                slot: slots.count
+                min: 1
+                count: clutchStrokeTime.param.value.count
+            }
+            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_stroke_pressure, 1, 8, true, true, slots.pressure)
+        }
+        name: qsTr("Clutch Stroke Pressure")
     }
     property ScalarMetaParam evJ1939CtlSourceAddress: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_j1939_ctl_source_address, true, true, slots.hex32bit)
         name: qsTr("J1939 CTL Source Address")
+    }
+    property ScalarMetaParam evDriveFaultCount: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_drive_fault_count, false, false, slots.count)
+        name: qsTr("EV Drive Fault Count")
+    }
+    property ScalarMetaParam evDriveLastFaultType: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.ev_drive_last_fault_type, false, false, slots.evDriveFault)
+        name: qsTr("EV Drive Last Fault")
     }
 }
