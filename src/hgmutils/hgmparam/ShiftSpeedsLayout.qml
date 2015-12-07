@@ -238,6 +238,11 @@ ColumnLayout {
             Layout.alignment: Qt.AlignTop
             metaParam: parameters.reverseLockoutSpeed
         }
+
+        ScalarParamSpinBox {
+            Layout.alignment: Qt.AlignTop
+            metaParam: parameters.transmissionDownshiftTypeTorqueThreshold
+        }
     }
 
 
