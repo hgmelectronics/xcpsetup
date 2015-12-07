@@ -222,6 +222,17 @@ ColumnLayout {
             valueLabel: qsTr("Limit")
             tableParam: parameters.shiftTorqueLimits
         }
+        Button {
+            text: "Torque Transfer Time"
+            onClicked: torqueTransferDialog.visible = true
+            enabled: torqueTransferDialog.allListsAnyValid
+        }
+        ScalarListDialog {
+            id: torqueTransferDialog
+            paramLists: [
+                parameters.transmissionShiftTorqueTransferTime
+            ]
+        }
 
         ScalarParamSpinBox {
             Layout.alignment: Qt.AlignTop
