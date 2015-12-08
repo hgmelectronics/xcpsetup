@@ -28,8 +28,8 @@ GroupBox {
             implicitWidth: 150
             horizontalAlignment: Qt.AlignRight
             stepSize: Math.pow(10,-param.slot.precision)
-            minimumValue: !isNaN(parseFloat(param.slot.engrMin)) ? isNaN(parseFloat(param.slot.engrMin)) : -Number.MAX_VALUE
-            maximumValue: !isNaN(parseFloat(param.slot.engrMax)) ? isNaN(parseFloat(param.slot.engrMax)) : Number.MAX_VALUE
+            minimumValue: !isNaN(parseFloat(param.slot.engrMin)) ? parseFloat(param.slot.engrMin) : -Number.MAX_VALUE
+            maximumValue: !isNaN(parseFloat(param.slot.engrMax)) ? parseFloat(param.slot.engrMax) : Number.MAX_VALUE
             decimals: param.slot.precision
             suffix: param.slot.unit.length != 0 ? " %1".arg(param.slot.unit) : ""
             value: param.floatVal
