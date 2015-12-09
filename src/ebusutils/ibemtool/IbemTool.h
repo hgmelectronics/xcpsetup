@@ -95,6 +95,8 @@ private:
     static const Xcp::Interface::Can::Filter SLAVE_FILTER;
     static const QString SLAVE_FILTER_STR;
     static constexpr int RECOVERY_IBEMID_OFFSET = 0x08;
+    static constexpr int CDA_IBEMID_OFFSET = 0x40;
+    static constexpr int CDA2_IBEMID_OFFSET = 0x48;
     static constexpr int REGULAR_IBEMID_OFFSET = 0x80;
     static constexpr int TIMEOUT_MSEC = 100;
     static constexpr int WATCHDOG_MSEC = 2000;
@@ -109,7 +111,7 @@ private:
     static constexpr double PROGRAM_STATE_PROGRESS_CREDIT = 0.0625;
     static constexpr double PROGRAM_PROGRESS_MULT = 1 - PROGRAM_STATE_PROGRESS_CREDIT * (N_PROGRAM_STATES - 1);
     static constexpr uint32_t PROG_BASE = 0x08004000;
-    static constexpr uint32_t PROG_TOP = 0x087EFFF;
+    static constexpr uint32_t PROG_TOP = 0x0807EFFF;
 
     Xcp::ProgramLayer *mProgLayer;
     FlashProg *mProgData;

@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.1
 import com.ebus.utils.ibemtool 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 ApplicationWindow {
     title: qsTr("IBEM Flash Tool")
@@ -70,7 +71,7 @@ ApplicationWindow {
             if(ok)
                 messageDialog.show("Programming complete")
             else
-                errorDialog.show("Programming failed: " + OpResult.asString(result))
+                errorDialog.show("Programming failed")
         }
     }
 

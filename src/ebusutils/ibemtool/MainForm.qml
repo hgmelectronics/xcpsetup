@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 ColumnLayout {
     id: root
@@ -116,30 +117,33 @@ ColumnLayout {
         }
     }
 
+    InterfaceRegistry {
+        id: registry
+    }
+
     ColumnLayout {
         anchors.left: parent.left
         anchors.right: parent.right
-        spacing: 5
 
-        InterfaceRegistry {
-            id: registry
-        }
-
-        Label {
-            font.pixelSize: 14
-            text: "Interface"
-        }
-
-        ComboBox {
-            id: intfcComboBox
-            model: registry.avail
-            textRole: "text"
-            visible: true
+        RowLayout {
+            id: intfcConfigRow
             anchors.left: parent.left
             anchors.right: parent.right
+            spacing: 5
+            XcpInterfaceChooser {
+                id: interfaceChooser
+                Layout.fillWidth: true
+                enabled: !ibemTool.intfcOk
+            }
+            BitRateChooser {
+                id: bitRateChooser
+                width: 100
+                enabled: !ibemTool.intfcOk
+            }
 
-            property string selectedUri
-            selectedUri: (count > 0 && currentIndex < count) ? model[currentIndex].uri : ""
+            Label {
+                text: qsTr("kbps")
+            }
         }
 
         RowLayout {
@@ -149,25 +153,12 @@ ColumnLayout {
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
-                id: intfcOpenButton
-                text: qsTr("Open")
-                onClicked: {
-                    if(intfcComboBox.selectedUri !== "") {
-                        root.intfcUri = intfcComboBox.selectedUri
-                        intfcOpenButton.enabled = false
-                    }
-                }
+                action: intfcOpenAction
             }
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.fillWidth: true
-                id: intfcCloseButton
-                text: qsTr("Close")
-                onClicked: {
-                    root.intfcUri = ""
-                    intfcOpenButton.enabled = true
-                }
-                enabled: !toolBusy && !intfcOpenButton.enabled
+                action: intfcCloseAction
             }
         }
     }
@@ -225,5 +216,27 @@ ColumnLayout {
         id: progressBar
         anchors.left: parent.left
         anchors.right: parent.right
+    }
+
+    Action {
+        id: intfcOpenAction
+        text: qsTr("Open")
+        enabled: !ibemTool.intfcOk
+        onTriggered: {
+            if (interfaceChooser.uri !== "") {
+                root.intfcUri = interfaceChooser.uri.replace(
+                            /bitrate=[0-9]*/,
+                            "bitrate=%1".arg(bitRateChooser.bps))
+            }
+        }
+    }
+
+    Action {
+        id: intfcCloseAction
+        text: qsTr("Close")
+        onTriggered: {
+            root.intfcUri = ""
+        }
+        enabled: ibemTool.intfcOk && ibemTool.idle
     }
 }

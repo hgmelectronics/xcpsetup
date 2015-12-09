@@ -8,11 +8,16 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setOrganizationName("Ebus Inc");
+    app.setOrganizationDomain("ebus.com");
+    app.setApplicationName("BMS Flash Tool");
 
     QQmlApplicationEngine engine;
 
 #ifdef STATICQT
-    engine.addImportPath(QStringLiteral("qrc:/"));
+    engine.setImportPathList({"qrc:/", "qrc:/QtQuick/Dialogs/"});
+#else
+    engine.addImportPath("qrc:/");
 #endif
 
     SetupTools::registerTypes();

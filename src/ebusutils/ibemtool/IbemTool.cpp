@@ -136,6 +136,13 @@ void IbemTool::setIntfcUri(QUrl uri)
     }
 
     mProgLayer->setIntfcUri(uri);
+    if(mProgLayer->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mProgLayer->intfc()->setPacketLog(true);
+        else
+            mProgLayer->intfc()->setPacketLog(false);
+    }
     emit intfcUriChanged();
 }
 
@@ -214,18 +221,18 @@ void IbemTool::onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString
         Q_ASSERT((id.cmd.addr & SLAVE_FILTER.maskId) == SLAVE_FILTER.filt.addr);
         int ibemId = (id.cmd.addr - SLAVE_FILTER.filt.addr) / 2;
 
-        bool idOk = false;
+        bool idOk = true;
         QString displayText;
         if(ibemId == RECOVERY_IBEMID_OFFSET)
-        {
             displayText = "Recovery";
-            idOk = true;
-        }
+        if(ibemId == CDA_IBEMID_OFFSET)
+            displayText = "CDA";
+        if(ibemId == CDA2_IBEMID_OFFSET)
+            displayText = "CDA2";
         else if(ibemId >= REGULAR_IBEMID_OFFSET)
-        {
             displayText = QString("ID %1").arg(ibemId - REGULAR_IBEMID_OFFSET);
-            idOk = true;
-        }
+        else
+            idOk = false;
 
         if(idOk)
         {
