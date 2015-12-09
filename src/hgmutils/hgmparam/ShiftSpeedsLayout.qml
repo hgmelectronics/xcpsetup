@@ -323,14 +323,12 @@ ColumnLayout {
         ColumnLayout {
             RowLayout {
                 ShiftTableByShiftEditMenuButton {
-                    Layout.margins: 8
                     text: qsTr("Upshift Tables")
                     speedTableParams: parameters.upshiftTablesA
                     rpmTableParams: parameters.rpmUpshiftTablesA
                     gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
                 }
                 ShiftTableByShiftEditMenuButton {
-                    Layout.margins: 8
                     text: qsTr("Downshift Tables")
                     speedTableParams: parameters.upshiftTablesA
                     rpmTableParams: parameters.rpmUpshiftTablesA
@@ -374,14 +372,12 @@ ColumnLayout {
         ColumnLayout {
             RowLayout {
                 ShiftTableByShiftEditMenuButton {
-                    Layout.margins: 8
                     text: qsTr("Upshift Tables")
                     speedTableParams: parameters.upshiftTablesB
                     rpmTableParams: parameters.rpmUpshiftTablesB
                     gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
                 }
                 ShiftTableByShiftEditMenuButton {
-                    Layout.margins: 8
                     text: qsTr("Downshift Tables")
                     speedTableParams: parameters.upshiftTablesB
                     rpmTableParams: parameters.rpmUpshiftTablesB
