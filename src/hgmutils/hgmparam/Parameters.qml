@@ -1540,16 +1540,6 @@ QtObject {
             name: qsTr("Shift RPM 5-6 A")
         }
     ]
-    property TableMapperModel shiftTablesAModel: TableMapperModel {
-        mapping: {
-            "tps": percentage1AxisModel,
-            "shift12": shiftTablesA[0].param.value.stringModel,
-            "shift23": shiftTablesA[1].param.value.stringModel,
-            "shift34": shiftTablesA[2].param.value.stringModel,
-            "shift45": shiftTablesA[3].param.value.stringModel,
-            "shift56": shiftTablesA[4].param.value.stringModel
-        }
-    }
 
     property
     list<TableMetaParam> shiftTablesB: [
@@ -1558,35 +1548,35 @@ QtObject {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Shift Speed 1-2 A")
+            name: qsTr("Shift Speed 1-2 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Shift Speed 2-3 A")
+            name: qsTr("Shift Speed 2-3 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Shift Speed 3-4 A")
+            name: qsTr("Shift Speed 3-4 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Shift Speed 4-5 A")
+            name: qsTr("Shift Speed 4-5 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Shift Speed 5-6 A")
+            name: qsTr("Shift Speed 5-6 B")
         }
     ]
     property
@@ -1642,16 +1632,6 @@ QtObject {
             name: qsTr("Shift RPM 5-6 B")
         }
     ]
-    property TableMapperModel shiftTablesBModel: TableMapperModel {
-        mapping: {
-            "tps": percentage1AxisModel,
-            "shift12": shiftTablesB[0].param.value.stringModel,
-            "shift23": shiftTablesB[1].param.value.stringModel,
-            "shift34": shiftTablesB[2].param.value.stringModel,
-            "shift45": shiftTablesB[3].param.value.stringModel,
-            "shift56": shiftTablesB[4].param.value.stringModel
-        }
-    }
 
     property
     list<TableMetaParam> shiftTorqueLimits: [
