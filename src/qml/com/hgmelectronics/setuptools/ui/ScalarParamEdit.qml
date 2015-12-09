@@ -16,7 +16,7 @@ GroupBox {
     enabled: param.valid
     property ScalarParam param: metaParam.param
     title: name
-    implicitWidth: Math.max(sizeHint.implicitWidth + 16, textField.implicitWidth + label.implicitWidth + 16)
+    implicitWidth: 166
     width: implicitWidth
 
     RowLayout {
@@ -24,7 +24,8 @@ GroupBox {
         anchors.fill: parent
         TextField {
             id: textField
-            //width: 150
+            implicitWidth: groupBox.implicitWidth - label.implicitWidth - 16
+            width: groupBox.width - label.implicitWidth - 16
             Layout.fillWidth: true
             text: param.stringVal
             readOnly: !param.range.writable

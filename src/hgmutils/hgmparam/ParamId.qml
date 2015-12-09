@@ -355,21 +355,23 @@ QtObject {
     readonly property double shift_downshift_offset_a: 0x04210000
     readonly property double shift_manual_mode_a: 0x04220000
     readonly property double shift_max_engine_speed_a: 0x04230000
-    readonly property double shift_tables_a_1: 0x04240000
-    readonly property double shift_tables_a_2: 0x04250000
-    readonly property double shift_tables_a_3: 0x04260000
-    readonly property double shift_tables_a_4: 0x04270000
-    readonly property double shift_tables_a_5: 0x04280000
+    readonly property double shift_tables_a_up_1: 0x04240000
+    readonly property double shift_tables_a_up_2: 0x04250000
+    readonly property double shift_tables_a_up_3: 0x04260000
+    readonly property double shift_tables_a_up_4: 0x04270000
+    readonly property double shift_tables_a_up_5: 0x04280000
+    readonly property double shift_tables_a_down_locked: 0x042f0000
 
     readonly property double shift_downshift_offset_b: 0x04400000
     readonly property double shift_manual_mode_b: 0x04410000
     readonly property double shift_speed_adjust_b: 0x04420000
     readonly property double shift_max_engine_speed_b: 0x04430000
-    readonly property double shift_tables_b_1: 0x04440000
-    readonly property double shift_tables_b_2: 0x04450000
-    readonly property double shift_tables_b_3: 0x04460000
-    readonly property double shift_tables_b_4: 0x04470000
-    readonly property double shift_tables_b_5: 0x04480000
+    readonly property double shift_tables_b_up_1: 0x04440000
+    readonly property double shift_tables_b_up_2: 0x04450000
+    readonly property double shift_tables_b_up_3: 0x04460000
+    readonly property double shift_tables_b_up_4: 0x04470000
+    readonly property double shift_tables_b_up_5: 0x04480000
+    readonly property double shift_tables_b_down_locked: 0x044f0000
 
     readonly property double shift_torque_limit_1_2: 0x04500000
     readonly property double shift_torque_limit_2_3: 0x04510000
@@ -388,6 +390,17 @@ QtObject {
     readonly property double shift_torque_limit_8_7: 0x04660000
 
     readonly property double shift_torque_limit_garage_shift: 0x04700000
+
+    readonly property double shift_tables_a_down_1: 0x04800000
+    readonly property double shift_tables_a_down_2: 0x04810000
+    readonly property double shift_tables_a_down_3: 0x04820000
+    readonly property double shift_tables_a_down_4: 0x04830000
+    readonly property double shift_tables_a_down_5: 0x04840000
+    readonly property double shift_tables_b_down_1: 0x04880000
+    readonly property double shift_tables_b_down_2: 0x04890000
+    readonly property double shift_tables_b_down_3: 0x048a0000
+    readonly property double shift_tables_b_down_4: 0x048b0000
+    readonly property double shift_tables_b_down_5: 0x048c0000
 
     // 8400 shift data
     readonly property double shift_current_gear: 0x84000000
