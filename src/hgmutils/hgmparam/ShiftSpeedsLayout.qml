@@ -154,6 +154,8 @@ ColumnLayout {
             visible: shiftBSelectButton.checked
             Layout.fillWidth: true
             Layout.fillHeight: true
+            anchors.bottom: parent.bottom
+            anchors.top: parent.top
         }
 
         TablePlot {
@@ -283,6 +285,8 @@ ColumnLayout {
             visible: shiftABSelectButton.checked
             Layout.fillWidth: true
             Layout.fillHeight: true
+            anchors.bottom: parent.bottom
+            anchors.top: parent.top
         }
 
         ColumnLayout {
