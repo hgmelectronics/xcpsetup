@@ -409,8 +409,10 @@ Window {
                                 }
 
                                 Component.onCompleted: {
-                                    forceActiveFocus(Qt.MouseFocusReason)
-                                    input.selectAll()
+                                    if(tableView.selection.count <= 1) {
+                                        forceActiveFocus(Qt.MouseFocusReason)
+                                        input.selectAll()
+                                    }
                                 }
                                 Component.onDestruction: {
                                     if(model[styleData.role] != text)

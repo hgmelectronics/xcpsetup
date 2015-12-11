@@ -192,7 +192,7 @@ Rectangle {
                                     }
 
                                     Component.onCompleted: {
-                                        if(role == selectedRoleName) {
+                                        if(role == selectedRoleName && tableView.selection.count <= 1) {
                                             forceActiveFocus(Qt.MouseFocusReason)
                                             input.selectAll()
                                         }
