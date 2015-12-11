@@ -16,21 +16,21 @@ RowLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         ScalarParamSpinBox {
-            metaParam: parameters.tccDisableTOSSPercentA
-        }
-        ScalarParamSpinBox {
             metaParam: parameters.tccEnableGearA
             minimumValue: 1
             maximumValue: 8
         }
         ScalarParamSpinBox {
-            metaParam: parameters.tccEnableTOSSA
+            metaParam: parameters.tccMinThrottleA
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccMaxThrottleA
         }
         ScalarParamSpinBox {
-            metaParam: parameters.tccMinThrottleA
+            metaParam: parameters.tccEnableTOSSA
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccDisableTOSSPercentA
         }
         EncodingParamEdit {
             metaParam: parameters.tccManualModeA
@@ -40,21 +40,21 @@ RowLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
         ScalarParamSpinBox {
-            metaParam: parameters.tccDisableTOSSPercentB
-        }
-        ScalarParamSpinBox {
             metaParam: parameters.tccEnableGearB
             minimumValue: 1
             maximumValue: 8
         }
         ScalarParamSpinBox {
-            metaParam: parameters.tccEnableTOSSB
+            metaParam: parameters.tccMinThrottleB
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccMaxThrottleB
         }
         ScalarParamSpinBox {
-            metaParam: parameters.tccMinThrottleB
+            metaParam: parameters.tccEnableTOSSB
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccDisableTOSSPercentB
         }
         EncodingParamEdit {
             metaParam: parameters.tccManualModeB
