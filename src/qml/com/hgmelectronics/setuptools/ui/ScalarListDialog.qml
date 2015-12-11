@@ -48,7 +48,7 @@ Window {
     maximumWidth: Math.max(minimumUsableWidth, calcWidth)
     width: maximumWidth
 
-    ScalarParamEdit {
+    ScalarParamSpinBox {
         id: stalkingHorse
         metaParam: paramLists[0].params[0]
         visible: false
@@ -76,7 +76,7 @@ Window {
                             property ScalarMetaParamList paramList: paramLists[index]
                             Repeater {
                                 model: paramList.length
-                                ScalarParamEdit {
+                                ScalarParamSpinBox {
                                     id: edit
                                     metaParam: paramList.params[index]
                                     enabled: paramList.params[index].param.valid
