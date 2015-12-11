@@ -164,6 +164,9 @@ RowLayout {
 
                     ScalarParamSpinBox {
                         id: stalkingHorse
+                        metaParam: parameters.garageShiftTime
+                    }
+                    ScalarParamSpinBox {
                         metaParam: parameters.garageShiftMaxPressure
                     }
                     ScalarParamSpinBox {
