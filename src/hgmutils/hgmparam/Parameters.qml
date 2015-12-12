@@ -1879,18 +1879,33 @@ QtObject {
         name: qsTr("TCC Apply Max Percentage")
     }
 
-    property ScalarMetaParam tccProportionalConstant: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_proportional_constant, true, true, slots.percentagePerRpm)
+    property ScalarMetaParam tccPercentageProportionalConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_percentage_proportional_constant, true, true, slots.percentagePerRpm)
         name: qsTr("TCC P Coeff")
     }
 
-    property ScalarMetaParam tccIntegralConstant: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_integral_constant, true, true, slots.percentagePerRpmSec)
+    property ScalarMetaParam tccPercentageIntegralConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_percentage_integral_constant, true, true, slots.percentagePerRpmSec)
         name: qsTr("TCC I Coeff")
     }
 
-    property ScalarMetaParam tccDerivativeConstant: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_derivative_constant, true, true, slots.percentagePerRpmPerSec)
+    property ScalarMetaParam tccPercentageDerivativeConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_percentage_derivative_constant, true, true, slots.percentagePerRpmPerSec)
+        name: qsTr("TCC D Coeff")
+    }
+
+    property ScalarMetaParam tccPressureProportionalConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_pressure_proportional_constant, true, true, slots.pressurePerRpm)
+        name: qsTr("TCC P Coeff")
+    }
+
+    property ScalarMetaParam tccPressureIntegralConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_pressure_integral_constant, true, true, slots.pressurePerRpmSec)
+        name: qsTr("TCC I Coeff")
+    }
+
+    property ScalarMetaParam tccPressureDerivativeConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_pressure_derivative_constant, true, true, slots.pressurePerRpmPerSec)
         name: qsTr("TCC D Coeff")
     }
 

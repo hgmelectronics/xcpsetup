@@ -468,9 +468,12 @@ QtObject {
     readonly property double tcc_prefill_percentage: 0x06530000
     readonly property double tcc_max_pressure: 0x06540000
     readonly property double tcc_max_percentage: 0x06550000
-    readonly property double tcc_proportional_constant: 0x06560000
-    readonly property double tcc_integral_constant: 0x06570000
-    readonly property double tcc_derivative_constant: 0x06580000
+    readonly property double tcc_percentage_proportional_constant: 0x06560000
+    readonly property double tcc_percentage_integral_constant: 0x06570000
+    readonly property double tcc_percentage_derivative_constant: 0x06580000
+    readonly property double tcc_pressure_proportional_constant: 0x06590000
+    readonly property double tcc_pressure_integral_constant: 0x065a0000
+    readonly property double tcc_pressure_derivative_constant: 0x065b0000
 
     readonly property double tc_mult_speedratio: 0x06700000
     readonly property double tc_mult_torqueratio: 0x06710000

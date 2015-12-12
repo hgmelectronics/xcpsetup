@@ -762,4 +762,31 @@ QtObject {
         unit: "%/kRPM/s"
         precision: 3
     }
+
+    property LinearSlot pressurePerRpmSec: LinearSlot {
+        rawA: -1E9
+        engrA: useMetricUnits ? -1E8 : -1.45037738E7
+        rawB: 1E9
+        engrB: useMetricUnits ? 1E8 : 1.45037738E7
+        unit: useMetricUnits ? "kPa/kRPM-s" : "PSI-kRPM/s"
+        precision: useMetricUnits ? 1 : 2
+    }
+
+    property LinearSlot pressurePerRpm: LinearSlot {
+        rawA: -1E9
+        engrA: useMetricUnits ? -1E6 : -1.45037738E5
+        rawB: 1E9
+        engrB: useMetricUnits ? 1E6 : 1.45037738E5
+        unit: useMetricUnits ? "kPa/kRPM" : "PSI/kRPM"
+        precision: useMetricUnits ? 3 : 4
+    }
+
+    property LinearSlot pressurePerRpmPerSec: LinearSlot {
+        rawA: -1E9
+        engrA: useMetricUnits ? -1E6 : -1.45037738E5
+        rawB: 1E9
+        engrB: useMetricUnits ? 1E6 : 1.45037738E5
+        unit: useMetricUnits ? "kPa/kRPM/s" : "PSI/kRPM/s"
+        precision: useMetricUnits ? 3 : 4
+    }
 }

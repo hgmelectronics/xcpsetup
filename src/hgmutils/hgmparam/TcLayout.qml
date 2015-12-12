@@ -69,30 +69,17 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.tccApplyTime
         }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccPrefillPressure
+        Button {
+            Layout.margins: 8
+            text: "Percentage and PID"
+            onClicked: percentagePidDialog.visible = true
+            enabled: parameters.tccPrefillPercentage.param.valid
         }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccPrefillPercentage
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccMaxPressure
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccMaxPercentage
-        }
-    }
-    ColumnLayout {
-        Layout.fillHeight: true
-        Layout.alignment: Qt.AlignTop
-        ScalarParamSpinBox {
-            metaParam: parameters.tccProportionalConstant
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccIntegralConstant
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.tccDerivativeConstant
+        Button {
+            Layout.margins: 8
+            text: "Pressure and PID"
+            onClicked: pressurePidDialog.visible = true
+            enabled: parameters.tccPrefillPressure.param.valid
         }
         TableParamEditButton {
             Layout.margins: 8
@@ -100,5 +87,33 @@ RowLayout {
             xLabel: "Speed Ratio"
             valueLabel: "Torque Ratio"
         }
+    }
+    ScalarListDialog {
+        id: percentagePidDialog
+        paramLists: [
+            ScalarMetaParamList {
+                params: [
+                    parameters.tccPrefillPercentage,
+                    parameters.tccMaxPercentage,
+                    parameters.tccPercentageProportionalConstant,
+                    parameters.tccPercentageIntegralConstant,
+                    parameters.tccPercentageDerivativeConstant
+                ]
+            }
+        ]
+    }
+    ScalarListDialog {
+        id: pressurePidDialog
+        paramLists: [
+            ScalarMetaParamList {
+                params: [
+                    parameters.tccPrefillPressure,
+                    parameters.tccMaxPressure,
+                    parameters.tccPressureProportionalConstant,
+                    parameters.tccPressureIntegralConstant,
+                    parameters.tccPressureDerivativeConstant
+                ]
+            }
+        ]
     }
 }
