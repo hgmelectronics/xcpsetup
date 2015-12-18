@@ -19,13 +19,14 @@ GroupBox {
     property ScalarParam param: metaParam.param
     title: name
     enabled: param.valid
-    implicitWidth: Math.max(sizeHint.implicitWidth + 16, spinBox.implicitWidth + 16)
+    implicitWidth: 166
     width: implicitWidth
 
     RowLayout {
         SpinBox {
             id: spinBox
-            implicitWidth: 150
+            implicitWidth: groupBox.implicitWidth - 16
+            width: groupBox.width - 16
             horizontalAlignment: Qt.AlignRight
             stepSize: Math.pow(10,-param.slot.precision)
             minimumValue: !isNaN(parseFloat(param.slot.engrMin)) ? parseFloat(param.slot.engrMin) : -Number.MAX_VALUE

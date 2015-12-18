@@ -20,33 +20,63 @@ ColumnLayout {
             id: shiftAPlot
             plots: [
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[0].param.stringModel
-                    valid: parameters.shiftTablesA[0].param.value.valid
+                    tableModel: parameters.upshiftTablesA[0].param.stringModel
+                    valid: parameters.upshiftTablesA[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[0]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[1].param.stringModel
-                    valid: parameters.shiftTablesA[1].param.value.valid
+                    tableModel: parameters.upshiftTablesA[1].param.stringModel
+                    valid: parameters.upshiftTablesA[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[1]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[2].param.stringModel
-                    valid: parameters.shiftTablesA[2].param.value.valid
+                    tableModel: parameters.upshiftTablesA[2].param.stringModel
+                    valid: parameters.upshiftTablesA[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[2]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[3].param.stringModel
-                    valid: parameters.shiftTablesA[3].param.value.valid
+                    tableModel: parameters.upshiftTablesA[3].param.stringModel
+                    valid: parameters.upshiftTablesA[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[3]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[4].param.stringModel
-                    valid: parameters.shiftTablesA[4].param.value.valid
+                    tableModel: parameters.upshiftTablesA[4].param.stringModel
+                    valid: parameters.upshiftTablesA[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[4]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[0].param.stringModel
+                    valid: parameters.downshiftTablesA[0].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[5]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[1].param.stringModel
+                    valid: parameters.downshiftTablesA[1].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[6]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[2].param.stringModel
+                    valid: parameters.downshiftTablesA[2].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[7]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[3].param.stringModel
+                    valid: parameters.downshiftTablesA[3].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[8]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[4].param.stringModel
+                    valid: parameters.downshiftTablesA[4].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[9]
                     fill: false
                 }
             ]
@@ -61,108 +91,202 @@ ColumnLayout {
             id: shiftBPlot
             plots: [
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[0].param.stringModel
-                    valid: parameters.shiftTablesB[0].param.value.valid
+                    tableModel: parameters.upshiftTablesB[0].param.stringModel
+                    valid: parameters.upshiftTablesB[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[0]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[1].param.stringModel
-                    valid: parameters.shiftTablesB[1].param.value.valid
+                    tableModel: parameters.upshiftTablesB[1].param.stringModel
+                    valid: parameters.upshiftTablesB[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[1]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[2].param.stringModel
-                    valid: parameters.shiftTablesB[2].param.value.valid
+                    tableModel: parameters.upshiftTablesB[2].param.stringModel
+                    valid: parameters.upshiftTablesB[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[2]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[3].param.stringModel
-                    valid: parameters.shiftTablesB[3].param.value.valid
+                    tableModel: parameters.upshiftTablesB[3].param.stringModel
+                    valid: parameters.upshiftTablesB[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[3]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[4].param.stringModel
-                    valid: parameters.shiftTablesB[4].param.value.valid
+                    tableModel: parameters.upshiftTablesB[4].param.stringModel
+                    valid: parameters.upshiftTablesB[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[4]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[0].param.stringModel
+                    valid: parameters.downshiftTablesB[0].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[5]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[1].param.stringModel
+                    valid: parameters.downshiftTablesB[1].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[6]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[2].param.stringModel
+                    valid: parameters.downshiftTablesB[2].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[7]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[3].param.stringModel
+                    valid: parameters.downshiftTablesB[3].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[8]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[4].param.stringModel
+                    valid: parameters.downshiftTablesB[4].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[9]
                     fill: false
                 }
             ]
             visible: shiftBSelectButton.checked
             Layout.fillWidth: true
             Layout.fillHeight: true
+            anchors.bottom: parent.bottom
+            anchors.top: parent.top
         }
 
         TablePlot {
             id: shiftABPlot
             plots: [
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[0].param.stringModel
-                    valid: parameters.shiftTablesA[0].param.value.valid
+                    tableModel: parameters.upshiftTablesA[0].param.stringModel
+                    valid: parameters.upshiftTablesA[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[0]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[1].param.stringModel
-                    valid: parameters.shiftTablesA[1].param.value.valid
+                    tableModel: parameters.upshiftTablesA[1].param.stringModel
+                    valid: parameters.upshiftTablesA[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[1]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[2].param.stringModel
-                    valid: parameters.shiftTablesA[2].param.value.valid
+                    tableModel: parameters.upshiftTablesA[2].param.stringModel
+                    valid: parameters.upshiftTablesA[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[2]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[3].param.stringModel
-                    valid: parameters.shiftTablesA[3].param.value.valid
+                    tableModel: parameters.upshiftTablesA[3].param.stringModel
+                    valid: parameters.upshiftTablesA[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[3]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesA[4].param.stringModel
-                    valid: parameters.shiftTablesA[4].param.value.valid
+                    tableModel: parameters.upshiftTablesA[4].param.stringModel
+                    valid: parameters.upshiftTablesA[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[4]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[0].param.stringModel
-                    valid: parameters.shiftTablesB[0].param.value.valid
+                    tableModel: parameters.upshiftTablesB[0].param.stringModel
+                    valid: parameters.upshiftTablesB[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[5]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[1].param.stringModel
-                    valid: parameters.shiftTablesB[1].param.value.valid
+                    tableModel: parameters.upshiftTablesB[1].param.stringModel
+                    valid: parameters.upshiftTablesB[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[6]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[2].param.stringModel
-                    valid: parameters.shiftTablesB[2].param.value.valid
+                    tableModel: parameters.upshiftTablesB[2].param.stringModel
+                    valid: parameters.upshiftTablesB[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[7]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[3].param.stringModel
-                    valid: parameters.shiftTablesB[3].param.value.valid
+                    tableModel: parameters.upshiftTablesB[3].param.stringModel
+                    valid: parameters.upshiftTablesB[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[8]
                     fill: false
                 },
                 XYTrace {
-                    tableModel: parameters.shiftTablesB[4].param.stringModel
-                    valid: parameters.shiftTablesB[4].param.value.valid
+                    tableModel: parameters.upshiftTablesB[4].param.stringModel
+                    valid: parameters.upshiftTablesB[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[9]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[0].param.stringModel
+                    valid: parameters.downshiftTablesA[0].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[10]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[1].param.stringModel
+                    valid: parameters.downshiftTablesA[1].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[11]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[2].param.stringModel
+                    valid: parameters.downshiftTablesA[2].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[12]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[3].param.stringModel
+                    valid: parameters.downshiftTablesA[3].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[13]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesA[4].param.stringModel
+                    valid: parameters.downshiftTablesA[4].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[14]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[0].param.stringModel
+                    valid: parameters.downshiftTablesB[0].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[15]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[1].param.stringModel
+                    valid: parameters.downshiftTablesB[1].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[16]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[2].param.stringModel
+                    valid: parameters.downshiftTablesB[2].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[17]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[3].param.stringModel
+                    valid: parameters.downshiftTablesB[3].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[18]
+                    fill: false
+                },
+                XYTrace {
+                    tableModel: parameters.downshiftTablesB[4].param.stringModel
+                    valid: parameters.downshiftTablesB[4].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    baseColor: cs2Defaults.preferredPlotColors[19]
                     fill: false
                 }
             ]
             visible: shiftABSelectButton.checked
             Layout.fillWidth: true
             Layout.fillHeight: true
+            anchors.bottom: parent.bottom
+            anchors.top: parent.top
         }
 
         ColumnLayout {
@@ -198,23 +322,106 @@ ColumnLayout {
         }
     }
 
+    GroupBox {
+        title: "Profile A"
+        ColumnLayout {
+            RowLayout {
+                ShiftTableByShiftEditMenuButton {
+                    text: qsTr("Upshift Tables")
+                    speedTableParams: parameters.upshiftTablesA
+                    rpmTableParams: parameters.rpmUpshiftTablesA
+                    gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                }
+                ShiftTableByShiftEditMenuButton {
+                    text: qsTr("Downshift Tables")
+                    speedTableParams: parameters.upshiftTablesA
+                    rpmTableParams: parameters.rpmUpshiftTablesA
+                    gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                    isDownshift: true
+                    enabled: (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                }
+            }
+            RowLayout {
+                EncodingParamEdit {
+                    metaParam: parameters.shiftTablesDownLockedA
+                    name: qsTr("Downshift Locked")
+                    implicitWidth: 132
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.shiftSpeedAdjustA
+                    name: qsTr("Shift Speed Adjust")
+                    implicitWidth: 132
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.shiftDownshiftOffsetA
+                    name: qsTr("Downshift Offset")
+                    implicitWidth: 132
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.shiftMaxEngineSpeedA
+                    name: qsTr("Max Engine Speed")
+                    implicitWidth: 132
+                }
+                EncodingParamEdit {
+                    metaParam: parameters.shiftManualModeA
+                    name: qsTr("Manual Mode")
+                    implicitWidth: 132
+                }
+            }
+        }
+    }
+
+    GroupBox {
+        title: "Profile B"
+        ColumnLayout {
+            RowLayout {
+                ShiftTableByShiftEditMenuButton {
+                    text: qsTr("Upshift Tables")
+                    speedTableParams: parameters.upshiftTablesB
+                    rpmTableParams: parameters.rpmUpshiftTablesB
+                    gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                }
+                ShiftTableByShiftEditMenuButton {
+                    text: qsTr("Downshift Tables")
+                    speedTableParams: parameters.upshiftTablesB
+                    rpmTableParams: parameters.rpmUpshiftTablesB
+                    gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                    isDownshift: true
+                    enabled: (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                }
+            }
+            RowLayout {
+                EncodingParamEdit {
+                    metaParam: parameters.shiftTablesDownLockedB
+                    name: "Downshift Locked"
+                    implicitWidth: 132
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.shiftSpeedAdjustB
+                    name: qsTr("Shift Speed Adjust")
+                    implicitWidth: 132
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.shiftDownshiftOffsetB
+                    name: qsTr("Downshift Offset")
+                    implicitWidth: 132
+                }
+                ScalarParamSpinBox {
+                    metaParam: parameters.shiftMaxEngineSpeedB
+                    name: qsTr("Max Engine Speed")
+                    implicitWidth: 132
+                }
+                EncodingParamEdit {
+                    metaParam: parameters.shiftManualModeB
+                    name: qsTr("Manual Mode")
+                    implicitWidth: 132
+                }
+            }
+        }
+    }
+
+
     RowLayout {
-        ShiftTableByShiftEditMenuButton {
-            Layout.margins: 8
-            text: qsTr("Shift Tables A")
-            speedTableParams: parameters.shiftTablesA
-            rpmTableParams: parameters.rpmShiftTablesA
-            gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-        }
-
-        ShiftTableByShiftEditMenuButton {
-            Layout.margins: 8
-            text: qsTr("Shift Tables B")
-            speedTableParams: parameters.shiftTablesB
-            rpmTableParams: parameters.rpmShiftTablesB
-            gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-        }
-
         TableByShiftEditMenuButton {
             Layout.margins: 8
             text: qsTr("Shift Torque Limits")
@@ -261,41 +468,5 @@ ColumnLayout {
             metaParam: parameters.transmissionDownshiftTypeTorqueThreshold
         }
 
-    }
-
-
-    RowLayout {
-        spacing: 5
-        ScalarParamSpinBox {
-            metaParam: parameters.shiftSpeedAdjustA
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.shiftDownshiftOffsetA
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.shiftMaxEngineSpeedA
-        }
-        EncodingParamEdit {
-            metaParam: parameters.shiftManualModeA
-        }
-
-        Layout.minimumHeight: 40
-    }
-    RowLayout {
-        spacing: 5
-        ScalarParamSpinBox {
-            metaParam: parameters.shiftSpeedAdjustB
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.shiftDownshiftOffsetB
-        }
-        ScalarParamSpinBox {
-            metaParam: parameters.shiftMaxEngineSpeedB
-        }
-        EncodingParamEdit {
-            metaParam: parameters.shiftManualModeB
-        }
-
-        Layout.minimumHeight: 40
     }
 }

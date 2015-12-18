@@ -15,7 +15,7 @@ GroupBox {
     property ScalarParam param: metaParam.param
     enabled: param.valid
     title: name
-    implicitWidth: Math.max(sizeHint.implicitWidth + 16, combo.implicitWidth + label.implicitWidth + 16)
+    implicitWidth: Math.max(sizeHint.implicitWidth + 16, Math.max(combo.maxEncodingStringWidth + 40, 150) + label.implicitWidth + 16)
     width: implicitWidth
 
     RowLayout {
@@ -24,7 +24,8 @@ GroupBox {
             id: combo
             model: param.slot.encodingStringList
             property int maxEncodingStringWidth
-            implicitWidth: Math.max(maxEncodingStringWidth + 40, 150)
+            implicitWidth: groupBox.implicitWidth - label.implicitWidth - 16
+            width: groupBox.width - label.implicitWidth - 16
             editable: true
             onActivated: {
                 if (index == -1)
