@@ -850,7 +850,7 @@ OpResult Connection::uploadSegment(XcpPtr base, int len, std::vector<quint8> &ou
 {
     std::function<OpResult (void)> action = [this, base, len, &out]()
     {
-        static constexpr char OPMSG[] = "uploading data";
+        QByteArray opMsg = QString("uploading data from address 0x%1 ext 0x%2, length %3").arg(base.addr, 8, 16, QChar('0')).arg(base.ext, 2, 16, QChar('0')).arg(len).toLocal8Bit();
 
         std::vector<quint8> query;
         std::vector<quint8> reply;
@@ -862,11 +862,11 @@ OpResult Connection::uploadSegment(XcpPtr base, int len, std::vector<quint8> &ou
             toSlaveEndian<quint32>(base.addr, query.data() + 4);
         }
 
-        RESETMTA_RETURN_ON_FAIL(transact(query, mAddrGran + len, reply, OPMSG));
+        RESETMTA_RETURN_ON_FAIL(transact(query, mAddrGran + len, reply, opMsg.data()));
         if(reply[0] != 0xFF)
         {
             mCalcMta.reset();
-            return getReplyResult(reply, OPMSG);
+            return getReplyResult(reply, opMsg.data());
         }
 
         mCalcMta = base + (len / mAddrGran);
@@ -885,19 +885,19 @@ OpResult Connection::downloadSegment(XcpPtr base, const std::vector<quint8> &dat
         query.resize(mAddrGran);
     query.insert(query.end(), data.begin(), data.end());
 
-    std::function<OpResult (void)> action = [this, base, query]()
+    std::function<OpResult (void)> action = [this, base, query, &data]()
     {
-        static constexpr char OPMSG[] = "downloading data";
+        QByteArray opMsg = QString("downloading data to address 0x%1 ext 0x%2, length %3").arg(base.addr, 8, 16, QChar('0')).arg(base.ext, 2, 16, QChar('0')).arg(data.size()).toLocal8Bit();
 
         if(!mCalcMta || mCalcMta.get() != base)
             RETURN_ON_FAIL(setMta(base));
 
         std::vector<quint8> reply;
-        RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
+        RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, opMsg.data()));
         if(reply[0] != 0xFF)
         {
             mCalcMta.reset();
-            return getReplyResult(reply, OPMSG);
+            return getReplyResult(reply, opMsg.data());
         }
 
         mCalcMta = base + query[1];
@@ -918,19 +918,19 @@ OpResult Connection::programPacket(XcpPtr base, const std::vector<quint8> &data)
         query.resize(mAddrGran);
     query.insert(query.end(), data.begin(), data.end());
 
-    std::function<OpResult (void)> action = [this, base, query, nElem]()
+    std::function<OpResult (void)> action = [this, base, query, nElem, &data]()
     {
-        static constexpr char OPMSG[] = "downloading program data";
+        QByteArray opMsg = QString("downloading program data to address 0x%1 ext 0x%2, length %3").arg(base.addr, 8, 16, QChar('0')).arg(base.ext, 2, 16, QChar('0')).arg(data.size()).toLocal8Bit();
 
         if(!mCalcMta || mCalcMta.get() != base)
             RETURN_ON_FAIL(setMta(base));
 
         std::vector<quint8> reply;
-        RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
+        RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, opMsg.data()));
         if(reply[0] != 0xFF)
         {
             mCalcMta.reset();
-            return getReplyResult(reply, OPMSG);
+            return getReplyResult(reply, opMsg.data());
         }
 
         mCalcMta = base + query[1];
@@ -949,7 +949,7 @@ OpResult Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
 
     std::function<OpResult (void)> action = [this, base, data]()
     {
-        static constexpr char OPMSG[] = "downloading program data in block mode";
+        QByteArray opMsg = QString("downloading program data in block mode to address 0x%1 ext 0x%2, length %3").arg(base.addr, 8, 16, QChar('0')).arg(base.ext, 2, 16, QChar('0')).arg(data.size()).toLocal8Bit();
 
         if(!mCalcMta || mCalcMta.get() != base)
             RETURN_ON_FAIL(setMta(base));
@@ -968,7 +968,7 @@ OpResult Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
                 for(const std::vector<quint8> &reply : replies)
                 {
                     if(reply.size() < 2 || reply[0] != 0xFE || reply[1] != 0x29)
-                        return getRepliesResult(replies, OPMSG);   // not ERR_SEQUENCE
+                        return getRepliesResult(replies, opMsg.data());   // not ERR_SEQUENCE
                 }
                 // if replies are all ERR_SEQUENCE, raise packet lost (and potentially try again)
                 return OpResult::PacketLost;
@@ -997,7 +997,7 @@ OpResult Connection::programBlock(XcpPtr base, const std::vector<quint8> &data)
             for(const std::vector<quint8> &reply : replies)
             {
                 if(reply.size() < 2 || reply[0] != 0xFE || reply[1] != 0x29)
-                    return getRepliesResult(replies, OPMSG);   // not ERR_SEQUENCE
+                    return getRepliesResult(replies, opMsg.data());   // not ERR_SEQUENCE
             }
             // if replies are all ERR_SEQUENCE, raise packet lost (and potentially try again)
             return OpResult::PacketLost;
@@ -1019,7 +1019,7 @@ OpResult Connection::buildChecksum(XcpPtr base, int len, CksumType *typeOut, qui
 
     std::function<OpResult (void)> action = [this, base, len, &typeVal, &cksumVal, typeOut, cksumOut]()
     {
-        static constexpr char OPMSG[] = "building checksum";
+        QByteArray opMsg = QString("building checksum at address 0x%1 ext 0x%2, length %3").arg(base.addr, 8, 16, QChar('0')).arg(base.ext, 2, 16, QChar('0')).arg(len).toLocal8Bit();
         static const std::map<quint8, CksumType> CKSUM_TYPE_CODES = {
             {0x01, CksumType::XCP_ADD_11},
             {0x02, CksumType::XCP_ADD_12},
@@ -1042,18 +1042,18 @@ OpResult Connection::buildChecksum(XcpPtr base, int len, CksumType *typeOut, qui
         query = {0xF3, 0, 0, 0, 0, 0, 0, 0};
         toSlaveEndian<quint32>(len / mAddrGran, query.data() + 4);
 
-        RESETMTA_RETURN_ON_FAIL(transact(query, 8, reply, OPMSG));
+        RESETMTA_RETURN_ON_FAIL(transact(query, 8, reply, opMsg.data()));
         if(reply[0] != 0xFF)
         {
             mCalcMta.reset();
-            return getReplyResult(reply, OPMSG);
+            return getReplyResult(reply, opMsg.data());
         }
 
         decltype(CKSUM_TYPE_CODES)::const_iterator type = CKSUM_TYPE_CODES.find(reply[1]);
         if(type == CKSUM_TYPE_CODES.end())
         {
             mCalcMta.reset();
-            return getReplyResult(reply, OPMSG);
+            return getReplyResult(reply, opMsg.data());
         }
 
         mCalcMta = base;
@@ -1178,16 +1178,16 @@ int Connection::addrGran() {
 
 OpResult Connection::setMta(XcpPtr ptr)
 {
-    static constexpr char OPMSG[] = "setting slave Memory Transfer Address";
+    QByteArray opMsg = QString("setting slave Memory Transfer Address to 0x%1 ext 0x%2").arg(ptr.addr, 8, 16, QChar('0')).arg(ptr.ext, 2, 16, QChar('0')).toLocal8Bit();
     std::vector<quint8> query({0xF6, 0, 0, ptr.ext, 0, 0, 0, 0});
     toSlaveEndian<quint32>(ptr.addr, query.data() + 4);
 
     std::vector<quint8> reply;
-    RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, OPMSG));
+    RESETMTA_RETURN_ON_FAIL(transact(query, 1, reply, opMsg.data()));
     if(reply[0] != 0xFF)
     {
         mCalcMta.reset();
-        return getReplyResult(reply, OPMSG);
+        return getReplyResult(reply, opMsg.data());
     }
     mCalcMta = ptr;
     return OpResult::Success;
