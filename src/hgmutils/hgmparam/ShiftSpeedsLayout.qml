@@ -222,27 +222,45 @@ ColumnLayout {
             valueLabel: qsTr("Limit")
             tableParam: parameters.shiftTorqueLimits
         }
+
         Button {
-            text: "Torque Transfer Time"
-            onClicked: torqueTransferDialog.visible = true
-            enabled: torqueTransferDialog.allListsAnyValid
+            text: "TS Torque Transfer Time"
+            onClicked: tsTorqueTransferDialog.visible = true
+            enabled: tsTorqueTransferDialog.allListsAnyValid
         }
         ScalarListDialog {
-            id: torqueTransferDialog
+            id: tsTorqueTransferDialog
             paramLists: [
-                parameters.transmissionShiftTorqueTransferTime
+                parameters.transmissionTorqueSpeedTransferTime
             ]
         }
+
+        Button {
+            text: "ST Torque Transfer Time"
+            onClicked: stTorqueTransferDialog.visible = true
+            enabled: stTorqueTransferDialog.allListsAnyValid
+        }
+        ScalarListDialog {
+            id: stTorqueTransferDialog
+            paramLists: [
+                parameters.transmissionSpeedTorqueTransferTime
+            ]
+        }
+
+    }
+
+    RowLayout {
+
 
         ScalarParamSpinBox {
             Layout.alignment: Qt.AlignTop
             metaParam: parameters.reverseLockoutSpeed
         }
-
         ScalarParamSpinBox {
             Layout.alignment: Qt.AlignTop
             metaParam: parameters.transmissionDownshiftTypeTorqueThreshold
         }
+
     }
 
 

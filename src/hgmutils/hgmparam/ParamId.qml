@@ -258,20 +258,35 @@ QtObject {
 
     readonly property double transmission_downshift_type_torque_threshold: 0x03e00000
 
-    readonly property double transmission_shift_r_n_torque_transfer_time: 0x03e10000
-    readonly property double transmission_shift_n_r_torque_transfer_time: 0x03e10001
-    readonly property double transmission_shift_n_1_torque_transfer_time: 0x03e10002
-    readonly property double transmission_shift_1_n_torque_transfer_time: 0x03e10003
-    readonly property double transmission_shift_1_2_torque_transfer_time: 0x03e10004
-    readonly property double transmission_shift_2_1_torque_transfer_time: 0x03e10005
-    readonly property double transmission_shift_2_3_torque_transfer_time: 0x03e10006
-    readonly property double transmission_shift_3_2_torque_transfer_time: 0x03e10007
-    readonly property double transmission_shift_3_4_torque_transfer_time: 0x03e10008
-    readonly property double transmission_shift_4_3_torque_transfer_time: 0x03e10009
-    readonly property double transmission_shift_4_5_torque_transfer_time: 0x03e1000a
-    readonly property double transmission_shift_5_4_torque_transfer_time: 0x03e1000b
-    readonly property double transmission_shift_5_6_torque_transfer_time: 0x03e1000c
-    readonly property double transmission_shift_6_5_torque_transfer_time: 0x03e1000d
+    readonly property double transmission_shift_r_n_ts_transfer_time: 0x03e10000
+    readonly property double transmission_shift_n_r_ts_transfer_time: 0x03e10001
+    readonly property double transmission_shift_n_1_ts_transfer_time: 0x03e10002
+    readonly property double transmission_shift_1_n_ts_transfer_time: 0x03e10003
+    readonly property double transmission_shift_1_2_ts_transfer_time: 0x03e10004
+    readonly property double transmission_shift_2_1_ts_transfer_time: 0x03e10005
+    readonly property double transmission_shift_2_3_ts_transfer_time: 0x03e10006
+    readonly property double transmission_shift_3_2_ts_transfer_time: 0x03e10007
+    readonly property double transmission_shift_3_4_ts_transfer_time: 0x03e10008
+    readonly property double transmission_shift_4_3_ts_transfer_time: 0x03e10009
+    readonly property double transmission_shift_4_5_ts_transfer_time: 0x03e1000a
+    readonly property double transmission_shift_5_4_ts_transfer_time: 0x03e1000b
+    readonly property double transmission_shift_5_6_ts_transfer_time: 0x03e1000c
+    readonly property double transmission_shift_6_5_ts_transfer_time: 0x03e1000d
+
+    readonly property double transmission_shift_r_n_st_transfer_time: 0x03e20000
+    readonly property double transmission_shift_n_r_st_transfer_time: 0x03e20001
+    readonly property double transmission_shift_n_1_st_transfer_time: 0x03e20002
+    readonly property double transmission_shift_1_n_st_transfer_time: 0x03e20003
+    readonly property double transmission_shift_1_2_st_transfer_time: 0x03e20004
+    readonly property double transmission_shift_2_1_st_transfer_time: 0x03e20005
+    readonly property double transmission_shift_2_3_st_transfer_time: 0x03e20006
+    readonly property double transmission_shift_3_2_st_transfer_time: 0x03e20007
+    readonly property double transmission_shift_3_4_st_transfer_time: 0x03e20008
+    readonly property double transmission_shift_4_3_st_transfer_time: 0x03e20009
+    readonly property double transmission_shift_4_5_st_transfer_time: 0x03e2000a
+    readonly property double transmission_shift_5_4_st_transfer_time: 0x03e2000b
+    readonly property double transmission_shift_5_6_st_transfer_time: 0x03e2000c
+    readonly property double transmission_shift_6_5_st_transfer_time: 0x03e2000d
 
     readonly property double garage_shift_time: 0x03f00000
     readonly property double garage_shift_max_pressure: 0x03f40000

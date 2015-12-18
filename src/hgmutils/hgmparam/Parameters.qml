@@ -465,65 +465,123 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_downshift_type_torque_threshold, true, true, slots.percentage1)
     }
 
-    property ScalarMetaParamList transmissionShiftTorqueTransferTime: ScalarMetaParamList {
+    property ScalarMetaParamList transmissionTorqueSpeedTransferTime: ScalarMetaParamList {
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time R-N")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time R-N")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time N-R")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time N-R")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time N-1")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time N-1")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 1-N")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 1-N")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 1-2")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 1-2")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 2-1")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 2-1")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 2-3")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 2-3")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 3-2")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 3-2")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 3-4")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 3-4")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 4-3")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 4-3")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 4-5")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 4-5")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 5-4")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 5-4")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 5-6")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 5-6")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
         ScalarMetaParam {
-            name: qsTr("Torque Transfer Time 6-5")
-            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_torque_transfer_time, true, true, slots.timeMilliseconds1)
+            name: qsTr("TS Transfer Time 6-5")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_ts_transfer_time, true, true, slots.timeMilliseconds1)
         }
     }
 
+    property ScalarMetaParamList transmissionSpeedTorqueTransferTime: ScalarMetaParamList {
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time R-N")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_r_n_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time N-R")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_r_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time N-1")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_n_1_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 1-N")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_n_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 1-2")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_1_2_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 2-1")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_1_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 2-3")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_2_3_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 3-2")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_2_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 3-4")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_3_4_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 4-3")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_3_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 4-5")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_4_5_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 5-4")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_4_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 5-6")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_5_6_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+        ScalarMetaParam {
+            name: qsTr("ST Transfer Time 6-5")
+            param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_st_transfer_time, true, true, slots.timeMilliseconds1)
+        }
+    }
     property TableMetaParam transmissionTemperaturePressureCompensation: TableMetaParam {
         param: TableParam {
             x: tempAxisModel
