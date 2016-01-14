@@ -12,7 +12,7 @@ import com.hgmelectronics.utils 1.0
 ApplicationWindow {
     id: application
     property string programName: qsTr("COMPUSHIFT Parameter Editor")
-    property string programVersion: "1.1"
+    property string programVersion: ""
     property alias useMetricUnits: paramTabView.useMetricUnits
     property alias readParametersOnConnect: readParametersOnConnectAction.checked
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked

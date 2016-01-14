@@ -209,13 +209,13 @@ class UrlUtil : public QObject
 {
     Q_OBJECT
 public:
-    ~UrlUtil();
+    ~UrlUtil() = default;
     Q_INVOKABLE QString urlToLocalFile(QString url);
 
     static QObject *create(QQmlEngine *engine, QJSEngine *scriptEngine);
 
 private:
-    UrlUtil();
+    UrlUtil() = default;
 
 
 // possible alternative
@@ -319,6 +319,21 @@ public:
     ~ScopeExit();
 private:
     std::function<void()> mFunc;
+};
+
+class AppVersion : public QObject
+{
+    Q_OBJECT
+public:
+    ~AppVersion() = default;
+    Q_PROPERTY(QString hash MEMBER HASH CONSTANT)
+
+    static QObject *create(QQmlEngine *engine, QJSEngine *scriptEngine);
+
+private:
+    AppVersion() = default;
+
+    static const QString HASH;
 };
 
 }   // namespace SetupTools

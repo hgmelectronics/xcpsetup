@@ -2,11 +2,13 @@ import QtQuick 2.4
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
+import com.hgmelectronics.setuptools 1.0
 
 Window {
     id: aboutDialog
-    property string programName;
-    property string programVersion;
+    property string programName
+    property string programVersion
+    property string programHash: AppVersion.hash
 
     title: "About %1".arg(programName)
 
@@ -34,6 +36,10 @@ Window {
                     font.pixelSize: 18
                     Layout.fillWidth: true
                     text: "%1 %2".arg(programName).arg(programVersion)
+                }
+                Label {
+                    visible: programHash.length > 0
+                    text: qsTr("Hash %1".arg(programHash))
                 }
                 Label {
                     text: qsTr("Copyright \u00A9 2015<br>HGM Automotive Electronics Inc.")
