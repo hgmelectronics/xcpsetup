@@ -127,12 +127,6 @@ bool PythonicEvent::wait(unsigned long timeoutMsec)
     return mCond.wait(locker.mutex(), timeoutMsec);
 }
 
-UrlUtil::UrlUtil()
-{}
-
-UrlUtil::~UrlUtil()
-{}
-
 QString UrlUtil::urlToLocalFile(QString urlStr)
 {
     QUrl url(urlStr);
@@ -348,6 +342,15 @@ ScopeExit::ScopeExit(std::function<void()> func) : mFunc(func)
 ScopeExit::~ScopeExit()
 {
     mFunc();
+}
+
+const QString AppVersion::HASH = QString(HG_VERSION);
+
+QObject *AppVersion::create(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine);
+    Q_UNUSED(scriptEngine);
+    return new AppVersion();
 }
 
 

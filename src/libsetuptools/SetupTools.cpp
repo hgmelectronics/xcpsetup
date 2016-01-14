@@ -37,6 +37,7 @@ void registerTypes()
     qmlRegisterSingletonType<SetupTools::Xcp::OpResultWrapper>("com.hgmelectronics.setuptools.xcp", major, minor, "OpResult", &SetupTools::Xcp::OpResultWrapper::create);
     qmlRegisterSingletonType<SetupTools::UrlUtil>("com.hgmelectronics.setuptools.xcp", major, minor, "UrlUtil", &SetupTools::UrlUtil::create);
     qmlRegisterSingletonType<SetupTools::Clipboard>("com.hgmelectronics.setuptools", major, minor, "Clipboard", &SetupTools::Clipboard::create);
+    qmlRegisterSingletonType<SetupTools::AppVersion>("com.hgmelectronics.setuptools.xcp", major, minor, "AppVersion", &SetupTools::AppVersion::create);
     qmlRegisterType<SetupTools::Xcp::ParamLayer>("com.hgmelectronics.setuptools.xcp", major, minor, "ParamLayer");
     qmlRegisterType<SetupTools::TabSeparated>("com.hgmelectronics.setuptools", major, minor, "TabSeparated");
 
