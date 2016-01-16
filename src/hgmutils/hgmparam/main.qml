@@ -55,24 +55,49 @@ ApplicationWindow {
         }
 
         onConnectSlaveDone: {
-            ParamResetNeeded.set = false
-            forceSlaveSupportCalPage()
-            if(slaveConnected && idle && readParametersOnConnect)
-                upload()
+            if(result === OpResult.Success) {
+                ParamResetNeeded.set = false
+                forceSlaveSupportCalPage()
+                if(slaveConnected && idle && readParametersOnConnect)
+                    upload()
+            }
+            else {
+                errorDialog.show(qsTr("Connect failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
         }
         onDisconnectSlaveDone: {
             ParamResetNeeded.set = false
         }
         onDownloadDone: {
-            if(saveParametersOnWrite)
-                nvWrite()
-        }
-        onNvWriteDone: {
-            if(ParamResetNeeded.set) {
-                disconnectSlave()
-                resetNeededDialog.open()
+            if(result === OpResult.Success) {
+                if(saveParametersOnWrite)
+                    nvWrite()
+            }
+            else {
+                errorDialog.show(qsTr("Download failed: %1").arg(
+                                     OpResult.asString(result)))
             }
         }
+        onNvWriteDone: {
+            if(result === OpResult.Success) {
+                if(ParamResetNeeded.set) {
+                    disconnectSlave()
+                    resetNeededDialog.open()
+                }
+            }
+            else {
+                errorDialog.show(qsTr("Nonvolatile memory write failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
+        }
+        onUploadDone: {
+            if(result !== OpResult.Success) {
+                errorDialog.show(qsTr("Upload failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
+        }
+
         onIdleChanged: checkImmediateWrite()
         onSlaveConnectedChanged: checkImmediateWrite()
 
@@ -130,7 +155,6 @@ ApplicationWindow {
                 : qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
         standardButtons: StandardButton.Ok
     }
-
     function saveParamFile() {
         if (saveReadOnlyParameters) {
             paramFileIo.write(paramLayer.rawData())
