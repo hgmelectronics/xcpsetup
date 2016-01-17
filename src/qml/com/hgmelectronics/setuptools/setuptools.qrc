@@ -30,6 +30,7 @@
         <file>ui/MultiroleTableParamEdit.qml</file>
         <file>MultiroleTableParam.qml</file>
         <file>MultiroleTableMetaParam.qml</file>
+        <file>ui/LogWindow.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

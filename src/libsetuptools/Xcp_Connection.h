@@ -282,6 +282,7 @@ signals:
     void buildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void getAvailSlavesDone(SetupTools::Xcp::OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
     void getAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void fault(SetupTools::Xcp::OpResult result, QString info);
     void stateChanged();
     void opProgressChanged();
 public slots:
@@ -301,9 +302,9 @@ public slots:
     SetupTools::Xcp::OpResult getAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
     SetupTools::Xcp::OpResult getAvailSlaves(Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> *out);
 private:
-    static SetupTools::Xcp::OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, const char *msg = NULL);
-    static SetupTools::Xcp::OpResult getReplyResult(const std::vector<quint8> &reply, const char *msg = NULL);
-    SetupTools::Xcp::OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, const char *msg = NULL, boost::optional<int> timeoutMsec = boost::optional<int>());
+    SetupTools::Xcp::OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, QString info = QString());
+    SetupTools::Xcp::OpResult getReplyResult(const std::vector<quint8> &reply, QString info = QString());
+    SetupTools::Xcp::OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, QString info = QString(), boost::optional<int> timeoutMsec = boost::optional<int>());
     SetupTools::Xcp::OpResult uploadSegment(XcpPtr base, int len, std::vector<quint8> &out);
     SetupTools::Xcp::OpResult downloadSegment(XcpPtr base, const std::vector<quint8> &data);
     SetupTools::Xcp::OpResult programPacket(XcpPtr base, const std::vector<quint8> &data);

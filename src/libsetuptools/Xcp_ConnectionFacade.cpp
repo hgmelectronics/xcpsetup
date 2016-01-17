@@ -39,6 +39,7 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(mConn, &Connection::programResetDone, this, &ConnectionFacade::onConnProgramResetDone, Qt::QueuedConnection);
     connect(mConn, &Connection::buildChecksumDone, this, &ConnectionFacade::onConnBuildChecksumDone, Qt::QueuedConnection);
     connect(mConn, &Connection::getAvailSlavesStrDone, this, &ConnectionFacade::onConnGetAvailSlavesStrDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::fault, this, &ConnectionFacade::onConnFault, Qt::QueuedConnection);
     connect(mConn, &Connection::stateChanged, this, &ConnectionFacade::onConnStateChanged, Qt::QueuedConnection);
     connect(mConn, &Connection::opProgressChanged, this, &ConnectionFacade::onConnOpProgressChanged, Qt::QueuedConnection);
 }
@@ -247,6 +248,11 @@ void ConnectionFacade::buildChecksum(XcpPtr base, int len)
 void ConnectionFacade::getAvailSlavesStr(QString bcastId, QString filter)
 {
     emit connGetAvailSlavesStr(bcastId, filter, NULL);
+}
+
+void ConnectionFacade::onConnFault(SetupTools::Xcp::OpResult result, QString info)
+{
+    emit fault(result, info);
 }
 
 void ConnectionFacade::onConnStateChanged()

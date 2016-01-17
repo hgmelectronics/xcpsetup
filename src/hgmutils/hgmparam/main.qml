@@ -75,8 +75,16 @@ ApplicationWindow {
         }
         onIdleChanged: checkImmediateWrite()
         onSlaveConnectedChanged: checkImmediateWrite()
+        onFault: {
+            if(code === OpResult.SlaveErrorOutOfRange)
+            logWindow.fault(info)
+        }
 
         Component.onCompleted: AutoRefreshManager.paramLayer = this
+    }
+
+    LogWindow {
+        id: logWindow
     }
 
     Connections {

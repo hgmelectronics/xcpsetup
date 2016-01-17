@@ -12,6 +12,7 @@ ParamLayer::ParamLayer(QObject *parent) :
     mActiveKeyIdx(-1)
 {
     connect(mConn, &ConnectionFacade::setStateDone, this, &ParamLayer::onConnSetStateDone);
+    connect(mConn, &ConnectionFacade::fault, this, &ParamLayer::onConnFault);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
 }
@@ -479,6 +480,11 @@ void ParamLayer::onConnSetStateDone(OpResult result)
         Q_ASSERT(0);
         break;
     }
+}
+
+void ParamLayer::onConnFault(OpResult result, QString info)
+{
+    emit fault(result, info);
 }
 
 void ParamLayer::onConnStateChanged()
