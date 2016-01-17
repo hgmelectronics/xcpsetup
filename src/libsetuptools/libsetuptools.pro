@@ -14,6 +14,8 @@ TARGET = setuptools
 TEMPLATE = lib
 CONFIG += staticlib
 
+DEFINES += HG_VERSION=\\\"$$system(hg id -i)\\\"
+
 SOURCES += \
     util.cpp \
     Xcp_Connection.cpp \

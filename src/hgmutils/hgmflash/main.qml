@@ -13,7 +13,7 @@ ApplicationWindow {
     id: application
 
     property string programName: qsTr("HGM Flash Tool")
-    property string programVersion: "1.1"
+    property string programVersion: ""
 
     property FlashProg progFileData
 
