@@ -12,7 +12,7 @@ Window {
 
     title: qsTr("Log")
 
-    width: 480
+    width: 640
     height: 360
 
     property var messages: []
@@ -48,9 +48,13 @@ Window {
         TextArea {
             id: textArea
 
+            text: ""
+
             readOnly: true
             wrapMode: TextEdit.NoWrap
-            textFormat: TextEdit.RichText
+            textFormat: TextEdit.AutoText
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
 
         RowLayout {
@@ -86,35 +90,37 @@ Window {
 
     function addMsg(msg) {
         messages.push(msg)
-        drawMsg(msg, textArea.text)
+        textArea.text += renderMsg(msg)
     }
 
-    function drawMsg(msg, buffer) {
+    function renderMsg(msg) {
         var timeText
         if(showTime.checked)
-            timeText = Qt.formatTime(time, Qt.locale(Locale.name).timeFormat(Locale.ShortFormat)) + " " + msg.text
+            timeText = Qt.formatTime(msg.time, Qt.locale().timeFormat(Locale.LongFormat)) + " " + msg.text
         else
             timeText = msg.text
 
+        var formatted = ""
         switch(msg.type) {
         case messageType.fault:
-            buffer += "<b><font color=\"#FF0000\">" + timeText + "</font></b><br/>"
+            formatted = "<b><font color=\"#FF0000\">" + timeText + "</font></b><br/>"
             break
         case messageType.warn:
             if(showWarn.checked)
-                buffer += "<font color=\"#DD9900\">" + timeText + "</font><br/>"
+                formatted = "<font color=\"#DD9900\">" + timeText + "</font><br/>"
             break
         case messageType.info:
             if(showInfo.checked)
-                buffer += "<i><font color=\"#777777\">" + timeText + "</font></i><br/>"
+                formatted = "<i><font color=\"#777777\">" + timeText + "</font></i><br/>"
             break
         }
+        return formatted
     }
 
     function redraw() {
         var buffer = ""
         for(var i = 0, end = messages.length; i < end; ++i) {
-            drawMsg(messages[i], buffer)
+            buffer += renderMsg(messages[i])
         }
         textArea.text = buffer
     }

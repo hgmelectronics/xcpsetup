@@ -78,7 +78,7 @@ signals:
     void buildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void getAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void setStateDone(SetupTools::Xcp::OpResult result);
-    void fault(SetupTools::Xcp::OpResult result, QString info);
+    void opMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void stateChanged();
     void opProgressChanged();
 
@@ -118,7 +118,7 @@ private:
     void onConnProgramResetDone(SetupTools::Xcp::OpResult result);
     void onConnBuildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void onConnGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-    void onConnFault(SetupTools::Xcp::OpResult result, QString info);
+    void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void onConnStateChanged();
     void onConnOpProgressChanged();
 

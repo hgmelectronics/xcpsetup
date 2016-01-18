@@ -39,7 +39,7 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(mConn, &Connection::programResetDone, this, &ConnectionFacade::onConnProgramResetDone, Qt::QueuedConnection);
     connect(mConn, &Connection::buildChecksumDone, this, &ConnectionFacade::onConnBuildChecksumDone, Qt::QueuedConnection);
     connect(mConn, &Connection::getAvailSlavesStrDone, this, &ConnectionFacade::onConnGetAvailSlavesStrDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::fault, this, &ConnectionFacade::onConnFault, Qt::QueuedConnection);
+    connect(mConn, &Connection::opMsg, this, &ConnectionFacade::onConnOpMsg, Qt::QueuedConnection);
     connect(mConn, &Connection::stateChanged, this, &ConnectionFacade::onConnStateChanged, Qt::QueuedConnection);
     connect(mConn, &Connection::opProgressChanged, this, &ConnectionFacade::onConnOpProgressChanged, Qt::QueuedConnection);
 }
@@ -250,9 +250,9 @@ void ConnectionFacade::getAvailSlavesStr(QString bcastId, QString filter)
     emit connGetAvailSlavesStr(bcastId, filter, NULL);
 }
 
-void ConnectionFacade::onConnFault(SetupTools::Xcp::OpResult result, QString info)
+void ConnectionFacade::onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext)
 {
-    emit fault(result, info);
+    emit opMsg(result, info, ext);
 }
 
 void ConnectionFacade::onConnStateChanged()

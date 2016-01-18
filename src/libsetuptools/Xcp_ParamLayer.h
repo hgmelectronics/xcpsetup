@@ -74,6 +74,8 @@ signals:
     void disconnectSlaveDone(SetupTools::Xcp::OpResult result);
     void nvWriteDone(SetupTools::Xcp::OpResult result);
     void fault(SetupTools::Xcp::OpResult result, QString info);
+    void warn(SetupTools::Xcp::OpResult result, QString info);
+    void info(SetupTools::Xcp::OpResult result, QString info);
     void stateChanged();
     void opProgressChanged();
     void writeCacheDirtyChanged();
@@ -92,7 +94,7 @@ public slots:
 
 private:
     void onConnSetStateDone(SetupTools::Xcp::OpResult result);
-    void onConnFault(SetupTools::Xcp::OpResult result, QString info);
+    void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void onConnStateChanged();
     void onConnNvWriteDone(SetupTools::Xcp::OpResult result);
     void onParamDownloadDone(SetupTools::Xcp::OpResult result);

@@ -101,8 +101,13 @@ ApplicationWindow {
         onIdleChanged: checkImmediateWrite()
         onSlaveConnectedChanged: checkImmediateWrite()
         onFault: {
-            if(code === OpResult.SlaveErrorOutOfRange)
             logWindow.fault(info)
+        }
+        onWarn: {
+            logWindow.warn(info)
+        }
+        onInfo: {
+            logWindow.info(info)
         }
 
         Component.onCompleted: AutoRefreshManager.paramLayer = this
@@ -219,6 +224,14 @@ ApplicationWindow {
         iconName: "help-about"
         onTriggered: {
             aboutDialog.show()
+        }
+    }
+
+    Action {
+        id: showLogAction
+        text: qsTr("Show &Log")
+        onTriggered: {
+            logWindow.show()
         }
     }
 
@@ -376,6 +389,10 @@ ApplicationWindow {
             }
             MenuItem {
                 action: AutoRefreshIntervalDialog.openAction
+            }
+            MenuSeparator {}
+            MenuItem {
+                action: showLogAction
             }
         }
 
