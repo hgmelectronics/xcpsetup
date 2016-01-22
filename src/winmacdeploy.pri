@@ -9,7 +9,7 @@ isEmpty(TARGET_EXT) {
     TARGET_CUSTOM_EXT = $${TARGET_EXT}
 }
 
-win32: DEPLOY_COMMAND = windeployqt --no-system-d3d-compiler
+win32: DEPLOY_COMMAND = windeployqt --no-system-d3d-compiler --no-translations
 macx: DEPLOY_COMMAND = macdeployqt
 linux: DEPLOY_COMMAND = echo
 
