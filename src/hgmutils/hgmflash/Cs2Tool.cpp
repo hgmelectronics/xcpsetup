@@ -17,6 +17,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     connect(mProgLayer, &Xcp::ProgramLayer::programVerifyDone, this, &Cs2Tool::onProgramVerifyDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &Cs2Tool::onProgramResetDone);
     connect(mProgLayer, &Xcp::ProgramLayer::opProgressChanged, this, &Cs2Tool::onProgLayerProgressChanged);
+    connect(mProgLayer, &Xcp::ProgramLayer::opMsg, this, &Cs2Tool::onProgLayerOpMsg);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
     mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
     mProgLayer->setSlaveProgResetIsAcked(false);
@@ -356,6 +357,12 @@ void Cs2Tool::onProgLayerStateChanged()
 void Cs2Tool::onProgLayerProgressChanged()
 {
     emit stateChanged();
+}
+
+void Cs2Tool::onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
+{
+    Q_UNUSED(ext);
+    emit fault(result, str);
 }
 
 int Cs2Tool::nBlocksInRange(uint progBase, uint progSize, uint rangeBase, uint rangeTop, uint blockSize)

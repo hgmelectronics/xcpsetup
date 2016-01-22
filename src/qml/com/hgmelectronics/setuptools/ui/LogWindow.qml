@@ -9,6 +9,9 @@ Window {
     property int faultCount
     property int warnCount
     property int infoCount
+    property bool visibleFault: faultCount > 0
+    property bool visibleWarn: (warnCount > 0) && showWarn.checked
+    property bool visibleInfo: (infoCount > 0) && showInfo.checked
 
     title: qsTr("Log")
 
@@ -29,14 +32,17 @@ Window {
 
     function fault(msg) {
         addMsg({type: messageType.fault, text: msg, time: new Date()})
+        faultCount = faultCount + 1
     }
 
     function warn(msg) {
         addMsg({type: messageType.warn, text: msg, time: new Date()})
+        warnCount = warnCount + 1
     }
 
     function info(msg) {
         addMsg({type: messageType.info, text: msg, time: new Date()})
+        infoCount = infoCount + 1
     }
 
     ColumnLayout {
@@ -82,6 +88,9 @@ Window {
                 text: qsTr("Clear")
                 onClicked: {
                     messages = []
+                    faultCount = 0
+                    warnCount = 0
+                    infoCount = 0
                     redraw()
                 }
             }

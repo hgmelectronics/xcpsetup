@@ -21,6 +21,7 @@ ProgramLayer::ProgramLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::programResetDone, this, &ProgramLayer::onConnProgramResetDone);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ProgramLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::opProgressChanged, this, &ProgramLayer::onConnOpProgressChanged);
+    connect(mConn, &ConnectionFacade::opMsg, this, &ProgramLayer::onConnOpMsg);
 }
 
 ProgramLayer::~ProgramLayer()
@@ -469,6 +470,11 @@ void ProgramLayer::onConnStateChanged()
 void ProgramLayer::onConnOpProgressChanged()
 {
     emit opProgressChanged();
+}
+
+void ProgramLayer::onConnOpMsg(OpResult result, QString info, Connection::OpExtInfo ext)
+{
+    emit opMsg(result, info, ext);
 }
 
 } // namespace Xcp

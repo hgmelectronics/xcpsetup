@@ -1,5 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
@@ -374,7 +375,7 @@ ApplicationWindow {
         }
 
         Menu {
-            title: qsTr("Edit")
+            title: qsTr("&Edit")
             MenuItem {
                 action: enableAllParametersAction
             }
@@ -397,9 +398,9 @@ ApplicationWindow {
         }
 
         Menu {
-            title: qsTr("Settings")
+            title: qsTr("&Settings")
             Menu {
-                title: qsTr("Units")
+                title: qsTr("&Units")
                 MenuItem {
                     action: useMetricUnitsAction
                 }
@@ -519,10 +520,19 @@ ApplicationWindow {
         registry: paramLayer.registry
     }
 
-    statusBar: ProgressBar {
-        id: progressBar
-        anchors.fill: parent
-        value: paramLayer.opProgress
+    statusBar: StatusBar {
+        RowLayout {
+            anchors.fill: parent
+            ProgressBar {
+                id: progressBar
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                value: paramLayer.opProgress
+            }
+            ShowLogButton {
+                window: logWindow
+            }
+        }
     }
 
     MessageDialog {

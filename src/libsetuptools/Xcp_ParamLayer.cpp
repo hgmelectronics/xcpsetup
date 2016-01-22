@@ -482,7 +482,7 @@ void ParamLayer::onConnSetStateDone(OpResult result)
     }
 }
 
-void ParamLayer::onConnOpMsg(OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
+void ParamLayer::onConnOpMsg(SetupTools::Xcp::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
 {
     if(ext.type == Connection::OpType::Upload && result == OpResult::SlaveErrorOutOfRange)
         emit info(result, str);
