@@ -1,5 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
@@ -100,8 +101,21 @@ ApplicationWindow {
 
         onIdleChanged: checkImmediateWrite()
         onSlaveConnectedChanged: checkImmediateWrite()
+        onFault: {
+            logWindow.fault(info)
+        }
+        onWarn: {
+            logWindow.warn(info)
+        }
+        onInfo: {
+            logWindow.info(info)
+        }
 
         Component.onCompleted: AutoRefreshManager.paramLayer = this
+    }
+
+    LogWindow {
+        id: logWindow
     }
 
     Connections {
@@ -211,6 +225,14 @@ ApplicationWindow {
         iconName: "help-about"
         onTriggered: {
             aboutDialog.show()
+        }
+    }
+
+    Action {
+        id: showLogAction
+        text: qsTr("Show &Log")
+        onTriggered: {
+            logWindow.show()
         }
     }
 
@@ -353,7 +375,7 @@ ApplicationWindow {
         }
 
         Menu {
-            title: qsTr("Edit")
+            title: qsTr("&Edit")
             MenuItem {
                 action: enableAllParametersAction
             }
@@ -369,12 +391,16 @@ ApplicationWindow {
             MenuItem {
                 action: AutoRefreshIntervalDialog.openAction
             }
+            MenuSeparator {}
+            MenuItem {
+                action: showLogAction
+            }
         }
 
         Menu {
-            title: qsTr("Settings")
+            title: qsTr("&Settings")
             Menu {
-                title: qsTr("Units")
+                title: qsTr("&Units")
                 MenuItem {
                     action: useMetricUnitsAction
                 }
@@ -494,10 +520,19 @@ ApplicationWindow {
         registry: paramLayer.registry
     }
 
-    statusBar: ProgressBar {
-        id: progressBar
-        anchors.fill: parent
-        value: paramLayer.opProgress
+    statusBar: StatusBar {
+        RowLayout {
+            anchors.fill: parent
+            ProgressBar {
+                id: progressBar
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                value: paramLayer.opProgress
+            }
+            ShowLogButton {
+                window: logWindow
+            }
+        }
     }
 
     MessageDialog {

@@ -56,6 +56,10 @@ signals:
     void programmingDone(int result);
     void resetDone(int result);
 
+    void fault(SetupTools::Xcp::OpResult result, QString info);
+    void warn(SetupTools::Xcp::OpResult result, QString info);
+    void info(SetupTools::Xcp::OpResult result, QString info);
+
 public slots:
     void startProgramming();
 
@@ -69,6 +73,7 @@ private:
 
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();
+    void onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
 
     enum class State
     {

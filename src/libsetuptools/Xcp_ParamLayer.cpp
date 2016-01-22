@@ -12,6 +12,7 @@ ParamLayer::ParamLayer(QObject *parent) :
     mActiveKeyIdx(-1)
 {
     connect(mConn, &ConnectionFacade::setStateDone, this, &ParamLayer::onConnSetStateDone);
+    connect(mConn, &ConnectionFacade::opMsg, this, &ParamLayer::onConnOpMsg);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
 }
@@ -479,6 +480,14 @@ void ParamLayer::onConnSetStateDone(OpResult result)
         Q_ASSERT(0);
         break;
     }
+}
+
+void ParamLayer::onConnOpMsg(SetupTools::Xcp::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
+{
+    if(ext.type == Connection::OpType::Upload && result == OpResult::SlaveErrorOutOfRange)
+        emit info(result, str);
+    else
+        emit fault(result, str);
 }
 
 void ParamLayer::onConnStateChanged()

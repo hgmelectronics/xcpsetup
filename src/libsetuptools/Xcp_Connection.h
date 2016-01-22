@@ -168,6 +168,89 @@ public:
         PgmMode =       static_cast<int>(State::PgmMode)
     };
 
+    enum CmdCode : quint8 {
+        CmdCode_Connect = 0xFF,
+        CmdCode_Disconnect = 0xFE,
+        CmdCode_GetStatus = 0xFD,
+        CmdCode_Synch = 0xFC,
+        CmdCode_GetCommModeInfo = 0xFB,
+        CmdCode_GetId = 0xFA,
+        CmdCode_SetRequest = 0xF9,
+        CmdCode_GetSeed = 0xF8,
+        CmdCode_Unlock = 0xF7,
+        CmdCode_SetMta = 0xF6,
+        CmdCode_Upload = 0xF5,
+        CmdCode_ShortUpload = 0xF4,
+        CmdCode_BuildChecksum = 0xF3,
+        CmdCode_TransportLayerCmd = 0xF2,
+        CmdCode_UserCmd = 0xF1,
+        CmdCode_Download = 0xF0,
+        CmdCode_DownloadNext = 0xEF,
+        CmdCode_DownloadMax = 0xEE,
+        CmdCode_ShortDownload = 0xED,
+        CmdCode_ModifyBits = 0xEC,
+        CmdCode_SetCalPage = 0xEB,
+        CmdCode_GetCalPage = 0xEA,
+        CmdCode_GetPagProcessorInfo = 0xE9,
+        CmdCode_GetSegmentInfo = 0xE8,
+        CmdCode_GetPageInfo = 0xE7,
+        CmdCode_SetSegmentMode = 0xE6,
+        CmdCode_GetSegmentMode = 0xE5,
+        CmdCode_CopyCalPage = 0xE4,
+        CmdCode_ClearDaqList = 0xE3,
+        CmdCode_SetDaqPtr = 0xE2,
+        CmdCode_WriteDaq = 0xE1,
+        CmdCode_SetDaqListMode = 0xE0,
+        CmdCode_GetDaqListMode = 0xDF,
+        CmdCode_StartStopDaqList = 0xDE,
+        CmdCode_StartStopSynch = 0xDD,
+        CmdCode_GetDaqClock = 0xDC,
+        CmdCode_ReadDaq = 0xDB,
+        CmdCode_GetDaqProcessorInfo = 0xDA,
+        CmdCode_GetDaqResolutionInfo = 0xD9,
+        CmdCode_GetDaqListInfo = 0xD8,
+        CmdCode_GetDaqEventInfo = 0xD7,
+        CmdCode_FreeDaq = 0xD6,
+        CmdCode_AllocDaq = 0xD5,
+        CmdCode_AllocOdt = 0xD4,
+        CmdCode_AllocOdtEntry = 0xD3,
+        CmdCode_ProgramStart = 0xD2,
+        CmdCode_ProgramClear = 0xD1,
+        CmdCode_Program = 0xD0,
+        CmdCode_ProgramReset = 0xCF,
+        CmdCode_GetPgmProcessorInfo = 0xCE,
+        CmdCode_GetSectorInfo = 0xCD,
+        CmdCode_ProgramPrepare = 0xCC,
+        CmdCode_ProgramFormat = 0xCB,
+        CmdCode_ProgramNext = 0xCA,
+        CmdCode_ProgramMax = 0xC9,
+        CmdCode_ProgramVerify = 0xC8,
+    };
+
+    enum class OpType {
+        SetState,
+        Open,
+        Close,
+        Upload,
+        Download,
+        NvWrite,
+        SetCalPage,
+        ProgramStart,
+        ProgramClear,
+        ProgramRange,
+        ProgramVerify,
+        ProgramReset,
+        BuildChecksum,
+        GetAvailSlaves
+    };
+
+    struct OpExtInfo {
+        OpType type;
+        boost::optional<quint8> cmd;
+        boost::optional<XcpPtr> addr;
+        boost::optional<int> len;
+    };
+
 private:
 
     Q_PROPERTY(QObject *intfc READ intfc WRITE setIntfc)
@@ -282,6 +365,7 @@ signals:
     void buildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void getAvailSlavesDone(SetupTools::Xcp::OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
     void getAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void opMsg(SetupTools::Xcp::OpResult result, QString info, OpExtInfo ext);
     void stateChanged();
     void opProgressChanged();
 public slots:
@@ -301,16 +385,16 @@ public slots:
     SetupTools::Xcp::OpResult getAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
     SetupTools::Xcp::OpResult getAvailSlaves(Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> *out);
 private:
-    static SetupTools::Xcp::OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, const char *msg = NULL);
-    static SetupTools::Xcp::OpResult getReplyResult(const std::vector<quint8> &reply, const char *msg = NULL);
-    SetupTools::Xcp::OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, const char *msg = NULL, boost::optional<int> timeoutMsec = boost::optional<int>());
-    SetupTools::Xcp::OpResult uploadSegment(XcpPtr base, int len, std::vector<quint8> &out);
-    SetupTools::Xcp::OpResult downloadSegment(XcpPtr base, const std::vector<quint8> &data);
-    SetupTools::Xcp::OpResult programPacket(XcpPtr base, const std::vector<quint8> &data);
-    SetupTools::Xcp::OpResult programBlock(XcpPtr base, const std::vector<quint8> &data);
-    SetupTools::Xcp::OpResult setMta(XcpPtr ptr);
-    SetupTools::Xcp::OpResult tryQuery(std::function<SetupTools::Xcp::OpResult (void)> &action);
-    SetupTools::Xcp::OpResult synch();
+    SetupTools::Xcp::OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, QString info, OpExtInfo ext);
+    SetupTools::Xcp::OpResult getReplyResult(const std::vector<quint8> &reply, QString info, OpExtInfo ext);
+    SetupTools::Xcp::OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, QString info, OpExtInfo ext, boost::optional<int> timeoutMsec = boost::optional<int>());
+    SetupTools::Xcp::OpResult uploadSegment(XcpPtr base, int len, std::vector<quint8> &out, OpType type);
+    SetupTools::Xcp::OpResult downloadSegment(XcpPtr base, const std::vector<quint8> &data, OpType type);
+    SetupTools::Xcp::OpResult programPacket(XcpPtr base, const std::vector<quint8> &data, OpType type);
+    SetupTools::Xcp::OpResult programBlock(XcpPtr base, const std::vector<quint8> &data, OpType type);
+    SetupTools::Xcp::OpResult setMta(XcpPtr ptr, OpType type);
+    SetupTools::Xcp::OpResult tryQuery(std::function<SetupTools::Xcp::OpResult (void)> &action, OpType type);
+    SetupTools::Xcp::OpResult synch(OpType type);
     void updateEmitOpProgress(double newVal);
 
     constexpr static const int MAX_RETRIES = 10;
@@ -338,6 +422,7 @@ private:
 
 Q_DECLARE_METATYPE(SetupTools::Xcp::XcpPtr)
 Q_DECLARE_METATYPE(SetupTools::Xcp::Connection::State)
+Q_DECLARE_METATYPE(SetupTools::Xcp::Connection::OpExtInfo)
 Q_DECLARE_METATYPE(SetupTools::Xcp::CksumType)
 Q_DECLARE_METATYPE(std::vector<quint8>)
 

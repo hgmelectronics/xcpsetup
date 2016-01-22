@@ -14,3 +14,5 @@ XcpInterfaceChooser 1.0 XcpInterfaceChooser.qml
 BitRateChooser 1.0 BitRateChooser.qml
 AutoRefreshArea 1.0 AutoRefreshArea.qml
 singleton AutoRefreshIntervalDialog 1.0 AutoRefreshIntervalDialog.qml
+LogWindow 1.0 LogWindow.qml
+ShowLogButton 1.0 ShowLogButton.qml

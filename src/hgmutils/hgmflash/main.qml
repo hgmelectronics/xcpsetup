@@ -42,6 +42,15 @@ ApplicationWindow {
                 errorDialog.show(qsTr("Reset failed: %1").arg(
                                      OpResult.asString(result)))
         }
+        onFault: {
+            logWindow.fault(info)
+        }
+        onWarn: {
+            logWindow.warn(info)
+        }
+        onInfo: {
+            logWindow.info(info)
+        }
     }
 
     FileDialog {
@@ -87,6 +96,14 @@ ApplicationWindow {
         id: helpAboutAction
         text: qsTr("&About")
         onTriggered: aboutDialog.show()
+    }
+
+    Action {
+        id: showLogAction
+        text: qsTr("Show &Log")
+        onTriggered: {
+            logWindow.show()
+        }
     }
 
     Action {
@@ -136,6 +153,13 @@ ApplicationWindow {
             }
             MenuItem {
                 action: exitAction
+            }
+        }
+
+        Menu {
+            title: qsTr("&Edit")
+            MenuItem {
+                action: showLogAction
             }
         }
         Menu {
@@ -345,12 +369,24 @@ ApplicationWindow {
             }
         }
     }
+
     statusBar: StatusBar {
-        ProgressBar {
-            id: progressBar
+        RowLayout {
             anchors.fill: parent
-            value: cs2Tool.progress
+            ProgressBar {
+                id: progressBar
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                value: cs2Tool.progress
+            }
+            ShowLogButton {
+                window: logWindow
+            }
         }
+    }
+
+    LogWindow {
+        id: logWindow
     }
 
     MessageDialog {

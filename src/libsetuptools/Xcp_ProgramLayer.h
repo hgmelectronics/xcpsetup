@@ -56,6 +56,7 @@ signals:
     void stateChanged();
     void opProgressChanged();
     void intfcChanged();
+    void opMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
 public slots:
     void program(FlashProg *prog, quint8 addrExt = 0, bool finalEmptyPacket = true);
     void programVerify(FlashProg *prog, CksumType type, quint8 addrExt = 0);    // For bootloaders that need PROGRAM_VERIFY to finish their flash write
@@ -73,6 +74,7 @@ private:
     void onConnProgramResetDone(OpResult result);
     void onConnStateChanged();
     void onConnOpProgressChanged();
+    void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
 
     enum class State
     {
