@@ -137,7 +137,9 @@ public:
     void setSerialLog(bool on);
     double elapsedSecs();
     virtual OpResult setPacketLog(bool enable);
-    virtual bool hasReliableTx();
+    virtual bool hasReliableTx() override;
+    virtual bool allowsMultipleReplies() override;
+    virtual int maxReplyTimeout() override;
 private:
     enum class CheckOk { No, Yes };
 

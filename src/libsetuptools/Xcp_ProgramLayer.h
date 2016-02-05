@@ -19,6 +19,7 @@ class ProgramLayer : public QObject
     Q_PROPERTY(int slaveTimeout READ slaveTimeout WRITE setSlaveTimeout)
     Q_PROPERTY(int slaveResetTimeout READ slaveResetTimeout WRITE setSlaveResetTimeout)
     Q_PROPERTY(int slaveProgClearTimeout READ slaveProgClearTimeout WRITE setSlaveProgClearTimeout)
+    Q_PROPERTY(int maxEraseSize READ maxEraseSize WRITE setMaxEraseSize)
     Q_PROPERTY(bool slaveProgResetIsAcked READ slaveProgResetIsAcked WRITE setSlaveProgResetIsAcked)
     Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
     Q_PROPERTY(double opProgress READ opProgress NOTIFY opProgressChanged)
@@ -45,6 +46,8 @@ public:
     void setSlaveProgResetIsAcked(bool);
     double opProgressNotifyFrac();
     void setOpProgressNotifyFrac(double);
+    int maxEraseSize();
+    void setMaxEraseSize(int);
     double opProgress();
 signals:
     void programDone(OpResult result, FlashProg *prog, quint8 addrExt);
@@ -78,6 +81,8 @@ private:
     void onConnOpProgressChanged();
     void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
 
+    void doProgramClear();   // Clear program bytes, as many as possible
+
     enum class State
     {
         IntfcNotOk,
@@ -93,10 +98,12 @@ private:
 
     ConnectionFacade *mConn;
     State mState;
+    quint32 mMaxEraseSize;
     FlashProg *mActiveProg;
     quint8 mActiveAddrExt;
     CksumType mActiveCksumType;
     bool mActiveFinalEmptyPacket;
+    quint32 mActiveBytesErased;
     QList<FlashBlock *>::const_iterator mActiveProgBlock;
 };
 

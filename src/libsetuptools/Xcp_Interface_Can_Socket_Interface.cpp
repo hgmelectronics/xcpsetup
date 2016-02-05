@@ -441,7 +441,15 @@ OpResult Interface::setFilter(Filter filt)
 
 bool Interface::hasReliableTx()
 {
-    return false;
+    return true;
+}
+bool Interface::allowsMultipleReplies()
+{
+    return true;
+}
+int Interface::maxReplyTimeout()
+{
+    return std::numeric_limits<int>::max();
 }
 
 OpResult Interface::doSetFilter(const Filter & filter)

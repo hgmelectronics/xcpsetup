@@ -329,7 +329,9 @@ void IbemTool::startProgramming()
     int firstPage = mInfilledProgData.base() / PAGE_SIZE;
     int lastPage = (mInfilledProgData.base() + mInfilledProgData.size() - 1) / PAGE_SIZE;
     int nPages = lastPage - firstPage + 1;
-    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * nPages);
+    int maxProgClearPages = (mProgLayer->intfc()->maxReplyTimeout() - PROG_CLEAR_BASE_TIMEOUT_MSEC) / PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC;
+    mProgLayer->setMaxEraseSize(maxProgClearPages * PAGE_SIZE);
+    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * std::min(nPages, maxProgClearPages));
     mProgLayer->program(&mInfilledProgData, 0, false);
 }
 void IbemTool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt)

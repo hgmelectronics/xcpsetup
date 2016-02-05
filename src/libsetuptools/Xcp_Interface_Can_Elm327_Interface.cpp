@@ -522,6 +522,14 @@ bool Interface::hasReliableTx()
     else
         return false;    // FIXME need to see if ELM does not drop packets
 }
+bool Interface::allowsMultipleReplies()
+{
+    return false;
+}
+int Interface::maxReplyTimeout()
+{
+    return 1000;    // 1.02 s, round down to 1
+}
 
 double Interface::elapsedSecs()
 {

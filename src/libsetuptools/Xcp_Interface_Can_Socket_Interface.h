@@ -54,7 +54,9 @@ public:
     virtual OpResult clearReceived();
     virtual OpResult setBitrate(int bps);                           //!< Set the bitrate used on the interface
     virtual OpResult setFilter(Filter filt);                     //!< Set the CAN filter used on the interface
-    virtual bool hasReliableTx();
+    virtual bool hasReliableTx() override;
+    virtual bool allowsMultipleReplies() override;
+    virtual int maxReplyTimeout() override;
 private:
     OpResult doSetFilter(const Filter & filt);
     OpResult setRxTimeout(quint32 usec);

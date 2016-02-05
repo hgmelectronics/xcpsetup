@@ -33,6 +33,8 @@ public:
     virtual OpResult clearReceived() = 0;
     virtual OpResult setPacketLog(bool enable) = 0;
     virtual bool hasReliableTx() = 0;
+    virtual bool allowsMultipleReplies() = 0;
+    virtual int maxReplyTimeout() = 0;
 };
 
 }   // namespace Interface
