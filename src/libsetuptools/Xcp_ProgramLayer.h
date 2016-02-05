@@ -53,6 +53,7 @@ signals:
     void programResetDone(OpResult result);
     void calModeDone(OpResult result);
     void pgmModeDone(OpResult result);
+    void disconnectDone(OpResult result);
     void stateChanged();
     void opProgressChanged();
     void intfcChanged();
@@ -64,6 +65,7 @@ public slots:
     void programReset();
     void calMode();
     void pgmMode();
+    void disconnect();
 
 private:
     void onConnSetStateDone(OpResult result);
@@ -85,7 +87,8 @@ private:
         BuildChecksumVerify,
         ProgramReset,
         CalMode,
-        PgmMode
+        PgmMode,
+        Disconnect
     };
 
     ConnectionFacade *mConn;

@@ -254,6 +254,25 @@ void ProgramLayer::pgmMode()
     mConn->setState(Connection::State::PgmMode);
 }
 
+void ProgramLayer::disconnect()
+{
+    if(mState != State::Idle)
+    {
+        emit disconnectDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    if(mConn->state() == Connection::State::Closed)
+    {
+        emit disconnectDone(OpResult::Success);
+        return;
+    }
+
+    mState = State::Disconnect;
+
+    mConn->setState(Connection::State::Closed);
+}
+
 void ProgramLayer::onConnSetStateDone(OpResult result)
 {
     switch(mState)
@@ -347,6 +366,11 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         mState = State::Idle;
         emit stateChanged();
         emit pgmModeDone(result);
+        break;
+    case State::Disconnect:
+        mState = State::Idle;
+        emit stateChanged();
+        emit disconnectDone(result);
         break;
     }
 }
