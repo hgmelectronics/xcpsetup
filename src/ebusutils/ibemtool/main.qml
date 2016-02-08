@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.1
 import com.ebus.utils.ibemtool 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 ApplicationWindow {
     title: qsTr("IBEM Flash Tool")
@@ -49,6 +50,7 @@ ApplicationWindow {
     MainForm {
         id: mainForm
         anchors.fill: parent
+        intfcOpen: ibemTool.intfcOk
         toolReady: ibemTool.programOk && ibemTool.intfcOk
         toolBusy: !ibemTool.idle
         progBaseText: ibemTool.programData ? "0x00000000".substr(0, 10 - ibemTool.programBase.toString(16).length) + ibemTool.programBase.toString(16).toUpperCase() : ""
@@ -68,9 +70,9 @@ ApplicationWindow {
         intfcUri: mainForm.intfcUri
         onProgrammingDone: {
             if(ok)
-                messageDialog.show("Programming complete")
+                messageDialog.show(qsTr("Programming complete"))
             else
-                errorDialog.show("Programming failed: " + OpResult.asString(result))
+                errorDialog.show(qsTr("Programming failed"))
         }
     }
 

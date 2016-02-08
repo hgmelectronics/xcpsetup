@@ -48,16 +48,22 @@ void Cs2Tool::setProgramData(FlashProg *prog)
     mInfilledProgData.infillToSingleBlock();
 
     if(mInfilledProgData.base() < SMALLBLOCK_BASE
-         || (mInfilledProgData.base() + mInfilledProgData.size()) > LARGEBLOCK_TOP)
+            || mInfilledProgData.base() < APPLIC_BASE
+            || (mInfilledProgData.base() + mInfilledProgData.size()) > LARGEBLOCK_TOP)
     {
         emit programChanged();
         return;
     }
 
-    int nBlocks = 0;
-    nBlocks += nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
-    nBlocks += nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), LARGEBLOCK_BASE, LARGEBLOCK_TOP, LARGEBLOCK_SIZE);
-    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * nBlocks);
+    int nSmallBlocks = nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
+    int nBlocks = nSmallBlocks + nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
+
+    int minBlockSize = nSmallBlocks ? SMALLBLOCK_SIZE : LARGEBLOCK_SIZE;
+    int maxClearBlocks = (mProgLayer->intfc()->maxReplyTimeout() - PROG_CLEAR_BASE_TIMEOUT_MSEC) / PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC;
+    if(maxClearBlocks == 0)
+        maxClearBlocks = 1; // If we technically cannot do even one, fudge it and hope
+    mProgLayer->setMaxEraseSize(minBlockSize * maxClearBlocks);
+    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * std::min(maxClearBlocks, nBlocks));
 
     mProgFileOkToFlash = true;
     emit programChanged();

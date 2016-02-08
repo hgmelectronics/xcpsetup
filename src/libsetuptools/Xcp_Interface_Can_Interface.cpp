@@ -9,32 +9,12 @@ namespace Interface
 namespace Can
 {
 
-Id::Id() :
-    addr(0),
-    type(Type::Std)
-{}
-
-Id::Id(quint32 addr_in, Type ext_in) :
-    addr(addr_in),
-    type(ext_in)
-{}
-
 Id::operator QString() const
 {
     if(type == Type::Std)
         return QString("%1").arg(addr, 3, 16, QChar('0'));
     else
         return QString("x%1").arg(addr, 8, 16, QChar('0'));
-}
-
-bool operator==(const Id &lhs, const Id &rhs)
-{
-    return (lhs.addr == rhs.addr && lhs.type == rhs.type);
-}
-
-bool operator!=(const Id &lhs, const Id &rhs)
-{
-    return !(lhs == rhs);
 }
 
 boost::optional<Id> StrToId(QString str)

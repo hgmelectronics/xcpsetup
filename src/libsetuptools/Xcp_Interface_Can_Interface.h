@@ -19,15 +19,27 @@ struct Id
 public:
     enum class Type { Std, Ext };
 
-    Id();
-    Id(quint32 addr_in, Type ext_in);
+    constexpr Id() :
+        addr(0),
+        type(Type::Std)
+    {}
+    constexpr Id(quint32 addr_in, Type ext_in) :
+        addr(addr_in),
+        type(ext_in)
+    {}
     operator QString() const;
 
     quint32 addr;
     Type type;
 };
-bool operator==(const Id &lhs, const Id &rhs);
-bool operator!=(const Id &lhs, const Id &rhs);
+inline bool operator==(const Id &lhs, const Id &rhs)
+{
+    return (lhs.addr == rhs.addr && lhs.type == rhs.type);
+}
+inline bool operator!=(const Id &lhs, const Id &rhs)
+{
+    return !(lhs == rhs);
+}
 
 boost::optional<Id> StrToId(QString str);
 QString IdToStr(Id id);
@@ -37,6 +49,14 @@ struct SlaveId
 public:
     Id cmd, res;
 };
+inline bool operator==(const SlaveId &lhs, const SlaveId &rhs)
+{
+    return (lhs.cmd == rhs.cmd && lhs.res == rhs.res);
+}
+inline bool operator!=(const SlaveId &lhs, const SlaveId &rhs)
+{
+    return !(lhs == rhs);
+}
 
 boost::optional<SlaveId>  StrToSlaveId(QString str);
 QString  SlaveIdToStr(SlaveId id);

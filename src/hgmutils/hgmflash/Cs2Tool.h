@@ -94,11 +94,12 @@ private:
     static constexpr int RESET_TIMEOUT_MSEC = 3000;
     static constexpr int ADDR_GRAN = 4;
     static constexpr int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
-    static constexpr int PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC = 1050;
+    static constexpr int PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC = 120;   // Round up from 105
     static constexpr uint SMALLBLOCK_BASE = 0x20000000;
     static constexpr uint SMALLBLOCK_TOP = 0x20010000;
     static constexpr uint LARGEBLOCK_BASE = SMALLBLOCK_TOP;
     static constexpr uint LARGEBLOCK_TOP = 0x200C0000;
+    static constexpr uint APPLIC_BASE = 0x20010000;
     static constexpr int SMALLBLOCK_SIZE = 8192;
     static constexpr int LARGEBLOCK_SIZE = 65536;
     static constexpr Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::XCP_CRC_32;
