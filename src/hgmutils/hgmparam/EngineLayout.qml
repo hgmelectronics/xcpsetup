@@ -54,6 +54,9 @@ RowLayout {
         EncodingParamEdit {
             metaParam: parameters.voltageTPSIsReversed
         }
+        ScalarParamSpinBox {
+            metaParam: parameters.engineMapTorqueProportion
+        }
     }
 
 

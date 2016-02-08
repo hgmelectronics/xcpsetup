@@ -1255,6 +1255,11 @@ QtObject {
         name: qsTr("Engine Running Detect Speed")
     }
 
+    property ScalarMetaParam engineMapTorqueProportion: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.engine_map_torque_proportion, true, true, slots.percentage1)
+        name: qsTr("Engine MAP Torque Proportion")
+    }
+
     property ScalarMetaParam engineIdleShutdownTime: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.engine_idle_shutdown_time, true, true, slots.timeInSecondsZeroIsDisabled)
         name: qsTr("Engine Idle Shutdown Time")

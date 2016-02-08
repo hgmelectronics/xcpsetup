@@ -517,6 +517,8 @@ QtObject {
 
     readonly property double engine_running_detection_speed: 0x07010000
 
+    readonly property double engine_map_torque_proportion: 0x07050000
+
     readonly property double voltage_tps_ground_enable: 0x07100000
     readonly property double voltage_tps_is_reversed: 0x07110000
     readonly property double voltage_tps_calibration_low: 0x07120000
