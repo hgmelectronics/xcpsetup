@@ -248,6 +248,16 @@ bool Interface::hasReliableTx()
     return true;
 }
 
+bool Interface::allowsMultipleReplies()
+{
+    return true;
+}
+
+int Interface::maxReplyTimeout()
+{
+    return std::numeric_limits<int>::max();
+}
+
 OpResult Interface::doSetFilter(const Filter & filter)
 {
     if(mSocket < 0)
