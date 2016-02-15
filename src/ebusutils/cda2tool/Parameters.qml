@@ -183,6 +183,14 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2LastBoard, true, true, slots.raw32)
         name: qsTr("")
     }
+    property ScalarMetaParam cbtmCommFaultTripCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmCommFaultTripCyc, true, true, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam cbtmCommFaultClearCyc: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmCommFaultClearCyc, true, true, slots.raw32)
+        name: qsTr("")
+    }
 
     property TableParam cbtmCellVolt: TableParam {
         x: SlotArrayModel {

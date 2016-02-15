@@ -40,6 +40,8 @@ QtObject {
     readonly property double cbtmIsospi1LastBoard:              4*0x00030007
     readonly property double cbtmIsospi2FirstBoard:             4*0x00030008
     readonly property double cbtmIsospi2LastBoard:              4*0x00030009
+    readonly property double cbtmCommFaultTripCyc:              4*0x0003000A
+    readonly property double cbtmCommFaultClearCyc:             4*0x0003000B
     readonly property double cbtmCellVolt:                      4*0x00031000
     readonly property double cbtmTabTemp:                       4*0x00032000
     readonly property double cbtmDisch:                         4*0x00033000

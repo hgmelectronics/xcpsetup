@@ -205,6 +205,14 @@ Item {
                             name: "IsoSPI #2 Last ID"
                             metaParam: parameters.cbtmIsospi2LastBoard
                         }
+                        ScalarParamEdit {
+                            name: "Comm Fault Trip Cycles"
+                            metaParam: parameters.cbtmCommFaultTripCyc
+                        }
+                        ScalarParamEdit {
+                            name: "Comm Fault Clear Cycles"
+                            metaParam: parameters.cbtmCommFaultClearCyc
+                        }
                     }
                     ColumnLayout {
                         spacing: 10
