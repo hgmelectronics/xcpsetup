@@ -108,7 +108,7 @@ private:
     static constexpr double PROGRAM_STATE_PROGRESS_CREDIT = 0.0625;
     static constexpr double PROGRAM_PROGRESS_MULT = 1 - PROGRAM_STATE_PROGRESS_CREDIT * (N_PROGRAM_STATES - 1);
 
-    void rereadProgFile();
+    void updateProgClear();
     static int nBlocksInRange(uint progBase, uint progSize, uint rangeBase, uint rangeTop, uint blockSize);
     void setState(State newState);
 
