@@ -334,8 +334,8 @@ ColumnLayout {
                 }
                 ShiftTableByShiftEditMenuButton {
                     text: qsTr("Downshift Tables")
-                    speedTableParams: parameters.upshiftTablesA
-                    rpmTableParams: parameters.rpmUpshiftTablesA
+                    speedTableParams: parameters.downshiftTablesA
+                    rpmTableParams: parameters.rpmDownshiftTablesA
                     gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
                     isDownshift: true
                     enabled: (parameters.shiftTablesDownLockedA.param.floatVal == 0)
@@ -383,8 +383,8 @@ ColumnLayout {
                 }
                 ShiftTableByShiftEditMenuButton {
                     text: qsTr("Downshift Tables")
-                    speedTableParams: parameters.upshiftTablesB
-                    rpmTableParams: parameters.rpmUpshiftTablesB
+                    speedTableParams: parameters.downshiftTablesB
+                    rpmTableParams: parameters.rpmDownshiftTablesB
                     gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
                     isDownshift: true
                     enabled: (parameters.shiftTablesDownLockedB.param.floatVal == 0)
