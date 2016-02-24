@@ -59,7 +59,10 @@ ColumnLayout {
             Button {
                 Layout.margins: 8
                 text: "Other Shaft Speed Sensors"
-                onClicked: transShaftSpeedSensorDialog.visible = true
+                onClicked: {
+                    transShaftSpeedSensorDialog.showNormal()
+                    transShaftSpeedSensorDialog.raise()
+                }
             }
             TableParamEditButton {
                 Layout.margins: 8

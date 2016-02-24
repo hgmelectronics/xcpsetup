@@ -49,7 +49,7 @@ Window {
             anchors.right: parent.right
             text: "Close"
             isDefault: true
-            onClicked: helpDialog.visible = false
+            onClicked: helpDialog.hide()
         }
     }
 }

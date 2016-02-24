@@ -16,7 +16,10 @@ Button {
     property alias hasShapers: table.hasShapers
 
     enabled: table.tableParam.param.value.range.valid
-    onClicked: table.visible = true
+    onClicked: {
+        table.showNormal()
+        table.raise()
+    }
     text: tableParam.name
 
     TableParamEditDialog {

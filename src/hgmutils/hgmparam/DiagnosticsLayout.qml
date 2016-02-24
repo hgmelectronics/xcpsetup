@@ -15,7 +15,10 @@ Flow {
 
     Button {
         text: "Bus Voltages"
-        onClicked: busVoltageDialog.visible = true
+        onClicked: {
+            busVoltageDialog.showNormal()
+            busVoltageDialog.raise()
+        }
     }
 
     ScalarListDialog {
@@ -36,7 +39,10 @@ Flow {
 
     Button {
         text: "Frequency Sensors"
-        onClicked: frequencySensorsDialog.visible = true
+        onClicked: {
+            frequencySensorsDialog.showNormal()
+            frequencySensorsDialog.raise()
+        }
     }
 
     ScalarListDialog {
@@ -56,7 +62,10 @@ Flow {
 
     Button {
         text: "Voltage Sensors"
-        onClicked: voltageSensorsDialog.visible = true
+        onClicked: {
+            voltageSensorsDialog.showNormal()
+            voltageSensorsDialog.raise()
+        }
     }
 
     ScalarListDialog {
@@ -79,7 +88,10 @@ Flow {
 
     Button {
         text: "Software"
-        onClicked: softwareDialog.visible = true
+        onClicked: {
+            softwareDialog.showNormal()
+            softwareDialog.raise()
+        }
     }
 
     ScalarListDialog {
@@ -99,7 +111,10 @@ Flow {
 
     Button {
         text: "Digital I/O"
-        onClicked: dioDialog.visible = true
+        onClicked: {
+            dioDialog.showNormal()
+            dioDialog.raise()
+        }
     }
 
     Window {
@@ -174,7 +189,10 @@ Flow {
 
     Button {
         text: "Frequency Outputs"
-        onClicked: frequencyOutputDialog.visible = true
+        onClicked: {
+            frequencyOutputDialog.showNormal()
+            frequencyOutputDialog.raise()
+        }
     }
 
     ScalarListDialog {
@@ -194,7 +212,8 @@ Flow {
         text: "PWM Drivers"
         enabled: parameters.controllerPWMDrivers.param.valid
         onClicked: {
-            pwmDriversWindow.visible = true
+            pwmDriversWindow.showNormal()
+            pwmDriversWindow.raise()
         }
         Window {
             id: pwmDriversWindow

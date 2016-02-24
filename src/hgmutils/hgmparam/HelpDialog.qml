@@ -10,7 +10,8 @@ Window {
     height: helpForm.implicitHeight + 20
 
     function show() {
-        visible = true
+        showNormal()
+        raise()
     }
 
     Column {

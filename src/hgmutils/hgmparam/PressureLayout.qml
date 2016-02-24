@@ -114,7 +114,10 @@ RowLayout {
                         }
                         Button {
                             text: "By Shift"
-                            onClicked: prefillDialogPress.visible = true
+                            onClicked: {
+                                prefillDialogPress.showNormal()
+                                prefillDialogPress.raise()
+                            }
                             enabled: prefillDialogPress.allListsAnyValid
                         }
                     }
@@ -148,7 +151,10 @@ RowLayout {
                 title: "Garage Shift"
                 Button {
                     text: "Edit"
-                    onClicked: garageShiftDialog.visible = true
+                    onClicked: {
+                        garageShiftDialog.showNormal()
+                        garageShiftDialog.raise()
+                    }
                     enabled: parameters.garageShiftMaxPressure.param.valid || parameters.garageShiftProportionalConstant.param.valid
                 }
             }
@@ -284,7 +290,10 @@ RowLayout {
                     
                     Button {
                         text: "By Shift"
-                        onClicked: prefillDialogPct.visible = true
+                        onClicked: {
+                            prefillDialogPct.showNormal()
+                            prefillDialogPct.raise()
+                        }
                         enabled: prefillDialogPct.allListsAnyValid
                     }
                 }
@@ -302,7 +311,10 @@ RowLayout {
                 title: "Garage Shift"
                 Button {
                     text: "Edit"
-                    onClicked: garageShiftDialogPct.visible = true
+                    onClicked: {
+                        garageShiftDialogPct.showNormal()
+                        garageShiftDialogPct.raise()
+                    }
                     enabled: parameters.garageShiftMaxPercentage.param.valid || parameters.garageShiftProportionalConstant.param.valid
                 }
             }

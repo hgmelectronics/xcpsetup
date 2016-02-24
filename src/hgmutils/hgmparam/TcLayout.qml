@@ -72,13 +72,19 @@ RowLayout {
         Button {
             Layout.margins: 8
             text: "Percentage and PID"
-            onClicked: percentagePidDialog.visible = true
+            onClicked: {
+                percentagePidDialog.showNormal()
+                percentagePidDialog.raise()
+            }
             enabled: parameters.tccPrefillPercentage.param.valid
         }
         Button {
             Layout.margins: 8
             text: "Pressure and PID"
-            onClicked: pressurePidDialog.visible = true
+            onClicked: {
+                pressurePidDialog.showNormal()
+                pressurePidDialog.raise()
+            }
             enabled: parameters.tccPrefillPressure.param.valid
         }
         TableParamEditButton {

@@ -15,5 +15,8 @@ Button {
         }
     }
 
-    onClicked: window.show()
+    onClicked: {
+        window.showNormal()
+        window.raise()
+    }
 }

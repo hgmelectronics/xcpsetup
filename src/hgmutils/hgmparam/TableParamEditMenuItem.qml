@@ -16,7 +16,10 @@ MenuItem {
     property alias hasShapers: table.hasShapers
 
     enabled: table.tableParam.param.value.range.valid
-    onTriggered: table.visible = true
+    onTriggered: {
+        table.showNormal()
+        table.raise()
+    }
     text: tableParam.name
 
     property TableParamEditDialog dialog: TableParamEditDialog {

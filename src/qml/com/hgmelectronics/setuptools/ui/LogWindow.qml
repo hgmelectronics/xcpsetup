@@ -26,10 +26,6 @@ Window {
         info: 2
     })
 
-    function show() {
-        visible = true
-    }
-
     function fault(msg) {
         addMsg({type: messageType.fault, text: msg, time: new Date()})
         faultCount = faultCount + 1

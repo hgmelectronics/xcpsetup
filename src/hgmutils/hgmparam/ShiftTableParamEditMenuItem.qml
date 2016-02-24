@@ -17,7 +17,10 @@ MenuItem {
     property alias nextGearName: table.nextGearName
 
     enabled: table.speedTableParam.param.valid
-    onTriggered: table.visible = true
+    onTriggered: {
+        table.showNormal()
+        table.raise()
+    }
     text: speedTableParam.name
 
     property ShiftTableParamEditDialog dialog: ShiftTableParamEditDialog {

@@ -17,272 +17,129 @@ ColumnLayout {
         Layout.fillHeight: true
         Layout.minimumHeight: 150
         TablePlot {
-            id: shiftAPlot
-            plots: [
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[0].param.stringModel
-                    valid: parameters.upshiftTablesA[0].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[0]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[1].param.stringModel
-                    valid: parameters.upshiftTablesA[1].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[1]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[2].param.stringModel
-                    valid: parameters.upshiftTablesA[2].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[2]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[3].param.stringModel
-                    valid: parameters.upshiftTablesA[3].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[3]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[4].param.stringModel
-                    valid: parameters.upshiftTablesA[4].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[4]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[0].param.stringModel
-                    valid: parameters.downshiftTablesA[0].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[5]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[1].param.stringModel
-                    valid: parameters.downshiftTablesA[1].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[6]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[2].param.stringModel
-                    valid: parameters.downshiftTablesA[2].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[7]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[3].param.stringModel
-                    valid: parameters.downshiftTablesA[3].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[8]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[4].param.stringModel
-                    valid: parameters.downshiftTablesA[4].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[9]
-                    fill: false
-                }
-            ]
-            visible: shiftASelectButton.checked
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            anchors.bottom: parent.bottom
-            anchors.top: parent.top
-        }
-
-        TablePlot {
-            id: shiftBPlot
-            plots: [
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[0].param.stringModel
-                    valid: parameters.upshiftTablesB[0].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[0]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[1].param.stringModel
-                    valid: parameters.upshiftTablesB[1].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[1]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[2].param.stringModel
-                    valid: parameters.upshiftTablesB[2].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[2]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[3].param.stringModel
-                    valid: parameters.upshiftTablesB[3].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[3]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[4].param.stringModel
-                    valid: parameters.upshiftTablesB[4].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[4]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[0].param.stringModel
-                    valid: parameters.downshiftTablesB[0].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[5]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[1].param.stringModel
-                    valid: parameters.downshiftTablesB[1].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[6]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[2].param.stringModel
-                    valid: parameters.downshiftTablesB[2].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[7]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[3].param.stringModel
-                    valid: parameters.downshiftTablesB[3].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[8]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[4].param.stringModel
-                    valid: parameters.downshiftTablesB[4].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
-                    baseColor: cs2Defaults.preferredPlotColors[9]
-                    fill: false
-                }
-            ]
-            visible: shiftBSelectButton.checked
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            anchors.bottom: parent.bottom
-            anchors.top: parent.top
-        }
-
-        TablePlot {
             id: shiftABPlot
             plots: [
                 XYTrace {
                     tableModel: parameters.upshiftTablesA[0].param.stringModel
-                    valid: parameters.upshiftTablesA[0].param.value.valid
+                    valid: upshiftAVisible.checked && parameters.upshiftTablesA[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[0]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesA[1].param.stringModel
-                    valid: parameters.upshiftTablesA[1].param.value.valid
+                    valid: upshiftAVisible.checked && parameters.upshiftTablesA[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[1]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesA[2].param.stringModel
-                    valid: parameters.upshiftTablesA[2].param.value.valid
+                    valid: upshiftAVisible.checked && parameters.upshiftTablesA[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[2]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesA[3].param.stringModel
-                    valid: parameters.upshiftTablesA[3].param.value.valid
+                    valid: upshiftAVisible.checked && parameters.upshiftTablesA[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[3]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesA[4].param.stringModel
-                    valid: parameters.upshiftTablesA[4].param.value.valid
+                    valid: upshiftAVisible.checked && parameters.upshiftTablesA[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[4]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesB[0].param.stringModel
-                    valid: parameters.upshiftTablesB[0].param.value.valid
+                    valid: upshiftBVisible.checked && parameters.upshiftTablesB[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[5]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesB[1].param.stringModel
-                    valid: parameters.upshiftTablesB[1].param.value.valid
+                    valid: upshiftBVisible.checked && parameters.upshiftTablesB[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[6]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesB[2].param.stringModel
-                    valid: parameters.upshiftTablesB[2].param.value.valid
+                    valid: upshiftBVisible.checked && parameters.upshiftTablesB[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[7]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesB[3].param.stringModel
-                    valid: parameters.upshiftTablesB[3].param.value.valid
+                    valid: upshiftBVisible.checked && parameters.upshiftTablesB[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[8]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.upshiftTablesB[4].param.stringModel
-                    valid: parameters.upshiftTablesB[4].param.value.valid
+                    valid: upshiftBVisible.checked && parameters.upshiftTablesB[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[9]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesA[0].param.stringModel
-                    valid: parameters.downshiftTablesA[0].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    valid: downshiftAVisible.checked && parameters.downshiftTablesA[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[10]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesA[1].param.stringModel
-                    valid: parameters.downshiftTablesA[1].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    valid: downshiftAVisible.checked &&parameters.downshiftTablesA[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[11]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesA[2].param.stringModel
-                    valid: parameters.downshiftTablesA[2].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    valid: downshiftAVisible.checked && parameters.downshiftTablesA[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[12]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesA[3].param.stringModel
-                    valid: parameters.downshiftTablesA[3].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    valid: downshiftAVisible.checked && parameters.downshiftTablesA[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[13]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesA[4].param.stringModel
-                    valid: parameters.downshiftTablesA[4].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    valid: downshiftAVisible.checked && parameters.downshiftTablesA[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[14]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesB[0].param.stringModel
-                    valid: parameters.downshiftTablesB[0].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    valid: downshiftBVisible.checked && parameters.downshiftTablesB[0].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[15]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesB[1].param.stringModel
-                    valid: parameters.downshiftTablesB[1].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    valid: downshiftBVisible.checked && parameters.downshiftTablesB[1].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[16]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesB[2].param.stringModel
-                    valid: parameters.downshiftTablesB[2].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    valid: downshiftBVisible.checked && parameters.downshiftTablesB[2].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[17]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesB[3].param.stringModel
-                    valid: parameters.downshiftTablesB[3].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    valid: downshiftBVisible.checked && parameters.downshiftTablesB[3].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[18]
                     fill: false
                 },
                 XYTrace {
                     tableModel: parameters.downshiftTablesB[4].param.stringModel
-                    valid: parameters.downshiftTablesB[4].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    valid: downshiftBVisible.checked && parameters.downshiftTablesB[4].param.value.valid
                     baseColor: cs2Defaults.preferredPlotColors[19]
                     fill: false
                 }
             ]
-            visible: shiftABSelectButton.checked
             Layout.fillWidth: true
             Layout.fillHeight: true
             anchors.bottom: parent.bottom
@@ -290,26 +147,33 @@ ColumnLayout {
         }
 
         ColumnLayout {
-            ExclusiveGroup { id: shiftPlotSelectGroup }
-
-            RadioButton {
-                id: shiftASelectButton
-                text: "A"
+            CheckBox {
+                id: upshiftAVisible
                 checked: true
-                exclusiveGroup: shiftPlotSelectGroup
+                text: "A Up"
+                onCheckedChanged: shiftABPlot.replot()
                 Layout.minimumWidth: 60
             }
-            RadioButton {
-                id: shiftBSelectButton
-                text: "B"
-                exclusiveGroup: shiftPlotSelectGroup
+            CheckBox {
+                id: downshiftAVisible
+                text: "A Down"
+                enabled: (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                onCheckedChanged: shiftABPlot.replot()
                 Layout.minimumWidth: 60
             }
-            RadioButton {
-                id: shiftABSelectButton
-                text: "A + B"
-                exclusiveGroup: shiftPlotSelectGroup
+            CheckBox {
+                id: upshiftBVisible
+                text: "B Up"
+                onCheckedChanged: shiftABPlot.replot()
                 Layout.minimumWidth: 60
+            }
+            CheckBox {
+                id: downshiftBVisible
+                text: "B Down"
+                enabled: (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                onCheckedChanged: shiftABPlot.replot()
+                Layout.minimumWidth: 60
+
             }
         }
 
@@ -432,7 +296,10 @@ ColumnLayout {
 
         Button {
             text: "TS Torque Transfer Time"
-            onClicked: tsTorqueTransferDialog.visible = true
+            onClicked: {
+                tsTorqueTransferDialog.showNormal()
+                tsTorqueTransferDialog.raise()
+            }
             enabled: tsTorqueTransferDialog.allListsAnyValid
         }
         ScalarListDialog {
@@ -444,7 +311,10 @@ ColumnLayout {
 
         Button {
             text: "ST Torque Transfer Time"
-            onClicked: stTorqueTransferDialog.visible = true
+            onClicked: {
+                stTorqueTransferDialog.showNormal()
+                stTorqueTransferDialog.raise()
+            }
             enabled: stTorqueTransferDialog.allListsAnyValid
         }
         ScalarListDialog {

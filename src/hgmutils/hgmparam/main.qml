@@ -28,6 +28,10 @@ ApplicationWindow {
 
     signal connect
 
+    onClosing: {
+        Qt.quit()
+    }
+
     onConnect: {
         paramLayer.slaveId = "%1:%2".arg(targetCmdId.value).arg(
                     targetResId.value)

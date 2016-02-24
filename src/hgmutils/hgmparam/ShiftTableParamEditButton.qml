@@ -17,7 +17,10 @@ Button {
     property alias nextGearName: table.nextGearName
 
     enabled: table.speedTableParam.param.value.range.valid
-    onClicked: table.visible = true
+    onClicked: {
+        table.showNormal()
+        table.raise()
+    }
 
     ShiftTableParamEditDialog {
         id: table

@@ -24,6 +24,10 @@ ApplicationWindow {
     title: programName
     visible: true
 
+    onClosing: {
+        Qt.quit()
+    }
+
     Cs2Tool {
         id: cs2Tool
         programData: application.progFileData
