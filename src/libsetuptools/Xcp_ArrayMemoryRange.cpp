@@ -138,7 +138,7 @@ void ArrayMemoryRange::download()
 
 void ArrayMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
 {
-    if(!data.empty())
+    if(writable() && !data.empty())
     {
         Q_ASSERT(beginIndex + data.size() <= mDim);
 

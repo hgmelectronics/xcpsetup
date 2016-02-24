@@ -67,7 +67,8 @@ void MemoryRange::setValid(bool newValid)
 
 void MemoryRange::setWriteCacheDirty(bool newWriteCacheDirty)
 {
-    if(updateDelta<bool>(mWriteCacheDirty, newWriteCacheDirty))
+    const bool dirty = writable() & newWriteCacheDirty;
+    if(updateDelta<bool>(mWriteCacheDirty, dirty))
         emit writeCacheDirtyChanged();
 }
 

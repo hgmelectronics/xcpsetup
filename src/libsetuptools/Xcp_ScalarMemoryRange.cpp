@@ -58,7 +58,7 @@ void ScalarMemoryRange::download()
 
 void ScalarMemoryRange::download(QVariant value)
 {
-    if(value != mSlaveValue)
+    if(writable() && value != mSlaveValue)
     {
         std::vector<quint8> buffer(size());
         convertToSlave(value, buffer.data());
