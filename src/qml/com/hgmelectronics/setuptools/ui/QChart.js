@@ -1433,7 +1433,7 @@ var Chart = function(canvas, context) {
                 ctx.lineWidth = config.datasetStrokeWidth;
                 ctx.lineJoin = "round"
                 ctx.beginPath();
-                ctx.moveTo(yAxisPosX, xAxisPosY - animPc * calculateOffset(data[iDataset].yData[0],calculatedYScale,yScaleHop))
+                ctx.moveTo(xPos(iDataset, 0), yPos(iDataset, 0))
 
                 for (iRow = 1; iRow < data[iDataset].yData.length; iRow++) {
                     if (config.bezierCurve)
@@ -1446,7 +1446,7 @@ var Chart = function(canvas, context) {
 
                 if (config.datasetFill) {
                     ctx.lineTo(xPos(iDataset, data[iDataset].yData.length-1), xAxisPosY);
-                    ctx.lineTo(yAxisPosX, xAxisPosY);
+                    ctx.lineTo(xPos(iDataset, 0), xAxisPosY);
                     ctx.closePath();
                     ctx.fillStyle = data[iDataset].fillColor;
                     ctx.fill();

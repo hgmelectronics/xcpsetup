@@ -32,7 +32,7 @@ QVariant ArrayParam::get(int row) const
     return slot()->asFloat(mRange->get(row));
 }
 
-bool ArrayParam::set(int row, const QVariant& value) const
+bool ArrayParam::set(int row, const QVariant& value)
 {
     return mRange->set(row, slot()->asRaw(value));
 }
@@ -178,6 +178,16 @@ ArrayParamModel::ArrayParamModel(bool stringFormat, bool raw, ArrayParam *parent
 
     connect(mParam->slot(), &Slot::valueParamChanged, this, &ArrayParamModel::onValueParamChanged);
     connect(mParam->range(), &ArrayMemoryRange::dataChanged, this, &ArrayParamModel::onRangeDataChanged);
+}
+
+QVariant ArrayParamModel::get(int row) const
+{
+    return data(index(row), Qt::DisplayRole);
+}
+
+bool ArrayParamModel::set(int row, const QVariant & value)
+{
+    return setData(index(row), value, Qt::DisplayRole);
 }
 
 int ArrayParamModel::count() const

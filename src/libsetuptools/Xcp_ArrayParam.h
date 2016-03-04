@@ -32,7 +32,7 @@ public:
     Q_INVOKABLE QVariant get(int row) const;
 
     // sets the value in engineering units
-    Q_INVOKABLE bool set(int row, const QVariant& value) const;
+    Q_INVOKABLE bool set(int row, const QVariant& value);
 
     int count() const;
 
@@ -86,6 +86,9 @@ class ArrayParamModel : public QAbstractListModel
     Q_PROPERTY(int count READ count CONSTANT)
 public:
     ArrayParamModel(bool stringFormat, bool raw, ArrayParam *parent);
+
+    Q_INVOKABLE QVariant get(int row) const;
+    Q_INVOKABLE bool set(int row, const QVariant& value);
 
     int count() const;
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
