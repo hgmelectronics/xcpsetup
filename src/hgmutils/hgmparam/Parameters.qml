@@ -460,10 +460,16 @@ QtObject {
         }
     }
 
-    property ScalarMetaParam transmissionDownshiftTypeTorqueThreshold: ScalarMetaParam {
-        name: qsTr("Downshift Type Torque Threshold")
-        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_downshift_type_torque_threshold, true, true, slots.percentage1)
+    property ScalarMetaParam transmissionSTDownshiftTorqueThreshold: ScalarMetaParam {
+        name: qsTr("ST Downshift Torque Threshold")
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_st_downshift_torque_threshold, true, true, slots.percentage1)
     }
+
+    property ScalarMetaParam transmissionSTUpshiftTorqueThreshold: ScalarMetaParam {
+        name: qsTr("ST Upshift Torque Threshold")
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_st_upshift_torque_threshold, true, true, slots.percentage1)
+    }
+
 
     property ScalarMetaParamList transmissionTorqueSpeedTransferTime: ScalarMetaParamList {
         ScalarMetaParam {

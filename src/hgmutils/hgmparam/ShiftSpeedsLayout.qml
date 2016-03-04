@@ -335,7 +335,11 @@ ColumnLayout {
         }
         ScalarParamSpinBox {
             Layout.alignment: Qt.AlignTop
-            metaParam: parameters.transmissionDownshiftTypeTorqueThreshold
+            metaParam: parameters.transmissionSTDownshiftTorqueThreshold
+        }
+        ScalarParamSpinBox {
+            Layout.alignment: Qt.AlignTop
+            metaParam: parameters.transmissionSTUpshiftTorqueThreshold
         }
 
     }

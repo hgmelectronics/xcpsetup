@@ -256,7 +256,8 @@ QtObject {
     readonly property double transmission_shift_6_5_prefill_pressure:   0x03c0000d
     readonly property double transmission_shift_6_5_prefill_percentage: 0x03d0000d
 
-    readonly property double transmission_downshift_type_torque_threshold: 0x03e00000
+    readonly property double transmission_st_downshift_torque_threshold: 0x03e00000
+    readonly property double transmission_st_upshift_torque_threshold: 0x03e30000
 
     readonly property double transmission_shift_r_n_ts_transfer_time: 0x03e10000
     readonly property double transmission_shift_n_r_ts_transfer_time: 0x03e10001
