@@ -81,14 +81,14 @@ void ProgramLayer::setSlaveTimeout(int timeout)
     mConn->setTimeout(timeout);
 }
 
-int ProgramLayer::slaveResetTimeout()
+int ProgramLayer::slaveBootDelay()
 {
-    return mConn->resetTimeout();
+    return mConn->bootDelay();
 }
 
-void ProgramLayer::setSlaveResetTimeout(int timeout)
+void ProgramLayer::setSlaveBootDelay(int timeout)
 {
-    mConn->setResetTimeout(timeout);
+    mConn->setBootDelay(timeout);
 }
 
 int ProgramLayer::slaveProgClearTimeout()

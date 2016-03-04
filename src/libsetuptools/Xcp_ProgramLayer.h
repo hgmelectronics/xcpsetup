@@ -17,7 +17,7 @@ class ProgramLayer : public QObject
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
     Q_PROPERTY(int slaveTimeout READ slaveTimeout WRITE setSlaveTimeout)
-    Q_PROPERTY(int slaveResetTimeout READ slaveResetTimeout WRITE setSlaveResetTimeout)
+    Q_PROPERTY(int slaveBootDelay READ slaveBootDelay WRITE setSlaveBootDelay)
     Q_PROPERTY(int slaveProgClearTimeout READ slaveProgClearTimeout WRITE setSlaveProgClearTimeout)
     Q_PROPERTY(int maxEraseSize READ maxEraseSize WRITE setMaxEraseSize)
     Q_PROPERTY(bool slaveProgResetIsAcked READ slaveProgResetIsAcked WRITE setSlaveProgResetIsAcked)
@@ -38,8 +38,8 @@ public:
     bool intfcOk();
     int slaveTimeout();
     void setSlaveTimeout(int);
-    int slaveResetTimeout();
-    void setSlaveResetTimeout(int);
+    int slaveBootDelay();
+    void setSlaveBootDelay(int);
     int slaveProgClearTimeout();
     void setSlaveProgClearTimeout(int);
     bool slaveProgResetIsAcked();

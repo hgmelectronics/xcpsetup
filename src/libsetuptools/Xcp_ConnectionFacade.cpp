@@ -130,14 +130,14 @@ void ConnectionFacade::setNvWriteTimeout(int val)
     mConn->setNvWriteTimeout(val);
 }
 
-int ConnectionFacade::resetTimeout()
+int ConnectionFacade::bootDelay()
 {
-    return mConn->resetTimeout();
+    return mConn->bootDelay();
 }
 
-void ConnectionFacade::setResetTimeout(int val)
+void ConnectionFacade::setBootDelay(int val)
 {
-    mConn->setResetTimeout(val);
+    mConn->setBootDelay(val);
 }
 
 double ConnectionFacade::opProgressNotifyFrac()

@@ -91,7 +91,7 @@ void Test::initTestCase()
     mConnFacade->setIntfc(mIntfc);
     mConnFacade->setTimeout(CONN_TIMEOUT);
     mConnFacade->setNvWriteTimeout(CONN_NVWRITE_TIMEOUT);
-    mConnFacade->setResetTimeout(CONN_RESET_TIMEOUT);
+    mConnFacade->setBootDelay(CONN_RESET_TIMEOUT);
     mConnFacade->setProgClearTimeout(CONN_PROGCLEAR_TIMEOUT);
     mSlave = new TestingSlave(mIntfc, this);
     updateAg(1);
