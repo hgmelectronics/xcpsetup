@@ -23,7 +23,6 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     mProgLayer->setSlaveProgResetIsAcked(false);
 }
 
-
 Cs2Tool::~Cs2Tool() {}
 
 FlashProg *Cs2Tool::programData()
@@ -54,16 +53,6 @@ void Cs2Tool::setProgramData(FlashProg *prog)
         emit programChanged();
         return;
     }
-
-    int nSmallBlocks = nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
-    int nBlocks = nSmallBlocks + nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
-
-    int minBlockSize = nSmallBlocks ? SMALLBLOCK_SIZE : LARGEBLOCK_SIZE;
-    int maxClearBlocks = (mProgLayer->intfc()->maxReplyTimeout() - PROG_CLEAR_BASE_TIMEOUT_MSEC) / PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC;
-    if(maxClearBlocks == 0)
-        maxClearBlocks = 1; // If we technically cannot do even one, fudge it and hope
-    mProgLayer->setMaxEraseSize(minBlockSize * maxClearBlocks);
-    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * std::min(maxClearBlocks, nBlocks));
 
     mProgFileOkToFlash = true;
     emit programChanged();
@@ -211,6 +200,8 @@ void Cs2Tool::startProgramming()
         emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
         return;
     }
+
+    updateProgClear();
 
     setState(State::Program_InitialConnect);
     
@@ -369,6 +360,20 @@ void Cs2Tool::onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString str, Se
 {
     Q_UNUSED(ext);
     emit fault(result, str);
+}
+
+void Cs2Tool::updateProgClear()
+{
+    int nSmallBlocks = nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
+    int nBlocks = nSmallBlocks + nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
+
+    int minBlockSize = nSmallBlocks ? SMALLBLOCK_SIZE : LARGEBLOCK_SIZE;
+    int maxClearBlocks = (mProgLayer->intfc()->maxReplyTimeout() - PROG_CLEAR_BASE_TIMEOUT_MSEC) / PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC;
+    if(maxClearBlocks == 0)
+        maxClearBlocks = 1; // If we technically cannot do even one, fudge it and hope
+    mProgLayer->setMaxEraseSize(minBlockSize * maxClearBlocks);
+    int idealTimeout = PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * std::min(maxClearBlocks, nBlocks);
+    mProgLayer->setSlaveProgClearTimeout(std::min(idealTimeout, mProgLayer->intfc()->maxReplyTimeout()));
 }
 
 int Cs2Tool::nBlocksInRange(uint progBase, uint progSize, uint rangeBase, uint rangeTop, uint blockSize)
