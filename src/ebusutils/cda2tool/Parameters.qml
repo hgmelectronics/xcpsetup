@@ -424,19 +424,19 @@ QtObject {
         name: qsTr("")
     }
     property ScalarMetaParam motorMotoringIntegrator: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorMotoringIntegrator, true, true, slots.current1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorMotoringIntegrator, false, false, slots.current1)
         name: qsTr("")
     }
     property ScalarMetaParam motorRegenIntegrator: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorRegenIntegrator, true, true, slots.current1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorRegenIntegrator, false, false, slots.current1)
         name: qsTr("")
     }
     property ScalarMetaParam motorAdjMaxMotoringCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxMotoringCurr, true, true, slots.current1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxMotoringCurr, false, false, slots.current1)
         name: qsTr("")
     }
     property ScalarMetaParam motorAdjMaxRegenCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxRegenCurr, true, true, slots.current1)
+        param: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxRegenCurr, false, false, slots.current1)
         name: qsTr("")
     }
 
