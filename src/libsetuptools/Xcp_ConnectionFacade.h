@@ -13,7 +13,7 @@ class ConnectionFacade : public QObject
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
-    Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
+    Q_PROPERTY(int bootDelay READ bootDelay WRITE setBootDelay)
     Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
     Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
     Q_PROPERTY(SetupTools::Xcp::Connection::State state READ state WRITE setState NOTIFY stateChanged)
@@ -37,8 +37,8 @@ public:
     void setTimeout(int);
     int nvWriteTimeout();
     void setNvWriteTimeout(int);
-    int resetTimeout();
-    void setResetTimeout(int);
+    int bootDelay();
+    void setBootDelay(int);
     double opProgressNotifyFrac();
     void setOpProgressNotifyFrac(double);
     int progClearTimeout(void);

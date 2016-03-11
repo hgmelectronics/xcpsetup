@@ -256,7 +256,7 @@ private:
     Q_PROPERTY(QObject *intfc READ intfc WRITE setIntfc)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
-    Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
+    Q_PROPERTY(int bootDelay READ bootDelay WRITE setBootDelay)
     Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
     Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
     Q_PROPERTY(bool progResetIsAcked READ progResetIsAcked WRITE setProgResetIsAcked)
@@ -274,8 +274,8 @@ public:
     void setTimeout(int msec);
     int nvWriteTimeout(void);
     void setNvWriteTimeout(int msec);
-    int resetTimeout(void);
-    void setResetTimeout(int msec);
+    int bootDelay(void);
+    void setBootDelay(int msec);
     double opProgressNotifyFrac();
     void setOpProgressNotifyFrac(double);
     int progClearTimeout(void);
@@ -402,7 +402,7 @@ private:
 
     Interface::Interface *mIntfc;
     QReadWriteLock mIntfcLock;
-    int mTimeoutMsec, mNvWriteTimeoutMsec, mResetTimeoutMsec, mProgClearTimeoutMsec;
+    int mTimeoutMsec, mNvWriteTimeoutMsec, mBootDelayMsec, mProgClearTimeoutMsec;
     bool mProgResetIsAcked;
 
     bool mConnected;

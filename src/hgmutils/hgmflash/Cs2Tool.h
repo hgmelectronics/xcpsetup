@@ -76,22 +76,21 @@ private:
     void onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
 
     enum class State
-    {
+    {                               // Precond                                  Action
         IntfcNotOk = 0,
         Idle,
-        Program_InitialConnect,
-        Program_ResetToBootloader,
-        Program_Program,
+        Program_InitialConnect,     // Prog layer not busy                      Set prog layer to cal mode
+        Program_ResetToBootloader,  // Cal mode, slave in app                   Program reset
+        Program_Reconnect,          // Slave disconnected, bootloader starting  Set prog layer to cal mode
+        Program_Program,            // Cal mode, slave in bootloader
         Program_Verify,
-        Program_ResetToApplication,
         Program_CalMode,
         Reset_Reset,
         _N_STATES
     };
     static constexpr int N_STATES = static_cast<int>(State::_N_STATES);
-    static constexpr int TIMEOUT_MSEC = 250;
-    static constexpr int NVWRITE_TIMEOUT_MSEC = 250;
-    static constexpr int RESET_TIMEOUT_MSEC = 3000;
+    static constexpr int TIMEOUT_MSEC = 500;
+    static constexpr int BOOT_DELAY_MSEC = 2000;
     static constexpr int ADDR_GRAN = 4;
     static constexpr int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
     static constexpr int PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC = 120;   // Round up from 105

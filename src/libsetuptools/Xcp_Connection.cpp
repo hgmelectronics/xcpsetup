@@ -145,7 +145,7 @@ Connection::Connection(QObject *parent) :
     mIntfc(nullptr),
     mTimeoutMsec(0),
     mNvWriteTimeoutMsec(0),
-    mResetTimeoutMsec(0),
+    mBootDelayMsec(0),
     mProgClearTimeoutMsec(0),
     mProgResetIsAcked(true),
     mConnected(false),
@@ -196,14 +196,14 @@ void Connection::setNvWriteTimeout(int msec)
     mNvWriteTimeoutMsec = msec;
 }
 
-int Connection::resetTimeout()
+int Connection::bootDelay()
 {
-    return mResetTimeoutMsec;
+    return mBootDelayMsec;
 }
 
-void Connection::setResetTimeout(int msec)
+void Connection::setBootDelay(int msec)
 {
-    mResetTimeoutMsec = msec;
+    mBootDelayMsec = msec;
 }
 
 double Connection::opProgressNotifyFrac()
@@ -282,7 +282,7 @@ OpResult Connection::setState(State val)
             Q_ASSERT(mPgmStarted);
             // need to do program reset
             EMIT_RETURN_ON_FAIL(setStateDone, programReset());
-            EMIT_RETURN(setStateDone, open(mResetTimeoutMsec));
+            EMIT_RETURN(setStateDone, open());
         }
         else
         {
@@ -756,6 +756,7 @@ OpResult Connection::programReset()
 
         mConnected = false;
         mCalcMta.reset();
+        QThread::msleep(mBootDelayMsec);
         emit stateChanged();
         return OpResult::Success;
     };

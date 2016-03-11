@@ -19,7 +19,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     connect(mProgLayer, &Xcp::ProgramLayer::opProgressChanged, this, &Cs2Tool::onProgLayerProgressChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::opMsg, this, &Cs2Tool::onProgLayerOpMsg);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
-    mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
+    mProgLayer->setSlaveBootDelay(BOOT_DELAY_MSEC);
     mProgLayer->setSlaveProgResetIsAcked(false);
 }
 
@@ -248,6 +248,28 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
             }
         }
     }
+    if(mState == State::Program_Reconnect)
+    {
+        if(result != SetupTools::Xcp::OpResult::Success)
+        {
+            setState(State::Idle);
+            emit programmingDone(static_cast<int>(result));
+        }
+        else
+        {
+            if(mProgLayer->conn()->addrGran() == 1)
+            {
+                // in bootloader
+                setState(State::Program_Program);
+                mProgLayer->program(&mInfilledProgData);
+            }
+            else
+            {
+                setState(State::Idle);
+                emit programmingDone(static_cast<int>(Xcp::OpResult::BadReply));
+            }
+        }
+    }
     else if(mState == State::Program_CalMode)
     {
         if(result == SetupTools::Xcp::OpResult::Success)
@@ -304,9 +326,8 @@ void Cs2Tool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *p
         return;
     }
 
-    setState(State::Program_ResetToApplication);
-
-    mProgLayer->programReset();
+    setState(State::Program_CalMode);
+    mProgLayer->calMode();
 }
 void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
 {
@@ -318,18 +339,7 @@ void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
             emit programmingDone(static_cast<int>(result));
             return;
         }
-        setState(State::Program_Program);
-        mProgLayer->program(&mInfilledProgData);
-    }
-    else if(mState == State::Program_ResetToApplication)
-    {
-        if(result != SetupTools::Xcp::OpResult::Success)
-        {
-            setState(State::Idle);
-            emit programmingDone(static_cast<int>(static_cast<int>(result)));
-            return;
-        }
-        setState(State::Program_CalMode);
+        setState(State::Program_Reconnect);
         mProgLayer->calMode();
     }
     else if(mState == State::Reset_Reset)

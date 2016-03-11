@@ -30,7 +30,7 @@ IbemTool::IbemTool(QObject *parent) :
     connect(mProgLayer, &Xcp::ProgramLayer::pgmModeDone, this, &IbemTool::onProgramModeDone);
     connect(mProgLayer, &Xcp::ProgramLayer::disconnectDone, this, &IbemTool::onDisconnectDone);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
-    mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
+    mProgLayer->setSlaveBootDelay(RESET_TIMEOUT_MSEC);
 }
 
 IbemTool::~IbemTool() {}
