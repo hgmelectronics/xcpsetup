@@ -90,7 +90,7 @@ private:
     };
     static constexpr int N_STATES = static_cast<int>(State::_N_STATES);
     static constexpr int TIMEOUT_MSEC = 500;
-    static constexpr int BOOT_DELAY_MSEC = 3000;
+    static constexpr int BOOT_DELAY_MSEC = 2000;
     static constexpr int ADDR_GRAN = 4;
     static constexpr int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
     static constexpr int PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC = 120;   // Round up from 105

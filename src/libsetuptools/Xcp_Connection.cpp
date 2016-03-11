@@ -282,7 +282,6 @@ OpResult Connection::setState(State val)
             Q_ASSERT(mPgmStarted);
             // need to do program reset
             EMIT_RETURN_ON_FAIL(setStateDone, programReset());
-            QThread::msleep(mBootDelayMsec);
             EMIT_RETURN(setStateDone, open());
         }
         else
@@ -757,6 +756,7 @@ OpResult Connection::programReset()
 
         mConnected = false;
         mCalcMta.reset();
+        QThread::msleep(mBootDelayMsec);
         emit stateChanged();
         return OpResult::Success;
     };
