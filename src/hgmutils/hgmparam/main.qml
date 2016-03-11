@@ -45,7 +45,7 @@ ApplicationWindow {
         id: paramLayer
         addrGran: 4
         slaveTimeout: 100
-        slaveNvWriteTimeout: 500
+        slaveNvWriteTimeout: 1000
 
         function checkImmediateWrite() {
             if(slaveConnected && idle && ImmediateWrite.keys.length > 0) {
