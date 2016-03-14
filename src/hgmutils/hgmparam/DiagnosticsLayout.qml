@@ -239,23 +239,37 @@ Flow {
             }
         }
     }
+
+    Button {
+        text: "Switch Monitor"
+        enabled: parameters.controllerSwitchCurrent.param.valid
+        onClicked: {
+            switchMonitorWindow.showNormal()
+            switchMonitorWindow.raise()
+        }
+        Window {
+            id: switchMonitorWindow
+            title: qsTr("Switch Monitor")
+            width: 520
+            height: 400
+
+            RowLayout {
+                id: switchMonitorRowLayout
+                anchors.fill: parent
+                MultiroleTableParamEdit {
+                    Layout.margins: 10
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    tableMetaParam: parameters.controllerSwitchMonitor
+                    roleNames: ["x", "input", "output"]
+                    label: ({"x": "Switch", "input": "Input", "output": "Output"})
+                }
+            }
+
+            AutoRefreshArea {
+                base: switchMonitorRowLayout
+            }
+        }
+    }
 }
-
-
-//        Tab {
-//            title: qsTr("Inputs")
-//            active: true
-//            Flow {
-//                anchors.fill: parent
-//                anchors.margins: 10
-//                spacing: 10
-//                TableParamView {
-//                    name: qsTr("Switch Monitor Input")
-//                    xLabel: qsTr("Switch #")
-//                    valueLabel: qsTr("State")
-//                    tableParam: parameters.switchMonitorModel
-//                    enabled: parameters.switchMonitorInput.valid
-//                }
-//            }
-//        }
-

@@ -48,6 +48,10 @@ QtObject {
         slot: slots.count
         count: 16
     }
+    property SlotArrayModel switchIdAxisModel: SlotArrayModel {
+        slot: slots.switchId
+        count: 22
+    }
 
 
     //readonly property ArrayParam controllerSoftwareVersion: registry.addArrayParam(MemoryRange.S32, paramId.controller_software_version, false, false, slots)
@@ -161,6 +165,34 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_speed_timer_2_frequency, true, false, slots.frequency)
         name: qsTr("Speed 2")
         immediateWrite: true
+    }
+
+    property TableMetaParam controllerSwitchState: TableMetaParam {
+        param: TableParam {
+            x: switchIdAxisModel
+            value: registry.addArrayParam(MemoryRange.S32, paramId.controller_switch_state, switchIdAxisModel.count, false, false, slots.booleanOnOff1)
+        }
+        name: qsTr("Switch Monitor Input")
+    }
+
+    property TableMetaParam controllerSwitchCurrent: TableMetaParam {
+        param: TableParam {
+            x: switchIdAxisModel
+            value: registry.addArrayParam(MemoryRange.S32, paramId.controller_switch_current, switchIdAxisModel.count, false, false, slots.booleanOnOff1)
+        }
+        name: qsTr("Switch Monitor Output")
+    }
+
+    property MultiroleTableMetaParam controllerSwitchMonitor: MultiroleTableMetaParam {
+        param: MultiroleTableParam {
+            roleMapping: {
+                "x": switchIdAxisModel,
+                "input": controllerSwitchState.param.value,
+                "output": controllerSwitchCurrent.param.value
+            }
+        }
+        isLiveData: true
+        name: qsTr("Switch Monitor")
     }
 
     property ScalarMetaParam controllerSDCardWriteProtect: ScalarMetaParam {

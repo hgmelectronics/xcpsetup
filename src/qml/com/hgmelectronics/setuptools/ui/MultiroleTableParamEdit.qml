@@ -93,7 +93,10 @@ Rectangle {
                                     return displayDelegate
                             }
                             else {
-                                return encodingDelegate
+                                if(root.tableParam.model[styleData.role].flags(0) & Qt.ItemIsEditable)
+                                    return encodingDelegate
+                                else
+                                    return readOnlyEncodingDelegate
                             }
                         }
                         Component {
@@ -221,6 +224,20 @@ Rectangle {
                                     onAccepted: {
                                         modelForwarder.dataModel = editText
                                     }
+                                }
+                            }
+                        }
+                        Component {
+                            id: readOnlyEncodingDelegate
+                            RowLayout {
+                                property int implicitWidth: text.implicitWidth + 16
+                                id: modelForwarder
+                                property var dataModel: model[styleData.role]
+                                Label {
+                                    Layout.leftMargin: 5
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    id: text
+                                    text: modelForwarder.dataModel
                                 }
                             }
                         }
