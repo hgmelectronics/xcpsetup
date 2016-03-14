@@ -23,7 +23,7 @@ Dialog {
         maximumValue: 1000000
         minimumValue: 0
         stepSize: 100
-        suffix: qsTr("msec")
+        suffix: qsTr(" msec")
         onEditingFinished: {
             AutoRefreshManager.interval = spinBox.value
         }
