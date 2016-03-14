@@ -345,4 +345,16 @@ RowLayout {
             }
         }
     }
+    GroupBox {
+        title: "Common"
+        Layout.alignment: Qt.AlignTop
+        ColumnLayout {
+            ScalarParamSpinBox {
+                metaParam: parameters.pressureAdjustA
+            }
+            ScalarParamSpinBox {
+                metaParam: parameters.pressureAdjustB
+            }
+        }
+    }
 }
