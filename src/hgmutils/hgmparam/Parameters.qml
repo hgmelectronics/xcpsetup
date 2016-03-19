@@ -2204,6 +2204,21 @@ QtObject {
         name: qsTr("TCC D Coeff")
     }
 
+    property ScalarMetaParam tccStrokeTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_stroke_time, true, true, slots.timeMilliseconds1)
+        name: qsTr("TCC Stroke Time")
+    }
+
+    property ScalarMetaParam tccStrokePressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_stroke_pressure, true, true, slots.pressure)
+        name: qsTr("TCC Stroke Pressure")
+    }
+
+    property ScalarMetaParam tccStrokePercentage: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_stroke_percentage, true, true, slots.percentage2)
+        name: qsTr("TCC Stroke Percentage")
+    }
+
     property TableMetaParam torqueConverterMult: TableMetaParam {
         param: TableParam {
             x: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_speedratio, 16, true, true, slots.ratio1)

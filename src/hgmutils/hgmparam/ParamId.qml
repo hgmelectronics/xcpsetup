@@ -503,6 +503,9 @@ QtObject {
     readonly property double tcc_pressure_proportional_constant: 0x06590000
     readonly property double tcc_pressure_integral_constant: 0x065a0000
     readonly property double tcc_pressure_derivative_constant: 0x065b0000
+    readonly property double tcc_stroke_time: 0x065c0000
+    readonly property double tcc_stroke_pressure: 0x065d0000
+    readonly property double tcc_stroke_percentage: 0x065e0000
 
     readonly property double tc_mult_speedratio: 0x06700000
     readonly property double tc_mult_torqueratio: 0x06710000
