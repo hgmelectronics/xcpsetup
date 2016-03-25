@@ -22,18 +22,13 @@ else {
     RECURSIVE_DELETE_COMMAND = rm -rf
 }
 
-CONFIG( debug, debug|release ) {
-    # debug
-    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/debug/$${TARGET}$${TARGET_CUSTOM_EXT}))
-    DEPLOY_DIR = $$shell_quote($$shell_path($${OUT_PWD}/debug/deploy))
-} else {
-    # release
+CONFIG( release, debug|release ) {
+    # deploy on release only
     DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
     DEPLOY_DIR = $$shell_quote($$shell_path($${OUT_PWD}/release/deploy))
-}
-
-win32 | macx {
-    QMAKE_POST_LINK += $${RECURSIVE_DELETE_COMMAND} $${DEPLOY_DIR} &
-    QMAKE_POST_LINK += $${DEPLOY_COMMAND} --dir $${DEPLOY_DIR} --qmldir $${PWD} $${DEPLOY_TARGET} &
-    QMAKE_POST_LINK += $${COPY_COMMAND} $${DEPLOY_TARGET} $${DEPLOY_DIR}
+    win32 | macx {
+        QMAKE_POST_LINK += $${RECURSIVE_DELETE_COMMAND} $${DEPLOY_DIR} &
+        QMAKE_POST_LINK += $${DEPLOY_COMMAND} --dir $${DEPLOY_DIR} --qmldir $${PWD} $${DEPLOY_TARGET} &
+        QMAKE_POST_LINK += $${COPY_COMMAND} $${DEPLOY_TARGET} $${DEPLOY_DIR}
+    }
 }
