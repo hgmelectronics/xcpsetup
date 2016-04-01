@@ -67,6 +67,9 @@ RowLayout {
             metaParam: parameters.tccPrefillTime
         }
         ScalarParamSpinBox {
+            metaParam: parameters.tccStrokeTime
+        }
+        ScalarParamSpinBox {
             metaParam: parameters.tccApplyTime
         }
         Button {
@@ -100,6 +103,7 @@ RowLayout {
             ScalarMetaParamList {
                 params: [
                     parameters.tccPrefillPercentage,
+                    parameters.tccStrokePercentage,
                     parameters.tccMaxPercentage,
                     parameters.tccPercentageProportionalConstant,
                     parameters.tccPercentageIntegralConstant,
@@ -114,6 +118,7 @@ RowLayout {
             ScalarMetaParamList {
                 params: [
                     parameters.tccPrefillPressure,
+                    parameters.tccStrokePressure,
                     parameters.tccMaxPressure,
                     parameters.tccPressureProportionalConstant,
                     parameters.tccPressureIntegralConstant,
