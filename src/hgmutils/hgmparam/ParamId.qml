@@ -134,11 +134,11 @@ QtObject {
 
     readonly property double transmission_shift_2_1_apply_pressure: 0x03480000
     readonly property double transmission_shift_3_2_apply_pressure: 0x03490000
-    readonly property double transmission_shift_4_3_apply_pressure: 0x34a0000
-    readonly property double transmission_shift_5_4_apply_pressure: 0x34b0000
-    readonly property double transmission_shift_6_5_apply_pressure: 0x34c0000
-    readonly property double transmission_shift_7_6_apply_pressure: 0x34d0000
-    readonly property double transmission_shift_8_7_apply_pressure: 0x34e0000
+    readonly property double transmission_shift_4_3_apply_pressure: 0x034a0000
+    readonly property double transmission_shift_5_4_apply_pressure: 0x034b0000
+    readonly property double transmission_shift_6_5_apply_pressure: 0x034c0000
+    readonly property double transmission_shift_7_6_apply_pressure: 0x034d0000
+    readonly property double transmission_shift_8_7_apply_pressure: 0x034e0000
 
     readonly property double transmission_shift_1_2_release_pressure: 0x03510000
     readonly property double transmission_shift_2_3_release_pressure: 0x03520000
@@ -520,6 +520,7 @@ QtObject {
     readonly property double engine_cylinders: 0x07000000
 
     readonly property double engine_running_detection_speed: 0x07010000
+    readonly property double engine_max_torque: 0x07020000
 
     readonly property double engine_map_torque_proportion: 0x07050000
 

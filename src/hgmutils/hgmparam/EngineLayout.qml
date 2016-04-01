@@ -57,6 +57,9 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.engineMapTorqueProportion
         }
+        ScalarParamSpinBox {
+            metaParam: parameters.engineMaxTorque
+        }
     }
 
 

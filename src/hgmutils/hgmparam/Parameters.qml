@@ -1298,6 +1298,11 @@ QtObject {
         name: qsTr("Engine MAP Torque Proportion")
     }
 
+    property ScalarMetaParam engineMaxTorque: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.engine_max_torque, true, true, slots.torque)
+        name: qsTr("Engine Max Torque")
+    }
+
     property ScalarMetaParam engineIdleShutdownTime: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.engine_idle_shutdown_time, true, true, slots.timeInSecondsZeroIsDisabled)
         name: qsTr("Engine Idle Shutdown Time")
