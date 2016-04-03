@@ -255,6 +255,10 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             antialiasing: true
+                            margins.left: 0
+                            margins.right: 0
+                            margins.bottom: 0
+                            margins.top: 0
 
                             RoleModeledLineSeries {
                                 id: cellVoltSeries

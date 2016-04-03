@@ -9,7 +9,7 @@ QtObject {
         qsTr("All files (*)")
     ]
     readonly property var preferredPlotColors: [
-        "#000000",
+        "#010101",
         "#e69f00",
         "#56b4e9",
         "#009e73",

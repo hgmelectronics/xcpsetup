@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
+import QtCharts 2.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
@@ -169,134 +170,259 @@ ColumnLayout {
     RowLayout {
         Layout.fillHeight: true
         Layout.minimumHeight: 150
-        TablePlot {
-            id: shiftABPlot
-            plots: [
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[0].param.stringModel
-                    valid: upshiftAVisible0 && parameters.upshiftTablesA[0].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[0]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[1].param.stringModel
-                    valid: upshiftAVisible1 && parameters.upshiftTablesA[1].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[1]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[2].param.stringModel
-                    valid: upshiftAVisible2 && parameters.upshiftTablesA[2].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[2]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[3].param.stringModel
-                    valid: upshiftAVisible3 && parameters.upshiftTablesA[3].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[3]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesA[4].param.stringModel
-                    valid: upshiftAVisible4 && parameters.upshiftTablesA[4].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[4]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[0].param.stringModel
-                    valid: upshiftBVisible0 && parameters.upshiftTablesB[0].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[5]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[1].param.stringModel
-                    valid: upshiftBVisible1 && parameters.upshiftTablesB[1].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[6]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[2].param.stringModel
-                    valid: upshiftBVisible2 && parameters.upshiftTablesB[2].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[7]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[3].param.stringModel
-                    valid: upshiftBVisible3 && parameters.upshiftTablesB[3].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[8]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.upshiftTablesB[4].param.stringModel
-                    valid: upshiftBVisible4 && parameters.upshiftTablesB[4].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[9]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[0].param.stringModel
-                    valid: downshiftAVisible0 && parameters.downshiftTablesA[0].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[10]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[1].param.stringModel
-                    valid: downshiftAVisible1 &&parameters.downshiftTablesA[1].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[11]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[2].param.stringModel
-                    valid: downshiftAVisible2 && parameters.downshiftTablesA[2].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[12]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[3].param.stringModel
-                    valid: downshiftAVisible3 && parameters.downshiftTablesA[3].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[13]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesA[4].param.stringModel
-                    valid: downshiftAVisible4 && parameters.downshiftTablesA[4].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[14]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[0].param.stringModel
-                    valid: downshiftBVisible0 && parameters.downshiftTablesB[0].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[15]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[1].param.stringModel
-                    valid: downshiftBVisible1 && parameters.downshiftTablesB[1].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[16]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[2].param.stringModel
-                    valid: downshiftBVisible2 && parameters.downshiftTablesB[2].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[17]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[3].param.stringModel
-                    valid: downshiftBVisible3 && parameters.downshiftTablesB[3].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[18]
-                    fill: false
-                },
-                XYTrace {
-                    tableModel: parameters.downshiftTablesB[4].param.stringModel
-                    valid: downshiftBVisible4 && parameters.downshiftTablesB[4].param.value.valid
-                    baseColor: cs2Defaults.preferredPlotColors[19]
-                    fill: false
-                }
-            ]
+        ChartView {
+            id: plot
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             anchors.bottom: parent.bottom
             anchors.top: parent.top
+            margins.left: 0
+            margins.right: 0
+            margins.bottom: 0
+            margins.top: 0
+
+            antialiasing: true
+            legend.visible: false   // FIXME review whether this is a good idea
+
+            RoleModeledLineSeries {
+                id: upshiftA0Series
+                visible: upshiftAVisible0 && parameters.upshiftTablesA[0].param.value.valid
+                model: parameters.upshiftTablesA[0].param.stringModel
+                name: qsTr("1-2 A")
+                style: Qt.SolidLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftA1Series
+                visible: upshiftAVisible1 && parameters.upshiftTablesA[1].param.value.valid
+                model: parameters.upshiftTablesA[1].param.stringModel
+                name: qsTr("2-3 A")
+                style: Qt.SolidLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftA2Series
+                visible: upshiftAVisible2 && parameters.upshiftTablesA[2].param.value.valid
+                model: parameters.upshiftTablesA[2].param.stringModel
+                name: qsTr("3-4 A")
+                style: Qt.SolidLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftA3Series
+                visible: upshiftAVisible3 && parameters.upshiftTablesA[3].param.value.valid
+                model: parameters.upshiftTablesA[3].param.stringModel
+                name: qsTr("4-5 A")
+                style: Qt.SolidLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftA4Series
+                visible: upshiftAVisible4 && parameters.upshiftTablesA[4].param.value.valid
+                model: parameters.upshiftTablesA[4].param.stringModel
+                name: qsTr("5-6 A")
+                style: Qt.SolidLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftA0Series
+                visible: downshiftAVisible0 && parameters.downshiftTablesA[0].param.value.valid
+                model: parameters.downshiftTablesA[0].param.stringModel
+                name: qsTr("2-1 A")
+                color: upshiftA0Series.color
+                width: 2
+                style: Qt.DashLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftA1Series
+                visible: downshiftAVisible1 && parameters.downshiftTablesA[1].param.value.valid
+                model: parameters.downshiftTablesA[1].param.stringModel
+                name: qsTr("3-2 A")
+                color: upshiftA1Series.color
+                width: 2
+                style: Qt.DashLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftA2Series
+                visible: downshiftAVisible2 && parameters.downshiftTablesA[2].param.value.valid
+                model: parameters.downshiftTablesA[2].param.stringModel
+                name: qsTr("4-3 A")
+                color: upshiftA2Series.color
+                width: 2
+                style: Qt.DashLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftA3Series
+                visible: downshiftAVisible3 && parameters.downshiftTablesA[3].param.value.valid
+                model: parameters.downshiftTablesA[3].param.stringModel
+                name: qsTr("5-4 A")
+                color: upshiftA3Series.color
+                width: 2
+                style: Qt.DashLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftA4Series
+                visible: downshiftAVisible4 && parameters.downshiftTablesA[4].param.value.valid
+                model: parameters.downshiftTablesA[4].param.stringModel
+                name: qsTr("6-5 A")
+                color: upshiftA4Series.color
+                width: 2
+                style: Qt.DashLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftB0Series
+                visible: upshiftBVisible0 && parameters.upshiftTablesB[0].param.value.valid
+                model: parameters.upshiftTablesB[0].param.stringModel
+                name: qsTr("1-2 B")
+                color: upshiftA0Series.color
+                width: 2
+                style: Qt.DotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftB1Series
+                visible: upshiftBVisible1 && parameters.upshiftTablesB[1].param.value.valid
+                model: parameters.upshiftTablesB[1].param.stringModel
+                name: qsTr("2-3 B")
+                color: upshiftA1Series.color
+                width: 2
+                style: Qt.DotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftB2Series
+                visible: upshiftBVisible2 && parameters.upshiftTablesB[2].param.value.valid
+                model: parameters.upshiftTablesB[2].param.stringModel
+                name: qsTr("3-4 B")
+                color: upshiftA2Series.color
+                width: 2
+                style: Qt.DotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftB3Series
+                visible: upshiftBVisible3 && parameters.upshiftTablesB[3].param.value.valid
+                model: parameters.upshiftTablesB[3].param.stringModel
+                name: qsTr("4-5 B")
+                color: upshiftA3Series.color
+                width: 2
+                style: Qt.DotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: upshiftB4Series
+                visible: upshiftBVisible4 && parameters.upshiftTablesB[4].param.value.valid
+                model: parameters.upshiftTablesB[4].param.stringModel
+                name: qsTr("5-6 B")
+                color: upshiftA4Series.color
+                width: 2
+                style: Qt.DotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftB0Series
+                visible: downshiftBVisible0 && parameters.downshiftTablesB[0].param.value.valid
+                model: parameters.downshiftTablesB[0].param.stringModel
+                name: qsTr("2-1 B")
+                color: upshiftA0Series.color
+                width: 2
+                style: Qt.DashDotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftB1Series
+                visible: downshiftBVisible1 && parameters.downshiftTablesB[1].param.value.valid
+                model: parameters.downshiftTablesB[1].param.stringModel
+                name: qsTr("3-2 B")
+                color: upshiftA1Series.color
+                width: 2
+                style: Qt.DashDotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftB2Series
+                visible: downshiftBVisible2 && parameters.downshiftTablesB[2].param.value.valid
+                model: parameters.downshiftTablesB[2].param.stringModel
+                name: qsTr("4-3 B")
+                color: upshiftA2Series.color
+                width: 2
+                style: Qt.DashDotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftB3Series
+                visible: downshiftBVisible3 && parameters.downshiftTablesB[3].param.value.valid
+                model: parameters.downshiftTablesB[3].param.stringModel
+                name: qsTr("5-4 B")
+                color: upshiftA3Series.color
+                width: 2
+                style: Qt.DashDotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+            RoleModeledLineSeries {
+                id: downshiftB4Series
+                visible: downshiftBVisible4 && parameters.downshiftTablesB[4].param.value.valid
+                model: parameters.downshiftTablesB[4].param.stringModel
+                name: qsTr("6-5 B")
+                color: upshiftA4Series.color
+                width: 2
+                style: Qt.DashDotLine
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
+            }
+        }
+
+        XYSeriesAutoAxis {
+            id: autoAxis
+            series: [
+                upshiftA0Series,
+                upshiftA1Series,
+                upshiftA2Series,
+                upshiftA3Series,
+                upshiftA4Series,
+                downshiftA0Series,
+                downshiftA1Series,
+                downshiftA2Series,
+                downshiftA3Series,
+                downshiftA4Series,
+                upshiftB0Series,
+                upshiftB1Series,
+                upshiftB2Series,
+                upshiftB3Series,
+                upshiftB4Series,
+                downshiftB0Series,
+                downshiftB1Series,
+                downshiftB2Series,
+                downshiftB3Series,
+                downshiftB4Series,
+            ]
+            xAxis.titleText: qsTr("Torque %1").arg(parameters.upshiftTablesA[0].param.x.slot.unit)
+            yAxis.titleText: qsTr("Speed %1").arg(parameters.upshiftTablesA[0].param.value.slot.unit)
         }
 
         GroupBox {
@@ -312,7 +438,6 @@ ColumnLayout {
                             text: parameters.upshiftTablesA[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
                             onCheckedChanged: {
                                 setShiftVisible(false, false, index, checked)
-                                shiftABPlot.replot()
                             }
                             Layout.minimumWidth: 40
                         }
@@ -327,7 +452,6 @@ ColumnLayout {
                             text: parameters.downshiftTablesA[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
                             onCheckedChanged: {
                                 setShiftVisible(true, false, index, checked)
-                                shiftABPlot.replot()
                             }
                             Layout.minimumWidth: 40
                         }
@@ -348,7 +472,6 @@ ColumnLayout {
                             text: parameters.upshiftTablesB[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
                             onCheckedChanged: {
                                 setShiftVisible(false, true, index, checked)
-                                shiftABPlot.replot()
                             }
                             Layout.minimumWidth: 40
                         }
@@ -363,7 +486,6 @@ ColumnLayout {
                             text: parameters.downshiftTablesB[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
                             onCheckedChanged: {
                                 setShiftVisible(true, true, index, checked)
-                                shiftABPlot.replot()
                             }
                             Layout.minimumWidth: 40
                         }
