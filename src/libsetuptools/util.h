@@ -285,11 +285,11 @@ private:
 };
 
 template <typename T>
-bool updateDelta(T &val, T newVal)
+bool updateDelta(T & val, const T & newVal)
 {
-    T oldVal = val;
+    bool diff = !(val == newVal);
     val = newVal;
-    return !(oldVal == newVal);
+    return diff;
 }
 
 template <typename Ii>

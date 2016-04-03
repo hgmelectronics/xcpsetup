@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += network serialport quick qml
+QT       += network serialport quick qml charts
 
 QT       -= gui
 
@@ -53,7 +53,9 @@ SOURCES += \
     ScaleOffsetProxyModel.cpp \
     SlotProxyModel.cpp \
     Xcp_VarArrayParam.cpp \
-    Xcp_TestingSlave.cpp
+    Xcp_TestingSlave.cpp \
+    RoleXYModelMapper.cpp \
+    XYSeriesAutoAxis.cpp
 
 HEADERS += \
     util.h \
@@ -92,7 +94,9 @@ HEADERS += \
     ScaleOffsetProxyModel.h \
     SlotProxyModel.h \
     Xcp_VarArrayParam.h \
-    Xcp_TestingSlave.h
+    Xcp_TestingSlave.h \
+    RoleXYModelMapper.h \
+    XYSeriesAutoAxis.h
 
 unix {
     target.path = /usr/lib

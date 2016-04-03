@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
+import QtCharts 2.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
@@ -249,50 +250,51 @@ Item {
                             text: "Cell Voltages"
                             font.bold: true
                         }
-                        TablePlot {
-                            id: cellVoltPlot
+                        ChartView {
+                            id: cellPlot
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            chartOptions: ({
-                                pointDot: false,
-                                bezierCurve: false,
-                                xScaleOverride: true,
-                                xScaleSteps: cellVoltTrace.valueList.length / 8,
-                                xScaleStepWidth: 8,
-                                xScaleStartValue: 0
-                            })
+                            antialiasing: true
 
-                            plots: [
-                                XYTrace {
-                                    id: cellVoltTrace
-                                    tableModel: parameters.cbtmCellVolt.stringModel
-                                    valid: parameters.cbtmCellVolt.value.valid
+                            RoleModeledLineSeries {
+                                id: cellVoltSeries
+                                visible: parameters.cbtmCellVolt.value.valid
+                                model: parameters.cbtmCellVolt.stringModel
+                                name: qsTr("Cell Voltage")
+
+                                axisX: ValueAxis {
+                                    min: 0
+                                    max: parameters.cbtmCellVolt.value.count
+                                    tickCount: parameters.cbtmCellVolt.value.count / 8 + 1
                                 }
-                            ]
-                        }
-                        Label {
-                            Layout.alignment: Qt.AlignLeft
-                            text: "Tab Temperatures"
-                            font.bold: true
-                        }
-                        TablePlot {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            chartOptions: ({
-                                pointDot: false,
-                                bezierCurve: false,
-                                xScaleOverride: true,
-                                xScaleSteps: tabTempTrace.valueList.length / 9,
-                                xScaleStepWidth: 9,
-                                xScaleStartValue: 0
-                            })
-                            plots: [
-                                XYTrace {
-                                    id: tabTempTrace
-                                    tableModel: parameters.cbtmTabTemp.stringModel
-                                    valid: parameters.cbtmTabTemp.value.valid
+
+                                axisY: cellVoltAutoAxis.yAxis
+                            }
+
+                            RoleModeledLineSeries {
+                                id: tabTempSeries
+                                visible: parameters.cbtmTabTemp.value.valid
+                                model: parameters.cbtmTabTemp.stringModel
+                                name: qsTr("Tab Temp degC")
+
+                                axisX: ValueAxis {
+                                    min: 0
+                                    max: parameters.cbtmTabTemp.value.count
+                                    tickCount: parameters.cbtmTabTemp.value.count / 9 + 1
                                 }
-                            ]
+
+                                axisY: tabTempAutoAxis.yAxis
+                            }
+                        }
+
+                        XYSeriesAutoAxis {
+                            id: cellVoltAutoAxis
+                            series: [ cellVoltSeries ]
+                        }
+
+                        XYSeriesAutoAxis {
+                            id: tabTempAutoAxis
+                            series: [ tabTempSeries ]
                         }
                     }
                 }

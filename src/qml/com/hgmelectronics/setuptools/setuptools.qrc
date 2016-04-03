@@ -32,6 +32,7 @@
         <file>MultiroleTableMetaParam.qml</file>
         <file>ui/LogWindow.qml</file>
         <file>ui/ShowLogButton.qml</file>
+        <file>ui/RoleModeledLineSeries.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

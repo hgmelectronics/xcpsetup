@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
+import QtCharts 2.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
@@ -23,9 +24,9 @@ Window {
 
     title: name
     width: (hasShapers || hasPlot) ? 420 : 240
-    height: 350 + chartBox.height
+    height: 350 + plot.height
     minimumWidth: (hasShapers || hasPlot) ? 420 : 240
-    minimumHeight: 350 + chartBox.height
+    minimumHeight: 350 + plot.height
 
     function arrayAverage() {
         var sum = 0.0
@@ -241,26 +242,33 @@ Window {
             color: hasPlot ? Qt.darker(pal.window, 1.5) : "transparent"
         }
 
-        Rectangle {
-            id: chartBox
+        ChartView {
+            id: plot
+
             Layout.fillWidth: true
             Layout.fillHeight: false
+            Layout.minimumHeight: 250
+            height: 250
 
-            Layout.minimumHeight: hasPlot ? 150 : 0  // dreadful hack because making chart invisible causes QML to hang
-            height: hasPlot ? 150 : 0
+            antialiasing: true
+            legend.visible: false
+            visible: hasPlot
 
-            TablePlot {
-                id: plot
-                anchors.fill: parent
-                anchors.margins: 10
-                plots: [
-                    XYTrace {
-                        tableModel: root.tableParam.param.stringModel
-                        valid: root.tableParam.param.value.valid
-                    }
-                ]
+            RoleModeledLineSeries {
+                id: series1
+                visible: root.tableParam.param.value.valid
+                model: root.tableParam.param.stringModel
+
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
             }
-            //visible: hasPlot
+        }
+
+        XYSeriesAutoAxis {
+            id: autoAxis
+            series: [ series1 ]
+            xAxis.titleText: xLabel
+            yAxis.titleText: valueLabel
         }
 
         RowLayout {
