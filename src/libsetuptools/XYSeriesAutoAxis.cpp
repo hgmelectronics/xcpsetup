@@ -85,6 +85,13 @@ void decadify(double & min, double & max)
         return;
     }
 
+    if(max == min)
+    {
+        min = max - 1;
+        max = max + 1;
+        return;
+    }
+
     double orderOfMagnitude = pow(10, floor(log(max - min) / log(10)));
     min = floor(min / orderOfMagnitude) * orderOfMagnitude;
     max = ceil(max / orderOfMagnitude) * orderOfMagnitude;
@@ -116,12 +123,15 @@ void XYSeriesAutoAxis::onSeriesChanged()
         }
     }
 
+    qDebug() << xMin << xMax << yMin << yMax;
+
     decadify(xMin, xMax);
     decadify(yMin, yMax);
 
-    if(xMin != mXAxis->min() || xMax != mXAxis->max()
-            || yMin != mYAxis->min() || yMax != mYAxis->max())
+    if(!(xMin == mXAxis->min()) || !(xMax == mXAxis->max())
+            || !(yMin == mYAxis->min()) || !(yMax == mYAxis->max()))
     {
+        qDebug() << xMin << xMax << yMin << yMax;
         mXAxis->setMin(xMin);
         mXAxis->setMax(xMax);
         mYAxis->setMin(yMin);
