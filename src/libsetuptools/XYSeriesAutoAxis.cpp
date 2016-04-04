@@ -123,15 +123,12 @@ void XYSeriesAutoAxis::onSeriesChanged()
         }
     }
 
-    qDebug() << xMin << xMax << yMin << yMax;
-
     decadify(xMin, xMax);
     decadify(yMin, yMax);
 
     if(!(xMin == mXAxis->min()) || !(xMax == mXAxis->max())
             || !(yMin == mYAxis->min()) || !(yMax == mYAxis->max()))
     {
-        qDebug() << xMin << xMax << yMin << yMax;
         mXAxis->setMin(xMin);
         mXAxis->setMax(xMax);
         mYAxis->setMin(yMin);
