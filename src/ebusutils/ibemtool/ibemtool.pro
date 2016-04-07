@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets serialport
+QT += qml quick widgets serialport charts
 
 SOURCES += main.cpp \
     IbemTool.cpp

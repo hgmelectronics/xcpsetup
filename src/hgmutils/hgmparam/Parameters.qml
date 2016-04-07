@@ -1578,35 +1578,35 @@ QtObject {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 1-2 A")
+            name: qsTr("Shift Speed 1-2 A")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 2-3 A")
+            name: qsTr("Shift Speed 2-3 A")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 3-4 A")
+            name: qsTr("Shift Speed 3-4 A")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 4-5 A")
+            name: qsTr("Shift Speed 4-5 A")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 5-6 A")
+            name: qsTr("Shift Speed 5-6 A")
         }
     ]
     property
@@ -1619,7 +1619,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Upshift RPM 1-2 A")
+            name: qsTr("Shift RPM 1-2 A")
         },
         TableMetaParam {
             param: TableParam {
@@ -1629,7 +1629,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Upshift RPM 2-3 A")
+            name: qsTr("Shift RPM 2-3 A")
         },
         TableMetaParam {
             param: TableParam {
@@ -1639,7 +1639,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Upshift RPM 3-4 A")
+            name: qsTr("Shift RPM 3-4 A")
         },
         TableMetaParam {
             param: TableParam {
@@ -1649,7 +1649,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Upshift RPM 4-5 A")
+            name: qsTr("Shift RPM 4-5 A")
         },
         TableMetaParam {
             param: TableParam {
@@ -1659,7 +1659,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Upshift RPM 5-6 A")
+            name: qsTr("Shift RPM 5-6 A")
         }
     ]
 
@@ -1670,35 +1670,35 @@ QtObject {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 1-2 B")
+            name: qsTr("Shift Speed 1-2 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 2-3 B")
+            name: qsTr("Shift Speed 2-3 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 3-4 B")
+            name: qsTr("Shift Speed 3-4 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 4-5 B")
+            name: qsTr("Shift Speed 4-5 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Upshift Speed 5-6 B")
+            name: qsTr("Shift Speed 5-6 B")
         }
     ]
     property
@@ -1762,35 +1762,35 @@ QtObject {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 1-2 A")
+            name: qsTr("Shift Speed 2-1 A")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 2-3 A")
+            name: qsTr("Shift Speed 3-2 A")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 3-4 A")
+            name: qsTr("Shift Speed 4-3 A")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 4-5 A")
+            name: qsTr("Shift Speed 5-4 A")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 5-6 A")
+            name: qsTr("Shift Speed 6-5 A")
         }
     ]
     property
@@ -1803,7 +1803,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Downshift RPM 1-2 A")
+            name: qsTr("Shift RPM 2-1 A")
         },
         TableMetaParam {
             param: TableParam {
@@ -1813,7 +1813,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Downshift RPM 2-3 A")
+            name: qsTr("Shift RPM 3-2 A")
         },
         TableMetaParam {
             param: TableParam {
@@ -1823,7 +1823,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Downshift RPM 3-4 A")
+            name: qsTr("Shift RPM 4-3 A")
         },
         TableMetaParam {
             param: TableParam {
@@ -1833,7 +1833,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Downshift RPM 4-5 A")
+            name: qsTr("Shift RPM 5-4 A")
         },
         TableMetaParam {
             param: TableParam {
@@ -1843,7 +1843,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Downshift RPM 5-6 A")
+            name: qsTr("Shift RPM 6-5 A")
         }
     ]
 
@@ -1854,35 +1854,35 @@ QtObject {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 1-2 B")
+            name: qsTr("Shift Speed 2-1 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 2-3 B")
+            name: qsTr("Shift Speed 3-2 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 3-4 B")
+            name: qsTr("Shift Speed 4-3 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 4-5 B")
+            name: qsTr("Shift Speed 5-4 B")
         },
         TableMetaParam {
             param: TableParam {
                 x: percentage1AxisModel
                 value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed)
             }
-            name: qsTr("Downshift Speed 5-6 B")
+            name: qsTr("Shift Speed 6-5 B")
         }
     ]
     property
@@ -1895,7 +1895,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Shift RPM 1-2 B")
+            name: qsTr("Shift RPM 2-1 B")
         },
         TableMetaParam {
             param: TableParam {
@@ -1905,7 +1905,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Shift RPM 2-3 B")
+            name: qsTr("Shift RPM 3-2 B")
         },
         TableMetaParam {
             param: TableParam {
@@ -1915,7 +1915,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Shift RPM 3-4 B")
+            name: qsTr("Shift RPM 4-3 B")
         },
         TableMetaParam {
             param: TableParam {
@@ -1925,7 +1925,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Shift RPM 4-5 B")
+            name: qsTr("Shift RPM 5-4 B")
         },
         TableMetaParam {
             param: TableParam {
@@ -1935,7 +1935,7 @@ QtObject {
                     slot: slots.rpm1
                 }
             }
-            name: qsTr("Shift RPM 5-6 B")
+            name: qsTr("Shift RPM 6-5 B")
         }
     ]
 

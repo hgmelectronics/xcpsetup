@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
 import QtQuick.Dialogs 1.2
+import QtCharts 2.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
@@ -11,9 +12,9 @@ Window {
     id: root
     title: name
     width: 500
-    height: 500
+    height: 350 + speedPlot.height
     minimumWidth: 500
-    minimumHeight: 220 + chartBox.height
+    minimumHeight: 220 + speedPlot.height
 
     function isDefined(val) {
         return (typeof(val) !== "undefined") && (val !== null)
@@ -280,25 +281,37 @@ Window {
                 event.accepted = false
         }
 
-        Rectangle {
-            id: chartBox
+        ChartView {
+            id: speedPlot
+
             Layout.fillWidth: true
             Layout.fillHeight: false
             Layout.minimumWidth: 300
-            Layout.minimumHeight: 150
-            height: 150
+            Layout.minimumHeight: 250
+            height: 250
+            margins.left: 0
+            margins.right: 0
+            margins.bottom: 0
+            margins.top: 0
 
-            TablePlot {
-                id: speedPlot
-                anchors.fill: parent
-                anchors.margins: 10
-                plots: [
-                    XYTrace {
-                        tableModel: root.speedTableParam.param.stringModel
-                        valid: root.speedTableParam.param.value.valid
-                    }
-                ]
+            antialiasing: true
+            legend.visible: false
+
+            RoleModeledLineSeries {
+                id: series1
+                visible: root.speedTableParam.param.value.valid
+                model: root.speedTableParam.param.stringModel
+
+                axisX: autoAxis.xAxis
+                axisY: autoAxis.yAxis
             }
+        }
+
+        XYSeriesAutoAxis {
+            id: autoAxis
+            series: [ series1 ]
+            xAxis.titleText: qsTr("Torque %1").arg(tpsSlot.unit)
+            yAxis.titleText: qsTr("Speed %1").arg(speedSlot.unit)
         }
 
         RowLayout {
@@ -334,7 +347,7 @@ Window {
                 }
                 TableViewColumn {
                     role: "tps"
-                    title: qsTr("Throttle %1").arg(tpsSlot.unit)
+                    title: qsTr("Torque %1").arg(tpsSlot.unit)
                     width: tableView.viewport.width / tableView.columnCount
                 }
                 TableViewColumn {

@@ -64,12 +64,22 @@ ColumnLayout {
                     transShaftSpeedSensorDialog.raise()
                 }
             }
+
             TableParamEditButton {
                 Layout.margins: 8
                 tableParam: parameters.transmissionTemperaturePressureCompensation
                 xLabel: "Temp"
                 valueLabel: "%"
             }
+        }
+        TableParamView {
+            Layout.alignment: Qt.AlignTop
+            name: "Gear Ratios"
+            xLabel: "Gear"
+            valueLabel: "Ratio"
+            xColumnWidth: 60
+            valueColumnWidth: 60
+            model: parameters.transmissionGearNumbersRatios.param.stringModel
         }
     }
 

@@ -20,6 +20,8 @@
 #include "ScaleOffsetProxyModel.h"
 #include "SlotProxyModel.h"
 #include "ModelListProxy.h"
+#include "RoleXYModelMapper.h"
+#include "XYSeriesAutoAxis.h"
 
 namespace SetupTools
 {
@@ -67,6 +69,8 @@ void registerTypes()
     qmlRegisterType<SetupTools::SlotProxyModel>("com.hgmelectronics.setuptools", major, minor, "SlotProxyModel");
     qmlRegisterType<SetupTools::TableMapperModel>("com.hgmelectronics.setuptools", major, minor, "TableMapperModel");
     qmlRegisterType<SetupTools::ModelListProxy>("com.hgmelectronics.setuptools", major, minor, "ModelListProxy");
+    qmlRegisterType<SetupTools::RoleXYModelMapper>("com.hgmelectronics.setuptools.ui", major, minor, "RoleXYModelMapper");
+    qmlRegisterType<SetupTools::XYSeriesAutoAxis>("com.hgmelectronics.setuptools.ui", major, minor, "XYSeriesAutoAxis");
 }
 
 }
