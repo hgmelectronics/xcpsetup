@@ -56,6 +56,7 @@ public:
     int opProgressNotifyPeriod();
     void setOpProgressNotifyPeriod(int);
     Q_INVOKABLE void forceSlaveSupportCalPage();    //!< Call after connecting for slaves that erroneously report they do not support calibration/paging
+    Q_INVOKABLE void setSlaveCalPage();    //!< Call after connecting for slaves that need segment and page initialized
     double opProgress();
     bool writeCacheDirty();
 

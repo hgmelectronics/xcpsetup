@@ -132,6 +132,11 @@ void ParamLayer::forceSlaveSupportCalPage()
     mConn->forceSlaveSupportCalPage();
 }
 
+void ParamLayer::setSlaveCalPage()
+{
+    mConn->setCalPage(0, 0);
+}
+
 double ParamLayer::opProgress()
 {
     if(mActiveKeys.empty() || mActiveKeyIdx < 0)

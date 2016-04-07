@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MainForm.qml</file>
+        <file>AboutDialog.qml</file>
+        <file>HelpDialog.qml</file>
+        <file>Slots.qml</file>
+        <file>ParamTabView.qml</file>
+        <file>Parameters.qml</file>
+        <file>ParamId.qml</file>
+        <file>SimpleTableParamEditButton.qml</file>
+    </qresource>
+</RCC>
