@@ -17,6 +17,7 @@ MenuItem {
     property alias nextGearName: table.nextGearName
 
     enabled: table.speedTableParam.param.valid
+    visible: table.speedTableParam.param.valid
     onTriggered: {
         table.showNormal()
         table.raise()

@@ -16,6 +16,7 @@ MenuItem {
     property alias hasShapers: table.hasShapers
 
     enabled: table.tableParam.param.value.range.valid
+    visible: table.tableParam.param.value.range.valid
     onTriggered: {
         table.showNormal()
         table.raise()
