@@ -1,0 +1,12 @@
+module com.hgmelectronics.setuptools
+
+TableParam 1.0 TableParam.qml
+MultiroleTableParam 1.0 MultiroleTableParam.qml
+ScalarMetaParam 1.0 ScalarMetaParam.qml
+TableMetaParam 1.0 TableMetaParam.qml
+MultiroleTableMetaParam 1.0 MultiroleTableMetaParam.qml
+ScalarMetaParamList 1.0 ScalarMetaParamList.qml
+singleton ParamResetNeeded 1.0 ParamResetNeeded.qml
+singleton AutoRefreshSelector 1.0 AutoRefreshSelector.qml
+singleton AutoRefreshManager 1.0 AutoRefreshManager.qml
+singleton ImmediateWrite 1.0 ImmediateWrite.qml

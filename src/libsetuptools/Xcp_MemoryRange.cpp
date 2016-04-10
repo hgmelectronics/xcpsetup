@@ -7,37 +7,18 @@ namespace SetupTools
 namespace Xcp
 {
 
-MemoryRange::MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, quint8 addrGran, MemoryRangeList *parent) :
+MemoryRange::MemoryRange(MemoryRangeType type, Xcp::XcpPtr base, quint32 size, bool writable, quint8 addrGran, MemoryRangeList *parent) :
     QObject(parent),
     mBase(base),
     mSize(size),
     mAddrGran(addrGran),
     mWritable(writable),
-    mValid(true),
+    mType(type),
+    mValid(false),
     mFullReload(true),
     mWriteCacheDirty(false)
 {}
 
-bool MemoryRange::writable() const
-{
-    return mWritable;
-}
-
-void MemoryRange::setWritable(bool newWritable)
-{
-    if(updateDelta<bool>(mWritable, newWritable))
-        emit writableChanged();
-}
-
-bool MemoryRange::valid() const
-{
-    return mValid;
-}
-
-bool MemoryRange::fullReload() const
-{
-    return mFullReload;
-}
 
 void MemoryRange::setFullReload(bool newFullReload)
 {
@@ -45,24 +26,10 @@ void MemoryRange::setFullReload(bool newFullReload)
         emit fullReloadChanged();
 }
 
-XcpPtr MemoryRange::base() const
-{
-    return mBase;
-}
 
 XcpPtr MemoryRange::end() const
 {
     return mBase + (mSize / mAddrGran);
-}
-
-quint32 MemoryRange::size() const
-{
-    return mSize;
-}
-
-bool MemoryRange::writeCacheDirty() const
-{
-    return mWriteCacheDirty;
 }
 
 void MemoryRange::upload()
@@ -100,13 +67,15 @@ void MemoryRange::setValid(bool newValid)
 
 void MemoryRange::setWriteCacheDirty(bool newWriteCacheDirty)
 {
-    if(updateDelta<bool>(mWriteCacheDirty, newWriteCacheDirty))
+    const bool dirty = writable() & newWriteCacheDirty;
+    if(updateDelta<bool>(mWriteCacheDirty, dirty))
         emit writeCacheDirtyChanged();
 }
 
-void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, QVariant value, quint8 *buf)
+void MemoryRange::convertToSlave(QVariant value, quint8 *buf)
 {
-    switch(type)
+    Xcp::ConnectionFacade *conn = connectionFacade();
+    switch(mType)
     {
     case MemoryRange::MemoryRangeType::U8:
         conn->toSlaveEndian<quint8>(value.toUInt(), buf);
@@ -157,9 +126,10 @@ void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *co
     }
 }
 
-QVariant convertFromSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, const quint8 *buf)
+QVariant MemoryRange::convertFromSlave(const quint8 *buf)
 {
-    switch(type)
+    Xcp::ConnectionFacade *conn = connectionFacade();
+    switch(mType)
     {
     case MemoryRange::MemoryRangeType::U8:
         return conn->fromSlaveEndian<quint8>(buf);

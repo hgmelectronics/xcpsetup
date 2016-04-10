@@ -1,0 +1,38 @@
+<RCC>
+    <qresource prefix="/com/hgmelectronics/setuptools">
+        <file>ui/QChart.js</file>
+        <file>ui/QChart.qml</file>
+        <file>ui/TablePlot.qml</file>
+        <file>ui/XYTrace.qml</file>
+        <file>ui/qmldir</file>
+        <file>qmldir</file>
+        <file>TableParam.qml</file>
+        <file>ui/ScalarParamEdit.qml</file>
+        <file>ui/ScalarParamSpinBox.qml</file>
+        <file>ui/ScalarParamCheckBox.qml</file>
+        <file>ui/TableParamEdit.qml</file>
+        <file>ui/ScalarParamIndicator.qml</file>
+        <file>ui/EncodingParamEdit.qml</file>
+        <file>ScalarMetaParam.qml</file>
+        <file>MetaParam.qml</file>
+        <file>TableMetaParam.qml</file>
+        <file>ui/ScalarListDialog.qml</file>
+        <file>ScalarMetaParamList.qml</file>
+        <file>ui/XcpInterfaceChooser.qml</file>
+        <file>ui/BitRateChooser.qml</file>
+        <file>ParamResetNeeded.qml</file>
+        <file>AutoRefreshSelector.qml</file>
+        <file>ui/AutoRefreshOverlay.qml</file>
+        <file>ui/AutoRefreshArea.qml</file>
+        <file>AutoRefreshManager.qml</file>
+        <file>ui/AutoRefreshIntervalDialog.qml</file>
+        <file>ImmediateWrite.qml</file>
+        <file>ui/MultiroleTableParamEdit.qml</file>
+        <file>MultiroleTableParam.qml</file>
+        <file>MultiroleTableMetaParam.qml</file>
+        <file>ui/LogWindow.qml</file>
+        <file>ui/ShowLogButton.qml</file>
+        <file>ui/RoleModeledLineSeries.qml</file>
+    </qresource>
+    <qresource prefix="/"/>
+</RCC>

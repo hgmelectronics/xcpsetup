@@ -9,26 +9,28 @@ const Xcp::Interface::Can::Filter IbemTool::SLAVE_FILTER =
      0x1FFFF000,
      true};
 const QString IbemTool::SLAVE_FILTER_STR = Xcp::Interface::Can::FilterToStr(IbemTool::SLAVE_FILTER);
+constexpr Xcp::Interface::Can::SlaveId IbemTool::IBEM_RECOVERY_ID;
+constexpr Xcp::Interface::Can::SlaveId IbemTool::CDA_ID;
+constexpr Xcp::Interface::Can::SlaveId IbemTool::CDA2_ID;
 
 IbemTool::IbemTool(QObject *parent) :
     QObject(parent),
     mProgLayer(new Xcp::ProgramLayer(this)),
-    mProgFile(new ProgFile(this)),
     mSlaveListModel(new MultiselectListModel(this)),
     mActiveSlave(-1),
     mState(State::IntfcNotOk),
     mTotalSlaves(0),
     mSlavesDone(0)
 {
-    connect(mProgFile, &ProgFile::progChanged, this, &IbemTool::onProgFileChanged);
     connect(mProgLayer->conn(), &Xcp::ConnectionFacade::getAvailSlavesStrDone, this, &IbemTool::onGetAvailSlavesStrDone);
     connect(mProgLayer, &Xcp::ProgramLayer::stateChanged, this, &IbemTool::onProgLayerStateChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::programDone, this, &IbemTool::onProgramDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programVerifyDone, this, &IbemTool::onProgramVerifyDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &IbemTool::onProgramResetDone);
     connect(mProgLayer, &Xcp::ProgramLayer::pgmModeDone, this, &IbemTool::onProgramModeDone);
+    connect(mProgLayer, &Xcp::ProgramLayer::disconnectDone, this, &IbemTool::onDisconnectDone);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
-    mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
+    mProgLayer->setSlaveBootDelay(RESET_TIMEOUT_MSEC);
 }
 
 IbemTool::~IbemTool() {}
@@ -38,58 +40,59 @@ MultiselectListModel *IbemTool::slaveListModel()
     return mSlaveListModel;
 }
 
-QString IbemTool::programFilePath()
+FlashProg *IbemTool::programData()
 {
-    return mProgFile->name();
+    return mProgData;
 }
 
-void IbemTool::setProgramFilePath(QString path)
+void IbemTool::setProgramData(FlashProg *prog)
 {
-    mProgFile->setName(path);
+    mProgData = prog;
 
-    rereadProgFile();
-}
+    mProgFileOkToFlash = false;
 
-int IbemTool::programFileType()
-{
-    return mProgFile->type();
-}
-
-void IbemTool::setProgramFileType(int type)
-{
-    mProgFile->setType(static_cast<ProgFile::Type>(type));
-
-    rereadProgFile();
-}
-
-void IbemTool::rereadProgFile()
-{
-    if(mProgFile->name().size() > 0 &&
-            mProgFile->type() != ProgFile::Type::Invalid)
+    if(mProgData)
     {
-        mProgFile->read();
-        mProgFile->prog().infillToSingleBlock();
+        mInfilledProgData = *mProgData;
+
+        mInfilledProgData.infillToSingleBlock();
+
+        quint32 base = mInfilledProgData.base();
+        quint32 top = base + mInfilledProgData.size();
+
+        if(base >= PROG_BASE
+             && top <= PROG_TOP)
+            mProgFileOkToFlash = true;
     }
+
+    emit programChanged();
 }
+
 
 int IbemTool::programSize()
 {
-    return mProgFile->size();
+    if(!mProgData)
+        return 0;
+
+    int size = 0;
+    for(FlashBlock *block : mProgData->blocks())
+        size += block->data.size();
+    return size;
 }
 
 qlonglong IbemTool::programBase()
 {
-    if(mProgFile->prog().blocks().size() != 1)
+    if(!mProgData || mProgData->blocks().size() == 0)
         return -1;
 
-    return mProgFile->base();
+    return mProgData->blocks()[0]->base;
 }
 
 qlonglong IbemTool::programCksum()
 {
-    if(mProgFile->prog().blocks().size() != 1)
+    if(mInfilledProgData.blocks().size() != 1)
         return -1;
-    boost::optional<quint32> cksum = Xcp::computeCksumStatic(CKSUM_TYPE, mProgFile->prog().blocks().first()->data);
+    boost::optional<quint32> cksum = Xcp::computeCksumStatic(CKSUM_TYPE, mInfilledProgData.blocks().first()->data);
     if(!cksum)
         return -1;
     return cksum.get();
@@ -97,7 +100,7 @@ qlonglong IbemTool::programCksum()
 
 bool IbemTool::programOk()
 {
-    return mProgFile->valid();
+    return mProgData && mProgFileOkToFlash;
 }
 
 double IbemTool::progress()
@@ -140,6 +143,13 @@ void IbemTool::setIntfcUri(QUrl uri)
     }
 
     mProgLayer->setIntfcUri(uri);
+    if(mProgLayer->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mProgLayer->intfc()->setPacketLog(true);
+        else
+            mProgLayer->intfc()->setPacketLog(false);
+    }
     emit intfcUriChanged();
 }
 
@@ -151,6 +161,11 @@ bool IbemTool::intfcOk()
 bool IbemTool::idle()
 {
     return mProgLayer->idle() && mRemainingPollIter == 0;
+}
+
+bool IbemTool::progReady()
+{
+    return (mState == State::Idle);
 }
 
 void IbemTool::pollForSlaves()
@@ -209,21 +224,32 @@ void IbemTool::onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString
         boost::optional<Xcp::Interface::Can::SlaveId> idOpt = Xcp::Interface::Can::StrToSlaveId(idStr);
         Q_ASSERT(idOpt);
         Xcp::Interface::Can::SlaveId id = idOpt.get();
-        Q_ASSERT(id.cmd.type == SLAVE_FILTER.filt.type);
         Q_ASSERT((id.cmd.addr & SLAVE_FILTER.maskId) == SLAVE_FILTER.filt.addr);
-        int ibemId = (id.cmd.addr - SLAVE_FILTER.filt.addr) / 2;
 
-        bool idOk = false;
+        quint32 ibemId = (id.cmd.addr - SLAVE_FILTER.filt.addr) / 2;
+
+        bool idOk = true;
         QString displayText;
-        if(ibemId == RECOVERY_IBEMID_OFFSET)
+
+        if(id == IBEM_RECOVERY_ID)
         {
-            displayText = "Recovery";
-            idOk = true;
+            displayText = tr("IBEM Recovery");
         }
-        else if(ibemId >= REGULAR_IBEMID_OFFSET)
+        else if(id == CDA_ID)
         {
-            displayText = QString("ID %1").arg(ibemId - REGULAR_IBEMID_OFFSET);
-            idOk = true;
+            displayText = tr("CDA");
+        }
+        else if(id == CDA2_ID)
+        {
+            displayText = tr("CDA2");
+        }
+        else if(ibemId <= IBEM_ID_MAX)
+        {
+            displayText = tr("ID %1").arg(ibemId);
+        }
+        else
+        {
+            idOk = false;
         }
 
         if(idOk)
@@ -261,7 +287,8 @@ void IbemTool::onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString
 
 void IbemTool::startProgramming()
 {
-    if(!mProgFile->valid()
+    if(!mProgData
+            || !mProgFileOkToFlash
             || mState != State::Idle)
     {
         emit programmingDone(false);
@@ -299,11 +326,13 @@ void IbemTool::startProgramming()
     Q_ASSERT(activeSlaveIdVar.isValid());
     mProgLayer->setSlaveId(activeSlaveIdVar.toString());
 
-    int firstPage = mProgFile->prog().base() / PAGE_SIZE;
-    int lastPage = (mProgFile->prog().base() + mProgFile->prog().size() - 1) / PAGE_SIZE;
+    int firstPage = mInfilledProgData.base() / PAGE_SIZE;
+    int lastPage = (mInfilledProgData.base() + mInfilledProgData.size() - 1) / PAGE_SIZE;
     int nPages = lastPage - firstPage + 1;
-    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * nPages);
-    mProgLayer->program(mProgFile->progPtr(), 0, false);
+    int maxProgClearPages = (mProgLayer->intfc()->maxReplyTimeout() - PROG_CLEAR_BASE_TIMEOUT_MSEC) / PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC;
+    mProgLayer->setMaxEraseSize(maxProgClearPages * PAGE_SIZE);
+    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * std::min(nPages, maxProgClearPages));
+    mProgLayer->program(&mInfilledProgData, 0, false);
 }
 void IbemTool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
 {
@@ -312,15 +341,16 @@ void IbemTool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, 
     Q_ASSERT(mState == State::Program);
     if(result != SetupTools::Xcp::OpResult::Success)
     {
-        mState = State::Idle;
         emit programmingDone(false);
+        mState = State::Disconnect;
+        mProgLayer->disconnect();
         return;
     }
     mState = State::ProgramVerify;
     emit progressChanged();
 
     // start program verify on active slave
-    mProgLayer->programVerify(mProgFile->progPtr(), CKSUM_TYPE);
+    mProgLayer->programVerify(&mInfilledProgData, CKSUM_TYPE);
 }
 
 void IbemTool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
@@ -331,9 +361,10 @@ void IbemTool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *
     Q_ASSERT(mState == State::ProgramVerify);
     if(result != SetupTools::Xcp::OpResult::Success)
     {
-        mState = State::Idle;
         emit programmingDone(false);
-        return;
+        mState = State::Disconnect;
+        emit progressChanged();
+        mProgLayer->disconnect();
     }
 
     mState = State::ProgramReset1;
@@ -361,9 +392,10 @@ void IbemTool::onProgramResetDone(SetupTools::Xcp::OpResult result)
 
     if(result != SetupTools::Xcp::OpResult::Success)
     {
-        mState = State::Idle;
-        emit progressChanged();
         emit programmingDone(false);
+        mState = State::Disconnect;
+        emit progressChanged();
+        mProgLayer->disconnect();
         return;
     }
 
@@ -403,7 +435,7 @@ void IbemTool::onProgramResetDone(SetupTools::Xcp::OpResult result)
         mProgLayer->setSlaveId(activeSlaveIdVar.toString());
 
         // tell prog layer to start programming it
-        mProgLayer->program(mProgFile->progPtr());
+        mProgLayer->program(&mInfilledProgData);
     }
 }
 
@@ -420,9 +452,10 @@ void IbemTool::onProgramModeDone(SetupTools::Xcp::OpResult result)
     }
     if(result != SetupTools::Xcp::OpResult::Success)
     {
-        mState = State::Idle;
-        emit progressChanged();
         emit programmingDone(false);
+        mState = State::Disconnect;
+        emit progressChanged();
+        mProgLayer->disconnect();
         return;
     }
 
@@ -431,9 +464,13 @@ void IbemTool::onProgramModeDone(SetupTools::Xcp::OpResult result)
     mProgLayer->programReset();
 }
 
-void IbemTool::onProgFileChanged()
+void IbemTool::onDisconnectDone(SetupTools::Xcp::OpResult result)
 {
-    emit programChanged();
+    Q_UNUSED(result);
+    Q_ASSERT(mState == State::Disconnect);
+
+    mState = State::Idle;
+    emit progressChanged();
 }
 
 void IbemTool::onProgLayerStateChanged()

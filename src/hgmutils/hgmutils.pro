@@ -1,4 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    hgmflash
+    hgmflash \
+    hgmparam
+
+CONFIG(hgmparamonly) SUBDIRS = hgmparam

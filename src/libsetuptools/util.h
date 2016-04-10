@@ -11,6 +11,7 @@
 #include <QtQml/QQmlEngine>
 #include <QtQml/QJSEngine>
 #include <QtQml/QQmlListProperty>
+#include <QClipboard>
 
 namespace SetupTools
 {
@@ -208,21 +209,87 @@ class UrlUtil : public QObject
 {
     Q_OBJECT
 public:
-    ~UrlUtil();
+    ~UrlUtil() = default;
     Q_INVOKABLE QString urlToLocalFile(QString url);
 
     static QObject *create(QQmlEngine *engine, QJSEngine *scriptEngine);
 
 private:
-    UrlUtil();
+    UrlUtil() = default;
+
+
+// possible alternative
+//    onAccepted: {
+//            var path = myFileDialog.fileUrl.toString();
+//            // remove prefixed "file:///"
+//            path = path.replace(/^(file:\/{3})/,"");
+//            // unescape html codes like '%23' for '#'
+//            cleanPath = decodeURIComponent(path);
+//            console.log(cleanPath)
+//        }
+//    }
+
+
+};
+
+class Clipboard : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QString text READ text WRITE setText NOTIFY changed)
+public:
+    ~Clipboard() = default;
+
+    Q_INVOKABLE void clear();
+
+    Q_INVOKABLE bool ownsClipboard() const;
+
+    Q_INVOKABLE QString text() const;
+    Q_INVOKABLE QString text(QString &subtype) const;
+    Q_INVOKABLE void setText(const QString &);
+
+    static QObject *create(QQmlEngine *engine, QJSEngine *scriptEngine);
+signals:
+    void changed();
+public slots:
+    void onChanged(QClipboard::Mode mode);
+private:
+    Clipboard();
+
+    QClipboard *mClipboard;
+};
+
+class TabSeparated : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+    Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
+    Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
+public:
+    TabSeparated(QObject *parent = nullptr);
+    ~TabSeparated() = default;
+
+    int rows() const;
+    int columns() const;
+    QString text() const;
+    void setRows(int newRows);
+    void setColumns(int newColumns);
+    void setText(QString newText);
+    Q_INVOKABLE QVariant get(int row, int column);
+    Q_INVOKABLE bool set(int row, int column, QString value);
+signals:
+    void textChanged();
+    void rowsChanged();
+    void columnsChanged();
+private:
+    QList<QStringList> mArray;
 };
 
 template <typename T>
-bool updateDelta(T &val, T newVal)
+bool updateDelta(T & val, const T & newVal)
 {
-    T oldVal = val;
+    bool diff = !(val == newVal);
     val = newVal;
-    return (oldVal != newVal);
+    return diff;
 }
 
 template <typename Ii>
@@ -252,6 +319,21 @@ public:
     ~ScopeExit();
 private:
     std::function<void()> mFunc;
+};
+
+class AppVersion : public QObject
+{
+    Q_OBJECT
+public:
+    ~AppVersion() = default;
+    Q_PROPERTY(QString hash MEMBER HASH CONSTANT)
+
+    static QObject *create(QQmlEngine *engine, QJSEngine *scriptEngine);
+
+private:
+    AppVersion() = default;
+
+    static const QString HASH;
 };
 
 }   // namespace SetupTools

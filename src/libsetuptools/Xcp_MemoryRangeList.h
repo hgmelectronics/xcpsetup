@@ -24,10 +24,23 @@ class MemoryRangeList : public QObject
 public:
     MemoryRangeList(quint8 addrGran, MemoryRangeTable *parent);
 
-    XcpPtr base() const;
+    XcpPtr base() const
+    {
+        return mBase;
+    }
+
     XcpPtr end() const;
-    quint32 size() const; //!< Length in bytes, NOT in AG
-    Xcp::ConnectionFacade *connectionFacade() const;
+
+    /**
+     * @brief MemoryRangeList::size
+     * @return - number of bytes in the MemoryRange (not in AG units)
+     */
+    quint32 size() const
+    {
+        return mSize;
+    }
+
+    Xcp::ConnectionFacade* connectionFacade() const;
 
     /**
      * @brief adds a memrange to list, or returns a pointer to an existing one that is identical
@@ -73,7 +86,7 @@ private:
     QList<MemoryRange *> mRanges;
     XcpPtr mBase;
     quint32 mSize;
-    quint8 mAddrGran;
+    const quint8 mAddrGran;
 };
 
 }   // namespace Xcp

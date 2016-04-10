@@ -21,18 +21,18 @@ void Test::linearSlotToFloat_data()
     QTest::addColumn<double>("engrOut");
 
 
-    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(70000) << NAN;
-    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << 40000.0;
-    QTest::newRow("03") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << 0.0;
-    QTest::newRow("04") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << 64255.0;
-    QTest::newRow("05") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << 40.0;
-    QTest::newRow("06") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << 0.0;
-    QTest::newRow("07") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << 64.255;
-    QTest::newRow("08") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(402) << 0.402;
-    QTest::newRow("09") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(100) << 0.0;
-    QTest::newRow("10") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(0) << 1.0;
-    QTest::newRow("11") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(25) << 0.75;
-    QTest::newRow("12") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(101) << NAN;
+    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(70000) << double(NAN);
+    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << 40000.0;
+    QTest::newRow("03") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(0) << 0.0;
+    QTest::newRow("04") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << 64255.0;
+    QTest::newRow("05") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << 40.0;
+    QTest::newRow("06") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(0) << 0.0;
+    QTest::newRow("07") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << 64.255;
+    QTest::newRow("08") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(402) << 0.402;
+    QTest::newRow("09") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(100) << 0.0;
+    QTest::newRow("10") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(0) << 1.0;
+    QTest::newRow("11") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(25) << 0.75;
+    QTest::newRow("12") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(101) << double(NAN);
 }
 
 void Test::linearSlotToFloat()
@@ -62,9 +62,9 @@ void Test::linearSlotToFloat()
     slot.setOorRaw(oorRaw);
 
     if(std::isnan(engrOut))
-        QVERIFY(std::isnan(slot.toFloat(rawIn)));
+        QVERIFY(std::isnan(slot.asFloat(rawIn)));
     else
-        QCOMPARE(slot.toFloat(rawIn), engrOut);
+        QCOMPARE(slot.asFloat(rawIn), engrOut);
 }
 
 
@@ -83,18 +83,18 @@ void Test::linearSlotToString_data()
     QTest::addColumn<QString>("engrOut");
 
 
-    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(70000) << QString("nan");
-    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << QString("40000");
-    QTest::newRow("03") << 10 << 1 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QString("0.0");
-    QTest::newRow("04") << 10 << 1 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << QString("64255.0");
-    QTest::newRow("05") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << QString("40.00");
-    QTest::newRow("06") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QString("0.00");
-    QTest::newRow("07") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << QString("64.25");
-    QTest::newRow("08") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(402) << QString("0.40");
-    QTest::newRow("09") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(100) << QString("0.000");
-    QTest::newRow("10") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(0) << QString("1.000");
-    QTest::newRow("11") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(25) << QString("0.750");
-    QTest::newRow("12") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(101) << QString("nan");
+    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(70000) << QString("nan");
+    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << QString("40000");
+    QTest::newRow("03") << 10 << 1 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QString("0.0");
+    QTest::newRow("04") << 10 << 1 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << QString("64255.0");
+    QTest::newRow("05") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(40000) << QString("40.00");
+    QTest::newRow("06") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QString("0.00");
+    QTest::newRow("07") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(64255) << QString("64.25");
+    QTest::newRow("08") << 10 << 2 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(402) << QString("0.40");
+    QTest::newRow("09") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(100) << QString("0.000");
+    QTest::newRow("10") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(0) << QString("1.000");
+    QTest::newRow("11") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(25) << QString("0.750");
+    QTest::newRow("12") << 10 << 3 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(101) << QString("nan");
 }
 
 void Test::linearSlotToString()
@@ -123,7 +123,7 @@ void Test::linearSlotToString()
     slot.setRawB(rawB);
     slot.setOorRaw(oorRaw);
 
-    QCOMPARE(slot.toString(rawIn), engrOut);
+    QCOMPARE(slot.asString(rawIn), engrOut);
 }
 
 void Test::linearSlotToRaw_data()
@@ -141,18 +141,18 @@ void Test::linearSlotToRaw_data()
     QTest::addColumn<QVariant>("rawOut");
 
 
-    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant("70000") << QVariant(quint32(65535));
-    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant("40000.0") << QVariant(quint32(40000));
-    QTest::newRow("03") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0.0) << QVariant(quint32(0));
-    QTest::newRow("04") << 16 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant("FAFF") << QVariant(quint32(0xFAFF));
-    QTest::newRow("05") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(40.0) << QVariant(quint32(40000));
-    QTest::newRow("06") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QVariant(quint32(0));
-    QTest::newRow("07") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant("64.255") << QVariant(quint32(64255));
-    QTest::newRow("08") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << NAN << 0.0 << 64255.0 << 65535.0 << QVariant(0.402) << QVariant(quint32(402));
-    QTest::newRow("09") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(0.0) << QVariant(quint32(100));
-    QTest::newRow("10") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant("1") << QVariant(quint32(0));
-    QTest::newRow("11") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant(0.75) << QVariant(quint32(25));
-    QTest::newRow("12") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << NAN << 0.0 << 100.0 << 65535.0 << QVariant("1.2") << QVariant(quint32(65535));
+    QTest::newRow("01") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant("70000") << QVariant(quint32(65535));
+    QTest::newRow("02") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant("40000.0") << QVariant(quint32(40000));
+    QTest::newRow("03") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(0.0) << QVariant(quint32(0));
+    QTest::newRow("04") << 16 << 0 << int(QMetaType::UInt) << 0.0 << 64255.0 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant("FAFF") << QVariant(quint32(0xFAFF));
+    QTest::newRow("05") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(40.0) << QVariant(quint32(40000));
+    QTest::newRow("06") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(0) << QVariant(quint32(0));
+    QTest::newRow("07") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant("64.255") << QVariant(quint32(64255));
+    QTest::newRow("08") << 10 << 0 << int(QMetaType::UInt) << 0.0 << 64.255 << double(NAN) << 0.0 << 64255.0 << 65535.0 << QVariant(0.402) << QVariant(quint32(402));
+    QTest::newRow("09") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(0.0) << QVariant(quint32(100));
+    QTest::newRow("10") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant("1") << QVariant(quint32(0));
+    QTest::newRow("11") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant(0.75) << QVariant(quint32(25));
+    QTest::newRow("12") << 10 << 0 << int(QMetaType::UInt) << 1.0 << 0.0 << double(NAN) << 0.0 << 100.0 << 65535.0 << QVariant("1.2") << QVariant(quint32(65535));
 }
 
 void Test::linearSlotToRaw()
@@ -181,7 +181,7 @@ void Test::linearSlotToRaw()
     slot.setRawB(rawB);
     slot.setOorRaw(oorRaw);
 
-    QCOMPARE(slot.toRaw(engrIn), rawOut);
+    QCOMPARE(slot.asRaw(engrIn), rawOut);
 }
 
 }   // namespace Xcp

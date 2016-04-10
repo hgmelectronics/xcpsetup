@@ -118,7 +118,7 @@ void Test::downloadNoOverlap()
     }
     for(int idx = 0; idx < base.size(); ++idx)
     {
-        QCOMPARE(range[idx]->valid(), true);
+        QCOMPARE(range[idx]->valid(), false);
         QCOMPARE(range[idx]->writable(), true);
         QCOMPARE(range[idx]->value().isValid(), false);
     }

@@ -1,6 +1,6 @@
 #include "Xcp_MemoryRangeTable.h"
 #include "Xcp_ScalarMemoryRange.h"
-#include "Xcp_TableMemoryRange.h"
+#include "Xcp_ArrayMemoryRange.h"
 
 namespace SetupTools
 {
@@ -10,7 +10,8 @@ namespace Xcp
 MemoryRangeTable::MemoryRangeTable(quint32 addrGran, QObject *parent):
   QObject(parent),
   mAddrGran(addrGran),
-  mConnectionFacade(nullptr)
+  mConnectionFacade(nullptr),
+  mConnectionOk(false)
 {}
 
 quint32 MemoryRangeTable::addrGran() const
@@ -25,18 +26,20 @@ ConnectionFacade *MemoryRangeTable::connectionFacade() const
 
 void MemoryRangeTable::setConnectionFacade(ConnectionFacade *newConn)
 {
-    if(newConn != mConnectionFacade) {
-        if(mConnectionFacade)
-            disconnect(mConnectionFacade, nullptr, nullptr, nullptr);
-        mConnectionFacade = newConn;
-        connect(newConn, &ConnectionFacade::stateChanged, this, &MemoryRangeTable::onConnStateChanged);
-        connect(newConn, &ConnectionFacade::uploadDone, this, &MemoryRangeTable::onUploadDone);
-        connect(newConn, &ConnectionFacade::downloadDone, this, &MemoryRangeTable::onDownloadDone);
-        onConnStateChanged();
-        for(MemoryRangeList *list : mEntries)
-            list->onConnectionChanged(mConnectionOk);
-        emit connectionChanged(mConnectionOk);
-    }
+    if(newConn == mConnectionFacade)
+        return;
+
+    if(mConnectionFacade)
+        disconnect(mConnectionFacade, nullptr, nullptr, nullptr);
+
+    mConnectionFacade = newConn;
+    connect(newConn, &ConnectionFacade::stateChanged, this, &MemoryRangeTable::onConnStateChanged);
+    connect(newConn, &ConnectionFacade::uploadDone, this, &MemoryRangeTable::onUploadDone);
+    connect(newConn, &ConnectionFacade::downloadDone, this, &MemoryRangeTable::onDownloadDone);
+    onConnStateChanged();
+    for(MemoryRangeList *list : mEntries)
+        list->onConnectionChanged(mConnectionOk);
+    emit connectionChanged(mConnectionOk);
 }
 
 bool MemoryRangeTable::connectionOk() const
@@ -44,12 +47,12 @@ bool MemoryRangeTable::connectionOk() const
     return mConnectionOk;
 }
 
-MemoryRange *MemoryRangeTable::addScalarRange(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable)
+ScalarMemoryRange *MemoryRangeTable::addScalarRange(MemoryRange::MemoryRangeType type, XcpPtr base, bool writable)
 {
     if(memoryRangeTypeSize(type) % mAddrGran)   // reject unaligned types
         return nullptr;
 
-    MemoryRange *newRange = new ScalarMemoryRange(type, base, writable, mAddrGran, nullptr);
+    ScalarMemoryRange *newRange = new ScalarMemoryRange(type, base, writable, mAddrGran, nullptr);
 
     if(newRange == nullptr)
         return nullptr;
@@ -59,14 +62,15 @@ MemoryRange *MemoryRangeTable::addScalarRange(MemoryRange::MemoryRangeType type,
     return newRange;
 }
 
-MemoryRange *MemoryRangeTable::addTableRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable)
+ArrayMemoryRange *MemoryRangeTable::addTableRange(MemoryRange::MemoryRangeType type, XcpPtr base, quint32 count, bool writable)
 {
     if(memoryRangeTypeSize(type) % mAddrGran)   // reject unaligned types
         return nullptr;
+
     if(count < 1)
         return nullptr;
 
-    MemoryRange *newRange = new TableMemoryRange(type, count, base, writable, mAddrGran, nullptr);
+    ArrayMemoryRange *newRange = new ArrayMemoryRange(type, count, base, writable, mAddrGran, nullptr);
 
     if(newRange == nullptr)
         return nullptr;
@@ -90,11 +94,11 @@ QList<MemoryRangeList *> const &MemoryRangeTable::getLists() const
 
 void MemoryRangeTable::onConnStateChanged()
 {
-    bool newConnectionOk;
-    newConnectionOk =
+    bool newConnectionOk =
             (mConnectionFacade != nullptr &&
              mConnectionFacade->state() == Connection::State::CalMode &&
              mConnectionFacade->addrGran() == int(mAddrGran));
+
     if(updateDelta<bool>(mConnectionOk, newConnectionOk))
     {
         for(MemoryRangeList *list : mEntries)
@@ -107,6 +111,7 @@ void MemoryRangeTable::onUploadDone(OpResult result, XcpPtr base, int len, std::
 {
     // find the appropriate ranges and call methods to notify objects bound to the signals
     ListRange overlap = findOverlap(base, len);
+
     for(MemoryRangeList *list : overlap)
         list->onUploadDone(result, base, len, data);
 }
@@ -115,6 +120,7 @@ void MemoryRangeTable::onDownloadDone(OpResult result, XcpPtr base, std::vector<
 {
     // find the appropriate ranges and call methods to notify objects bound to the signals
     ListRange overlap = findOverlap(base, data.size());
+
     for(MemoryRangeList *list : overlap)
         list->onDownloadDone(result, base, data);
 }

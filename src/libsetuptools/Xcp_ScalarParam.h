@@ -10,43 +10,46 @@ namespace SetupTools {
 
 namespace Xcp {
 
+class ParamRegistry;
+
 class ScalarParam : public Param
 {
     Q_OBJECT
 
     Q_PROPERTY(double floatVal READ floatVal WRITE setFloatVal NOTIFY valChanged)
     Q_PROPERTY(QString stringVal READ stringVal WRITE setStringVal NOTIFY valChanged)
-    Q_PROPERTY(QString unit READ unit NOTIFY unitChanged)
-    Q_PROPERTY(QString name MEMBER name)
+    Q_PROPERTY(ScalarMemoryRange* range READ range CONSTANT)
+
 public:
     ScalarParam(QObject *parent = nullptr);
-    ScalarParam(ScalarMemoryRange *range, const Slot *slot, QObject *parent = nullptr);
-    double floatVal() const;
-    QString stringVal() const;
-    void setFloatVal(double);
-    void setStringVal(QString);
-    QString unit() const;
-    const ScalarMemoryRange *range() const;
-    const Slot *slot() const;
-    virtual QVariant getSerializableValue();
-    virtual bool setSerializableValue(const QVariant &val);
-    virtual void resetCaches();
+    ScalarParam(ScalarMemoryRange *range, Slot *slot, ParamRegistry *registry);
 
-    QString name;
+    double floatVal() const;
+    void setFloatVal(double);
+
+    QString stringVal() const;
+    void setStringVal(QString);
+
+    ScalarMemoryRange* range() const;
+
+    virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
+    virtual bool setSerializableValue(const QVariant &val);
+    virtual QVariant getSerializableRawValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
+    virtual bool setSerializableRawValue(const QVariant &val);
+
 signals:
     void valChanged();
-    void unitChanged();
+
 public slots:
+    virtual void upload();
+    virtual void download();
+
+private:
     void onRangeValChanged();
     void onRangeUploadDone(SetupTools::Xcp::OpResult result);
     void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
-    void onSlotUnitChanged();
     void onSlotValueParamChanged();
-    virtual void upload();
-    virtual void download();
-private:
     ScalarMemoryRange * const mRange;   // owned by the ParamRegistry
-    const Slot * const mSlot;           // owned by QML
 };
 
 } // namespace Xcp

@@ -32,12 +32,20 @@ public:
     double oorRaw() const;
     void setOorRaw(double newVal);
 
-    Q_INVOKABLE virtual double toFloat(QVariant raw) const;
-    Q_INVOKABLE virtual QString toString(QVariant raw) const;
-    Q_INVOKABLE virtual QVariant toRaw(QVariant engr) const;
+    Q_INVOKABLE virtual double asFloat(QVariant raw) const;
+    Q_INVOKABLE virtual QString asString(QVariant raw) const;
+    Q_INVOKABLE virtual QVariant asRaw(QVariant engr) const;
+    Q_INVOKABLE virtual bool rawInRange(QVariant raw) const;
     Q_INVOKABLE virtual bool engrInRange(QVariant engr) const;
+    virtual QVariant rawMin() const;
+    virtual QVariant rawMax() const;
+    virtual QVariant engrMin() const;
+    virtual QVariant engrMax() const;
+    virtual QValidator *validator();
 signals:
     void linearValueParamChanged();
+public slots:
+    void updateValidator();
 private:
     double mEngrA;
     double mEngrB;
@@ -45,6 +53,8 @@ private:
     double mRawA;
     double mRawB;
     double mOorRaw;
+
+    QDoubleValidator *mValidator;
 };
 
 } // namespace SetupTools

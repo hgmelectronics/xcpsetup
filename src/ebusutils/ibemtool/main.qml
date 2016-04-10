@@ -4,7 +4,9 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import com.ebus.utils.ibemtool 1.0
-import com.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 ApplicationWindow {
     title: qsTr("IBEM Flash Tool")
@@ -48,11 +50,12 @@ ApplicationWindow {
     MainForm {
         id: mainForm
         anchors.fill: parent
+        intfcOpen: ibemTool.intfcOk
         toolReady: ibemTool.programOk && ibemTool.intfcOk
         toolBusy: !ibemTool.idle
-        progBaseText: ibemTool.programOk ? "0x00000000".substr(0, 10 - ibemTool.programBase.toString(16).length) + ibemTool.programBase.toString(16).toUpperCase() : ""
-        progSizeText: ibemTool.programOk ? ibemTool.programSize.toString(10) : ""
-        progCksumText: ibemTool.programOk ? "0x00000000".substr(0, 10 - ibemTool.programCksum.toString(16).length) + ibemTool.programCksum.toString(16).toUpperCase() : ""
+        progBaseText: ibemTool.programData ? "0x00000000".substr(0, 10 - ibemTool.programBase.toString(16).length) + ibemTool.programBase.toString(16).toUpperCase() : ""
+        progSizeText: ibemTool.programData ? ibemTool.programSize.toString(10) : ""
+        progCksumText: ibemTool.programData ? "0x00000000".substr(0, 10 - ibemTool.programCksum.toString(16).length) + ibemTool.programCksum.toString(16).toUpperCase() : ""
         progressValue: ibemTool.progress
         onUserStart: ibemTool.startProgramming()
         targetsModel: ibemTool.slaveListModel
@@ -63,14 +66,13 @@ ApplicationWindow {
 
     IbemTool {
         id: ibemTool
-        programFilePath: mainForm.progFilePath
-        programFileType: mainForm.progFileType
+        programData: mainForm.progFileData
         intfcUri: mainForm.intfcUri
         onProgrammingDone: {
             if(ok)
-                messageDialog.show("Programming complete")
+                messageDialog.show(qsTr("Programming complete"))
             else
-                errorDialog.show("Programming failed: " + OpResult.asString(result))
+                errorDialog.show(qsTr("Programming failed"))
         }
     }
 
@@ -112,7 +114,7 @@ ApplicationWindow {
                 spacing: 5
                 Label {
                     font.pixelSize: 18
-                    text: "IBEMTool 1.2"
+                    text: "IBEMTool 1.3"
                 }
                 Label {
                     text: "Copyright \u00A9 2015 Ebus Inc."

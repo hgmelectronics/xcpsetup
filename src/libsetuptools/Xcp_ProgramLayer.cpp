@@ -7,10 +7,12 @@ ProgramLayer::ProgramLayer(QObject *parent) :
     QObject(parent),
     mConn(new ConnectionFacade(this)),
     mState(State::IntfcNotOk),
+    mMaxEraseSize(std::numeric_limits<decltype(mMaxEraseSize)>::max()),
     mActiveProg(NULL),
     mActiveAddrExt(0),
     mActiveCksumType(CksumType::Invalid),
-    mActiveFinalEmptyPacket(false)
+    mActiveFinalEmptyPacket(false),
+    mActiveBytesErased(0)
 {
     onConnStateChanged();   // make absolutely sure states are consistent
     connect(mConn, &ConnectionFacade::setStateDone, this, &ProgramLayer::onConnSetStateDone);
@@ -21,6 +23,7 @@ ProgramLayer::ProgramLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::programResetDone, this, &ProgramLayer::onConnProgramResetDone);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ProgramLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::opProgressChanged, this, &ProgramLayer::onConnOpProgressChanged);
+    connect(mConn, &ConnectionFacade::opMsg, this, &ProgramLayer::onConnOpMsg);
 }
 
 ProgramLayer::~ProgramLayer()
@@ -78,14 +81,14 @@ void ProgramLayer::setSlaveTimeout(int timeout)
     mConn->setTimeout(timeout);
 }
 
-int ProgramLayer::slaveResetTimeout()
+int ProgramLayer::slaveBootDelay()
 {
-    return mConn->resetTimeout();
+    return mConn->bootDelay();
 }
 
-void ProgramLayer::setSlaveResetTimeout(int timeout)
+void ProgramLayer::setSlaveBootDelay(int timeout)
 {
-    mConn->setResetTimeout(timeout);
+    mConn->setBootDelay(timeout);
 }
 
 int ProgramLayer::slaveProgClearTimeout()
@@ -116,6 +119,17 @@ double ProgramLayer::opProgressNotifyFrac()
 void ProgramLayer::setOpProgressNotifyFrac(double val)
 {
     mConn->setOpProgressNotifyFrac(val);
+}
+
+int ProgramLayer::maxEraseSize()
+{
+    return int(mMaxEraseSize);
+}
+
+void ProgramLayer::setMaxEraseSize(int val)
+{
+    if(val > 0)
+        mMaxEraseSize = quint32(val);
 }
 
 double ProgramLayer::opProgress()
@@ -253,6 +267,25 @@ void ProgramLayer::pgmMode()
     mConn->setState(Connection::State::PgmMode);
 }
 
+void ProgramLayer::disconnect()
+{
+    if(mState != State::Idle)
+    {
+        emit disconnectDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    if(mConn->state() == Connection::State::Closed)
+    {
+        emit disconnectDone(OpResult::Success);
+        return;
+    }
+
+    mState = State::Disconnect;
+
+    mConn->setState(Connection::State::Closed);
+}
+
 void ProgramLayer::onConnSetStateDone(OpResult result)
 {
     switch(mState)
@@ -278,7 +311,8 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
             emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mActiveProgBlock = mActiveProg->blocks().begin();
-        mConn->programClear({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data.size());
+        mActiveBytesErased = 0;
+        doProgramClear();
         break;
     case State::ProgramVerify:
         if(result != OpResult::Success)
@@ -347,6 +381,11 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         emit stateChanged();
         emit pgmModeDone(result);
         break;
+    case State::Disconnect:
+        mState = State::Idle;
+        emit stateChanged();
+        emit disconnectDone(result);
+        break;
     }
 }
 
@@ -362,7 +401,10 @@ void ProgramLayer::onConnProgramClearDone(OpResult result, XcpPtr base, int len)
         emit programDone(result, mActiveProg, mActiveAddrExt);
         return;
     }
-    mConn->programRange({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data, mActiveFinalEmptyPacket);
+    if(mActiveBytesErased < (*mActiveProgBlock)->data.size())
+        doProgramClear();
+    else
+        mConn->programRange({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data, mActiveFinalEmptyPacket);
 }
 
 void ProgramLayer::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket)
@@ -380,10 +422,11 @@ void ProgramLayer::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vec
     }
 
     ++mActiveProgBlock;
+    mActiveBytesErased = 0;
 
     if(mActiveProgBlock != mActiveProg->blocks().end())
     {
-        mConn->programClear({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data.size());
+        doProgramClear();
     }
     else
     {
@@ -469,6 +512,20 @@ void ProgramLayer::onConnStateChanged()
 void ProgramLayer::onConnOpProgressChanged()
 {
     emit opProgressChanged();
+}
+
+void ProgramLayer::onConnOpMsg(OpResult result, QString info, Connection::OpExtInfo ext)
+{
+    emit opMsg(result, info, ext);
+}
+
+void ProgramLayer::doProgramClear()
+{
+    quint32 bytesRemaining = (*mActiveProgBlock)->data.size() - mActiveBytesErased;
+    quint32 bytesToErase = std::min(bytesRemaining, quint32(mMaxEraseSize));
+    quint32 eraseBase = (*mActiveProgBlock)->base + mActiveBytesErased;
+    mActiveBytesErased += bytesToErase;
+    mConn->programClear({eraseBase, mActiveAddrExt}, bytesToErase);
 }
 
 } // namespace Xcp

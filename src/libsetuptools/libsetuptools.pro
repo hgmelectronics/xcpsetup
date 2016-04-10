@@ -4,15 +4,17 @@
 #
 #-------------------------------------------------
 
-QT       += network serialport quick qml
+QT       += network serialport quick qml charts
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections
+QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections -Wall -Wuninitialized
 
 TARGET = setuptools
 TEMPLATE = lib
 CONFIG += staticlib
+
+DEFINES += HG_VERSION=\\\"$$system(hg id -i)\\\"
 
 SOURCES += \
     util.cpp \
@@ -33,17 +35,27 @@ SOURCES += \
     Xcp_MemoryRangeList.cpp \
     Xcp_MemoryRange.cpp \
     Xcp_ScalarMemoryRange.cpp \
-    Xcp_TableMemoryRange.cpp \
-    LinearTableAxis.cpp \
     Slot.cpp \
     LinearSlot.cpp \
     Xcp_ParamRegistry.cpp \
     Xcp_ScalarParam.cpp \
     Xcp_Param.cpp \
-    Xcp_TableParam.cpp \
-    TableAxis.cpp \
-    ParamFile.cpp \
-    Xcp_ParamLayer.cpp
+    Xcp_ParamLayer.cpp \
+    EncodingSlot.cpp \
+    Xcp_ArrayMemoryRange.cpp \
+    Xcp_ArrayParam.cpp \
+    SlotArrayModel.cpp \
+    TransposeProxyModel.cpp \
+    TableMapperModel.cpp \
+    ModelListProxy.cpp \
+    JSONParamFile.cpp \
+    Xcp_Interface_Can_Socket_Interface.cpp \
+    ScaleOffsetProxyModel.cpp \
+    SlotProxyModel.cpp \
+    Xcp_VarArrayParam.cpp \
+    Xcp_TestingSlave.cpp \
+    RoleXYModelMapper.cpp \
+    XYSeriesAutoAxis.cpp
 
 HEADERS += \
     util.h \
@@ -64,21 +76,32 @@ HEADERS += \
     Xcp_MemoryRange.h \
     Xcp_MemoryRangeList.h \
     Xcp_ScalarMemoryRange.h \
-    Xcp_TableMemoryRange.h \
-    LinearTableAxis.h \
     Slot.h \
     LinearSlot.h \
     Xcp_ParamRegistry.h \
     Xcp_ScalarParam.h \
     Xcp_Param.h \
-    Xcp_TableParam.h \
-    TableAxis.h \
-    ParamFile.h \
-    Xcp_ParamLayer.h
+    Xcp_ParamLayer.h \
+    EncodingSlot.h \
+    Xcp_ArrayMemoryRange.h \
+    Xcp_ArrayParam.h \
+    TransposeProxyModel.h \
+    TableMapperModel.h \
+    ModelListProxy.h \
+    JSONParamFile.h \
+    Xcp_Interface_Can_Socket_Interface.h \
+    SlotArrayModel.h \
+    ScaleOffsetProxyModel.h \
+    SlotProxyModel.h \
+    Xcp_VarArrayParam.h \
+    Xcp_TestingSlave.h \
+    RoleXYModelMapper.h \
+    XYSeriesAutoAxis.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
+    DEFINES += SOCKETCAN
 }
 
 win32 {

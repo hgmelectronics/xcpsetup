@@ -1,0 +1,8 @@
+module com.hgmelectronics.utils
+
+AboutDialog         1.0 AboutDialog.qml
+CS2Defaults         1.0 CS2Defaults.qml
+ColumnEditDelegate  1.0 ColumnEditDelegate.qml
+HexEntryField       1.0 HexEntryField.qml
+Splash              1.0 Splash.qml
+

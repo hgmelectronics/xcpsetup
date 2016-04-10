@@ -6,95 +6,82 @@ namespace SetupTools
 Cs2Tool::Cs2Tool(QObject *parent) :
     QObject(parent),
     mProgLayer(new Xcp::ProgramLayer(this)),
-    mProgFile(new ProgFile(this)),
     mProgFileOkToFlash(false),
-    mParamLayer(new Xcp::ParamLayer(ADDR_GRAN, this)),
-    mParamFile(new ParamFile(this)),
     mState(State::IntfcNotOk),
     mSlaveCmdId("18FCD403"),
     mSlaveResId("18FCD4F9")
 {
-    connect(mProgFile, &ProgFile::progChanged, this, &Cs2Tool::onProgFileChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::calModeDone, this, &Cs2Tool::onProgCalModeDone);
     connect(mProgLayer, &Xcp::ProgramLayer::stateChanged, this, &Cs2Tool::onProgLayerStateChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::programDone, this, &Cs2Tool::onProgramDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programVerifyDone, this, &Cs2Tool::onProgramVerifyDone);
     connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &Cs2Tool::onProgramResetDone);
     connect(mProgLayer, &Xcp::ProgramLayer::opProgressChanged, this, &Cs2Tool::onProgLayerProgressChanged);
+    connect(mProgLayer, &Xcp::ProgramLayer::opMsg, this, &Cs2Tool::onProgLayerOpMsg);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
-    mProgLayer->setSlaveResetTimeout(RESET_TIMEOUT_MSEC);
+    mProgLayer->setSlaveBootDelay(BOOT_DELAY_MSEC);
     mProgLayer->setSlaveProgResetIsAcked(false);
-
-    connect(mParamLayer, &Xcp::ParamLayer::stateChanged, this, &Cs2Tool::onParamLayerStateChanged);
-    connect(mParamLayer, &Xcp::ParamLayer::opProgressChanged, this, &Cs2Tool::onParamLayerProgressChanged);
-    connect(mParamLayer, &Xcp::ParamLayer::writeCacheDirtyChanged, this, &Cs2Tool::onParamLayerWriteCacheDirtyChanged);
-    connect(mParamLayer, &Xcp::ParamLayer::connectSlaveDone, this, &Cs2Tool::onParamConnectSlaveDone);
-    connect(mParamLayer, &Xcp::ParamLayer::downloadDone, this, &Cs2Tool::onParamDownloadDone);
-    connect(mParamLayer, &Xcp::ParamLayer::uploadDone, this, &Cs2Tool::onParamUploadDone);
-    connect(mParamLayer, &Xcp::ParamLayer::nvWriteDone, this, &Cs2Tool::onParamNvWriteDone);
-    connect(mParamLayer, &Xcp::ParamLayer::disconnectSlaveDone, this, &Cs2Tool::onParamDisconnectSlaveDone);
-    mParamLayer->setSlaveTimeout(TIMEOUT_MSEC);
-    mParamLayer->setSlaveNvWriteTimeout(NVWRITE_TIMEOUT_MSEC);
-
-    mParamFile->setType(ParamFile::Type::Json);
 }
-
 
 Cs2Tool::~Cs2Tool() {}
 
-QString Cs2Tool::programFilePath()
+FlashProg *Cs2Tool::programData()
 {
-    return mProgFile->name();
+    return mProgData;
 }
 
-void Cs2Tool::setProgramFilePath(QString path)
+void Cs2Tool::setProgramData(FlashProg *prog)
 {
-    mProgFile->setName(path);
+    mProgData = prog;
 
-    rereadProgFile();
-}
+    mProgFileOkToFlash = false;
 
-QString Cs2Tool::paramFilePath()
-{
-    return mParamFile->name();
-}
+    if(!mProgData)
+    {
+        emit programChanged();
+        return;
+    }
 
-void Cs2Tool::setParamFilePath(QString path)
-{
-    mParamFile->setName(path);
-    emit paramFileChanged();
-}
+    mInfilledProgData = *mProgData;
 
-int Cs2Tool::programFileType()
-{
-    return mProgFile->type();
-}
+    mInfilledProgData.infillToSingleBlock();
 
-void Cs2Tool::setProgramFileType(int type)
-{
-    mProgFile->setType(static_cast<ProgFile::Type>(type));
+    if(mInfilledProgData.base() < SMALLBLOCK_BASE
+            || mInfilledProgData.base() < APPLIC_BASE
+            || (mInfilledProgData.base() + mInfilledProgData.size()) > LARGEBLOCK_TOP)
+    {
+        emit programChanged();
+        return;
+    }
 
-    rereadProgFile();
+    mProgFileOkToFlash = true;
+    emit programChanged();
 }
 
 int Cs2Tool::programSize()
 {
-    return mProgFile->size();
+    if(!mProgData)
+        return 0;
+
+    int size = 0;
+    for(FlashBlock *block : mProgData->blocks())
+        size += block->data.size();
+    return size;
 }
 
 qlonglong Cs2Tool::programBase()
 {
-    if(mProgFile->prog().blocks().size() != 1)
+    if(!mProgData || mProgData->blocks().size() == 0)
         return -1;
 
-    return mProgFile->base();
+    return mProgData->blocks()[0]->base;
 }
 
 qlonglong Cs2Tool::programCksum()
 {
-    if(mProgFile->prog().blocks().size() != 1)
+    if(mInfilledProgData.blocks().size() != 1)
         return -1;
-    boost::optional<quint32> cksum = Xcp::computeCksumStatic(CKSUM_TYPE, mProgFile->prog().blocks().first()->data);
+    boost::optional<quint32> cksum = Xcp::computeCksumStatic(CKSUM_TYPE, mInfilledProgData.blocks().first()->data);
     if(!cksum)
         return -1;
     return cksum.get();
@@ -102,12 +89,7 @@ qlonglong Cs2Tool::programCksum()
 
 bool Cs2Tool::programOk()
 {
-    return mProgFile->valid() && mProgFileOkToFlash;
-}
-
-bool Cs2Tool::paramFileExists()
-{
-    return mParamFile->exists();
+    return mProgData && mProgFileOkToFlash;
 }
 
 double Cs2Tool::progress()
@@ -130,10 +112,6 @@ double Cs2Tool::progress()
     else if(mState == State::Reset_Reset)
     {
         return 1;
-    }
-    else if(mState >= State::ParamConnect && mState <= State::ParamNvWrite)
-    {
-        return mParamLayer->opProgress();
     }
     else    // catch unhandled states
     {
@@ -167,7 +145,6 @@ void Cs2Tool::setIntfcUri(QUrl uri)
     }
 
     mProgLayer->setIntfcUri(uri);
-    mParamLayer->setIntfc(mProgLayer->intfc(), uri);
     if(mProgLayer->intfc())
     {
         if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
@@ -207,43 +184,24 @@ bool Cs2Tool::intfcOk()
 
 bool Cs2Tool::idle()
 {
-    return mProgLayer->idle() && mParamLayer->idle();
-}
-
-Xcp::ParamLayer *Cs2Tool::paramLayer()
-{
-    return mParamLayer;
-}
-
-bool Cs2Tool::paramWriteCacheDirty()
-{
-    return mParamLayer->writeCacheDirty();
-}
-
-bool Cs2Tool::paramConnected()
-{
-    return (mState == State::ParamConnected);
+    return mProgLayer->idle();
 }
 
 bool Cs2Tool::progReady()
 {
     return (mState == State::Idle || (mState >= State::Program_InitialConnect && mState <= State::Program_CalMode));
 }
-
-bool Cs2Tool::paramReady()
-{
-    return (mState == State::Idle || (mState >= State::ParamConnect && mState <= State::ParamNvWrite));
-}
-
 void Cs2Tool::startProgramming()
 {
-    if(!mProgFile->valid()
+    if(!mProgData
             || !mProgFileOkToFlash
             || mState != State::Idle)
     {
         emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
         return;
     }
+
+    updateProgClear();
 
     setState(State::Program_InitialConnect);
     
@@ -265,135 +223,6 @@ void Cs2Tool::startReset()
     mProgLayer->programReset();
 }
 
-void Cs2Tool::startParamConnect()
-{
-    if(mState != State::Idle)
-    {
-        emit paramConnectDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
-        return;
-    }
-
-    setState(State::ParamConnect);
-
-    mParamLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
-    mParamLayer->connectSlave();
-}
-
-void Cs2Tool::startParamDownload()
-{
-    if(mState != State::Idle && mState != State::ParamConnected)
-    {
-        emit paramDownloadDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
-        return;
-    }
-
-    mParamDisconnectWhenDone = !(mState == State::ParamConnected);
-
-    setState(State::ParamDownload);
-
-    mParamLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
-    mParamLayer->download();
-}
-
-void Cs2Tool::startParamUpload()
-{
-    if(mState != State::Idle && mState != State::ParamConnected)
-    {
-        emit paramUploadDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
-        return;
-    }
-
-    mParamDisconnectWhenDone = !(mState == State::ParamConnected);
-
-    setState(State::ParamUpload);
-
-    mParamLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
-    mParamLayer->upload();
-}
-
-void Cs2Tool::loadParamFile()
-{
-    QMap<QString, QVariant> map;
-    ParamFile::Result readResult = mParamFile->read(map);
-    if(readResult != ParamFile::Result::Ok)
-    {
-        switch(readResult)
-        {
-        case ParamFile::Result::Ok:
-            emit loadParamFileDone(static_cast<int>(Xcp::OpResult::Success), QStringList());
-            break;
-        case ParamFile::Result::FileOpenFail:
-            emit loadParamFileDone(static_cast<int>(Xcp::OpResult::FileOpenFail), QStringList());
-            break;
-        case ParamFile::Result::CorruptedFile:
-            emit loadParamFileDone(static_cast<int>(Xcp::OpResult::CorruptedFile), QStringList());
-            break;
-        case ParamFile::Result::InvalidType:
-            emit loadParamFileDone(static_cast<int>(Xcp::OpResult::InvalidArgument), QStringList());
-            break;
-        default:
-            emit loadParamFileDone(static_cast<int>(Xcp::OpResult::UnknownError), QStringList());
-            break;
-        }
-        return;
-    }
-    QStringList failedKeys = mParamLayer->setData(map);
-    if(failedKeys.empty())
-        emit loadParamFileDone(static_cast<int>(Xcp::OpResult::Success), failedKeys);
-    else
-        emit loadParamFileDone(static_cast<int>(Xcp::OpResult::WarnKeyLoadFailure), failedKeys);
-}
-
-void Cs2Tool::saveParamFile()
-{
-    ParamFile::Result writeResult = mParamFile->write(mParamLayer->saveableData());
-    switch(writeResult)
-    {
-    case ParamFile::Result::Ok:
-        emit saveParamFileDone(static_cast<int>(Xcp::OpResult::Success));
-        break;
-    case ParamFile::Result::FileOpenFail:
-        emit saveParamFileDone(static_cast<int>(Xcp::OpResult::FileOpenFail));
-        break;
-    case ParamFile::Result::FileWriteFail:
-        emit saveParamFileDone(static_cast<int>(Xcp::OpResult::FileWriteFail));
-        break;
-    case ParamFile::Result::InvalidType:
-        emit saveParamFileDone(static_cast<int>(Xcp::OpResult::InvalidArgument));
-        break;
-    default:
-        emit saveParamFileDone(static_cast<int>(Xcp::OpResult::UnknownError));
-        break;
-    }
-}
-
-void Cs2Tool::startParamNvWrite()
-{
-    if(mState != State::Idle && mState != State::ParamConnected)
-    {
-        emit paramNvWriteDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
-        return;
-    }
-
-    mParamDisconnectWhenDone = !(mState == State::ParamConnected);
-
-    setState(State::ParamNvWrite);
-
-    mParamLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
-    mParamLayer->nvWrite();
-}
-
-void Cs2Tool::startParamDisconnect()
-{
-    if(mState != State::Idle && mState != State::ParamConnected)
-    {
-        emit paramDisconnectDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
-        return;
-    }
-
-    mParamLayer->disconnectSlave();
-}
-
 void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
 {
     if(mState == State::Program_InitialConnect)
@@ -409,13 +238,35 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
             {
                 // already in bootloader
                 setState(State::Program_Program);
-                mProgLayer->program(mProgFile->progPtr());
+                mProgLayer->program(&mInfilledProgData);
             }
             else
             {
                 // in application code - program reset needed
                 setState(State::Program_ResetToBootloader);
                 mProgLayer->programReset();
+            }
+        }
+    }
+    if(mState == State::Program_Reconnect)
+    {
+        if(result != SetupTools::Xcp::OpResult::Success)
+        {
+            setState(State::Idle);
+            emit programmingDone(static_cast<int>(result));
+        }
+        else
+        {
+            if(mProgLayer->conn()->addrGran() == 1)
+            {
+                // in bootloader
+                setState(State::Program_Program);
+                mProgLayer->program(&mInfilledProgData);
+            }
+            else
+            {
+                setState(State::Idle);
+                emit programmingDone(static_cast<int>(Xcp::OpResult::BadReply));
             }
         }
     }
@@ -459,7 +310,7 @@ void Cs2Tool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, q
     }
     setState(State::Program_Verify);
 
-    mProgLayer->programVerify(mProgFile->progPtr(), CKSUM_TYPE);
+    mProgLayer->programVerify(&mInfilledProgData, CKSUM_TYPE);
 }
 
 void Cs2Tool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
@@ -475,9 +326,8 @@ void Cs2Tool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *p
         return;
     }
 
-    setState(State::Program_ResetToApplication);
-
-    mProgLayer->programReset();
+    setState(State::Program_CalMode);
+    mProgLayer->calMode();
 }
 void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
 {
@@ -489,18 +339,7 @@ void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
             emit programmingDone(static_cast<int>(result));
             return;
         }
-        setState(State::Program_Program);
-        mProgLayer->program(mProgFile->progPtr());
-    }
-    else if(mState == State::Program_ResetToApplication)
-    {
-        if(result != SetupTools::Xcp::OpResult::Success)
-        {
-            setState(State::Idle);
-            emit programmingDone(static_cast<int>(static_cast<int>(result)));
-            return;
-        }
-        setState(State::Program_CalMode);
+        setState(State::Program_Reconnect);
         mProgLayer->calMode();
     }
     else if(mState == State::Reset_Reset)
@@ -512,11 +351,6 @@ void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
     {
         Q_ASSERT(0);
     }
-}
-
-void Cs2Tool::onProgFileChanged()
-{
-    emit programChanged();
 }
 
 void Cs2Tool::onProgLayerStateChanged()
@@ -532,132 +366,24 @@ void Cs2Tool::onProgLayerProgressChanged()
     emit stateChanged();
 }
 
-void Cs2Tool::onParamLayerStateChanged()
+void Cs2Tool::onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
 {
-    // do nothing
+    Q_UNUSED(ext);
+    emit fault(result, str);
 }
 
-void Cs2Tool::onParamLayerProgressChanged()
+void Cs2Tool::updateProgClear()
 {
-    emit stateChanged();
-}
+    int nSmallBlocks = nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
+    int nBlocks = nSmallBlocks + nBlocksInRange(mInfilledProgData.base(), mInfilledProgData.size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
 
-void Cs2Tool::onParamLayerWriteCacheDirtyChanged()
-{
-    emit paramWriteCacheDirtyChanged();
-}
-
-void Cs2Tool::onParamConnectSlaveDone(Xcp::OpResult result)
-{
-    Q_ASSERT(mState == State::ParamConnect);
-
-    setState(State::ParamConnected);
-    emit paramConnectDone(static_cast<int>(result));
-}
-
-void Cs2Tool::onParamDownloadDone(SetupTools::Xcp::OpResult result, QStringList keys)
-{
-    Q_UNUSED(keys);
-
-    Q_ASSERT(mState == State::ParamDownload);
-
-    if(mParamDisconnectWhenDone)
-    {
-        mLastParamResult = result;
-        mParamLayer->disconnectSlave();
-    }
-    else
-    {
-        setState(State::ParamConnected);
-        emit paramDownloadDone(static_cast<int>(result));
-    }
-}
-
-void Cs2Tool::onParamUploadDone(SetupTools::Xcp::OpResult result, QStringList keys)
-{
-    Q_UNUSED(keys);
-
-    Q_ASSERT(mState == State::ParamUpload);
-
-    if(mParamDisconnectWhenDone)
-    {
-        mLastParamResult = result;
-        mParamLayer->disconnectSlave();
-    }
-    else
-    {
-        setState(State::ParamConnected);
-        emit paramUploadDone(static_cast<int>(result));
-    }
-}
-
-void Cs2Tool::onParamNvWriteDone(SetupTools::Xcp::OpResult result)
-{
-    Q_ASSERT(mState == State::ParamNvWrite);
-
-    if(mParamDisconnectWhenDone)
-    {
-        mLastParamResult = result;
-        mParamLayer->disconnectSlave();
-    }
-    else
-    {
-        setState(State::ParamConnected);
-        emit paramNvWriteDone(static_cast<int>(result));
-    }
-}
-
-void Cs2Tool::onParamDisconnectSlaveDone(Xcp::OpResult result)
-{
-    Q_ASSERT(mState == State::ParamConnected || mState == State::ParamDownload
-             || mState == State::ParamUpload || mState == State::ParamNvWrite);
-
-    State prevState = mState;
-    setState(State::Idle);
-    switch(prevState)
-    {
-    case State::ParamConnected:
-        emit paramDisconnectDone(static_cast<int>(result));
-        break;
-    case State::ParamDownload:
-        emit paramDownloadDone(static_cast<int>(result));
-        break;
-    case State::ParamUpload:
-        emit paramUploadDone(static_cast<int>(result));
-        break;
-    case State::ParamNvWrite:
-        emit paramNvWriteDone(static_cast<int>(result));
-        break;
-    default:
-        Q_ASSERT(0);
-        break;
-    }
-}
-
-void Cs2Tool::rereadProgFile()
-{
-    mProgFileOkToFlash = false;
-    emit programChanged();
-
-    if(mProgFile->name().size() <= 0 ||  mProgFile->type() == ProgFile::Type::Invalid)
-        return;
-
-    if(mProgFile->read() != ProgFile::Result::Ok)
-        return;
-
-    mProgFile->prog().infillToSingleBlock();
-
-    if(mProgFile->prog().base() < SMALLBLOCK_BASE
-            || (mProgFile->prog().base() + mProgFile->prog().size()) > LARGEBLOCK_TOP)
-        return; // program is outside of LPC2929 flash
-
-    int nBlocks = 0;
-    nBlocks += nBlocksInRange(mProgFile->prog().base(), mProgFile->prog().size(), SMALLBLOCK_BASE, SMALLBLOCK_TOP, SMALLBLOCK_SIZE);
-    nBlocks += nBlocksInRange(mProgFile->prog().base(), mProgFile->prog().size(), LARGEBLOCK_BASE, LARGEBLOCK_TOP, LARGEBLOCK_SIZE);
-    mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * nBlocks);
-
-    mProgFileOkToFlash = true;
-    emit programChanged();
+    int minBlockSize = nSmallBlocks ? SMALLBLOCK_SIZE : LARGEBLOCK_SIZE;
+    int maxClearBlocks = (mProgLayer->intfc()->maxReplyTimeout() - PROG_CLEAR_BASE_TIMEOUT_MSEC) / PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC;
+    if(maxClearBlocks == 0)
+        maxClearBlocks = 1; // If we technically cannot do even one, fudge it and hope
+    mProgLayer->setMaxEraseSize(minBlockSize * maxClearBlocks);
+    int idealTimeout = PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_BLOCK_MSEC * std::min(maxClearBlocks, nBlocks);
+    mProgLayer->setSlaveProgClearTimeout(std::min(idealTimeout, mProgLayer->intfc()->maxReplyTimeout()));
 }
 
 int Cs2Tool::nBlocksInRange(uint progBase, uint progSize, uint rangeBase, uint rangeTop, uint blockSize)

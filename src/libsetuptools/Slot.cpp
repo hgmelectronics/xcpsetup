@@ -48,4 +48,30 @@ void Slot::setStorageType(int newVal)
         emit valueParamChanged();
 }
 
+QVariant Slot::stringRoundtrip(QVariant engr)
+{
+    return asString(asRaw(engr));
+}
+
+QVariant Slot::rawMin() const
+{
+    return QVariant();
+}
+QVariant Slot::rawMax() const
+{
+    return QVariant();
+}
+QVariant Slot::engrMin() const
+{
+    return QVariant();
+}
+QVariant Slot::engrMax() const
+{
+    return QVariant();
+}
+QValidator *Slot::validator()
+{
+    return nullptr;
+}
+
 }   // namespace SetupTools

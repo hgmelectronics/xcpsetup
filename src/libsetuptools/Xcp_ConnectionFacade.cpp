@@ -8,6 +8,7 @@ namespace Xcp {
 ConnectionFacade::ConnectionFacade(QObject *parent) :
     QObject(parent),
     mIntfc(),
+    mIntfcOwned(false),
     mConn(new Connection(nullptr)),
     mConnThread(new QThread(this))
 {
@@ -38,6 +39,7 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(mConn, &Connection::programResetDone, this, &ConnectionFacade::onConnProgramResetDone, Qt::QueuedConnection);
     connect(mConn, &Connection::buildChecksumDone, this, &ConnectionFacade::onConnBuildChecksumDone, Qt::QueuedConnection);
     connect(mConn, &Connection::getAvailSlavesStrDone, this, &ConnectionFacade::onConnGetAvailSlavesStrDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::opMsg, this, &ConnectionFacade::onConnOpMsg, Qt::QueuedConnection);
     connect(mConn, &Connection::stateChanged, this, &ConnectionFacade::onConnStateChanged, Qt::QueuedConnection);
     connect(mConn, &Connection::opProgressChanged, this, &ConnectionFacade::onConnOpProgressChanged, Qt::QueuedConnection);
 }
@@ -57,10 +59,11 @@ void ConnectionFacade::setIntfcUri(QUrl val)
 {
     if(mIntfcUri != val)
     {
-        if(mIntfc)
+        if(mIntfc && mIntfcOwned)
             delete mIntfc;
         mIntfcUri = val;
         mIntfc = Interface::Registry().make(mIntfcUri);
+        mIntfcOwned = true;
         mConn->setIntfc(mIntfc);
     }
 }
@@ -74,10 +77,11 @@ void ConnectionFacade::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
     if(mIntfc != intfc)
     {
-        if(mIntfc)
+        if(mIntfc && mIntfcOwned)
             delete mIntfc;
         mIntfcUri = uri;
         mIntfc = intfc;
+        mIntfcOwned = false;
         mConn->setIntfc(intfc);
     }
 }
@@ -126,14 +130,14 @@ void ConnectionFacade::setNvWriteTimeout(int val)
     mConn->setNvWriteTimeout(val);
 }
 
-int ConnectionFacade::resetTimeout()
+int ConnectionFacade::bootDelay()
 {
-    return mConn->resetTimeout();
+    return mConn->bootDelay();
 }
 
-void ConnectionFacade::setResetTimeout(int val)
+void ConnectionFacade::setBootDelay(int val)
 {
-    mConn->setResetTimeout(val);
+    mConn->setBootDelay(val);
 }
 
 double ConnectionFacade::opProgressNotifyFrac()
@@ -179,6 +183,11 @@ void ConnectionFacade::setState(Connection::State val)
 double ConnectionFacade::opProgress()
 {
     return mConn->opProgress();
+}
+
+void ConnectionFacade::forceSlaveSupportCalPage()
+{
+    mConn->forceSlaveSupportCalPage();
 }
 
 quint32 ConnectionFacade::computeCksum(CksumType type, const std::vector<quint8> &data)
@@ -239,6 +248,11 @@ void ConnectionFacade::buildChecksum(XcpPtr base, int len)
 void ConnectionFacade::getAvailSlavesStr(QString bcastId, QString filter)
 {
     emit connGetAvailSlavesStr(bcastId, filter, NULL);
+}
+
+void ConnectionFacade::onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext)
+{
+    emit opMsg(result, info, ext);
 }
 
 void ConnectionFacade::onConnStateChanged()

@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>HelpDialog.qml</file>
+        <file>ParamTabView.qml</file>
+        <file>Slots.qml</file>
+        <file>TableParamView.qml</file>
+        <file>Parameters.qml</file>
+        <file>ParamId.qml</file>
+        <file>TableParamEditDialog.qml</file>
+        <file>TableParamEditButton.qml</file>
+        <file>TableByGearEditButtonGroup.qml</file>
+        <file>TableByShiftEditButtonGroup.qml</file>
+        <file>ShiftTableParamEditDialog.qml</file>
+        <file>ShiftTableByShiftEditButtonGroup.qml</file>
+        <file>ShiftTableParamEditButton.qml</file>
+        <file>PWMDriversWindow.qml</file>
+        <file>DiagnosticsLayout.qml</file>
+        <file>EngineLayout.qml</file>
+        <file>ShiftSpeedsLayout.qml</file>
+        <file>VehicleLayout.qml</file>
+        <file>PressureLayout.qml</file>
+        <file>KeypadDisplayLayout.qml</file>
+        <file>TcLayout.qml</file>
+        <file>CanLayout.qml</file>
+        <file>EvLayout.qml</file>
+        <file>TransmissionLayout.qml</file>
+        <file>TableByClutchEditButtonGroup.qml</file>
+        <file>TableByGearEditMenuButton.qml</file>
+        <file>TableParamEditMenuItem.qml</file>
+        <file>TableByShiftEditMenuButton.qml</file>
+        <file>TableByClutchEditMenuButton.qml</file>
+        <file>ShiftTableByShiftEditMenuButton.qml</file>
+        <file>ShiftTableParamEditMenuItem.qml</file>
+    </qresource>
+</RCC>

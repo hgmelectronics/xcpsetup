@@ -1,7 +1,9 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    cda2tool \
     ebussetuptools \
+	ibemparam \
     ibemtool \
     multilist_demo
 

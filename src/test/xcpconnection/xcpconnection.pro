@@ -8,7 +8,7 @@ QT       += core testlib quick
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs
+QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -Wall -Wuninitialized
 
 static {
     QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections
@@ -24,8 +24,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    test.cpp \
-    testingslave.cpp
+    test.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../libsetuptools/release/ -lsetuptools
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../libsetuptools/debug/ -lsetuptools
@@ -35,5 +34,4 @@ INCLUDEPATH += $$PWD/../../libsetuptools
 DEPENDPATH += $$PWD/../../libsetuptools
 
 HEADERS += \
-    test.h \
-    testingslave.h
+    test.h

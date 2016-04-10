@@ -2,7 +2,9 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
-import com.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools.xcp 1.0
+import com.hgmelectronics.setuptools 1.0
+import com.hgmelectronics.setuptools.ui 1.0
 
 ColumnLayout {
     id: root
@@ -12,12 +14,13 @@ ColumnLayout {
     anchors.margins: 10
 
     property string progFilePath: progFileDialog.filePath
-    property int progFileType: progFileDialog.fileType
+    property FlashProg progFileData
     property alias targetsModel: targetsView.model
     property alias progBaseText: progBaseField.text
     property alias progSizeText: progSizeField.text
     property alias progCksumText: progCksumField.text
     property string intfcUri: ""
+    property bool intfcOpen
     property alias progressValue: progressBar.value
     property bool toolReady
     property bool toolBusy
@@ -39,17 +42,16 @@ ColumnLayout {
 
         FileDialog {
             property string filePath
-            property int fileType: ProgFile.Invalid
             id: progFileDialog
             title: qsTr("Select program file")
             modality: Qt.NonModal
-            nameFilters: [ "S-record files (*.srec)", "Foobar (*)" ]
+            nameFilters: [ "S-record files (*.srec)", "All files (*)" ]
             onAccepted: {
                 filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
                 if(selectedNameFilter == "S-record files (*.srec)")
-                    fileType = ProgFile.Srec;
+                    root.progFileData = ProgFile.readSrec(filePath)
                 else
-                    fileType = ProgFile.Invalid;
+                    root.progFileData = ProgFile.readSrec(filePath) // default to S-record
                 root.progFileAccepted()
             }
         }
@@ -130,16 +132,22 @@ ColumnLayout {
             text: "Interface"
         }
 
-        ComboBox {
-            id: intfcComboBox
-            model: registry.avail
-            textRole: "text"
-            visible: true
+        RowLayout {
+            id: intfcConfigRow
             anchors.left: parent.left
             anchors.right: parent.right
+            spacing: 5
 
-            property string selectedUri
-            selectedUri: (count > 0 && currentIndex < count) ? model[currentIndex].uri : ""
+            XcpInterfaceChooser {
+                id: interfaceChooser
+                Layout.fillWidth: true
+                enabled: !intfcOpen
+            }
+
+            BitRateChooser {
+                id: bitRateChooser
+                enabled: !intfcOpen
+            }
         }
 
         RowLayout {
@@ -152,11 +160,13 @@ ColumnLayout {
                 id: intfcOpenButton
                 text: qsTr("Open")
                 onClicked: {
-                    if(intfcComboBox.selectedUri !== "") {
-                        root.intfcUri = intfcComboBox.selectedUri
-                        intfcOpenButton.enabled = false
-                    }
+                    if (interfaceChooser.uri !== "")
+                        root.intfcUri = interfaceChooser.uri.replace(
+                                    /bitrate=[0-9]*/,
+                                    "bitrate=" + bitRateChooser.bps.toString(
+                                        ))
                 }
+                enabled: !intfcOpen
             }
             Button {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
@@ -165,9 +175,8 @@ ColumnLayout {
                 text: qsTr("Close")
                 onClicked: {
                     root.intfcUri = ""
-                    intfcOpenButton.enabled = true
                 }
-                enabled: !toolBusy && !intfcOpenButton.enabled
+                enabled: !toolBusy && intfcOpen
             }
         }
     }

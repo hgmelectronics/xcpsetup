@@ -19,18 +19,21 @@ class ParamLayer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcChanged)
-    Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
-    Q_PROPERTY(ConnectionFacade *conn READ conn NOTIFY never)
-    Q_PROPERTY(ParamRegistry *registry READ registry NOTIFY never)
+    Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId NOTIFY slaveIdChanged)
+    Q_PROPERTY(ConnectionFacade *conn READ conn CONSTANT)
+    Q_PROPERTY(ParamRegistry *registry READ registry CONSTANT)
+    Q_PROPERTY(quint32 addrGran READ addrGran WRITE setAddrGran NOTIFY addrGranChanged)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
+    Q_PROPERTY(bool slaveConnected READ slaveConnected NOTIFY stateChanged)
     Q_PROPERTY(int slaveTimeout READ slaveTimeout WRITE setSlaveTimeout)
     Q_PROPERTY(int slaveNvWriteTimeout READ slaveNvWriteTimeout WRITE setSlaveNvWriteTimeout)
     Q_PROPERTY(int opProgressNotifyPeriod READ opProgressNotifyPeriod WRITE setOpProgressNotifyPeriod)
     Q_PROPERTY(double opProgress READ opProgress NOTIFY opProgressChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
 public:
-    explicit ParamLayer(quint32 addrGran, QObject *parent = 0);
+    explicit ParamLayer(QObject *parent = nullptr);
+    explicit ParamLayer(quint32 addrGran, QObject *parent = nullptr);
     virtual ~ParamLayer() {}
 
     QUrl intfcUri();
@@ -41,33 +44,46 @@ public:
     void setSlaveId(QString);
     ConnectionFacade *conn();
     ParamRegistry *registry();
+    quint32 addrGran();
+    void setAddrGran(quint32);
     bool idle();
     bool intfcOk();
+    bool slaveConnected();
     int slaveTimeout();
     void setSlaveTimeout(int);
     int slaveNvWriteTimeout();
     void setSlaveNvWriteTimeout(int);
     int opProgressNotifyPeriod();
     void setOpProgressNotifyPeriod(int);
+    Q_INVOKABLE void forceSlaveSupportCalPage();    //!< Call after connecting for slaves that erroneously report they do not support calibration/paging
+    Q_INVOKABLE void setSlaveCalPage();    //!< Call after connecting for slaves that need segment and page initialized
     double opProgress();
     bool writeCacheDirty();
 
-    QMap<QString, QVariant> data();
-    QMap<QString, QVariant> saveableData();
-    QMap<QString, QVariant> data(const QStringList &keys);
-    QStringList setData(const QMap<QString, QVariant> &data);   //!< Returns keys that did not set successfully
+    Q_INVOKABLE QMap<QString, QVariant> data();
+    Q_INVOKABLE QMap<QString, QVariant> rawData();
+    Q_INVOKABLE QMap<QString, QVariant> saveableData();
+    Q_INVOKABLE QMap<QString, QVariant> saveableRawData();
+    Q_INVOKABLE QMap<QString, QVariant> data(const QStringList &keys);
+    Q_INVOKABLE QStringList setData(QVariantMap data);   //!< Returns keys that did not set successfully
+    Q_INVOKABLE QMap<QString, QVariant> rawData(const QStringList &keys);
+    Q_INVOKABLE QStringList setRawData(QVariantMap data);   //!< Returns keys that did not set successfully
 signals:
     void downloadDone(SetupTools::Xcp::OpResult result, QStringList keys);
     void uploadDone(SetupTools::Xcp::OpResult result, QStringList keys);
     void connectSlaveDone(SetupTools::Xcp::OpResult result);
     void disconnectSlaveDone(SetupTools::Xcp::OpResult result);
     void nvWriteDone(SetupTools::Xcp::OpResult result);
+    void fault(SetupTools::Xcp::OpResult result, QString info);
+    void warn(SetupTools::Xcp::OpResult result, QString info);
+    void info(SetupTools::Xcp::OpResult result, QString info);
     void stateChanged();
     void opProgressChanged();
     void writeCacheDirtyChanged();
     void intfcChanged();
+    void addrGranChanged();
+    void slaveIdChanged();
 
-    void never();
 public slots:
     void download();
     void upload();
@@ -77,16 +93,15 @@ public slots:
     void connectSlave();
     void disconnectSlave();
 
+private:
     void onConnSetStateDone(SetupTools::Xcp::OpResult result);
+    void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void onConnStateChanged();
-
     void onConnNvWriteDone(SetupTools::Xcp::OpResult result);
-
     void onParamDownloadDone(SetupTools::Xcp::OpResult result);
     void onParamUploadDone(SetupTools::Xcp::OpResult result);
-
     void onRegistryWriteCacheDirtyChanged();
-private:
+
     enum class State
     {
         IntfcNotOk,
@@ -111,7 +126,7 @@ private:
     int mOpProgressNotifyPeriod;
 
     QStringList mActiveKeys;
-    QStringList::iterator mActiveKeyIt;
+    int mActiveKeyIdx;
     QMetaObject::Connection mActiveParamConnection;
     SetupTools::Xcp::OpResult mActiveResult;
 };

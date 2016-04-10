@@ -5,6 +5,7 @@ import QtQuick.Window 2.2
 
 Window {
     id: helpDialog
+
     title: "HGMFlash help"
     width: helpForm.implicitWidth + 20
     height: helpForm.implicitHeight + 20
@@ -48,7 +49,7 @@ Window {
             anchors.right: parent.right
             text: "Close"
             isDefault: true
-            onClicked: helpDialog.visible = false
+            onClicked: helpDialog.hide()
         }
     }
 }

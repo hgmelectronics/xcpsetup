@@ -10,8 +10,11 @@ LinearSlot::LinearSlot(QObject *parent) :
     mOorEngr(NAN),
     mRawA(quint32(0)),
     mRawB(quint32(0)),
-    mOorRaw(quint32(0xFFFFFFFF))
-{}
+    mOorRaw(quint32(0xFFFFFFFF)),
+    mValidator(new QDoubleValidator(this))
+{
+    connect(this, &Slot::valueParamChanged, this, &LinearSlot::updateValidator);
+}
 
 double LinearSlot::engrA() const
 {
@@ -86,7 +89,7 @@ void LinearSlot::setOorRaw(double newVal)
     }
 }
 
-double LinearSlot::toFloat(QVariant raw) const
+double LinearSlot::asFloat(QVariant raw) const
 {
     bool convertedOk = false;
     double rawConv = raw.toDouble(&convertedOk);
@@ -95,16 +98,16 @@ double LinearSlot::toFloat(QVariant raw) const
     return (rawConv - mRawA) / (mRawB - mRawA) * (mEngrB - mEngrA) + mEngrA;
 }
 
-QString LinearSlot::toString(QVariant raw) const
+QString LinearSlot::asString(QVariant raw) const
 {
-    double engr = toFloat(raw);
+    double engr = asFloat(raw);
     if(base() == 10)
         return QString::number(engr, 'f', precision());
     else
         return QString::number(qint64(engr), base());
 }
 
-QVariant LinearSlot::toRaw(QVariant engr) const
+QVariant LinearSlot::asRaw(QVariant engr) const
 {
     bool convertedOk = false;
     double engrConv;
@@ -131,6 +134,13 @@ QVariant LinearSlot::toRaw(QVariant engr) const
         return mOorRaw;
 }
 
+bool LinearSlot::rawInRange(QVariant raw) const
+{
+    bool convertedOk = false;
+    double rawConv = raw.toDouble(&convertedOk);
+    return (convertedOk && inRange(rawConv, mRawA, mRawB));
+}
+
 bool LinearSlot::engrInRange(QVariant engr) const
 {
     bool convertedOk = false;
@@ -146,6 +156,39 @@ bool LinearSlot::engrInRange(QVariant engr) const
     }
 
     return (convertedOk && inRange(engrConv, mEngrA, mEngrB));
+}
+
+QVariant LinearSlot::rawMin() const
+{
+    return std::min(mRawA, mRawB);
+}
+
+QVariant LinearSlot::rawMax() const
+{
+    return std::max(mRawA, mRawB);
+}
+
+QVariant LinearSlot::engrMin() const
+{
+    return std::min(mEngrA, mEngrB);
+}
+
+QVariant LinearSlot::engrMax() const
+{
+    return std::max(mEngrA, mEngrB);
+}
+
+QValidator *LinearSlot::validator()
+{
+    return mValidator;
+}
+
+void LinearSlot::updateValidator()
+{
+    if(mEngrA > mEngrB)
+        mValidator->setRange(mEngrB, mEngrA, precision());
+    else
+        mValidator->setRange(mEngrA, mEngrB, precision());
 }
 
 } // namespace SetupTools

@@ -13,7 +13,7 @@ class ConnectionFacade : public QObject
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
     Q_PROPERTY(int timeout READ timeout WRITE setTimeout)
     Q_PROPERTY(int nvWriteTimeout READ nvWriteTimeout WRITE setNvWriteTimeout)
-    Q_PROPERTY(int resetTimeout READ resetTimeout WRITE setResetTimeout)
+    Q_PROPERTY(int bootDelay READ bootDelay WRITE setBootDelay)
     Q_PROPERTY(int progClearTimeout READ progClearTimeout WRITE setProgClearTimeout)
     Q_PROPERTY(double opProgressNotifyFrac READ opProgressNotifyFrac WRITE setOpProgressNotifyFrac)
     Q_PROPERTY(SetupTools::Xcp::Connection::State state READ state WRITE setState NOTIFY stateChanged)
@@ -37,8 +37,8 @@ public:
     void setTimeout(int);
     int nvWriteTimeout();
     void setNvWriteTimeout(int);
-    int resetTimeout();
-    void setResetTimeout(int);
+    int bootDelay();
+    void setBootDelay(int);
     double opProgressNotifyFrac();
     void setOpProgressNotifyFrac(double);
     int progClearTimeout(void);
@@ -46,6 +46,7 @@ public:
     bool progResetIsAcked(void);
     void setProgResetIsAcked(bool val);
     double opProgress();
+    void forceSlaveSupportCalPage();
     ::SetupTools::Xcp::Connection::State state();
     void setState(::SetupTools::Xcp::Connection::State val);
     quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
@@ -77,6 +78,7 @@ signals:
     void buildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void getAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void setStateDone(SetupTools::Xcp::OpResult result);
+    void opMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void stateChanged();
     void opProgressChanged();
 
@@ -104,6 +106,7 @@ public slots:
     void buildChecksum(XcpPtr base, int len);
     void getAvailSlavesStr(QString bcastId, QString filter);
 
+private:
     void onConnSetStateDone(SetupTools::Xcp::OpResult);
     void onConnUploadDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, std::vector<quint8> data);
     void onConnDownloadDone(SetupTools::Xcp::OpResult result, XcpPtr base, std::vector<quint8> data);
@@ -115,10 +118,12 @@ public slots:
     void onConnProgramResetDone(SetupTools::Xcp::OpResult result);
     void onConnBuildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void onConnGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void onConnStateChanged();
     void onConnOpProgressChanged();
-private:
+
     Interface::Interface* mIntfc;
+    bool mIntfcOwned;
     QUrl mIntfcUri;
     Connection *mConn;
     QThread *mConnThread;
@@ -139,12 +144,14 @@ public:
 signals:
     void uploadUint32Done(int result, quint32 data);
     void downloadUint32Done(int result);
+
 public slots:
     void uploadUint32(quint32 base);
     void downloadUint32(quint32 base, quint32 data);
+
+private:
     void onConnUploadDone(SetupTools::Xcp::OpResult, XcpPtr, int, const std::vector<quint8> &);
     void onConnDownloadDone(SetupTools::Xcp::OpResult, XcpPtr, const std::vector<quint8> &);
-private:
     ConnectionFacade *mConn;
 };
 

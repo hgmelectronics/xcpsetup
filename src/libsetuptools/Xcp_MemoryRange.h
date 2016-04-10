@@ -16,7 +16,12 @@ class MemoryRangeList;  // forward declare
 class MemoryRange: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool writable READ writable WRITE setWritable NOTIFY writableChanged)
+    Q_PROPERTY(XcpPtr base READ base CONSTANT)
+    Q_PROPERTY(XcpPtr end READ end CONSTANT)
+    Q_PROPERTY(quint32 size READ size CONSTANT)
+    Q_PROPERTY(MemoryRangeType type READ type CONSTANT)
+    Q_PROPERTY(quint8 addrGran READ addrGran CONSTANT)
+    Q_PROPERTY(bool writable READ writable CONSTANT)
     Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
     Q_PROPERTY(bool fullReload READ fullReload WRITE setFullReload NOTIFY fullReloadChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
@@ -44,40 +49,73 @@ public:
      * @param writable
      * @param parent
      */
-    MemoryRange(Xcp::XcpPtr base, quint32 size, bool writable, quint8 addrGran, MemoryRangeList *parent);
+    MemoryRange(MemoryRangeType type, Xcp::XcpPtr base, quint32 size, bool writable, quint8 addrGran, MemoryRangeList *parent);
 
-    bool writable() const;
-    void setWritable(bool);
+    XcpPtr base() const
+    {
+        return mBase;
+    }
 
-    bool valid() const;
+    bool writable() const
+    {
+        return mWritable;
+    }
 
-    bool fullReload() const;
-    void setFullReload(bool);
+    bool valid() const
+    {
+        return mValid;
+    }
 
-    XcpPtr base() const;
+    void setValid(bool newValid);
+
+    bool fullReload() const
+    {
+        return mFullReload;
+    }
+
+    void setFullReload(bool newFullReload);
+
+    quint32 size() const //!< size in bytes
+    {
+        return mSize;
+    }
+
+    quint8 addrGran() const
+    {
+        return mAddrGran;
+    }
+
+    MemoryRangeType type() const
+    {
+        return mType;
+    }
+
+    bool writeCacheDirty() const
+    {
+        return mWriteCacheDirty;
+    }
+
+    void setWriteCacheDirty(bool newWriteCacheDirty);
+
     XcpPtr end() const;
-
-    quint32 size() const; //!< size in bytes
 
     virtual void resetCaches() = 0;
 
     virtual bool operator==(MemoryRange &other) = 0;
     inline bool operator!=(MemoryRange &other) { return !(*this == other); }
 
-    bool writeCacheDirty() const;
 
     static inline bool isValidType(int type) {
         return (type >= U8 && type < F64);
     }
 
 signals:
-    void writableChanged();
     void validChanged();
     void fullReloadChanged();
     void writeCacheDirtyChanged();
     void uploadDone(SetupTools::Xcp::OpResult result);
     void downloadDone(SetupTools::Xcp::OpResult result);
-    void valueChanged();
+
 public slots:
     void upload();
     virtual void download() = 0;
@@ -87,21 +125,22 @@ public slots:
 
 protected:
     Xcp::ConnectionFacade *connectionFacade() const;
-    void setValid(bool newValid);
-    void setWriteCacheDirty(bool newWriteCacheDirty);
 
+    void convertToSlave(QVariant value, quint8 *buf);
+    QVariant convertFromSlave(const quint8 *buf);
+
+private:
     const Xcp::XcpPtr mBase;
     const quint32 mSize;
     const quint8 mAddrGran;
+    const bool mWritable;
+    const MemoryRangeType mType;
 
-    bool mWritable;
     bool mValid;
     bool mFullReload;
     bool mWriteCacheDirty;
 };
 
-void convertToSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, QVariant value, quint8 *buf);
-QVariant convertFromSlave(MemoryRange::MemoryRangeType type, Xcp::ConnectionFacade *conn, const quint8 *buf);
 quint32 memoryRangeTypeSize(MemoryRange::MemoryRangeType type);
 QMetaType::Type memoryRangeTypeQtCode(MemoryRange::MemoryRangeType type);
 

@@ -69,6 +69,14 @@ SetupTools::Xcp::OpResult Interface::setPacketLog(bool enable)
 {
     return mHasReliableTx;
 }
+ bool Interface::allowsMultipleReplies()
+ {
+     return true;
+ }
+ int Interface::maxReplyTimeout()
+ {
+     return std::numeric_limits<int>::max();
+ }
 
 }   // namespace Can
 }   // namespace Interface

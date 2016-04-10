@@ -3,18 +3,24 @@
 namespace SetupTools {
 namespace Xcp {
 
-ParamLayer::ParamLayer(quint32 addrGran, QObject *parent) :
+ParamLayer::ParamLayer(QObject *parent) :
     QObject(parent),
     mConn(new ConnectionFacade(this)),
-    mRegistry(new ParamRegistry(addrGran, this)),
+    mRegistry(nullptr),
     mState(State::IntfcNotOk),
     mOpProgressNotifyPeriod(1),
-    mActiveKeyIt(mActiveKeys.end())
+    mActiveKeyIdx(-1)
 {
-    mRegistry->setConnectionFacade(mConn);
     connect(mConn, &ConnectionFacade::setStateDone, this, &ParamLayer::onConnSetStateDone);
+    connect(mConn, &ConnectionFacade::opMsg, this, &ParamLayer::onConnOpMsg);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
+}
+
+ParamLayer::ParamLayer(quint32 addrGran, QObject *parent) :
+    ParamLayer(parent)
+{
+    setAddrGran(addrGran);
 }
 
 QUrl ParamLayer::intfcUri()
@@ -25,6 +31,13 @@ QUrl ParamLayer::intfcUri()
 void ParamLayer::setIntfcUri(QUrl uri)
 {
     mConn->setIntfcUri(uri);
+    if(mConn->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mConn->intfc()->setPacketLog(true);
+        else
+            mConn->intfc()->setPacketLog(false);
+    }
     emit intfcChanged();
 }
 
@@ -36,6 +49,13 @@ Interface::Interface *ParamLayer::intfc()
 void ParamLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
     mConn->setIntfc(intfc, uri);
+    if(mConn->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mConn->intfc()->setPacketLog(true);
+        else
+            mConn->intfc()->setPacketLog(false);
+    }
     emit intfcChanged();
 }
 
@@ -47,16 +67,33 @@ QString ParamLayer::slaveId()
 void ParamLayer::setSlaveId(QString id)
 {
     mConn->setSlaveId(id);
+    emit slaveIdChanged();
 }
 
 bool ParamLayer::idle()
 {
-    return (mState == State::Disconnected || mState == State::IntfcNotOk);
+    switch(mState)
+    {
+    case State::IntfcNotOk:     return true;    break;
+    case State::Disconnected:   return true;    break;
+    case State::Connect:        return false;   break;
+    case State::Connected:      return true;    break;
+    case State::Download:       return false;   break;
+    case State::Upload:         return false;   break;
+    case State::NvWrite:        return false;   break;
+    case State::Disconnect:     return false;   break;
+    default:                    return true;    break;
+    }
 }
 
 bool ParamLayer::intfcOk()
 {
     return (mState != State::IntfcNotOk);
+}
+
+bool ParamLayer::slaveConnected()
+{
+    return !(mState == State::Disconnected || mState == State::IntfcNotOk);
 }
 
 int ParamLayer::slaveTimeout()
@@ -90,12 +127,23 @@ void ParamLayer::setOpProgressNotifyPeriod(int val)
     mOpProgressNotifyPeriod = val;
 }
 
+void ParamLayer::forceSlaveSupportCalPage()
+{
+    mConn->forceSlaveSupportCalPage();
+}
+
+void ParamLayer::setSlaveCalPage()
+{
+    mConn->setCalPage(0, 0);
+}
+
 double ParamLayer::opProgress()
 {
-    if(mActiveKeys.empty())
+    if(mActiveKeys.empty() || mActiveKeyIdx < 0)
         return 0;
 
-    return std::distance(mActiveKeys.begin(), mActiveKeyIt) / double(mActiveKeys.size());
+    Q_ASSERT(mActiveKeyIdx <= mActiveKeys.size());
+    return mActiveKeyIdx / double(mActiveKeys.size());
 }
 
 ConnectionFacade *ParamLayer::conn()
@@ -108,6 +156,25 @@ ParamRegistry *ParamLayer::registry()
     return mRegistry;
 }
 
+quint32 ParamLayer::addrGran()
+{
+    if(mRegistry)
+        return mRegistry->addrGran();
+    else
+        return 0;
+}
+
+void ParamLayer::setAddrGran(quint32 val)
+{
+    if(!mRegistry)
+    {
+        mRegistry = new ParamRegistry(val, this);
+        mRegistry->setConnectionFacade(mConn);
+    }
+
+    emit addrGranChanged();
+}
+
 bool ParamLayer::writeCacheDirty()
 {
     return mRegistry->writeCacheDirty();
@@ -118,9 +185,19 @@ QMap<QString, QVariant> ParamLayer::data()
     return data(mRegistry->paramKeys());
 }
 
+QMap<QString, QVariant> ParamLayer::rawData()
+{
+    return rawData(mRegistry->paramKeys());
+}
+
 QMap<QString, QVariant> ParamLayer::saveableData()
 {
     return data(mRegistry->saveableParamKeys());
+}
+
+QMap<QString, QVariant> ParamLayer::saveableRawData()
+{
+    return rawData(mRegistry->saveableParamKeys());
 }
 
 QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
@@ -130,12 +207,18 @@ QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
     {
         Param *param = mRegistry->getParam(key);
         Q_ASSERT(param != nullptr);
-        ret[key] = param->getSerializableValue();
+        if(param->valid())
+        {
+            bool anyInRange = false;
+            QVariant value = param->getSerializableValue(nullptr, &anyInRange);
+            if(anyInRange)
+                ret[key] = value;
+        }
     }
     return ret;
 }
 
-QStringList ParamLayer::setData(const QMap<QString, QVariant> &data)
+QStringList ParamLayer::setData(QVariantMap data)
 {
     QStringList failedKeys;
 
@@ -143,14 +226,64 @@ QStringList ParamLayer::setData(const QMap<QString, QVariant> &data)
 
     for(QString key : keys)
     {
-        bool ok = false;
-
         Param *param = mRegistry->getParam(key);
-        if(param != nullptr)
-            ok = param->setSerializableValue(data[key]);
+        if(param == nullptr)
+        {
+            continue;
+        }
 
-        if(!ok)
+        if(param->setSerializableValue(data[key]))
+        {
+            param->setValid(true);
+        }
+        else
+        {
             failedKeys.push_back(key);
+        }
+    }
+
+    return failedKeys;
+}
+
+QMap<QString, QVariant> ParamLayer::rawData(const QStringList &keys)
+{
+    QMap<QString, QVariant> ret;
+    for(QString key : keys)
+    {
+        Param *param = mRegistry->getParam(key);
+        Q_ASSERT(param != nullptr);
+        if(param->valid())
+        {
+            bool anyInRange = false;
+            QVariant value = param->getSerializableRawValue(nullptr, &anyInRange);
+            if(anyInRange)
+                ret[key] = value;
+        }
+    }
+    return ret;
+}
+
+QStringList ParamLayer::setRawData(QVariantMap data)
+{
+    QStringList failedKeys;
+
+    QStringList keys = data.keys();
+
+    for(QString key : keys)
+    {
+        Param *param = mRegistry->getParam(key);
+        if(param == nullptr)
+        {
+            continue;
+        }
+        if (param->setSerializableRawValue(data[key]))
+        {
+            param->setValid(true);
+        }
+        else
+        {
+            failedKeys.push_back(key);
+        }
     }
 
     return failedKeys;
@@ -176,7 +309,7 @@ void ParamLayer::download(QStringList keys)
     }
 
     mActiveKeys = keys;
-    mActiveKeyIt = mActiveKeys.begin();
+    mActiveKeyIdx = 0;
     mActiveResult = OpResult::Success;
     emit opProgressChanged();
 
@@ -204,7 +337,7 @@ void ParamLayer::upload(QStringList keys)
     }
 
     mActiveKeys = keys;
-    mActiveKeyIt = mActiveKeys.begin();
+    mActiveKeyIdx = 0;
     mActiveResult = OpResult::Success;
     emit opProgressChanged();
 
@@ -252,7 +385,7 @@ void ParamLayer::connectSlave()
 
     disconnect(mActiveParamConnection);
     mActiveKeys.clear();
-    mActiveKeyIt = mActiveKeys.end();
+    mActiveKeyIdx = -1;
 
     if(mConn->state() == Connection::State::CalMode)
     {
@@ -276,7 +409,7 @@ void ParamLayer::disconnectSlave()
 
     disconnect(mActiveParamConnection);
     mActiveKeys.clear();
-    mActiveKeyIt = mActiveKeys.end();
+    mActiveKeyIdx = -1;
 
     if(mConn->state() == Connection::State::IntfcInvalid)
     {
@@ -354,9 +487,18 @@ void ParamLayer::onConnSetStateDone(OpResult result)
     }
 }
 
+void ParamLayer::onConnOpMsg(SetupTools::Xcp::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
+{
+    if(ext.type == Connection::OpType::Upload && result == OpResult::SlaveErrorOutOfRange)
+        emit info(result, str);
+    else
+        emit fault(result, str);
+}
+
 void ParamLayer::onConnStateChanged()
 {
-    mRegistry->resetCaches();
+    if(mState == State::Connect && mConn->state() == Connection::State::CalMode)
+        mRegistry->resetCaches();
 
     Connection::State newState = mConn->state();
     if(newState == Connection::State::IntfcInvalid)
@@ -381,7 +523,7 @@ void ParamLayer::onParamDownloadDone(OpResult result)
 
     disconnect(mActiveParamConnection);
 
-    ++mActiveKeyIt;
+    ++mActiveKeyIdx;
     notifyProgress();
     downloadKey();
 }
@@ -394,7 +536,7 @@ void ParamLayer::onParamUploadDone(OpResult result)
 
     disconnect(mActiveParamConnection);
 
-    ++mActiveKeyIt;
+    ++mActiveKeyIdx;
     notifyProgress();
     uploadKey();
 }
@@ -407,32 +549,44 @@ void ParamLayer::onRegistryWriteCacheDirtyChanged()
 void ParamLayer::downloadKey()
 {
     Q_ASSERT(mState == State::Download);
-    Q_ASSERT(mActiveKeyIt >= mActiveKeys.begin() && mActiveKeyIt <= mActiveKeys.end());
+    Q_ASSERT(mActiveKeyIdx >= 0 && mActiveKeyIdx <= mActiveKeys.size());
 
-    Param *param = getNextParam();
-    if(param == nullptr)
+    while(1)
     {
-        setState(State::Connected);
-        emit downloadDone(mActiveResult, mActiveKeys);
-        return;
+        Param *param = getNextParam();
+        if(param == nullptr)
+        {
+            setState(State::Connected);
+            mActiveKeyIdx = -1;
+            emit opProgressChanged();
+            emit downloadDone(mActiveResult, mActiveKeys);
+            break;
+        }
+        if(param->writeCacheDirty())
+        {
+            mActiveParamConnection = QObject::connect(param, &Param::downloadDone, this, &ParamLayer::onParamDownloadDone);
+            param->download();
+            break;
+        }
+        ++mActiveKeyIdx;
     }
-    mActiveParamConnection = QObject::connect(param, &Param::downloadDone, this, onParamDownloadDone);
-    param->download();
 }
 
 void ParamLayer::uploadKey()
 {
     Q_ASSERT(mState == State::Upload);
-    Q_ASSERT(mActiveKeyIt >= mActiveKeys.begin() && mActiveKeyIt <= mActiveKeys.end());
+    Q_ASSERT(mActiveKeyIdx >= 0 && mActiveKeyIdx <= mActiveKeys.size());
 
     Param *param = getNextParam();
     if(param == nullptr)
     {
         setState(State::Connected);
+        mActiveKeyIdx = -1;
+        emit opProgressChanged();
         emit uploadDone(mActiveResult, mActiveKeys);
         return;
     }
-    mActiveParamConnection = QObject::connect(param, &Param::uploadDone, this, onParamUploadDone);
+    mActiveParamConnection = QObject::connect(param, &Param::uploadDone, this, &ParamLayer::onParamUploadDone);
     param->upload();
 }
 
@@ -441,9 +595,9 @@ Param *ParamLayer::getNextParam()
     Param *param = nullptr;
     while(1)
     {
-        if(mActiveKeyIt == mActiveKeys.end())
+        if(mActiveKeyIdx >= mActiveKeys.size())
             break;
-        param = mRegistry->getParam(*mActiveKeyIt);
+        param = mRegistry->getParam(mActiveKeys[mActiveKeyIdx]);
         if(param != nullptr)
         {
             break;
@@ -454,7 +608,7 @@ Param *ParamLayer::getNextParam()
                 mActiveResult = OpResult::InvalidArgument;
         }
 
-        ++mActiveKeyIt;
+        ++mActiveKeyIdx;
     }
 
     return param;
@@ -468,7 +622,8 @@ void ParamLayer::setState(State val)
 
 void ParamLayer::notifyProgress()
 {
-    if((std::distance(mActiveKeys.begin(), mActiveKeyIt) % mOpProgressNotifyPeriod) == 0)
+    if((mActiveKeyIdx % mOpProgressNotifyPeriod) == 0
+            || mActiveKeyIdx == mActiveKeys.size())
         emit opProgressChanged();
 }
 
