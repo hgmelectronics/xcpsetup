@@ -485,8 +485,8 @@ QtObject {
     }
 
     property LinearSlot torque: LinearSlot {
-        rawA: 0
-        engrA: 0
+        rawA: -1E9
+        engrA: useMetricUnits ? -1E9 : -7.37562E8
         rawB: 1E9
         engrB: useMetricUnits ? 1E9 : 7.37562E8
         unit: useMetricUnits ? "Nm" : "ft-lbf"
