@@ -36,6 +36,10 @@ QtObject {
         slot: slots.tempTableIndex1
         count: 11
     }
+    property SlotArrayModel pressureTorqueAxisModel: SlotArrayModel {
+        slot: slots.count
+        count: 20
+    }
     property SlotArrayModel colorIndexAxisModel: SlotArrayModel {
         slot: slots.colorIndex
         count: 3
@@ -664,284 +668,107 @@ QtObject {
         immediateWrite: true
     }
 
-    property
-    list<TableMetaParam> transmissionUpshiftApplyPressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_n_1_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift N-1 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 1-2 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 2-3 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 3-4 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 4-5 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 5-6 Apply")
-        }/*,
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_7_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 6-7 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_7_8_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 7-8 Apply")
-        }*/
-    ]
+    function gearLetter(num) {
+        if(num === -1)
+            return "R"
+        else if(num === 0)
+            return "N"
+        else
+            return num.toString()
+    }
+    property int pressureTableLength: 20
+    property var blankTableMetaParam: Qt.createComponent("qrc:/BlankTableMetaParam.qml")
 
-    property
-    list<TableMetaParam> transmissionDownshiftApplyPressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
+    property ArrayParam transmissionShiftApplyPressureTorqueArray: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_apply_pressure_torque, pressureTorqueAxisModel.count, true, true, slots.torque)
+    property TableMetaParam transmissionShiftApplyPressureTorque: TableMetaParam {
+        param: TableParam {
+            x: pressureTorqueAxisModel
+            value: transmissionShiftApplyPressureTorqueArray
+        }
+        name: qsTr("Shift Apply Pressure Torque")
+    }
+    property var transmissionShiftApplyPressure: {
+        var list = []
+        var from
+        var to
+        var id
+        for(from = -1; from <= 6; ++from) {
+            for(to = -1; to <= 6; ++to) {
+                if(from !== to) {
+                    id = paramId.transmission_shift_apply_pressure_base + (from + 1) << 20 + (to + 1) << 16
+                    list.push(Qt.createQmlObject("import QtQuick 2.0; import com.hgmelectronics.setuptools 1.0; import com.hgmelectronics.setuptools.xcp 1.0;"
+                                                 + "TableMetaParam { "
+                                                 + "    param: TableParam { "
+                                                 + "        x: transmissionShiftApplyPressureTorqueArray;"
+                                                 + "        value: registry.addArrayParam(MemoryRange.S32, " + id.toString() + ", pressureTableLength, true, true, slots.pressure)"
+                                                 + "    }"
+                                                 + "    name: \"Shift " + gearLetter(from) + "-" + gearLetter(to) + " Apply Pressure\""
+                                                 + "}", this))
+                }
             }
-            name: qsTr("Shift 2-1 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 3-2 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 4-3 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 5-4 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 6-5 Apply")
-        }/*,
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_7_6_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 7-6 Apply")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_8_7_apply_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 8-7 Apply")
-        }*/
-    ]
+        }
 
-    property
-    list<TableMetaParam> transmissionUpshiftReleasePressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 1-2 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 2-3 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 3-4 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 4-5 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 5-6 Release")
-        }/*,
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_7_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 6-7 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_7_8_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 7-8 Release")
-        }*/
-    ]
+        return list
+    }
 
-    property
-    list<TableMetaParam> transmissionDownshiftReleasePressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
+    property ArrayParam transmissionShiftReleasePressureTorqueArray: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_release_pressure_torque, pressureTorqueAxisModel.count, true, true, slots.torque)
+    property TableMetaParam transmissionShiftReleasePressureTorque: TableMetaParam {
+        param: TableParam {
+            x: pressureTorqueAxisModel
+            value: transmissionShiftReleasePressureTorqueArray
+        }
+        name: qsTr("Shift Release Pressure Torque")
+    }
+    property var transmissionShiftReleasePressure: {
+        var list = []
+        var from
+        var to
+        var id
+        for(from = -1; from <= 6; ++from) {
+            for(to = -1; to <= 6; ++to) {
+                if(from !== to) {
+                    id = paramId.transmission_shift_release_pressure_base + (from + 1) << 20 + (to + 1) << 16
+                    list.push(Qt.createQmlObject("import QtQuick 2.0; import com.hgmelectronics.setuptools 1.0; import com.hgmelectronics.setuptools.xcp 1.0;"
+                                                 + "TableMetaParam { "
+                                                 + "    param: TableParam { "
+                                                 + "        x: transmissionShiftReleasePressureTorqueArray;"
+                                                 + "        value: registry.addArrayParam(MemoryRange.S32, " + id.toString() + ", pressureTableLength, true, true, slots.pressure)"
+                                                 + "    }"
+                                                 + "    name: \"Shift " + gearLetter(from) + "-" + gearLetter(to) + " Release Pressure\""
+                                                 + "}", this))
+                }
             }
-            name: qsTr("Shift 2-1 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 3-2 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 4-3 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 5-4 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 6-5 Release")
-        }/*,
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_7_6_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 7-6 Release")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_8_7_release_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Shift 8-7 Release")
-        }*/
-    ]
+        }
 
-    property
-    list<TableMetaParam> transmissionMainPressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_1_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Gear 1 Main Pressure")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_2_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Gear 2 Main Pressure")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_3_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Gear 3 Main Pressure")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_4_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Gear 4 Main Pressure")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_5_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Gear 5 Main Pressure")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_6_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Gear 6 Main Pressure")
-        }/*,
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_7_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Gear 7 Main Pressure")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_8_main_pressure, pressureAxisModel.count, true, true, slots.pressure)
-            }
-            name: qsTr("Gear 8 Main Pressure")
-        }*/
-    ]
+        return list
+    }
+
+    property ArrayParam transmissionLinePressureTorqueArray: registry.addArrayParam(MemoryRange.S32, paramId.transmission_line_pressure_torque, pressureTorqueAxisModel.count, true, true, slots.torque)
+    property TableMetaParam transmissionLinePressureTorque: TableMetaParam {
+        param: TableParam {
+            x: pressureTorqueAxisModel
+            value: transmissionLinePressureTorqueArray
+        }
+        name: qsTr("Line Pressure Torque")
+    }
+    property var transmissionLinePressure: {
+        var list = []
+        var gear
+        var id
+        for(gear = -1; gear <= 6; ++gear) {
+            id = paramId.transmission_shift_apply_pressure_base + (gear + 1) << 20 + (gear + 1) << 16
+            list.push(Qt.createQmlObject("import QtQuick 2.0; import com.hgmelectronics.setuptools 1.0; import com.hgmelectronics.setuptools.xcp 1.0;"
+                                         + "TableMetaParam { "
+                                         + "    param: TableParam { "
+                                         + "        x: transmissionLinePressureTorqueArray;"
+                                         + "        value: registry.addArrayParam(MemoryRange.S32, " + id.toString() + ", pressureTableLength, true, true, slots.pressure)"
+                                         + "    }"
+                                         + "    name: \"Gear " + gearLetter(gear) + " Line Pressure\""
+                                         + "}", this))
+        }
+
+        return list
+    }
 
     property
     list<TableMetaParam> transmissionUpshiftApplyPercentage: [

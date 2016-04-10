@@ -114,48 +114,6 @@ QtObject {
     readonly property double transmission_shaft_5_speed_sensor_pulse_count: 0x30e0000
     readonly property double transmission_shaft_6_speed_sensor_pulse_count: 0x30f0000
 
-    readonly property double transmission_gear_1_main_pressure: 0x03310000
-    readonly property double transmission_gear_2_main_pressure: 0x03320000
-    readonly property double transmission_gear_3_main_pressure: 0x03330000
-    readonly property double transmission_gear_4_main_pressure: 0x03340000
-    readonly property double transmission_gear_5_main_pressure: 0x03350000
-    readonly property double transmission_gear_6_main_pressure: 0x03360000
-    readonly property double transmission_gear_7_main_pressure: 0x03370000
-    readonly property double transmission_gear_8_main_pressure: 0x03380000
-
-    readonly property double transmission_shift_n_1_apply_pressure: 0x03400000
-    readonly property double transmission_shift_1_2_apply_pressure: 0x03410000
-    readonly property double transmission_shift_2_3_apply_pressure: 0x03420000
-    readonly property double transmission_shift_3_4_apply_pressure: 0x03430000
-    readonly property double transmission_shift_4_5_apply_pressure: 0x03440000
-    readonly property double transmission_shift_5_6_apply_pressure: 0x03450000
-    readonly property double transmission_shift_6_7_apply_pressure: 0x03460000
-    readonly property double transmission_shift_7_8_apply_pressure: 0x03470000
-
-    readonly property double transmission_shift_2_1_apply_pressure: 0x03480000
-    readonly property double transmission_shift_3_2_apply_pressure: 0x03490000
-    readonly property double transmission_shift_4_3_apply_pressure: 0x034a0000
-    readonly property double transmission_shift_5_4_apply_pressure: 0x034b0000
-    readonly property double transmission_shift_6_5_apply_pressure: 0x034c0000
-    readonly property double transmission_shift_7_6_apply_pressure: 0x034d0000
-    readonly property double transmission_shift_8_7_apply_pressure: 0x034e0000
-
-    readonly property double transmission_shift_1_2_release_pressure: 0x03510000
-    readonly property double transmission_shift_2_3_release_pressure: 0x03520000
-    readonly property double transmission_shift_3_4_release_pressure: 0x03530000
-    readonly property double transmission_shift_4_5_release_pressure: 0x03540000
-    readonly property double transmission_shift_5_6_release_pressure: 0x03550000
-    readonly property double transmission_shift_6_7_release_pressure: 0x03560000
-    readonly property double transmission_shift_7_8_release_pressure: 0x03570000
-
-    readonly property double transmission_shift_2_1_release_pressure: 0x03580000
-    readonly property double transmission_shift_3_2_release_pressure: 0x03590000
-    readonly property double transmission_shift_4_3_release_pressure: 0x35a0000
-    readonly property double transmission_shift_5_4_release_pressure: 0x35b0000
-    readonly property double transmission_shift_6_5_release_pressure: 0x35c0000
-    readonly property double transmission_shift_7_6_release_pressure: 0x35d0000
-    readonly property double transmission_shift_8_7_release_pressure: 0x35e0000
-
     readonly property double transmission_gear_1_main_percentage: 0x03610000
     readonly property double transmission_gear_2_main_percentage: 0x03620000
     readonly property double transmission_gear_3_main_percentage: 0x03630000
@@ -197,6 +155,13 @@ QtObject {
     readonly property double transmission_shift_6_5_release_percentage: 0x38c0000
     readonly property double transmission_shift_7_6_release_percentage: 0x38d0000
     readonly property double transmission_shift_8_7_release_percentage: 0x38e0000
+
+    readonly property double transmission_shift_apply_pressure_torque:   0x03900000
+    readonly property double transmission_shift_release_pressure_torque: 0x03910000
+    readonly property double transmission_line_pressure_torque:          0x03920000
+
+    readonly property double transmission_shift_apply_pressure_base:     0x13000000
+    readonly property double transmission_shift_release_pressure_base:   0x23000000
 
     readonly property double transmission_pressure_temperature_compensation: 0x3a00000
 

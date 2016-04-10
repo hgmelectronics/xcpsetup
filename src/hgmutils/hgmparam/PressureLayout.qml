@@ -17,57 +17,71 @@ RowLayout {
         Layout.alignment: Qt.AlignTop
         ColumnLayout {
             GroupBox {
-                title: "Upshift"
+                title: "Apply"
 
                 RowLayout {
                     spacing: 8
-                    TableByShiftEditMenuButton {
-                        text: qsTr("Apply Pressure")
-                        xLabel: qsTr("Torque")
-                        valueLabel: qsTr("Pressure")
-                        tableParam: parameters.transmissionUpshiftApplyPressure
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Torques"
+                        xLabel: "Index"
+                        valueLabel: "Torque"
+                        tableParam: parameters.transmissionShiftApplyPressureTorque
+                        hasPlot: true
+                        hasShapers: true
                     }
-
                     TableByShiftEditMenuButton {
-                        text: qsTr("Release Pressure")
+                        text: qsTr("Pressures")
                         xLabel: qsTr("Torque")
                         valueLabel: qsTr("Pressure")
-                        tableParam: parameters.transmissionUpshiftReleasePressure
+                        tableParam: parameters.transmissionShiftApplyPressure
                     }
                 }
             }
-
             GroupBox {
-                title: "Downshift"
+                title: "Release"
 
                 RowLayout {
                     spacing: 8
-                    TableByShiftEditMenuButton {
-                        text: qsTr("Apply Pressure")
-                        xLabel: qsTr("Torque")
-                        valueLabel: qsTr("Pressure")
-                        tableParam: parameters.transmissionDownshiftApplyPressure
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Torques"
+                        xLabel: "Index"
+                        valueLabel: "Torque"
+                        tableParam: parameters.transmissionShiftReleasePressureTorque
+                        hasPlot: true
+                        hasShapers: true
                     }
-
                     TableByShiftEditMenuButton {
-                        text: qsTr("Release Pressure")
+                        text: qsTr("Pressures")
                         xLabel: qsTr("Torque")
                         valueLabel: qsTr("Pressure")
-                        tableParam: parameters.transmissionDownshiftReleasePressure
+                        tableParam: parameters.transmissionShiftReleasePressure
                     }
                 }
             }
-
             GroupBox {
-                title: "Main Pressure"
-                TableByGearEditMenuButton {
-                    text: qsTr("Edit")
-                    xLabel: qsTr("Torque")
-                    valueLabel: qsTr("Pressure")
-                    tableParam: parameters.transmissionMainPressure
+                title: "Main Line"
+
+                RowLayout {
+                    spacing: 8
+                    TableParamEditButton {
+                        Layout.margins: 0
+                        text: "Torques"
+                        xLabel: "Index"
+                        valueLabel: "Torque"
+                        tableParam: parameters.transmissionLinePressureTorque
+                        hasPlot: true
+                        hasShapers: true
+                    }
+                    TableByShiftEditMenuButton {
+                        text: qsTr("Pressures")
+                        xLabel: qsTr("Torque")
+                        valueLabel: qsTr("Pressure")
+                        tableParam: parameters.transmissionLinePressure
+                    }
                 }
             }
-
             GroupBox {
                 title: "Prefill"
                 ColumnLayout {
