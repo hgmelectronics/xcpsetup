@@ -65,24 +65,25 @@ GroupBox {
             visible: false
             text: name
         }
-    }
 
-    function updateCombo() {
-        combo.currentIndex = param.slot.engrToEncodingIndex(param.stringVal)
-        if (combo.currentIndex == -1)
-            combo.editText = param.stringVal
-    }
+        function updateCombo() {
+            combo.currentIndex = param.slot.engrToEncodingIndex(param.stringVal)
+            if (combo.currentIndex == -1)
+                combo.editText = param.stringVal
+        }
 
-    Connections {
-        target: param
-        onValChanged: updateCombo()
-    }
+        Connections {
+            target: param
+            onValChanged: row.updateCombo()
+        }
 
-    Component.onCompleted: updateCombo()
+        Component.onCompleted: updateCombo()
 
-    AutoRefreshOverlay {
-        key: param.key
-        visible: enableAutoRefreshOverlay
-        enabled: enableAutoRefreshOverlay
+        AutoRefreshOverlay {
+            anchors.fill: combo
+            key: param.key
+            visible: enableAutoRefreshOverlay
+            enabled: enableAutoRefreshOverlay
+        }
     }
 }
