@@ -33,6 +33,9 @@ RowLayout {
             metaParam: parameters.tccDisableTOSSPercentA
         }
         EncodingParamEdit {
+            metaParam: parameters.tccDisableInSwitchShiftA
+        }
+        EncodingParamEdit {
             metaParam: parameters.tccManualModeA
         }
     }
@@ -55,6 +58,9 @@ RowLayout {
         }
         ScalarParamSpinBox {
             metaParam: parameters.tccDisableTOSSPercentB
+        }
+        EncodingParamEdit {
+            metaParam: parameters.tccDisableInSwitchShiftB
         }
         EncodingParamEdit {
             metaParam: parameters.tccManualModeB

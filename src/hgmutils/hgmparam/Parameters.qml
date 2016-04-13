@@ -1384,6 +1384,17 @@ QtObject {
         name: qsTr("Manual TCC B")
     }
 
+
+    property ScalarMetaParam tccDisableInSwitchShiftA: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_disable_in_switch_shift_a, true, true, slots.booleanYesNo1)
+        name: qsTr("TCC Disable In Switch Shift A")
+    }
+
+    property ScalarMetaParam tccDisableInSwitchShiftB: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_disable_in_switch_shift_b, true, true, slots.booleanYesNo1)
+        name: qsTr("TCC Disable In Switch Shift B")
+    }
+
     property ScalarMetaParam shiftMaxEngineSpeedA: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.shift_max_engine_speed_a, true, true, slots.rpm1)
         name: qsTr("Max Engine Speed A")
