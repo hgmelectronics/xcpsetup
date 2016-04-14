@@ -421,8 +421,8 @@ ColumnLayout {
                 downshiftB3Series,
                 downshiftB4Series,
             ]
-            xAxis.titleText: qsTr("Torque %1").arg(parameters.upshiftTablesA[0].param.x.slot.unit)
-            yAxis.titleText: qsTr("Speed %1").arg(parameters.upshiftTablesA[0].param.value.slot.unit)
+            xAxis.titleText: qsTr("Torque ") + parameters.upshiftTablesA[0].param.x.slot.unit
+            yAxis.titleText: qsTr("Speed ") + parameters.upshiftTablesA[0].param.value.slot.unit
         }
 
         GroupBox {
