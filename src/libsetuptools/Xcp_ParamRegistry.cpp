@@ -7,6 +7,34 @@
 namespace SetupTools {
 namespace Xcp {
 
+void ParamAddrRangeMap::insert(XcpPtr base, quint32 size, Param * param)
+{
+    mVector.insert(lowerBound(base), {base, size, param});
+}
+
+QPair<Param *, int> ParamAddrRangeMap::find(XcpPtr base)
+{
+    auto upperIt = upperBound(base);
+    if(upperIt != mVector.begin())
+    {
+        auto matchIt = upperIt - 1;
+        int offset = int(qint64(base.addr) - qint64(matchIt->base.addr));
+        if(offset < int(matchIt->size))
+            return {matchIt->param, offset};
+    }
+    return {nullptr, 0};
+}
+
+QVector<ParamAddrRangeMap::ArrayAddrEntry>::iterator ParamAddrRangeMap::lowerBound(XcpPtr base)
+{
+    return std::lower_bound(mVector.begin(), mVector.end(), base);
+}
+
+QVector<ParamAddrRangeMap::ArrayAddrEntry>::iterator ParamAddrRangeMap::upperBound(XcpPtr base)
+{
+    return std::upper_bound(mVector.begin(), mVector.end(), base);
+}
+
 ParamRegistry::ParamRegistry(QObject *parent) :
     QObject(parent)
 {}
@@ -58,6 +86,15 @@ bool ParamRegistry::writeCacheDirty() const
     return !mWriteCacheDirtyKeys.empty();
 }
 
+QPair<Param *, int> ParamRegistry::findParamByAddr(XcpPtr base)
+{
+    auto scalarIt = mScalarAddrMap.find(base);
+    if(scalarIt != mScalarAddrMap.end())
+        return {*scalarIt, -1};
+
+    return mArrayAddrMap.find(base);
+}
+
 ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, QString keyIn, QString nameIn)
 {
     QString key = keyIn.isEmpty() ? base.toString() : keyIn;
@@ -102,6 +139,7 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
     param->name = name;
     mParams[key] = param;
     mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key), key);
+    mScalarAddrMap[base] = param;
     if(saveable)
         mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), key), key);
     connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
@@ -150,7 +188,7 @@ ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool 
         return nullptr;
     }
 
-     ArrayMemoryRange *tableRange = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
+    ArrayMemoryRange *tableRange = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
     if(tableRange == nullptr)
     {
         qDebug() << QString("Failed to create array param with key %1, failed to create range").arg(key);
@@ -164,6 +202,7 @@ ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool 
     param->name = name;
     mParams[key] = param;
     mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key), key);
+    mArrayAddrMap.insert(base, tableRange->size() / mTable->addrGran(), param);
     if(saveable)
         mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), key), key);
     connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
@@ -242,6 +281,7 @@ VarArrayParam *ParamRegistry::addVarArrayParam(int type, XcpPtr base, int minCou
     param->name = name;
     mParams[key] = param;
     mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key), key);
+    mArrayAddrMap.insert(base, baseRange->size() / minCount * maxCount / mTable->addrGran(), param);
     if(saveable)
         mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), key), key);
     connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
