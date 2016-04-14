@@ -301,7 +301,7 @@ RowLayout {
                         hasPlot: false
                         hasShapers: false
                     }
-                    
+
                     Button {
                         text: "By Shift"
                         onClicked: {
@@ -366,9 +366,59 @@ RowLayout {
             ScalarParamSpinBox {
                 metaParam: parameters.pressureAdjustA
             }
+
             ScalarParamSpinBox {
                 metaParam: parameters.pressureAdjustB
+            }
+
+            ScalarParamSpinBox {
+                Layout.alignment: Qt.AlignTop
+                metaParam: parameters.transmissionSTDownshiftTorqueThreshold
+            }
+
+            ScalarParamSpinBox {
+                Layout.alignment: Qt.AlignTop
+                metaParam: parameters.transmissionSTUpshiftTorqueThreshold
+            }
+
+            Button {
+                text: "TS Torque Transfer Time"
+                onClicked: {
+                    tsTorqueTransferDialog.showNormal()
+                    tsTorqueTransferDialog.raise()
+                }
+                enabled: tsTorqueTransferDialog.allListsAnyValid
+            }
+            ScalarListDialog {
+                id: tsTorqueTransferDialog
+                paramLists: [
+                    parameters.transmissionTorqueSpeedTransferTime
+                ]
+            }
+
+            Button {
+                text: "ST Torque Transfer Time"
+                onClicked: {
+                    stTorqueTransferDialog.showNormal()
+                    stTorqueTransferDialog.raise()
+                }
+                enabled: stTorqueTransferDialog.allListsAnyValid
+            }
+            ScalarListDialog {
+                id: stTorqueTransferDialog
+                paramLists: [
+                    parameters.transmissionSpeedTorqueTransferTime
+                ]
+            }
+
+            TableByShiftEditMenuButton {
+                text: qsTr("Shift Torque Limits")
+                xLabel: qsTr("Driver Torque")
+                valueLabel: qsTr("Limit")
+                tableParam: parameters.shiftTorqueLimits
             }
         }
     }
 }
+
+

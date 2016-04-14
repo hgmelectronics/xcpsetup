@@ -421,8 +421,8 @@ ColumnLayout {
                 downshiftB3Series,
                 downshiftB4Series,
             ]
-            xAxis.titleText: qsTr("Torque %1").arg(parameters.upshiftTablesA[0].param.x.slot.unit)
-            yAxis.titleText: qsTr("Speed %1").arg(parameters.upshiftTablesA[0].param.value.slot.unit)
+            xAxis.titleText: qsTr("Torque ") + parameters.upshiftTablesA[0].param.x.slot.unit
+            yAxis.titleText: qsTr("Speed ") + parameters.upshiftTablesA[0].param.value.slot.unit
         }
 
         GroupBox {
@@ -498,6 +498,7 @@ ColumnLayout {
 
     GroupBox {
         title: "Profile A"
+        Layout.fillWidth: true
         ColumnLayout {
             RowLayout {
                 ShiftTableByShiftEditMenuButton {
@@ -547,6 +548,7 @@ ColumnLayout {
 
     GroupBox {
         title: "Profile B"
+        Layout.fillWidth: true
         ColumnLayout {
             RowLayout {
                 ShiftTableByShiftEditMenuButton {
@@ -592,65 +594,16 @@ ColumnLayout {
                 }
             }
         }
-    }
-
-
-    RowLayout {
-        TableByShiftEditMenuButton {
-            Layout.margins: 8
-            text: qsTr("Shift Torque Limits")
-            xLabel: qsTr("Driver Torque")
-            valueLabel: qsTr("Limit")
-            tableParam: parameters.shiftTorqueLimits
-        }
-
-        Button {
-            text: "TS Torque Transfer Time"
-            onClicked: {
-                tsTorqueTransferDialog.showNormal()
-                tsTorqueTransferDialog.raise()
-            }
-            enabled: tsTorqueTransferDialog.allListsAnyValid
-        }
-        ScalarListDialog {
-            id: tsTorqueTransferDialog
-            paramLists: [
-                parameters.transmissionTorqueSpeedTransferTime
-            ]
-        }
-
-        Button {
-            text: "ST Torque Transfer Time"
-            onClicked: {
-                stTorqueTransferDialog.showNormal()
-                stTorqueTransferDialog.raise()
-            }
-            enabled: stTorqueTransferDialog.allListsAnyValid
-        }
-        ScalarListDialog {
-            id: stTorqueTransferDialog
-            paramLists: [
-                parameters.transmissionSpeedTorqueTransferTime
-            ]
-        }
 
     }
-
-    RowLayout {
-
-
-        ScalarParamSpinBox {
-            Layout.alignment: Qt.AlignTop
-            metaParam: parameters.reverseLockoutSpeed
+    GroupBox {
+        title: "Common"
+        Layout.fillWidth: true
+        RowLayout {
+            ScalarParamSpinBox {
+                Layout.alignment: Qt.AlignTop
+                metaParam: parameters.reverseLockoutSpeed
+            }
         }
-        ScalarParamSpinBox {
-            Layout.alignment: Qt.AlignTop
-            metaParam: parameters.transmissionSTDownshiftTorqueThreshold
-        }
-        ScalarParamSpinBox {
-            Layout.alignment: Qt.AlignTop
-            metaParam: parameters.transmissionSTUpshiftTorqueThreshold
-        }
-
     }
 }

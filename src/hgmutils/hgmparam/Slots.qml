@@ -528,6 +528,7 @@ QtObject {
             { raw: 301, engr: "ZF 4HP24 w/P38 switch" },
             { raw: 302, engr: "ZF 4HP24 w/HGM Lever Sensor" },
             { raw: 400, engr: "Nissan RE4R03A" },
+            { raw: 401, engr: "Nissan RE5R05A" },
             { raw: 500, engr: "Toyota 442F" },
             { raw: 501, engr: "Toyota 442F w/PCS" },
             { raw: 502, engr: "Toyota A340" },
@@ -540,9 +541,6 @@ QtObject {
             { raw: 701, engr: "ZeroTruck / Dart Machine 3 Speed" },
             { raw: 702, engr: "Dart Machine 2 Speed" },
             { raw: 900, engr: "HGM 4L80E 6 Speed" },
-            { raw: 901, engr: "Toyota AB60 Remote Control" },
-            { raw: 902, engr: "Mercedes W5A330 Remote Control" },
-            { raw: 903, engr: "Mercedes W5A580 Remote Control" },
             { raw: 1000, engr: "Mercedes W5A330" },
             { raw: 1001, engr: "Mercedes W5A580" },
             { raw: 1100, engr: "PSI A61FM" }
@@ -592,7 +590,8 @@ QtObject {
             { raw: 16, engr: "Ebus Yaskawa A1000" },
             { raw: 17, engr: "AEM Series 2 CAN" },
             { raw: 18, engr: "VW GTI MKV" },
-            { raw: 19, engr: "Ebus Yaskawa G5" }
+            { raw: 19, engr: "Ebus Yaskawa G5" },
+            { raw: 20, engr: "Nissan ZD30" }
         ]
         unencodedSlot: count
     }
