@@ -8,7 +8,7 @@ Slot::Slot(QObject *parent) :
     mUnit(""),
     mBase(10),
     mPrecision(0),
-    mStorageType(QMetaType::UInt)
+    mStorageType(QMetaType::Int)
 {}
 
 QString Slot::unit() const
