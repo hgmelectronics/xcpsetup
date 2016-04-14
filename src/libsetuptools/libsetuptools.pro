@@ -55,7 +55,8 @@ SOURCES += \
     Xcp_VarArrayParam.cpp \
     Xcp_TestingSlave.cpp \
     RoleXYModelMapper.cpp \
-    XYSeriesAutoAxis.cpp
+    XYSeriesAutoAxis.cpp \
+    CSVParamFile.cpp
 
 HEADERS += \
     util.h \
@@ -96,7 +97,8 @@ HEADERS += \
     Xcp_VarArrayParam.h \
     Xcp_TestingSlave.h \
     RoleXYModelMapper.h \
-    XYSeriesAutoAxis.h
+    XYSeriesAutoAxis.h \
+    CSVParamFile.h
 
 unix {
     target.path = /usr/lib

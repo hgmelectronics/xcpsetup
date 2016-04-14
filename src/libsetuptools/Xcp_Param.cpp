@@ -76,6 +76,12 @@ void Param::setKey(QString newKey)
         emit keyChanged();
 }
 
+void Param::setName(QString newName)
+{
+    if(updateDelta<>(name, newName))
+        emit nameChanged();
+}
+
 bool Param::valid() const
 {
     if(!mBaseRange)

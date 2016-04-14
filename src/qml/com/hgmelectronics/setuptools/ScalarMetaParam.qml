@@ -13,4 +13,5 @@ MetaParam {
         }
     }
     isLiveData: !param.saveable
+    name: param.name
 }
