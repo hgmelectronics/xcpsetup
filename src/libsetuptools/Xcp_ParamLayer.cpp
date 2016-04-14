@@ -289,6 +289,25 @@ QStringList ParamLayer::setRawData(QVariantMap data)
     return failedKeys;
 }
 
+QMap<QString, QVariant> ParamLayer::names()
+{
+    return names(mRegistry->paramKeys());
+}
+
+QMap<QString, QVariant> ParamLayer::names(const QStringList &keys)
+{
+    QMap<QString, QVariant> map;
+    for(QString key : keys)
+    {
+        Param *param = mRegistry->getParam(key);
+        if(param == nullptr)
+            continue;
+
+        map.insert(key, param->name);
+    }
+    return map;
+}
+
 void ParamLayer::download()
 {
     download(mRegistry->paramKeys());

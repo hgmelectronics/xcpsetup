@@ -6,6 +6,7 @@ QtObject {
     readonly property int bps: 500000
     readonly property var parameterFilenameFilters: [
         qsTr("HGM parameter files (*.hgp)"),
+        qsTr("HGM CSV parameter files (*.csv)"),
         qsTr("All files (*)")
     ]
     readonly property var preferredPlotColors: [
