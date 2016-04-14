@@ -482,6 +482,8 @@ QtObject {
     readonly property double tcc_manual_mode_a: 0x06240000
     readonly property double tcc_max_throttle_a: 0x06250000
     readonly property double tcc_min_throttle_a: 0x06260000
+    readonly property double tcc_disable_in_switch_shift_a: 0x06270000
+
 
     readonly property double tcc_downshift_offset_b: 0x06400000
     readonly property double tcc_disable_toss_percent_b: 0x06410000
@@ -490,6 +492,7 @@ QtObject {
     readonly property double tcc_manual_mode_b: 0x06440000
     readonly property double tcc_max_throttle_b: 0x06450000
     readonly property double tcc_min_throttle_b: 0x06460000
+    readonly property double tcc_disable_in_switch_shift_b: 0x06470000
 
     readonly property double tcc_prefill_time: 0x06500000
     readonly property double tcc_apply_time: 0x06510000

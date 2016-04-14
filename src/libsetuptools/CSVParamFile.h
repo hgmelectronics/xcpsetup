@@ -1,5 +1,5 @@
-#ifndef JSONPARAMFILE_H
-#define JSONPARAMFILE_H
+#ifndef CSVPARAMFILE_H
+#define CSVPARAMFILE_H
 
 #include <QObject>
 #include <QFile>
@@ -9,7 +9,7 @@
 namespace SetupTools
 {
 
-class JSONParamFile : public QObject
+class CSVParamFile : public QObject
 {
     Q_OBJECT
     Q_ENUMS(Result)
@@ -28,7 +28,7 @@ public:
         FileWriteFail
     };
 
-    JSONParamFile(QObject *parent = 0);
+    CSVParamFile(QObject *parent = 0);
     void setName(QString newName);
     QString parseError() { return mLastParseError; }
     Result result() { return mLastResult; }
@@ -36,7 +36,7 @@ public:
 
     Q_INVOKABLE static QString resultString(int result);
     Q_INVOKABLE QVariantMap read();
-    Q_INVOKABLE void write(QVariantMap map);
+    Q_INVOKABLE void write(QVariantMap valueMap, QVariantMap nameMap);
 public slots:
 signals:
     void nameChanged();
@@ -44,8 +44,8 @@ signals:
     void resultChanged();
     void opComplete();
 private:
-    QVariantMap readJson(QFile &file);
-    void writeJson(QFile &file, QVariantMap map);
+    QVariantMap readCsv(QFile &file);
+    void writeCsv(QFile &file, QVariantMap valueMap, QVariantMap nameMap);
     void setExists(bool exists);
     void setResult(Result val);
     void setParseError(QString parseErrorString);
@@ -57,7 +57,6 @@ private:
     QString mLastResultString;
 };
 
-}   // namespace SetupTools
+}
 
-#endif // JSONPARAMFILE_H
-
+#endif // CSVPARAMFILE_H

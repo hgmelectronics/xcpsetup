@@ -12,4 +12,5 @@ MetaParam {
                 ParamResetNeeded.set = true
         }
     }
+    name: ("value" in param.roleMapping) ? param.roleMapping["value"].name : ""
 }

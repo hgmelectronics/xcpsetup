@@ -14,6 +14,7 @@
 #include "LinearSlot.h"
 #include "EncodingSlot.h"
 #include "JSONParamFile.h"
+#include "CSVParamFile.h"
 #include "TransposeProxyModel.h"
 #include "TableMapperModel.h"
 #include "SlotArrayModel.h"
@@ -45,6 +46,7 @@ void registerTypes()
 
     qmlRegisterType<SetupTools::Xcp::ParamRegistry>("com.hgmelectronics.setuptools.xcp", major, minor, "ParamRegistry");
     qmlRegisterType<SetupTools::JSONParamFile>("com.hgmelectronics.setuptools", major, minor, "JSONParamFile");
+    qmlRegisterType<SetupTools::CSVParamFile>("com.hgmelectronics.setuptools", major, minor, "CSVParamFile");
 
     qmlRegisterUncreatableType<SetupTools::Xcp::Param>("com.hgmelectronics.setuptools.xcp", major, minor, "Param", "SetupTools::Xcp::Param is uncreatable from within QML");
     qmlRegisterUncreatableType<SetupTools::Xcp::MemoryRange>("com.hgmelectronics.setuptools.xcp", major, minor, "MemoryRange", "SetupTools::Xcp::MemoryRange is uncreatable from within QML");

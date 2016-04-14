@@ -58,7 +58,7 @@ Item {
 
         Tab {
             active: true
-            title: qsTr("Pressures")
+            title: qsTr("Shift Control")
             PressureLayout {
                 parameters: params
             }

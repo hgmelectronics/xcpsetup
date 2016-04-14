@@ -11,6 +11,8 @@ class Slot : public QObject
 {
     Q_OBJECT
 
+    Q_ENUMS(TypeCode)
+
     Q_PROPERTY(QString unit READ unit WRITE setUnit NOTIFY unitChanged)                         //!< Unit name if any, e.g. "mph"
     Q_PROPERTY(int base READ base WRITE setBase NOTIFY valueParamChanged)                       //!< Base to print - if != 10 then precision is ignored
     Q_PROPERTY(int precision READ precision WRITE setPrecision NOTIFY valueParamChanged)        //!< Number of digits to print after decimal point when rendering to a string
@@ -21,6 +23,20 @@ class Slot : public QObject
     Q_PROPERTY(QVariant engrMax READ engrMax NOTIFY valueParamChanged)
     Q_PROPERTY(QValidator *validator READ validator NOTIFY valueParamChanged)
 public:
+    enum TypeCode
+    {
+        S32 = QMetaType::Int,
+        U32 = QMetaType::UInt,
+        S64 = QMetaType::LongLong,
+        U64 = QMetaType::ULongLong,
+        F64 = QMetaType::Double,
+        S16 = QMetaType::Short,
+        S8 = QMetaType::Char,
+        U16 = QMetaType::UShort,
+        U8 = QMetaType::UChar,
+        F32 = QMetaType::Float
+    };
+
     Slot(QObject *parent = nullptr);
 
     QString unit() const;

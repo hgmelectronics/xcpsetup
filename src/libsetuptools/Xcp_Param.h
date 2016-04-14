@@ -18,6 +18,7 @@ class Param : public QObject
 
     Q_PROPERTY(bool saveable MEMBER saveable WRITE setSaveable NOTIFY saveableChanged)
     Q_PROPERTY(QString key MEMBER key WRITE setKey NOTIFY keyChanged)
+    Q_PROPERTY(QString name MEMBER name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(bool valid READ valid WRITE setValid NOTIFY validChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty WRITE setWriteCacheDirty NOTIFY writeCacheDirtyChanged)
     Q_PROPERTY(Slot* slot READ slot CONSTANT)
@@ -29,6 +30,7 @@ public:
 
     void setSaveable(bool newSaveable);
     void setKey(QString newKey);
+    void setName(QString newName);
 
     bool valid() const;
     void setValid(bool valid);
@@ -47,10 +49,12 @@ public:
 
     bool saveable;
     QString key;
+    QString name;
 
 signals:
     void saveableChanged();
     void keyChanged();
+    void nameChanged();
     void uploadDone(SetupTools::Xcp::OpResult result);
     void downloadDone(SetupTools::Xcp::OpResult result);
     void writeCacheDirtyChanged(QString key);
