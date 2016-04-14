@@ -68,6 +68,8 @@ public:
     Q_INVOKABLE QStringList setData(QVariantMap data);   //!< Returns keys that did not set successfully
     Q_INVOKABLE QMap<QString, QVariant> rawData(const QStringList &keys);
     Q_INVOKABLE QStringList setRawData(QVariantMap data);   //!< Returns keys that did not set successfully
+    Q_INVOKABLE QMap<QString, QVariant> names();
+    Q_INVOKABLE QMap<QString, QVariant> names(const QStringList &keys);
 signals:
     void downloadDone(SetupTools::Xcp::OpResult result, QStringList keys);
     void uploadDone(SetupTools::Xcp::OpResult result, QStringList keys);

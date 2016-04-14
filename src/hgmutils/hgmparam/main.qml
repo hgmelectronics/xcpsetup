@@ -21,6 +21,16 @@ ApplicationWindow {
     property CS2Defaults cs2Defaults:  CS2Defaults {
                                       }
 
+    function setStandardUnits() {
+        var save = { metric: useMetricUnits }
+        useMetricUnits = true
+        return save
+    }
+
+    function restoreUnits(save) {
+        useMetricUnits = save.metric
+    }
+
     title: programName
     width: 800
     height: 600
@@ -131,9 +141,17 @@ ApplicationWindow {
     }
 
     JSONParamFile {
-        id: paramFileIo
+        id: jsonParamFileIo
         onOpComplete: {
             if (result !== JSONParamFile.Ok)
+                errorDialog.show(resultString)
+        }
+    }
+
+    CSVParamFile {
+        id: csvParamFileIo
+        onOpComplete: {
+            if (result !== CSVParamFile.Ok)
                 errorDialog.show(resultString)
         }
     }
@@ -156,11 +174,28 @@ ApplicationWindow {
         }
 
         onAccepted: {
-            paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            if (selectExisting) {
-                paramLayer.setRawData(paramFileIo.read())
-            } else {
-                saveParamFile()
+            var name = UrlUtil.urlToLocalFile(fileUrl.toString())
+            if(name.match(/.hgp$/)) {
+                jsonParamFileIo.name = name
+                if (selectExisting) {
+                    var rawData = jsonParamFileIo.read()
+                    paramLayer.setRawData(rawData)
+                    paramLayer.setRawData(rawData)    // second time in case of param dependencies in wrong order
+                } else {
+                    saveJsonParamFile()
+                }
+            }
+            else {
+                csvParamFileIo.name = name
+                if (selectExisting) {
+                    var saveUnits = setStandardUnits()
+                    var data = csvParamFileIo.read()
+                    paramLayer.setData(data)
+                    paramLayer.setData(data)    // second time in case of param dependencies in wrong order
+                    restoreUnits(saveUnits)
+                } else {
+                    saveCsvParamFile()
+                }
             }
         }
     }
@@ -173,12 +208,23 @@ ApplicationWindow {
                 : qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
         standardButtons: StandardButton.Ok
     }
-    function saveParamFile() {
+    function saveJsonParamFile() {
         if (saveReadOnlyParameters) {
-            paramFileIo.write(paramLayer.rawData())
+            jsonParamFileIo.write(paramLayer.rawData())
         } else {
-            paramFileIo.write(paramLayer.saveableRawData())
+            jsonParamFileIo.write(paramLayer.saveableRawData())
         }
+    }
+    function saveCsvParamFile() {
+        var data
+        var saveUnits = setStandardUnits()
+        if (saveReadOnlyParameters)
+            data = paramLayer.data()
+        else
+            data = paramLayer.saveableData()
+        restoreUnits(saveUnits)
+
+        csvParamFileIo.write(data, paramLayer.names())
     }
 
     Action {
