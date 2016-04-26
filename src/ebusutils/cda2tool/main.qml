@@ -186,7 +186,7 @@ ApplicationWindow {
         nameFilters: [ "JSON files (*.json)", "All files (*)" ]
         onAccepted: {
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            paramLayer.setRawData(paramFileIo.read())
+            paramLayer.setRawData(paramFileIo.read(), true)
         }
         selectExisting: true
     }

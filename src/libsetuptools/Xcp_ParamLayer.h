@@ -65,9 +65,9 @@ public:
     Q_INVOKABLE QMap<QString, QVariant> saveableData();
     Q_INVOKABLE QMap<QString, QVariant> saveableRawData();
     Q_INVOKABLE QMap<QString, QVariant> data(const QStringList &keys);
-    Q_INVOKABLE QStringList setData(QVariantMap data);   //!< Returns keys that did not set successfully
+    Q_INVOKABLE QStringList setData(QVariantMap data, bool eraseOld);   //!< Returns keys that did not set successfully
     Q_INVOKABLE QMap<QString, QVariant> rawData(const QStringList &keys);
-    Q_INVOKABLE QStringList setRawData(QVariantMap data);   //!< Returns keys that did not set successfully
+    Q_INVOKABLE QStringList setRawData(QVariantMap data, bool eraseOld);   //!< Returns keys that did not set successfully
     Q_INVOKABLE QMap<QString, QVariant> names();
     Q_INVOKABLE QMap<QString, QVariant> names(const QStringList &keys);
 signals:
@@ -125,6 +125,7 @@ private:
     ConnectionFacade *mConn;
     ParamRegistry *mRegistry;
     State mState;
+    boost::optional<ParamRegistryHistoryElide> mParamHistoryElide;
     int mOpProgressNotifyPeriod;
 
     QStringList mActiveKeys;

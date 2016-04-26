@@ -55,10 +55,11 @@ signals:
     void saveableChanged();
     void keyChanged();
     void nameChanged();
+    void rawValueChanged(QString key);
     void uploadDone(SetupTools::Xcp::OpResult result);
     void downloadDone(SetupTools::Xcp::OpResult result);
     void writeCacheDirtyChanged(QString key);
-    void validChanged();
+    void validChanged(QString key);
     void cachesReset();
 
 public slots:

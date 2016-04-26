@@ -218,8 +218,10 @@ QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
     return ret;
 }
 
-QStringList ParamLayer::setData(QVariantMap data)
+QStringList ParamLayer::setData(QVariantMap data, bool eraseOld)
 {
+    ParamRegistryHistoryElide elide = mRegistry->historyElide();
+
     QStringList failedKeys;
 
     QStringList keys = data.keys();
@@ -227,18 +229,25 @@ QStringList ParamLayer::setData(QVariantMap data)
     for(QString key : keys)
     {
         Param *param = mRegistry->getParam(key);
-        if(param == nullptr)
+        if(param != nullptr)
         {
-            continue;
+            if(param->setSerializableValue(data[key]))
+                param->setValid(true);
+            else
+                failedKeys.push_back(key);
         }
+    }
 
-        if(param->setSerializableValue(data[key]))
+    if(eraseOld)
+    {
+        QSet<QString> keysSet = QSet<QString>::fromList(mRegistry->paramKeys());
+        keysSet.subtract(QSet<QString>::fromList(keys));    // remove the keys that were given as data
+        keysSet.unite(QSet<QString>::fromList(failedKeys)); // add back keys that didn't set successfully
+        for(QString key : keysSet)
         {
-            param->setValid(true);
-        }
-        else
-        {
-            failedKeys.push_back(key);
+            Param *param = mRegistry->getParam(key);
+            if(param != nullptr)
+                param->setSerializableRawValue(QVariant());
         }
     }
 
@@ -263,8 +272,10 @@ QMap<QString, QVariant> ParamLayer::rawData(const QStringList &keys)
     return ret;
 }
 
-QStringList ParamLayer::setRawData(QVariantMap data)
+QStringList ParamLayer::setRawData(QVariantMap data, bool eraseOld)
 {
+    ParamRegistryHistoryElide elide = mRegistry->historyElide();
+
     QStringList failedKeys;
 
     QStringList keys = data.keys();
@@ -272,17 +283,25 @@ QStringList ParamLayer::setRawData(QVariantMap data)
     for(QString key : keys)
     {
         Param *param = mRegistry->getParam(key);
-        if(param == nullptr)
+        if(param != nullptr)
         {
-            continue;
+            if (param->setSerializableRawValue(data[key]))
+                param->setValid(true);
+            else
+                failedKeys.push_back(key);
         }
-        if (param->setSerializableRawValue(data[key]))
+    }
+
+    if(eraseOld)
+    {
+        QSet<QString> keysSet = QSet<QString>::fromList(mRegistry->paramKeys());
+        keysSet.subtract(QSet<QString>::fromList(keys));    // remove the keys that were given as data
+        keysSet.unite(QSet<QString>::fromList(failedKeys)); // add back keys that didn't set successfully
+        for(QString key : keysSet)
         {
-            param->setValid(true);
-        }
-        else
-        {
-            failedKeys.push_back(key);
+            Param *param = mRegistry->getParam(key);
+            if(param != nullptr)
+                param->setSerializableRawValue(QVariant());
         }
     }
 
@@ -341,9 +360,14 @@ void ParamLayer::download(QStringList keys)
     setState(State::Download);
 
     if(mConn->state() != Connection::State::CalMode)
+    {
         mConn->setState(Connection::State::CalMode);
+    }
     else
+    {
+        mParamHistoryElide = mRegistry->historyElide();
         downloadKey();
+    }
 }
 
 void ParamLayer::upload(QStringList keys)
@@ -369,9 +393,14 @@ void ParamLayer::upload(QStringList keys)
     setState(State::Upload);
 
     if(mConn->state() != Connection::State::CalMode)
+    {
         mConn->setState(Connection::State::CalMode);
+    }
     else
+    {
+        mParamHistoryElide = mRegistry->historyElide();
         uploadKey();
+    }
 }
 
 void ParamLayer::nvWrite()
@@ -460,6 +489,7 @@ void ParamLayer::onConnSetStateDone(OpResult result)
         if(result == OpResult::Success)
         {
             Q_ASSERT(mConn->state() == Connection::State::CalMode);
+            mParamHistoryElide = mRegistry->historyElide();
             downloadKey();
         }
         else
@@ -472,6 +502,7 @@ void ParamLayer::onConnSetStateDone(OpResult result)
         if(result == OpResult::Success)
         {
             Q_ASSERT(mConn->state() == Connection::State::CalMode);
+            mParamHistoryElide = mRegistry->historyElide();
             uploadKey();
         }
         else
@@ -589,6 +620,7 @@ void ParamLayer::downloadKey()
         if(param == nullptr)
         {
             setState(State::Connected);
+            mParamHistoryElide.reset();
             mActiveKeyIdx = -1;
             emit opProgressChanged();
             emit downloadDone(mActiveResult, mActiveKeys);
@@ -613,6 +645,7 @@ void ParamLayer::uploadKey()
     if(param == nullptr)
     {
         setState(State::Connected);
+        mParamHistoryElide.reset();
         mActiveKeyIdx = -1;
         emit opProgressChanged();
         emit uploadDone(mActiveResult, mActiveKeys);
