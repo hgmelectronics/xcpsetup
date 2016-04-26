@@ -16,6 +16,29 @@
 namespace SetupTools {
 namespace Xcp {
 
+class ParamAddrRangeMap
+{
+public:
+    ParamAddrRangeMap() = default;
+    void insert(XcpPtr base, quint32 size, Param * param);
+    QPair<Param *, int> find(XcpPtr base);  // assumes ranges do not overlap
+private:
+    struct ArrayAddrEntry
+    {
+        XcpPtr base;
+        quint32 size;
+        Param * param;
+        operator XcpPtr() {
+            return base;
+        }
+    };
+
+    QVector<ArrayAddrEntry>::iterator lowerBound(XcpPtr base);
+    QVector<ArrayAddrEntry>::iterator upperBound(XcpPtr base);
+
+    QVector<ArrayAddrEntry> mVector;
+};
+
 class ParamRegistry : public QObject
 {
     Q_OBJECT
@@ -38,6 +61,7 @@ public:
     const QList<QString> &paramKeys() const;
     const QList<QString> &saveableParamKeys() const;
     bool writeCacheDirty() const;
+    QPair<Param *, int> findParamByAddr(XcpPtr base);
 
     SetupTools::Xcp::ScalarParam *addScalarParam(int type, SetupTools::Xcp::XcpPtr base, bool writable, bool saveable, SetupTools::Slot* slot, QString key = QString(), QString name = QString());
     SetupTools::Xcp::ArrayParam *addArrayParam(int type, SetupTools::Xcp::XcpPtr base, int count, bool writable, bool saveable, SetupTools::Slot* slot, QString key = QString(), QString name = QString());
@@ -51,7 +75,6 @@ public:
     Q_INVOKABLE void setValidAll(bool valid);
     Q_INVOKABLE void setWriteCacheDirtyAll(bool dirty);
 
-
 signals:
     void connectionChanged();
     void paramsChanged();
@@ -60,8 +83,11 @@ signals:
 private:
     void onTableConnectionChanged();
     void onParamWriteCacheDirtyChanged(QString key);
-    MemoryRangeTable *mTable;
+
+    MemoryRangeTable * mTable;
     QMap<QString, Param *> mParams;
+    QMap<XcpPtr, Param *> mScalarAddrMap;
+    ParamAddrRangeMap mArrayAddrMap;
     QList<QString> mParamKeys;  // maintain our own list of keys because QMap<>::keys() just builds a new list every time
     QList<QString> mSaveableParamKeys;  // maintain our own list of keys because QMap<>::keys() just builds a new list every time
     QList<QString> mWriteCacheDirtyKeys;

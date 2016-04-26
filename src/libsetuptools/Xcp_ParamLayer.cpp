@@ -508,10 +508,23 @@ void ParamLayer::onConnSetStateDone(OpResult result)
 
 void ParamLayer::onConnOpMsg(SetupTools::Xcp::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
 {
+    QString extStr = str;
+    if(ext.addr)
+    {
+        auto paramInfo = mRegistry->findParamByAddr(ext.addr.get());
+        if(paramInfo.first != nullptr)
+        {
+            if(paramInfo.second < 0)
+                extStr = tr("%1 (%2)").arg(str).arg(paramInfo.first->name);
+            else
+                extStr = tr("%1 (%2, offset %3)").arg(str).arg(paramInfo.first->name).arg(paramInfo.second);
+        }
+    }
+
     if(ext.type == Connection::OpType::Upload && result == OpResult::SlaveErrorOutOfRange)
-        emit info(result, str);
+        emit info(result, extStr);
     else
-        emit fault(result, str);
+        emit fault(result, extStr);
 }
 
 void ParamLayer::onConnStateChanged()
