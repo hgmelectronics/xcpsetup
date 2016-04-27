@@ -119,7 +119,7 @@ QString EncodingSlot::asString(QVariant raw) const
 
 QVariant EncodingSlot::asRaw(QVariant engr) const
 {
-    if(engr.type() == QMetaType::QString && mEngrToRaw.count(engr.toString()))
+    if(engr.type() == QVariant::Type::String && mEngrToRaw.count(engr.toString()))
     {
         QVariant rawVar = mEngrToRaw[engr.toString()];
         rawVar.convert(storageType());
