@@ -124,7 +124,8 @@ void Param::resetCaches()
 
 void Param::onRangeValidChanged()
 {
-    emit validChanged();
+    emit validChanged(key);
+    emit rawValueChanged(key);
 }
 
 void Param::onRangeWriteCacheDirtyChanged()
@@ -137,7 +138,10 @@ void Param::onExtRangeValidChanged(int index)
     bool prevValid = valid();
     mExtRangeValid.set(index, mExtRanges[index]->valid());
     if(prevValid != valid())
-        emit validChanged();
+    {
+        emit validChanged(key);
+        emit rawValueChanged(key);
+    }
 }
 
 void Param::onExtRangeWriteCacheDirtyChanged(int index)

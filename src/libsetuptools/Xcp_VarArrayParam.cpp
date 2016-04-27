@@ -111,7 +111,7 @@ QVariant VarArrayParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 
 QVariant VarArrayParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
 {
-    if(!mRange || !slot() || !mActualDim)
+    if(!mRange || !slot() || !mActualDim || !mRange->valid())
         return QVariant();
 
     QVariantList ret;
@@ -149,6 +149,10 @@ bool VarArrayParam::setSerializableValue(const QVariant &val)
 {
     if(!slot())
         return false;
+    if(!val.isValid())
+    {
+        return setSerializableRawValue(val);
+    }
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     QStringList stringList = val.toStringList();
@@ -171,6 +175,16 @@ bool VarArrayParam::setSerializableRawValue(const QVariant &val)
 {
     if(!mRange || !slot())
         return false;
+    if(!val.isValid())
+    {
+        mRange->setValid(false);
+        for(auto extRange : mExtRanges)
+            extRange->setValid(false);
+        mActualDim.reset();
+        emit countChanged();
+        emitDataChanged(true);
+        return true;
+    }
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     QVariantList list = val.toList();
@@ -187,6 +201,24 @@ bool VarArrayParam::setSerializableRawValue(const QVariant &val)
     if(!mRange->setDataRange(list.mid(0, mRange->count()), 0))
         return false;
 
+    mRange->setValid(true);
+    for(size_t i = 0; i < mRange->size(); ++i)
+        mDataChanged[i] = true;
+
+    for(int i = 0, end = mExtRanges.size(); i < end; ++i)
+    {
+        int offset = i + mRange->count();
+        if(offset < list.size())
+        {
+            mExtRanges[i]->setValue(list[offset]);
+            mExtRanges[i]->setValid(true);
+            mDataChanged[offset] = true;
+        }
+        else
+        {
+            mExtRanges[i]->setValid(false);
+        }
+    }
     for(int i = 0, end = std::min(mExtRanges.size(), list.size() - mRange->count()); i < end; ++i)
         mExtRanges[i]->setValue(list[i + mRange->count()]);
 
@@ -405,7 +437,10 @@ void VarArrayParam::emitDataChanged(bool forceModelChanged)
         --lastBit;
     }
     if(forceModelChanged || lastBit >= beginBit)
+    {
         emit modelChanged();
+        emit rawValueChanged(key);
+    }
     if(lastBit >= beginBit)
         emit modelDataChanged(beginBit, lastBit + 1);
     mDataChanged.reset();
@@ -430,7 +465,7 @@ int VarArrayParamModel::count() const
 
 int VarArrayParamModel::rowCount(const QModelIndex &parent) const
 {
-    return parent.isValid() ? 0 : mParam->count();
+    return parent.isValid() ? 0 : mPrevCount;
 }
 
 QVariant VarArrayParamModel::data(const QModelIndex &index, int role) const
@@ -509,14 +544,15 @@ void VarArrayParamModel::onParamCountChanged()
     if(mParam->count() > mPrevCount)
     {
         beginInsertRows(QModelIndex(), mPrevCount, mParam->count() - 1);
+        mPrevCount = mParam->count();
         endInsertRows();
     }
     else if(mParam->count() < mPrevCount)
     {
         beginRemoveRows(QModelIndex(), mParam->count(), mPrevCount - 1);
+        mPrevCount = mParam->count();
         endRemoveRows();
     }
-    mPrevCount = mParam->count();
     emit countChanged();
     emit dataChanged(createIndex(0, 0), createIndex(mParam->count() - 1, 0));
 }

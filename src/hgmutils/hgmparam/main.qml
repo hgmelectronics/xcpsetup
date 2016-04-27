@@ -179,8 +179,10 @@ ApplicationWindow {
                 jsonParamFileIo.name = name
                 if (selectExisting) {
                     var rawData = jsonParamFileIo.read()
-                    paramLayer.setRawData(rawData)
-                    paramLayer.setRawData(rawData)    // second time in case of param dependencies in wrong order
+                    paramLayer.registry.beginHistoryElide()
+                    paramLayer.setRawData(rawData, false)
+                    paramLayer.setRawData(rawData, true)    // second time in case of param dependencies in wrong order
+                    paramLayer.registry.endHistoryElide()
                 } else {
                     saveJsonParamFile()
                 }
@@ -190,8 +192,10 @@ ApplicationWindow {
                 if (selectExisting) {
                     var saveUnits = setStandardUnits()
                     var data = csvParamFileIo.read()
-                    paramLayer.setData(data)
-                    paramLayer.setData(data)    // second time in case of param dependencies in wrong order
+                    paramLayer.registry.beginHistoryElide()
+                    paramLayer.setData(data, false)
+                    paramLayer.setData(data, true)    // second time in case of param dependencies in wrong order
+                    paramLayer.registry.endHistoryElide()
                     restoreUnits(saveUnits)
                 } else {
                     saveCsvParamFile()
@@ -397,6 +401,22 @@ ApplicationWindow {
     }
 
     Action {
+        id: undoAction
+        text: qsTr("Undo")
+        shortcut: StandardKey.Undo
+        enabled: paramLayer.registry.currentRevNum > paramLayer.registry.minRevNum
+        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum - 1
+    }
+
+    Action {
+        id: redoAction
+        text: qsTr("Redo")
+        shortcut: StandardKey.Redo
+        enabled: paramLayer.registry.currentRevNum < paramLayer.registry.maxRevNum
+        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum + 1
+    }
+
+    Action {
         id: enableAllParametersAction
         text: qsTr("Enable All Parameters")
         onTriggered: paramLayer.registry.setValidAll(true)
@@ -426,6 +446,13 @@ ApplicationWindow {
 
         Menu {
             title: qsTr("&Edit")
+            MenuItem {
+                action: undoAction
+            }
+            MenuItem {
+                action: redoAction
+            }
+            MenuSeparator {}
             MenuItem {
                 action: enableAllParametersAction
             }
