@@ -632,6 +632,7 @@ QtObject {
             rawB: 1E9
             engrB: 1E7
             precision: 2
+            unit: "s"
         }
     }
 
