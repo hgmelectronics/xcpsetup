@@ -26,12 +26,25 @@ QtObject {
         return ret
     }
 
-    property var model: {
+    property var stringModelMapping: {
         var ret = ({})
         for(var role in roleMapping) {
             if(roleMapping.hasOwnProperty(role)) {
                 if(typeof(roleMapping[role].stringModel) !== "undefined")
                     ret[role] = roleMapping[role].stringModel
+                else
+                    ret[role] = roleMapping[role]
+            }
+        }
+        return ret
+    }
+
+    property var floatModelMapping: {
+        var ret = ({})
+        for(var role in roleMapping) {
+            if(roleMapping.hasOwnProperty(role)) {
+                if(typeof(roleMapping[role].floatModel) !== "undefined")
+                    ret[role] = roleMapping[role].floatModel
                 else
                     ret[role] = roleMapping[role]
             }
@@ -65,7 +78,11 @@ QtObject {
     signal downloadDone(OpResult result)
 
     property TableMapperModel stringModel: TableMapperModel {
-        mapping: root.model
+        mapping: root.stringModelMapping
+    }
+
+    property TableMapperModel floatModel: TableMapperModel {
+        mapping: root.floatModelMapping
     }
 
     property Instantiator downloadDoneConnector: Instantiator {
@@ -78,7 +95,7 @@ QtObject {
 
     Component.onCompleted: {
         for(var i = 1; i < roleNames.length; ++i) {
-            console.assert(model[roleNames[0]].count === model[roleNames[i]].count, "MultiroleTableParam instantiated with mismatched row counts", model[roleNames[0]].count, "and", model[roleNames[i]].count)
+            console.assert(stringModelMapping[roleNames[0]].count === stringModelMapping[roleNames[i]].count, "MultiroleTableParam instantiated with mismatched row counts", stringModelMapping[roleNames[0]].count, "and", stringModelMapping[roleNames[i]].count)
         }
     }
 }

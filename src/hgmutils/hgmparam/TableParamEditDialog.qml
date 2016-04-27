@@ -261,7 +261,7 @@ Window {
             RoleModeledLineSeries {
                 id: series1
                 visible: root.tableParam.param.value.valid
-                model: root.tableParam.param.stringModel
+                model: root.tableParam.param.floatModel
 
                 axisX: autoAxis.xAxis
                 axisY: autoAxis.yAxis
