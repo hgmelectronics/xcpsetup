@@ -300,7 +300,7 @@ Window {
             RoleModeledLineSeries {
                 id: series1
                 visible: root.speedTableParam.param.value.valid
-                model: root.speedTableParam.param.stringModel
+                model: root.speedTableParam.param.floatModel
 
                 axisX: autoAxis.xAxis
                 axisY: autoAxis.yAxis

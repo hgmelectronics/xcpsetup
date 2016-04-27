@@ -188,7 +188,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftA0Series
                 visible: upshiftAVisible0 && parameters.upshiftTablesA[0].param.value.valid
-                model: parameters.upshiftTablesA[0].param.stringModel
+                model: parameters.upshiftTablesA[0].param.floatModel
                 name: qsTr("1-2 A")
                 style: Qt.SolidLine
                 axisX: autoAxis.xAxis
@@ -197,7 +197,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftA1Series
                 visible: upshiftAVisible1 && parameters.upshiftTablesA[1].param.value.valid
-                model: parameters.upshiftTablesA[1].param.stringModel
+                model: parameters.upshiftTablesA[1].param.floatModel
                 name: qsTr("2-3 A")
                 style: Qt.SolidLine
                 axisX: autoAxis.xAxis
@@ -206,7 +206,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftA2Series
                 visible: upshiftAVisible2 && parameters.upshiftTablesA[2].param.value.valid
-                model: parameters.upshiftTablesA[2].param.stringModel
+                model: parameters.upshiftTablesA[2].param.floatModel
                 name: qsTr("3-4 A")
                 style: Qt.SolidLine
                 axisX: autoAxis.xAxis
@@ -215,7 +215,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftA3Series
                 visible: upshiftAVisible3 && parameters.upshiftTablesA[3].param.value.valid
-                model: parameters.upshiftTablesA[3].param.stringModel
+                model: parameters.upshiftTablesA[3].param.floatModel
                 name: qsTr("4-5 A")
                 style: Qt.SolidLine
                 axisX: autoAxis.xAxis
@@ -224,7 +224,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftA4Series
                 visible: upshiftAVisible4 && parameters.upshiftTablesA[4].param.value.valid
-                model: parameters.upshiftTablesA[4].param.stringModel
+                model: parameters.upshiftTablesA[4].param.floatModel
                 name: qsTr("5-6 A")
                 style: Qt.SolidLine
                 axisX: autoAxis.xAxis
@@ -233,7 +233,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftA0Series
                 visible: downshiftAVisible0 && parameters.downshiftTablesA[0].param.value.valid
-                model: parameters.downshiftTablesA[0].param.stringModel
+                model: parameters.downshiftTablesA[0].param.floatModel
                 name: qsTr("2-1 A")
                 color: upshiftA0Series.color
                 width: 2
@@ -244,7 +244,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftA1Series
                 visible: downshiftAVisible1 && parameters.downshiftTablesA[1].param.value.valid
-                model: parameters.downshiftTablesA[1].param.stringModel
+                model: parameters.downshiftTablesA[1].param.floatModel
                 name: qsTr("3-2 A")
                 color: upshiftA1Series.color
                 width: 2
@@ -255,7 +255,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftA2Series
                 visible: downshiftAVisible2 && parameters.downshiftTablesA[2].param.value.valid
-                model: parameters.downshiftTablesA[2].param.stringModel
+                model: parameters.downshiftTablesA[2].param.floatModel
                 name: qsTr("4-3 A")
                 color: upshiftA2Series.color
                 width: 2
@@ -266,7 +266,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftA3Series
                 visible: downshiftAVisible3 && parameters.downshiftTablesA[3].param.value.valid
-                model: parameters.downshiftTablesA[3].param.stringModel
+                model: parameters.downshiftTablesA[3].param.floatModel
                 name: qsTr("5-4 A")
                 color: upshiftA3Series.color
                 width: 2
@@ -277,7 +277,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftA4Series
                 visible: downshiftAVisible4 && parameters.downshiftTablesA[4].param.value.valid
-                model: parameters.downshiftTablesA[4].param.stringModel
+                model: parameters.downshiftTablesA[4].param.floatModel
                 name: qsTr("6-5 A")
                 color: upshiftA4Series.color
                 width: 2
@@ -288,7 +288,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftB0Series
                 visible: upshiftBVisible0 && parameters.upshiftTablesB[0].param.value.valid
-                model: parameters.upshiftTablesB[0].param.stringModel
+                model: parameters.upshiftTablesB[0].param.floatModel
                 name: qsTr("1-2 B")
                 color: upshiftA0Series.color
                 width: 2
@@ -299,7 +299,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftB1Series
                 visible: upshiftBVisible1 && parameters.upshiftTablesB[1].param.value.valid
-                model: parameters.upshiftTablesB[1].param.stringModel
+                model: parameters.upshiftTablesB[1].param.floatModel
                 name: qsTr("2-3 B")
                 color: upshiftA1Series.color
                 width: 2
@@ -310,7 +310,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftB2Series
                 visible: upshiftBVisible2 && parameters.upshiftTablesB[2].param.value.valid
-                model: parameters.upshiftTablesB[2].param.stringModel
+                model: parameters.upshiftTablesB[2].param.floatModel
                 name: qsTr("3-4 B")
                 color: upshiftA2Series.color
                 width: 2
@@ -321,7 +321,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftB3Series
                 visible: upshiftBVisible3 && parameters.upshiftTablesB[3].param.value.valid
-                model: parameters.upshiftTablesB[3].param.stringModel
+                model: parameters.upshiftTablesB[3].param.floatModel
                 name: qsTr("4-5 B")
                 color: upshiftA3Series.color
                 width: 2
@@ -332,7 +332,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: upshiftB4Series
                 visible: upshiftBVisible4 && parameters.upshiftTablesB[4].param.value.valid
-                model: parameters.upshiftTablesB[4].param.stringModel
+                model: parameters.upshiftTablesB[4].param.floatModel
                 name: qsTr("5-6 B")
                 color: upshiftA4Series.color
                 width: 2
@@ -343,7 +343,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftB0Series
                 visible: downshiftBVisible0 && parameters.downshiftTablesB[0].param.value.valid
-                model: parameters.downshiftTablesB[0].param.stringModel
+                model: parameters.downshiftTablesB[0].param.floatModel
                 name: qsTr("2-1 B")
                 color: upshiftA0Series.color
                 width: 2
@@ -354,7 +354,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftB1Series
                 visible: downshiftBVisible1 && parameters.downshiftTablesB[1].param.value.valid
-                model: parameters.downshiftTablesB[1].param.stringModel
+                model: parameters.downshiftTablesB[1].param.floatModel
                 name: qsTr("3-2 B")
                 color: upshiftA1Series.color
                 width: 2
@@ -365,7 +365,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftB2Series
                 visible: downshiftBVisible2 && parameters.downshiftTablesB[2].param.value.valid
-                model: parameters.downshiftTablesB[2].param.stringModel
+                model: parameters.downshiftTablesB[2].param.floatModel
                 name: qsTr("4-3 B")
                 color: upshiftA2Series.color
                 width: 2
@@ -376,7 +376,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftB3Series
                 visible: downshiftBVisible3 && parameters.downshiftTablesB[3].param.value.valid
-                model: parameters.downshiftTablesB[3].param.stringModel
+                model: parameters.downshiftTablesB[3].param.floatModel
                 name: qsTr("5-4 B")
                 color: upshiftA3Series.color
                 width: 2
@@ -387,7 +387,7 @@ ColumnLayout {
             RoleModeledLineSeries {
                 id: downshiftB4Series
                 visible: downshiftBVisible4 && parameters.downshiftTablesB[4].param.value.valid
-                model: parameters.downshiftTablesB[4].param.stringModel
+                model: parameters.downshiftTablesB[4].param.floatModel
                 name: qsTr("6-5 B")
                 color: upshiftA4Series.color
                 width: 2
