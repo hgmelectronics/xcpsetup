@@ -282,7 +282,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
         GroupBox {
-            enabled: param.valid
+            enabled: parameters.controllerSoftwareVersionArray.valid
             title: "Software Version"
             TextField {
                 text: parameters.controllerSoftwareVersion
