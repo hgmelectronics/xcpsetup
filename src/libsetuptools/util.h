@@ -13,6 +13,8 @@
 #include <QtQml/QQmlListProperty>
 #include <QClipboard>
 
+#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+
 namespace SetupTools
 {
 
@@ -335,6 +337,29 @@ private:
 
     static const QString HASH;
 };
+
+template <typename T, T (QVariant::* ConvFunc)(bool *) const>
+T QVariantConvOr(const QVariant & var, const T & defaultVal)
+{
+    bool ok = false;
+    T out = CALL_MEMBER_FN(var, ConvFunc)(&ok);
+    return ok ? out : defaultVal;
+}
+
+inline int QVariantToIntOr(const QVariant & var, int defaultVal)
+{
+    return QVariantConvOr<int, &QVariant::toInt>(var, defaultVal);
+}
+
+inline int QVariantToUIntOr(const QVariant & var, uint defaultVal)
+{
+    return QVariantConvOr<uint, &QVariant::toUInt>(var, defaultVal);
+}
+
+inline int QVariantToDoubleOr(const QVariant & var, double defaultVal)
+{
+    return QVariantConvOr<double, &QVariant::toDouble>(var, defaultVal);
+}
 
 }   // namespace SetupTools
 #endif // UTIL_H

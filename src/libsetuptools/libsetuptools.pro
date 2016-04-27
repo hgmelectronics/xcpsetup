@@ -56,7 +56,8 @@ SOURCES += \
     Xcp_TestingSlave.cpp \
     RoleXYModelMapper.cpp \
     XYSeriesAutoAxis.cpp \
-    CSVParamFile.cpp
+    CSVParamFile.cpp \
+    ModelStringProxy.cpp
 
 HEADERS += \
     util.h \
@@ -98,7 +99,8 @@ HEADERS += \
     Xcp_TestingSlave.h \
     RoleXYModelMapper.h \
     XYSeriesAutoAxis.h \
-    CSVParamFile.h
+    CSVParamFile.h \
+    ModelStringProxy.h
 
 unix {
     target.path = /usr/lib
