@@ -51,8 +51,13 @@ QtObject {
         count: 22
     }
 
+    readonly property VarArrayParam controllerSoftwareVersionArray: registry.addVarArrayParam(MemoryRange.S32, paramId.controller_software_version, 1, 33, false, false, slots.count)
+    property ModelStringProxy controllerSoftwareVersionStringProxy : ModelStringProxy {
+        source: controllerSoftwareVersionArray.floatModel
+        packing: ModelStringProxy.Char
+    }
+    readonly property string controllerSoftwareVersion: controllerSoftwareVersionStringProxy.string
 
-    //readonly property ArrayParam controllerSoftwareVersion: registry.addArrayParam(MemoryRange.S32, paramId.controller_software_version, false, false, slots)
     property ScalarMetaParam controllerHeapUsed: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_heap_used, false, false, slots.count, "", qsTr("Heap Used"))
     }
