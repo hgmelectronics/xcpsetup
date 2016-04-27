@@ -541,22 +541,20 @@ void VarArrayParamModel::onParamDataChanged(quint32 beginChanged, quint32 endCha
 
 void VarArrayParamModel::onParamCountChanged()
 {
-    int maxCount = std::max(mParam->count(), mPrevCount);
     if(mParam->count() > mPrevCount)
     {
         beginInsertRows(QModelIndex(), mPrevCount, mParam->count() - 1);
         mPrevCount = mParam->count();
-        emit dataChanged(createIndex(0, 0), createIndex(maxCount - 1, 0));
         endInsertRows();
     }
     else if(mParam->count() < mPrevCount)
     {
         beginRemoveRows(QModelIndex(), mParam->count(), mPrevCount - 1);
         mPrevCount = mParam->count();
-        emit dataChanged(createIndex(0, 0), createIndex(maxCount - 1, 0));
         endRemoveRows();
     }
     emit countChanged();
+    emit dataChanged(createIndex(0, 0), createIndex(mParam->count() - 1, 0));
 }
 
 } // namespace Xcp
