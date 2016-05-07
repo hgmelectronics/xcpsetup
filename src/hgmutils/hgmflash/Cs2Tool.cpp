@@ -18,6 +18,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &Cs2Tool::onProgramResetDone);
     connect(mProgLayer, &Xcp::ProgramLayer::opProgressChanged, this, &Cs2Tool::onProgLayerProgressChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::opMsg, this, &Cs2Tool::onProgLayerOpMsg);
+    connect(mProgLayer, &Xcp::ProgramLayer::disconnectDone, this, &Cs2Tool::onProgLayerDisconnectDone);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
     mProgLayer->setSlaveBootDelay(BOOT_DELAY_MSEC);
     mProgLayer->setSlaveProgResetIsAcked(false);
@@ -274,8 +275,8 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
     {
         if(result == SetupTools::Xcp::OpResult::Success)
         {
-            setState(State::Idle);
-            emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::Success));
+            setState(State::Program_Disconnect);
+            mProgLayer->disconnect();
         }
         else
         {
@@ -370,6 +371,19 @@ void Cs2Tool::onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString str, Se
 {
     Q_UNUSED(ext);
     emit fault(result, str);
+}
+
+void Cs2Tool::onProgLayerDisconnectDone(Xcp::OpResult result)
+{
+    Q_UNUSED(result);
+
+    Q_ASSERT(mState == State::Program_Disconnect);
+
+    if(mState == State::Program_Disconnect)
+    {
+        setState(State::Idle);
+        emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::Success));
+    }
 }
 
 void Cs2Tool::updateProgClear()

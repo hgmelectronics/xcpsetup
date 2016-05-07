@@ -74,6 +74,7 @@ private:
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();
     void onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void onProgLayerDisconnectDone(SetupTools::Xcp::OpResult result);
 
     enum class State
     {                               // Precond                                  Action
@@ -85,6 +86,7 @@ private:
         Program_Program,            // Cal mode, slave in bootloader
         Program_Verify,
         Program_CalMode,
+        Program_Disconnect,
         Reset_Reset,
         _N_STATES
     };
