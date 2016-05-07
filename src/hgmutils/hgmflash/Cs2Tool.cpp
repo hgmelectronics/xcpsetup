@@ -248,7 +248,7 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
             }
         }
     }
-    if(mState == State::Program_Reconnect)
+    else if(mState == State::Program_Reconnect)
     {
         if(result != SetupTools::Xcp::OpResult::Success)
         {
