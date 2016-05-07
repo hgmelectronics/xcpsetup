@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
+import Qt.labs.settings 1.0
 import com.hgmelectronics.utils.cs2tool 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
@@ -15,6 +16,8 @@ ApplicationWindow {
     property string programName: qsTr("HGM Flash Tool")
     property string programVersion: ""
 
+    property alias progFileDir: progFileDialog.folder
+
     property FlashProg progFileData
 
     property alias targetCmdId: cs2Tool.slaveCmdId
@@ -26,6 +29,15 @@ ApplicationWindow {
 
     onClosing: {
         Qt.quit()
+    }
+
+    Settings {
+        category: "application"
+        property alias progFileDir: application.progFileDir
+        property alias windowWidth: application.width
+        property alias windowHeight: application.height
+        property alias windowX: application.x
+        property alias windowY: application.y
     }
 
     Cs2Tool {
@@ -64,8 +76,9 @@ ApplicationWindow {
         title: qsTr("Select program file")
         modality: Qt.NonModal
         nameFilters: ["S-record files (*.srec)", "All files (*)"]
-        folder: shortcuts.home
+        folder: shortcuts.documents
         onAccepted: {
+            folder = folder
             filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
             if (selectedNameFilter == "S-record files (*.srec)")
                 application.progFileData = ProgFile.readSrec(filePath)

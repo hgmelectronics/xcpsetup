@@ -8,6 +8,9 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setOrganizationName("Ebus");
+    app.setOrganizationDomain("ebus.com");
+    app.setApplicationName("IBEM Flash Tool");
 
     QQmlApplicationEngine engine;
 

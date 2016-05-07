@@ -3,15 +3,27 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
+import Qt.labs.settings 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
 ApplicationWindow {
+    id: application
     title: qsTr("CDA2 Param Tool")
     width: 1200
     height: 850
     visible: true
+    property alias paramFileDir: paramLoadFileDialog.folder
+
+    Settings {
+        category: "application"
+        property alias paramFileDir: application.paramFileDir
+        property alias windowWidth: application.width
+        property alias windowHeight: application.height
+        property alias windowX: application.x
+        property alias windowY: application.y
+    }
 
     menuBar: MenuBar {
         property alias fileMenu: fileMenu
@@ -182,9 +194,12 @@ ApplicationWindow {
         property string filePath
         id: paramLoadFileDialog
         title: qsTr("Load Parameter File")
+        folder: shortcuts.documents
         modality: Qt.NonModal
         nameFilters: [ "JSON files (*.json)", "All files (*)" ]
         onAccepted: {
+            console.log(folder)
+            folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramLayer.setRawData(paramFileIo.read(), true)
         }
@@ -195,9 +210,11 @@ ApplicationWindow {
         property string filePath
         id: paramSaveFileDialog
         title: qsTr("Save Parameter File")
+        folder: paramLoadFileDialog.folder
         modality: Qt.NonModal
         nameFilters: [ "JSON files (*.json)", "All files (*)" ]
         onAccepted: {
+            paramLoadFileDialog.folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
             paramFileIo.write(paramLayer.saveableRawData())
         }

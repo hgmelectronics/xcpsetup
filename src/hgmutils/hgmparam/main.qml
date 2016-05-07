@@ -18,6 +18,7 @@ ApplicationWindow {
     property alias readParametersOnConnect: readParametersOnConnectAction.checked
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
+    property alias paramFileDir: paramFileDialog.folder
     property CS2Defaults cs2Defaults:  CS2Defaults {
                                       }
 
@@ -53,6 +54,11 @@ ApplicationWindow {
         property alias saveReadOnlyParameters: application.saveReadOnlyParameters
         property alias useMetricUnits: application.useMetricUnits
         property alias saveOnWrite: application.saveParametersOnWrite
+        property alias paramFileDir: application.paramFileDir
+        property alias windowWidth: application.width
+        property alias windowHeight: application.height
+        property alias windowX: application.x
+        property alias windowY: application.y
     }
 
     ParamLayer {
@@ -161,7 +167,7 @@ ApplicationWindow {
         title: selectExisting ? qsTr("Load Parameter File") : qsTr(
                                     "Save Parameter File as")
         nameFilters: cs2Defaults.parameterFilenameFilters
-        folder: shortcuts.home
+        folder: shortcuts.documents
 
         function load() {
             selectExisting = true
@@ -174,6 +180,7 @@ ApplicationWindow {
         }
 
         onAccepted: {
+            folder = folder // dark magicks: documentation says folder is updated when dialog is closed, but if you don't do this it resets to the value bound above for next invocation
             var name = UrlUtil.urlToLocalFile(fileUrl.toString())
             if(name.match(/.hgp$/)) {
                 jsonParamFileIo.name = name

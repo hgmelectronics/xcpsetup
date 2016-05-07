@@ -3,17 +3,28 @@ import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
+import Qt.labs.settings 1.0
 import com.ebus.utils.ibemtool 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
 ApplicationWindow {
+    id: application
     title: qsTr("IBEM Flash Tool")
     width: 400
     height: 600
     visible: true
+    property alias progFileDir: mainForm.progFileDir
 
+    Settings {
+        category: "application"
+        property alias progFileDir: application.progFileDir
+        property alias windowWidth: application.width
+        property alias windowHeight: application.height
+        property alias windowX: application.x
+        property alias windowY: application.y
+    }
 
     menuBar: MenuBar {
         property alias fileMenu: fileMenu

@@ -14,6 +14,7 @@ ColumnLayout {
     anchors.margins: 10
 
     property string progFilePath: progFileDialog.filePath
+    property alias progFileDir: progFileDialog.folder
     property FlashProg progFileData
     property alias targetsModel: targetsView.model
     property alias progBaseText: progBaseField.text
@@ -45,8 +46,10 @@ ColumnLayout {
             id: progFileDialog
             title: qsTr("Select program file")
             modality: Qt.NonModal
+            folder: shortcuts.documents
             nameFilters: [ "S-record files (*.srec)", "All files (*)" ]
             onAccepted: {
+                folder = folder
                 filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
                 if(selectedNameFilter == "S-record files (*.srec)")
                     root.progFileData = ProgFile.readSrec(filePath)
