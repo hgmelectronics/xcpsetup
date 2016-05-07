@@ -180,6 +180,7 @@ ApplicationWindow {
                 if (selectExisting) {
                     var rawData = jsonParamFileIo.read()
                     paramLayer.registry.beginHistoryElide()
+                    paramLayer.registry.setValidAll(false)
                     paramLayer.setRawData(rawData, false)
                     paramLayer.setRawData(rawData, true)    // second time in case of param dependencies in wrong order
                     paramLayer.registry.endHistoryElide()
@@ -193,6 +194,7 @@ ApplicationWindow {
                     var saveUnits = setStandardUnits()
                     var data = csvParamFileIo.read()
                     paramLayer.registry.beginHistoryElide()
+                    paramLayer.registry.setValidAll(false)
                     paramLayer.setData(data, false)
                     paramLayer.setData(data, true)    // second time in case of param dependencies in wrong order
                     paramLayer.registry.endHistoryElide()
