@@ -112,6 +112,8 @@ public:
 protected:
     boost::optional<SlaveId> mSlaveAddr;
     bool mPacketLogEnabled;
+signals:
+    void slaveIdChanged();
 };
 
 }   // namespace Can

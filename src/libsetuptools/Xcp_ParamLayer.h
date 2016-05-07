@@ -103,6 +103,7 @@ private:
     void onParamDownloadDone(SetupTools::Xcp::OpResult result);
     void onParamUploadDone(SetupTools::Xcp::OpResult result);
     void onRegistryWriteCacheDirtyChanged();
+    void onIntfcSlaveIdChanged();
 
     enum class State
     {

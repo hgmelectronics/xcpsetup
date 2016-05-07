@@ -325,6 +325,12 @@ void IbemTool::startProgramming()
     QVariant activeSlaveIdVar = *qobject_cast<QVariantObject *>(mSlaveListModel->wrapper(mActiveSlave)->obj());
     Q_ASSERT(activeSlaveIdVar.isValid());
     mProgLayer->setSlaveId(activeSlaveIdVar.toString());
+    if(mProgLayer->slaveId() != activeSlaveIdVar.toString())
+    {
+        mState = State::Idle;
+        emit programmingDone(false);
+        return;
+    }
 
     int firstPage = mInfilledProgData.base() / PAGE_SIZE;
     int lastPage = (mInfilledProgData.base() + mInfilledProgData.size() - 1) / PAGE_SIZE;

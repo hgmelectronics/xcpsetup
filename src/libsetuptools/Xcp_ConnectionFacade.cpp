@@ -108,6 +108,8 @@ void ConnectionFacade::setSlaveId(QString val)
     boost::optional<Interface::Can::SlaveId> slaveId = Interface::Can::StrToSlaveId(val);
     if(slaveId)
         canIntfc->connect(slaveId.get());
+
+    emit slaveIdChanged();
 }
 
 int ConnectionFacade::timeout()

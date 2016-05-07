@@ -36,7 +36,18 @@ QUrl ProgramLayer::intfcUri()
 
 void ProgramLayer::setIntfcUri(QUrl uri)
 {
+    if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
+        QObject::disconnect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ProgramLayer::onIntfcSlaveIdChanged);
     mConn->setIntfcUri(uri);
+    if(mConn->intfc())
+    {
+        if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
+            QObject::connect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ProgramLayer::onIntfcSlaveIdChanged);
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mConn->intfc()->setPacketLog(true);
+        else
+            mConn->intfc()->setPacketLog(false);
+    }
     emit intfcChanged();
 }
 
@@ -47,7 +58,18 @@ Interface::Interface *ProgramLayer::intfc()
 
 void ProgramLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
+    if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
+        QObject::disconnect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ProgramLayer::onIntfcSlaveIdChanged);
     mConn->setIntfc(intfc, uri);
+    if(mConn->intfc())
+    {
+        if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
+            QObject::connect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ProgramLayer::onIntfcSlaveIdChanged);
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mConn->intfc()->setPacketLog(true);
+        else
+            mConn->intfc()->setPacketLog(false);
+    }
     emit intfcChanged();
 }
 
@@ -59,6 +81,7 @@ QString ProgramLayer::slaveId()
 void ProgramLayer::setSlaveId(QString id)
 {
     mConn->setSlaveId(id);
+    emit slaveIdChanged();
 }
 
 bool ProgramLayer::idle()
@@ -517,6 +540,11 @@ void ProgramLayer::onConnOpProgressChanged()
 void ProgramLayer::onConnOpMsg(OpResult result, QString info, Connection::OpExtInfo ext)
 {
     emit opMsg(result, info, ext);
+}
+
+void ProgramLayer::onIntfcSlaveIdChanged()
+{
+    emit slaveIdChanged();
 }
 
 void ProgramLayer::doProgramClear()

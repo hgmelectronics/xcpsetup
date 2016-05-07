@@ -120,8 +120,12 @@ ApplicationWindow {
         paramFilePath: paramFileIo.name
         progressValue: paramLayer.opProgress
         onUserConnectParam: {
-            paramLayer.slaveId = targetCmdId + ":" + targetResId
-            paramLayer.connectSlave()
+            var slaveId = targetCmdId + ":" + targetResId
+            paramLayer.slaveId = slaveId
+            if(paramLayer.slaveId.toLowerCase() === slaveId.toLowerCase())
+                paramLayer.connectSlave()
+            else
+                errorDialog.show(qsTr("Failed to set slave device ID"))
         }
         onUserDownloadParam: paramLayer.download()
         onUserUploadParam: paramLayer.upload()

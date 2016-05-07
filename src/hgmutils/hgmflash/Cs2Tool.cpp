@@ -206,7 +206,13 @@ void Cs2Tool::startProgramming()
 
     setState(State::Program_InitialConnect);
     
-    mProgLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
+    QString slaveId = mSlaveCmdId + ":" + mSlaveResId;
+    mProgLayer->setSlaveId(slaveId);
+    if(mProgLayer->slaveId() != slaveId)
+    {
+        emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::NoIntfc));
+        return;
+    }
     mProgLayer->calMode();
 }
 
@@ -220,7 +226,13 @@ void Cs2Tool::startReset()
 
     setState(State::Reset_Reset);
 
-    mProgLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
+    QString slaveId = mSlaveCmdId + ":" + mSlaveResId;
+    mProgLayer->setSlaveId(slaveId);
+    if(mProgLayer->slaveId() != slaveId)
+    {
+        emit resetDone(static_cast<int>(SetupTools::Xcp::OpResult::NoIntfc));
+        return;
+    }
     mProgLayer->programReset();
 }
 

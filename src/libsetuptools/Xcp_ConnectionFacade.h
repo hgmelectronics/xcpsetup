@@ -81,6 +81,7 @@ signals:
     void opMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void stateChanged();
     void opProgressChanged();
+    void slaveIdChanged();
 
     void connSetState(Connection::State val);
     void connUpload(XcpPtr base, int len, std::vector<quint8> *out);

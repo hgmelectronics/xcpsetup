@@ -93,12 +93,14 @@ OpResult Interface::connect(SlaveId addr)
     if(res == OpResult::Success)
     {
         mSlaveAddr = addr;
+        emit slaveIdChanged();
         clearReceived();
         return OpResult::Success;
     }
     else
     {
         mSlaveAddr.reset();
+        emit slaveIdChanged();
         return res;
     }
 }
@@ -108,6 +110,7 @@ OpResult Interface::disconnect()
     if(mSocket < 0)
         return OpResult::InvalidOperation;
     mSlaveAddr.reset();
+    emit slaveIdChanged();
     return doSetFilter(mFilter);
 }
 

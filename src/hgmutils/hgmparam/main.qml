@@ -44,9 +44,12 @@ ApplicationWindow {
     }
 
     onConnect: {
-        paramLayer.slaveId = "%1:%2".arg(targetCmdId.value).arg(
-                    targetResId.value)
-        paramLayer.connectSlave()
+        var slaveId = "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
+        paramLayer.slaveId = slaveId
+        if(paramLayer.slaveId.toLowerCase() === slaveId.toLowerCase())
+            paramLayer.connectSlave()
+        else
+            errorDialog.show(qsTr("Failed to set slave device ID"))
     }
 
     Settings {

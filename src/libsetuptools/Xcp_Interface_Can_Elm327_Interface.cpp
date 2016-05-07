@@ -427,11 +427,13 @@ OpResult Interface::connect(SlaveId addr)
     if(res == OpResult::Success)
     {
         mSlaveAddr = addr;
+        emit slaveIdChanged();
         return OpResult::Success;
     }
     else
     {
         mSlaveAddr.reset();
+        emit slaveIdChanged();
         return res;
     }
 }
@@ -440,6 +442,7 @@ OpResult Interface::disconnect()
 {
     Q_ASSERT(mPort);
     mSlaveAddr.reset();
+    emit slaveIdChanged();
     return doSetFilter(mFilter);
 }
 

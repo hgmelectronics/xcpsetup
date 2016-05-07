@@ -12,7 +12,7 @@ class ProgramLayer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcChanged)
-    Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
+    Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId NOTIFY slaveIdChanged)
     Q_PROPERTY(ConnectionFacade *conn READ conn)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
@@ -61,6 +61,7 @@ signals:
     void opProgressChanged();
     void intfcChanged();
     void opMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void slaveIdChanged();
 public slots:
     void program(FlashProg *prog, quint8 addrExt = 0, bool finalEmptyPacket = true);
     void programVerify(FlashProg *prog, CksumType type, quint8 addrExt = 0);    // For bootloaders that need PROGRAM_VERIFY to finish their flash write
@@ -80,6 +81,7 @@ private:
     void onConnStateChanged();
     void onConnOpProgressChanged();
     void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void onIntfcSlaveIdChanged();
 
     void doProgramClear();   // Clear program bytes, as many as possible
 

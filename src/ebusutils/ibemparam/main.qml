@@ -130,10 +130,12 @@ ApplicationWindow {
         onUserConnectParam: {
             var cmdId = boardId * 2 + 0x1F000100    // convert again for luck and on startup
             var resId = boardId * 2 + 0x1F000101
-            var idString = cmdId.toString(16) + ":" + resId.toString(16)
-            paramLayer.slaveId = idString
-            console.log(paramLayer.slaveId)
-            paramLayer.connectSlave()
+            var slaveId = cmdId.toString(16) + ":" + resId.toString(16)
+            paramLayer.slaveId = slaveId
+            if(paramLayer.slaveId.toLowerCase() === slaveId.toLowerCase())
+                paramLayer.connectSlave()
+            else
+                errorDialog.show(qsTr("Failed to set slave device ID"))
         }
         onUserDownloadParam: paramLayer.download()
         onUserUploadParam: paramLayer.upload()
