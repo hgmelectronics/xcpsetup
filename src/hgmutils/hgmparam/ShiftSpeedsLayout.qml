@@ -513,7 +513,7 @@ ColumnLayout {
                     rpmTableParams: parameters.rpmDownshiftTablesA
                     gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
                     isDownshift: true
-                    enabled: (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                    enabled: (parameters.shiftTablesDownLockedA.param.floatVal == 0 && parameters.shiftTablesDownLockedA.param.valid)
                 }
             }
             RowLayout {
@@ -563,7 +563,7 @@ ColumnLayout {
                     rpmTableParams: parameters.rpmDownshiftTablesB
                     gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
                     isDownshift: true
-                    enabled: (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                    enabled: (parameters.shiftTablesDownLockedB.param.floatVal == 0 && parameters.shiftTablesDownLockedA.param.valid)
                 }
             }
             RowLayout {
