@@ -2042,4 +2042,12 @@ QtObject {
     property ScalarMetaParam evDriveLastFaultType: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_drive_last_fault_type, false, false, slots.evDriveFault, "", qsTr("EV Drive Last Fault"))
     }
+    property ScalarMetaParam securityCodeEntry: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.security_code, true, false, slots.count)
+        name: qsTr("Security Code Entry")
+    }
+    property ScalarMetaParam securityCodeSetup: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.setup_security_code, true, true, slots.count)
+        name: qsTr("Security Code Setup")
+    }
 }

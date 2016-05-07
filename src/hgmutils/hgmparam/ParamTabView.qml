@@ -10,6 +10,7 @@ import com.hgmelectronics.setuptools.ui 1.0
 Item {
     id: root
     property alias useMetricUnits: params.useMetricUnits
+    property alias parameters: params
     property ParamRegistry registry
     anchors.left: parent.left
     anchors.right: parent.right

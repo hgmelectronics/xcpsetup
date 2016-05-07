@@ -430,6 +430,15 @@ ApplicationWindow {
         onTriggered: paramLayer.registry.setValidAll(false)
     }
 
+    Action {
+        id: securityCodeAction
+        text: securityCodeDialog.title
+        enabled: securityCodeDialog.ready
+        onTriggered: {
+            securityCodeDialog.open()
+        }
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -473,6 +482,10 @@ ApplicationWindow {
             MenuSeparator {}
             MenuItem {
                 action: showLogAction
+            }
+            MenuSeparator {}
+            MenuItem {
+                action: securityCodeAction
             }
         }
 
@@ -658,6 +671,12 @@ ApplicationWindow {
 
     HelpDialog {
         id: helpDialog
+    }
+
+    SecurityCodeDialog {
+        id: securityCodeDialog
+        paramLayer: paramLayer
+        parameters: paramTabView.parameters
     }
 
     Splash {

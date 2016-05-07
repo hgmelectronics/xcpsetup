@@ -32,5 +32,6 @@
         <file>TableByClutchEditMenuButton.qml</file>
         <file>ShiftTableByShiftEditMenuButton.qml</file>
         <file>ShiftTableParamEditMenuItem.qml</file>
+        <file>SecurityCodeDialog.qml</file>
     </qresource>
 </RCC>
