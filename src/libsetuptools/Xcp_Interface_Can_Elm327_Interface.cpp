@@ -37,6 +37,7 @@ void IoTask::init()
     mPort->setParent(this);
     connect(mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
     connect(mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
+    connect(mPort, static_cast<void(SerialPort::*)(SerialPort::SerialPortError)>(&SerialPort::error), this, &IoTask::portError);
 }
 
 std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
@@ -92,7 +93,7 @@ void IoTask::portReadyRead()
                 {
                     mLines.push_back(newLine);
 #ifdef ELM327_DEBUG
-                    qDebug() << TIMESTAMP_STR << "RX" << ToHexString(newLine.begin(), newLine.end());
+                    qDebug() << TIMESTAMP_STR << "RX" << QByteArray(reinterpret_cast<char *>(newLine.data()), newLine.size()) << ToHexString(newLine.begin(), newLine.end());
 #endif
                     newLine.clear();
                 }
@@ -102,7 +103,7 @@ void IoTask::portReadyRead()
         {
             mLines.push_back(newLine);
 #ifdef ELM327_DEBUG
-            qDebug() << TIMESTAMP_STR << "RX" << ToHexString(newLine.begin(), newLine.end());
+            qDebug() << TIMESTAMP_STR << "RX" << QByteArray(reinterpret_cast<char *>(newLine.data()), newLine.size()) << ToHexString(newLine.begin(), newLine.end());
 #endif
         }
     }
@@ -167,6 +168,38 @@ void IoTask::portReadyRead()
     mLines.swap(incompleteLines);
 }
 
+void IoTask::portBytesWritten(qint64 bytes)
+{
+    QMutexLocker locker(&mPendingTxBytesMutex);
+    mPendingTxBytes = std::max(mPendingTxBytes - bytes, qint64(0)); // coerce since first call to this function always seems to be a spurious one with bytes==1
+    if(mPendingTxBytes == 0)
+        mWriteComplete.set();
+}
+
+void IoTask::portError(SerialPort::SerialPortError error)
+{
+    if(error == SerialPort::NoError)    // results from clearError() call later in this func
+        return;
+
+    switch(error)
+    {
+    case SerialPort::TimeoutError:
+    case SerialPort::ReadError:     // problem with input data, higher levels will handle this as a timeout
+    case SerialPort::ParityError:   // include the old enum values even though they are deprecated, since documentation doesn't clearly state they will never be sent
+    case SerialPort::FramingError:
+    case SerialPort::BreakConditionError:
+        break;
+    default:    // something has gone wrong with a write, or the device has been disconnected
+    {
+        QMutexLocker locker(&mPendingTxBytesMutex);
+        mPendingTxBytes = 0;
+        mWriteComplete.set();
+    }
+    }
+
+    mPort->clearError();
+}
+
 void IoTask::write(std::vector<quint8> data)
 {
     {
@@ -175,16 +208,8 @@ void IoTask::write(std::vector<quint8> data)
     }
     mPort->write(data.data(), data.size());
 #ifdef ELM327_DEBUG
-    qDebug() << TIMESTAMP_STR << "TX" << ToHexString(data.begin(), data.end());
+    qDebug() << TIMESTAMP_STR << "TX" << QByteArray(reinterpret_cast<char *>(data.data()), data.size()) << ToHexString(data.begin(), data.end());
 #endif
-}
-
-void IoTask::portBytesWritten(qint64 bytes)
-{
-    QMutexLocker locker(&mPendingTxBytesMutex);
-    mPendingTxBytes = std::max(mPendingTxBytes - bytes, qint64(0)); // coerce since first call to this function always seems to be a spurious one with bytes==1
-    if(mPendingTxBytes == 0)
-        mWriteComplete.set();
 }
 
 void IoTask::setSerialLog(bool on)

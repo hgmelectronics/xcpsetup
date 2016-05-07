@@ -51,6 +51,7 @@ public slots:
     void init();
     void portReadyRead();
     void portBytesWritten(qint64 bytes);
+    void portError(SerialPort::SerialPortError error);
     void write(std::vector<quint8> data);
 
 private:

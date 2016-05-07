@@ -20,6 +20,7 @@ namespace SetupTools
 
 class SerialPort : public QSerialPort
 {
+    Q_OBJECT
 public:
     explicit SerialPort(QObject *parent = Q_NULLPTR);
     explicit SerialPort(const QString &name, QObject *parent = Q_NULLPTR);
