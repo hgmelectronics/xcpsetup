@@ -306,7 +306,7 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
     }
     else
     {
-        Q_ASSERT(0);
+        Q_ASSERT(mState == State::Program_InitialConnect || mState == State::Program_Reconnect || mState == State::Program_CalMode);
     }
 }
 
@@ -362,7 +362,7 @@ void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
     }
     else
     {
-        Q_ASSERT(0);
+        Q_ASSERT(mState == State::Program_ResetToBootloader || mState == State::Reset_Reset);
     }
 }
 
