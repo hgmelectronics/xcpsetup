@@ -533,17 +533,17 @@ QtObject {
     }
 
     property ScalarMetaParam garageShiftProportionalConstant: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_p_const, true, true, slots.percentagePerRpm, "", qsTr("Garage Shift P Coeff"))
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_p_const, true, true, slots.pressurePerRpm, "", qsTr("Garage Shift P Coeff"))
         immediateWrite: true
     }
 
     property ScalarMetaParam garageShiftIntegralConstant: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_i_const, true, true, slots.percentagePerRpmSec, "", qsTr("Garage Shift I Coeff"))
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_i_const, true, true, slots.pressurePerRpmSec, "", qsTr("Garage Shift I Coeff"))
         immediateWrite: true
     }
 
     property ScalarMetaParam garageShiftDerivativeConstant: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_d_const, true, true, slots.percentagePerRpmPerSec, "", qsTr("Garage Shift D Coeff"))
+        param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_d_const, true, true, slots.pressurePerRpmPerSec, "", qsTr("Garage Shift D Coeff"))
         immediateWrite: true
     }
 
