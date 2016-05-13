@@ -258,6 +258,9 @@ QtObject {
 
     readonly property double transmission_st_downshift_torque_threshold: 0x03e00000
     readonly property double transmission_st_upshift_torque_threshold: 0x03e30000
+    readonly property double transmission_ts_reg_p_const: 0x03e40000
+    readonly property double transmission_ts_reg_i_const: 0x03e50000
+    readonly property double transmission_ts_reg_d_const: 0x03e60000
 
     readonly property double transmission_shift_r_n_ts_transfer_time: 0x03e10000
     readonly property double transmission_shift_n_r_ts_transfer_time: 0x03e10001

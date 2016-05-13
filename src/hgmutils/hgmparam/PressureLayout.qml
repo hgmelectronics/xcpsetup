@@ -161,7 +161,7 @@ RowLayout {
             Window {
                 id: garageShiftDialog
 
-                height: 25 + (stalkingHorse.implicitHeight + 5) * 7
+                height: 25 + (stalkingHorse.implicitHeight + 5) * 4
                 width: 35 + stalkingHorse.implicitWidth + 5
 
                 ColumnLayout {
@@ -183,6 +183,38 @@ RowLayout {
                     }
                     ScalarParamSpinBox {
                         metaParam: parameters.garageShiftDerivativeConstant
+                    }
+                }
+            }
+
+            GroupBox {
+                title: "TS Shift Reg"
+                Button {
+                    text: "Edit"
+                    onClicked: {
+                        tsShiftRegDialog.showNormal()
+                        tsShiftRegDialog.raise()
+                    }
+                    enabled: parameters.tsShiftProportionalConstant.param.valid
+                }
+            }
+            Window {
+                id: tsShiftRegDialog
+
+                height: 25 + (stalkingHorse.implicitHeight + 5) * 3
+                width: 35 + stalkingHorse.implicitWidth + 5
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    ScalarParamSpinBox {
+                        metaParam: parameters.tsShiftProportionalConstant
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.tsShiftIntegralConstant
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.tsShiftDerivativeConstant
                     }
                 }
             }

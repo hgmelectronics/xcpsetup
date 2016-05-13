@@ -420,6 +420,21 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_st_upshift_torque_threshold, true, true, slots.percentage1, "", qsTr("ST Upshift Torque Threshold"))
     }
 
+    property ScalarMetaParam tsShiftProportionalConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ts_reg_p_const, true, true, slots.pressurePerRpm, "", qsTr("TS Shift P Coeff"))
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tsShiftIntegralConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ts_reg_i_const, true, true, slots.pressurePerRpmSec, "", qsTr("TS Shift I Coeff"))
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam tsShiftDerivativeConstant: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_ts_reg_d_const, true, true, slots.pressurePerRpmPerSec, "", qsTr("TS Shift D Coeff"))
+        immediateWrite: true
+    }
+
 
     property ScalarMetaParamList transmissionTorqueSpeedTransferTime: ScalarMetaParamList {
         ScalarMetaParam {
