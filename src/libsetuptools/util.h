@@ -298,6 +298,8 @@ bool updateDelta(T & val, const T & newVal)
 template <typename Ii>
 QString ToHexString(Ii begin, Ii end)
 {
+    if(begin == end)
+        return QString();
     QString hex;
     Ii it = begin;
     while(1)

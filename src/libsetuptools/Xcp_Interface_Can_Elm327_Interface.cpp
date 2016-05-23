@@ -515,7 +515,10 @@ OpResult Interface::receiveFrames(int timeoutMsec, std::vector<Frame> &out, cons
         }
     } while(timer.nsecsElapsed() <= timeoutNsec && !out.size());
 
-    return OpResult::Success;
+    if(out.size() > 0)
+        return OpResult::Success;
+    else
+        return OpResult::Timeout;
 }
 
 OpResult Interface::clearReceived()

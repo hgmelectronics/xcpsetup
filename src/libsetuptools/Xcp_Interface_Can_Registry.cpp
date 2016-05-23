@@ -1,5 +1,6 @@
 #include "Xcp_Interface_Can_Registry.h"
 #include "Xcp_Interface_Can_Elm327_Interface.h"
+#include "Xcp_Interface_Can_J2534_Interface.h"
 #include "Xcp_Interface_Can_Socket_Interface.h"
 
 namespace SetupTools
@@ -14,15 +15,18 @@ namespace Can
 QList<QUrl> Registry::avail()
 {
     QList<QUrl> ret;
-    ret.append(Elm327::Registry::avail());
+    ret.append(J2534::Registry::avail());
     ret.append(Socket::Registry::avail());
+    ret.append(Elm327::Registry::avail());
     return ret;
 }
 
 Interface *Registry::make(QUrl uri)
 {
     Interface *ret;
-    ret = Elm327::Registry::make(uri);
+    ret = J2534::Registry::make(uri);
+    if(!ret)
+        ret = Elm327::Registry::make(uri);
     if(!ret)
         ret = Socket::Registry::make(uri);
     /*if(!ret)
@@ -34,6 +38,8 @@ QString Registry::desc(QUrl uri)
 {
     QString ret;
     ret = Elm327::Registry::desc(uri);
+    if(!ret.length())
+        ret = J2534::Registry::desc(uri);
     if(!ret.length())
         ret = Socket::Registry::desc(uri);
     /*if(!ret.length())

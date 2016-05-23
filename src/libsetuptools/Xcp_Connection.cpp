@@ -975,7 +975,14 @@ OpResult Connection::programBlock(XcpPtr base, const std::vector<quint8> &data, 
         {
             // check for a pre-existing error (from a previous operation, or a previous iter of this operation)
             std::vector<std::vector<quint8> > replies;
-            RESETMTA_RETURN_ON_FAIL(mIntfc->receive(0, replies));
+            {
+                OpResult readResult = mIntfc->receive(0, replies);
+                if(readResult != OpResult::Success && readResult != OpResult::Timeout)
+                {
+                    mCalcMta.reset();
+                    return readResult;
+                }
+            }
             // if no replies, everything is OK
             if(replies.size() > 0)
             {

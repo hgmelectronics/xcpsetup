@@ -57,7 +57,9 @@ SOURCES += \
     RoleXYModelMapper.cpp \
     XYSeriesAutoAxis.cpp \
     CSVParamFile.cpp \
-    ModelStringProxy.cpp
+    ModelStringProxy.cpp \
+    Xcp_Interface_Can_J2534_Interface.cpp \
+    Xcp_Interface_Can_J2534_Library.cpp
 
 HEADERS += \
     util.h \
@@ -100,7 +102,9 @@ HEADERS += \
     RoleXYModelMapper.h \
     XYSeriesAutoAxis.h \
     CSVParamFile.h \
-    ModelStringProxy.h
+    ModelStringProxy.h \
+    Xcp_Interface_Can_J2534_Interface.h \
+    Xcp_Interface_Can_J2534_Library.h
 
 unix {
     target.path = /usr/lib
@@ -110,6 +114,7 @@ unix {
 
 win32 {
     DEFINES += SPINWAIT
+    DEFINES += J2534_INTFC
 }
 
 #CONFIG(debug) DEFINES += ELM327_DEBUG
