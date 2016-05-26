@@ -38,6 +38,7 @@ ApplicationWindow {
         property alias windowHeight: application.height
         property alias windowX: application.x
         property alias windowY: application.y
+        property alias interfaceUri: interfaceChooser.uri
     }
 
     Cs2Tool {

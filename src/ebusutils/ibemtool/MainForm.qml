@@ -23,6 +23,7 @@ ColumnLayout {
     property string intfcUri: ""
     property bool intfcOpen
     property alias progressValue: progressBar.value
+    property alias unmodifiedInterfaceUri: interfaceChooser.uri
     property bool toolReady
     property bool toolBusy
     signal progFileAccepted()

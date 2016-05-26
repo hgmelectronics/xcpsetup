@@ -23,6 +23,7 @@ ColumnLayout {
     property bool slaveConnected
     property bool paramBusy
     property bool paramWriteCacheDirty
+    property alias unmodifiedInterfaceUri: interfaceChooser.uri
     signal userConnectParam
     signal userDownloadParam
     signal userUploadParam

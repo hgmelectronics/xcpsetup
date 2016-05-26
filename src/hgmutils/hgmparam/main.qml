@@ -19,6 +19,7 @@ ApplicationWindow {
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property alias paramFileDir: paramFileDialog.folder
+    property alias interfaceUri: interfaceChooser.uri
     property CS2Defaults cs2Defaults:  CS2Defaults {
                                       }
 
@@ -62,6 +63,7 @@ ApplicationWindow {
         property alias windowHeight: application.height
         property alias windowX: application.x
         property alias windowY: application.y
+        property alias interfaceUri: application.interfaceUri
     }
 
     ParamLayer {

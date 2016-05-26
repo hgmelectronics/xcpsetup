@@ -4,8 +4,31 @@ import com.hgmelectronics.setuptools.xcp 1.0
 
 GroupBox {
     title: "Interface"
-    property alias uri: comboBox.selectedUri
+    property string uri
     property bool allowUpdate: enabled
+
+    function setIndexByUri(newUri) {
+        //console.log("setIndexByUri: begins with", newUri)
+        var i = 0
+        while(1) {
+            if(i >= registry.rowCount()) {
+                //console.log("setIndexByUri: Ran out of entries")
+                comboBox.currentIndex = -1
+                break
+            }
+            else if(newUri == registry.uri(i)) {
+                //console.log("setIndexByUri: Found index", i)
+                comboBox.currentIndex = i
+                break
+            }
+            //console.log("setIndexByUri: Non-matching entry", registry.uri(i))
+            ++i
+        }
+    }
+
+    onUriChanged: {
+         setIndexByUri(uri)
+    }
 
     InterfaceRegistry {
         id: registry
@@ -13,20 +36,28 @@ GroupBox {
 
     ComboBox {
         id: comboBox
-        property string selectedUri
 
         anchors.fill: parent
         model: registry
         textRole: "display"
         visible: true
-        selectedUri: (count > 0
-                      && currentIndex < count) ? registry.uri(currentIndex) : ""
+
+        onCurrentIndexChanged: {
+            if(count > 0 && currentIndex < count)
+                uri = registry.uri(currentIndex)
+        }
 
         Connections {
             target: registry
             onDataChanged: {
-                if(comboBox.currentIndex >= registry.rowCount())
+                if(comboBox.currentIndex >= registry.rowCount() || comboBox.currentIndex < 0) {
+                    //console.log("onDataChanged: Index out of range")
                     comboBox.currentIndex = -1
+                }
+                else if(registry.uri(comboBox.currentIndex) != uri) {
+                    //console.log("onDataChanged: URI mismatched")
+                    setIndexByUri(uri)
+                }
             }
         }
 
