@@ -316,11 +316,28 @@ Interface::~Interface() {
 
 OpResult Interface::setup(const QSerialPortInfo *portInfo)
 {
-    if(portInfo)
-        mPort = new SerialPort(*portInfo);
-    else if(mPortInfo)
-        mPort = new SerialPort(*mPortInfo);
-    else
+    const QSerialPortInfo *info = portInfo ? portInfo : mPortInfo;
+    if(!info)
+        return OpResult::InvalidOperation;
+
+    {
+        QString winFtdiRegKey = QString("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\FTDIBUS\\VID_%1+PID_%2+%3\\0000\\Device Parameters")
+                .arg(info->vendorIdentifier(), 4, 16, QChar('0'))
+                .arg(info->productIdentifier(), 4, 16, QChar('0'))
+                .arg(info->serialNumber());
+        QSettings winFtdiReg(winFtdiRegKey, QSettings::NativeFormat);
+        bool latencyTimerReadOk;
+        quint32 latencyTimerSetting = winFtdiReg.value("LatencyTimer").toUInt(&latencyTimerReadOk);
+        if(latencyTimerReadOk && latencyTimerSetting > 1)
+        {
+            qDebug() << "FTDI USB-serial latency timer is set to" << latencyTimerSetting << "ms";
+            qDebug() << "Attempting to fix latency timer, will not succeed without admin privileges";
+            winFtdiReg.setValue("LatencyTimer", 1);
+        }
+    }
+
+    mPort = new SerialPort(*info);
+    if(!mPort)
         return OpResult::InvalidOperation;
 
     if(!mPort->open(QIODevice::ReadWrite))
