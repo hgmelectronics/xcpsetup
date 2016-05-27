@@ -208,8 +208,9 @@ void Cs2Tool::startProgramming()
     
     QString slaveId = mSlaveCmdId + ":" + mSlaveResId;
     mProgLayer->setSlaveId(slaveId);
-    if(mProgLayer->slaveId() != slaveId)
+    if(mProgLayer->slaveId().toLower() != slaveId.toLower())
     {
+        setState(State::Idle);
         emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::NoIntfc));
         return;
     }
@@ -228,9 +229,10 @@ void Cs2Tool::startReset()
 
     QString slaveId = mSlaveCmdId + ":" + mSlaveResId;
     mProgLayer->setSlaveId(slaveId);
-    if(mProgLayer->slaveId() != slaveId)
+    if(mProgLayer->slaveId().toLower() != slaveId.toLower())
     {
         emit resetDone(static_cast<int>(SetupTools::Xcp::OpResult::NoIntfc));
+        setState(State::Idle);
         return;
     }
     mProgLayer->programReset();

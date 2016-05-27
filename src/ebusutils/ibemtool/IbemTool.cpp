@@ -325,7 +325,7 @@ void IbemTool::startProgramming()
     QVariant activeSlaveIdVar = *qobject_cast<QVariantObject *>(mSlaveListModel->wrapper(mActiveSlave)->obj());
     Q_ASSERT(activeSlaveIdVar.isValid());
     mProgLayer->setSlaveId(activeSlaveIdVar.toString());
-    if(mProgLayer->slaveId() != activeSlaveIdVar.toString())
+    if(mProgLayer->slaveId().toLower() != activeSlaveIdVar.toString().toLower())
     {
         mState = State::Idle;
         emit programmingDone(false);
