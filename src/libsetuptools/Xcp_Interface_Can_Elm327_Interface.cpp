@@ -3,6 +3,11 @@
 #include <QUrl>
 #include <boost/logic/tribool.hpp>
 
+#ifdef Q_OS_WIN
+    #include <windows.h>
+    #include <shellapi.h>
+#endif
+
 #ifdef ELM327_DEBUG
 #include <QDebug>
 #include <QTime>
@@ -315,13 +320,78 @@ Interface::Interface(const QSerialPortInfo portInfo, QObject *parent) :
 Interface::~Interface() {
 }
 
+static std::vector<wchar_t> wideString(const QString & str)
+{
+    std::vector<wchar_t> out;
+    out.resize(str.size() + 1);
+    str.toWCharArray(out.data());
+    out[str.size()] = 0;
+    return out;
+}
+
+static void checkFixWinLatencyTimer(const QSerialPortInfo & info)
+{
+#ifdef Q_OS_WIN
+    QString winFtdiRegKey = QString("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\FTDIBUS\\VID_%1+PID_%2+%3\\0000\\Device Parameters")
+            .arg(info.vendorIdentifier(), 4, 16, QChar('0'))
+            .arg(info.productIdentifier(), 4, 16, QChar('0'))
+            .arg(info.serialNumber());
+    QSettings winFtdiReg(winFtdiRegKey, QSettings::NativeFormat);
+    bool latencyTimerReadOk;
+    quint32 latencyTimerSetting = winFtdiReg.value("LatencyTimer").toUInt(&latencyTimerReadOk);
+    if(latencyTimerReadOk && latencyTimerSetting > 1)
+    {
+        qDebug() << "FTDI USB-serial latency timer is set to" << latencyTimerSetting << "ms";
+        qDebug() << "Attempting to fix latency timer";
+
+        // Use regedit to do the change since it handles elevation automatically
+        QString fileName = QDir::tempPath() + "/Fix for FTDI latency timer on " + info.portName() + ".reg";
+        {
+            QFile regfile(fileName);
+            if(!regfile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+                return;
+            regfile.write("Windows Registry Editor Version 5.00\r\n");
+            regfile.write("\r\n");
+            regfile.write("[" + winFtdiRegKey.toUtf8() + "]\r\n");
+            regfile.write("\"LatencyTimer\"=dword:00000001");
+            regfile.close();
+        }
+        // File must be not only closed but also have its references disposed before regedit will deign to open it.
+
+        // Start regedit by invoking ShellExecuteEx on the file.
+        // ShellExecuteEx is used because we need to get a handle to the process so we can wait for it to finish before deleting the file.
+
+        auto verb = wideString("open");
+        auto file = wideString("\"" + QDir::toNativeSeparators(fileName) + "\"");
+        SHELLEXECUTEINFO shellExecInfo;
+        shellExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+        shellExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+        shellExecInfo.hwnd = nullptr;
+        shellExecInfo.lpVerb = verb.data();
+        shellExecInfo.lpFile = file.data();
+        shellExecInfo.lpParameters = nullptr;
+        shellExecInfo.lpDirectory = nullptr;
+        shellExecInfo.nShow = SW_SHOW;
+        shellExecInfo.hInstApp = nullptr;
+        if(ShellExecuteEx(&shellExecInfo))
+            WaitForSingleObject(shellExecInfo.hProcess, INFINITE);
+
+        QFile regfile(fileName);
+        regfile.remove();
+    }
+#endif
+}
+
 OpResult Interface::setup(const QSerialPortInfo *portInfo)
 {
-    if(portInfo)
-        mPort = new SerialPort(*portInfo);
-    else if(mPortInfo)
-        mPort = new SerialPort(*mPortInfo);
-    else
+    const QSerialPortInfo *info = portInfo ? portInfo : mPortInfo;
+    if(!info)
+        return OpResult::InvalidOperation;
+
+    checkFixWinLatencyTimer(*info);
+
+    mPort = new SerialPort(*info);
+    if(!mPort)
         return OpResult::InvalidOperation;
 
     if(!mPort->open(QIODevice::ReadWrite))
