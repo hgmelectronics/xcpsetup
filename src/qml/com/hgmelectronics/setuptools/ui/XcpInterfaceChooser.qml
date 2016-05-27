@@ -6,15 +6,12 @@ import com.hgmelectronics.setuptools.xcp 1.0
 GroupBox {
     title: "Interface"
     property string uri
-    property bool allowUpdate: enabled
 
     property Action updateAvail: Action {
         text: qsTr("Update");
         tooltip: qsTr("Update available interfaces");
-        onTriggered: {
-            if(allowUpdate)
-                registry.updateAvail()
-        }
+
+        onTriggered: registry.updateAvail()
     }
 
     function setIndexByUri(newUri) {
