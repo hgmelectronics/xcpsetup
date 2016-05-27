@@ -1,6 +1,7 @@
 #include "Xcp_Interface_Can_Elm327_Interface.h"
 #include <algorithm>
 #include <QUrl>
+#include <boost/logic/tribool.hpp>
 
 #ifdef ELM327_DEBUG
 #include <QDebug>
@@ -541,7 +542,7 @@ void  Interface::setSerialLog(bool on)
 {
     mIo->setSerialLog(on);
 }
-OpResult  Interface::setPacketLog(bool enable)
+OpResult Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
     return OpResult::Success;
@@ -724,12 +725,25 @@ OpResult Interface::updateBitrateTxType()
     return OpResult::Success;
 }
 
+boost::logic::tribool portIsElm(const QSerialPortInfo & info)
+{
+    static constexpr quint16 ELM_STN_VID = 0x0403;
+    static constexpr quint16 ELM_STN_PID = 0x6015;
+    if(!info.hasProductIdentifier() || !info.hasVendorIdentifier())
+        return boost::indeterminate;
+    if(info.productIdentifier() == ELM_STN_PID && info.vendorIdentifier() == ELM_STN_VID)
+        return true;
+    else
+        return false;
+}
+
 QList<QSerialPortInfo> getPortsAvail()
 {
     QList<QSerialPortInfo> ret;
     for(const auto &portInfo : QSerialPortInfo::availablePorts())
     {
-        if(!portInfo.isBusy()) {
+        if(!portInfo.isBusy() && portIsElm(portInfo) != false)
+        {
             QSerialPort port(portInfo);
             if(port.open(QIODevice::ReadWrite)) {
                 port.close();
