@@ -26,6 +26,12 @@ QtObject {
         slot: slots.percentage1
         count: 101
     }
+
+    property SlotArrayModel tccTableAxisModel: SlotArrayModel {
+        slot: slots.tccTableAxis
+        count: 21
+    }
+
     property SlotArrayModel pressureAxisModel: SlotArrayModel {
         slot: slots.pressureTableAxis
         count: 11
@@ -1052,6 +1058,169 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_disable_in_switch_shift_b, true, true, slots.booleanYesNo1)
         name: qsTr("TCC Disable In Switch Shift B")
     }
+
+
+    property
+    list<TableMetaParam> tccEnableSpeedTablesA: [
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_1, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 1 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_2, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 2 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_3, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 3 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_4, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 4 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_5, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 5 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_6, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 6 A"))
+            }
+        }
+    ]
+
+    property
+    list<TableMetaParam> tccDisableSpeedTablesA: [
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_1, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 1 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_2, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 2 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_3, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 3 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_4, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 4 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_5, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 5 A"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_6, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 6 A"))
+            }
+        }
+    ]
+
+    property
+    list<TableMetaParam> tccEnableSpeedTablesB: [
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_1, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 1 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_2, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 2 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_3, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 3 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_4, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 4 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_5, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 5 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_6, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 6 B"))
+            }
+        }
+    ]
+
+    property
+    list<TableMetaParam> tccDisableSpeedTablesB: [
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_1, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 1 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_2, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 2 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_3, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 3 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_4, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 4 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_5, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 5 B"))
+            }
+        },
+        TableMetaParam {
+            param: TableParam {
+                x: tccTableAxisModel
+                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_6, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 6 B"))
+            }
+        }
+    ]
+
+
 
     property ScalarMetaParam shiftMaxEngineSpeedA: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.shift_max_engine_speed_a, true, true, slots.rpm1, "", qsTr("Max Engine Speed A"))
