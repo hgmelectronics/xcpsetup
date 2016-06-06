@@ -20,10 +20,10 @@ GroupBox {
         while(1) {
             if(i >= registry.rowCount()) {
                 //console.log("setIndexByUri: Ran out of entries")
-                comboBox.currentIndex = -1
+                comboBox.currentIndex = registry.rowCount() > 0 ? 0 : -1
                 break
             }
-            else if(newUri == registry.uri(i)) {
+            else if(newUri === registry.uri(i).toString()) {
                 //console.log("setIndexByUri: Found index", i)
                 comboBox.currentIndex = i
                 break
@@ -34,7 +34,8 @@ GroupBox {
     }
 
     onUriChanged: {
-         setIndexByUri(uri)
+        setIndexByUri(uri)
+        uri = registry.uri(comboBox.currentIndex).toString()
     }
 
     RowLayout {
@@ -43,30 +44,20 @@ GroupBox {
             id: comboBox
 
             Layout.fillWidth: true
+            currentIndex: -1
 
             model: registry
             textRole: "display"
             visible: true
 
             onCurrentIndexChanged: {
-                if(count > 0 && currentIndex < count)
-                    uri = registry.uri(currentIndex)
-                else
-                    uri = ""
+                //console.log("onCurrentIndexChanged", currentIndex)
+                uri = registry.uri(currentIndex).toString()
             }
 
             Connections {
                 target: registry
-                onDataChanged: {
-                    if(comboBox.currentIndex >= registry.rowCount() || comboBox.currentIndex < 0) {
-                        //console.log("onDataChanged: Index out of range")
-                        comboBox.currentIndex = -1
-                    }
-                    else if(registry.uri(comboBox.currentIndex) != uri) {
-                        //console.log("onDataChanged: URI mismatched")
-                        setIndexByUri(uri)
-                    }
-                }
+                onDataChanged: setIndexByUri(uri)
             }
         }
 
