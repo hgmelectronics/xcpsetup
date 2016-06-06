@@ -51,6 +51,8 @@ GroupBox {
             onCurrentIndexChanged: {
                 if(count > 0 && currentIndex < count)
                     uri = registry.uri(currentIndex)
+                else
+                    uri = ""
             }
 
             Connections {
