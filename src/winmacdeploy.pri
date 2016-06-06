@@ -15,19 +15,19 @@ linux: DEPLOY_COMMAND = echo
 
 win32 {
     COPY_COMMAND = copy
-    RECURSIVE_DELETE_COMMAND = rmdir /s /q
+    QMAKE_DEL_FILE = del /s /f /q
 }
 else {
     COPY_COMMAND = cp
-    RECURSIVE_DELETE_COMMAND = rm -rf
+    QMAKE_DEL_FILE = rm -rf
 }
 
 CONFIG( release, debug|release ) {
     # deploy on release only
     DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
-    DEPLOY_DIR = $$shell_quote($$shell_path($${OUT_PWD}/release/deploy))
+    DEPLOY_DIR = $$shell_quote($$shell_path($${OUT_PWD}/../deploy))
     win32 | macx {
-        QMAKE_POST_LINK += $${RECURSIVE_DELETE_COMMAND} $${DEPLOY_DIR} &
+        QMAKE_CLEAN += $${DEPLOY_DIR}
         QMAKE_POST_LINK += $${DEPLOY_COMMAND} --dir $${DEPLOY_DIR} --qmldir $${PWD} $${DEPLOY_TARGET} &
         QMAKE_POST_LINK += $${COPY_COMMAND} $${DEPLOY_TARGET} $${DEPLOY_DIR}
     }
