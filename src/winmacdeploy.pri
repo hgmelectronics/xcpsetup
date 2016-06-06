@@ -15,11 +15,9 @@ linux: DEPLOY_COMMAND = echo
 
 win32 {
     COPY_COMMAND = copy
-    QMAKE_DEL_FILE = del /s /f /q
 }
 else {
     COPY_COMMAND = cp
-    QMAKE_DEL_FILE = rm -rf
 }
 
 CONFIG( release, debug|release ) {
@@ -37,8 +35,18 @@ CONFIG( release, debug|release ) {
         }
         return($$cmd)
     }
+
+    defineReplace(deployexecs) {
+        in = $$1
+        dirs = $$eval($$in)
+        execs =
+        for(dir, $$1) {
+            execs += $${dir}/$${TARGET}$${TARGET_CUSTOM_EXT}
+        }
+        return($$execs)
+    }
     win32 | macx {
-        QMAKE_CLEAN += $${DEPLOY_DIRS}
+        QMAKE_CLEAN += $$deployexecs(DEPLOY_DIRS)
         QMAKE_POST_LINK += $$deploycmds(DEPLOY_DIRS)
     }
 }
