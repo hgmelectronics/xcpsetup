@@ -1,11 +1,18 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Layouts 1.1
 import com.hgmelectronics.setuptools.xcp 1.0
 
 GroupBox {
     title: "Interface"
     property string uri
-    property bool allowUpdate: enabled
+
+    property Action updateAvail: Action {
+        text: qsTr("Update");
+        tooltip: qsTr("Update available interfaces");
+
+        onTriggered: registry.updateAvail()
+    }
 
     function setIndexByUri(newUri) {
         //console.log("setIndexByUri: begins with", newUri)
@@ -30,51 +37,45 @@ GroupBox {
          setIndexByUri(uri)
     }
 
-    InterfaceRegistry {
-        id: registry
-    }
-
-    ComboBox {
-        id: comboBox
-
+    RowLayout {
         anchors.fill: parent
-        model: registry
-        textRole: "display"
-        visible: true
+        ComboBox {
+            id: comboBox
 
-        onCurrentIndexChanged: {
-            if(count > 0 && currentIndex < count)
-                uri = registry.uri(currentIndex)
-        }
+            Layout.fillWidth: true
 
-        Connections {
-            target: registry
-            onDataChanged: {
-                if(comboBox.currentIndex >= registry.rowCount() || comboBox.currentIndex < 0) {
-                    //console.log("onDataChanged: Index out of range")
-                    comboBox.currentIndex = -1
-                }
-                else if(registry.uri(comboBox.currentIndex) != uri) {
-                    //console.log("onDataChanged: URI mismatched")
-                    setIndexByUri(uri)
+            model: registry
+            textRole: "display"
+            visible: true
+
+            onCurrentIndexChanged: {
+                if(count > 0 && currentIndex < count)
+                    uri = registry.uri(currentIndex)
+                else
+                    uri = ""
+            }
+
+            Connections {
+                target: registry
+                onDataChanged: {
+                    if(comboBox.currentIndex >= registry.rowCount() || comboBox.currentIndex < 0) {
+                        //console.log("onDataChanged: Index out of range")
+                        comboBox.currentIndex = -1
+                    }
+                    else if(registry.uri(comboBox.currentIndex) != uri) {
+                        //console.log("onDataChanged: URI mismatched")
+                        setIndexByUri(uri)
+                    }
                 }
             }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            propagateComposedEvents: true
+        Button {
+            action: updateAvail
+        }
 
-            onPressed: {
-                mouse.accepted = false
-                if(allowUpdate)
-                    registry.updateAvail()
-            }
-            onReleased: mouse.accepted = false
-            onDoubleClicked: mouse.accepted = false
-            onPositionChanged: mouse.accepted = false
-            onPressAndHold: mouse.accepted = false
-            onClicked: mouse.accepted = false
+        InterfaceRegistry {
+            id: registry
         }
     }
 }
