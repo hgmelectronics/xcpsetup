@@ -31,7 +31,9 @@ CONFIG( release, debug|release ) {
         dirs = $$eval($$in)
         cmd =
         for(dir, $$1) {
-            cmd += $${DEPLOY_COMMAND} --dir $$shell_quote($$shell_path($${dir})) --qmldir $${PWD} $${DEPLOY_TARGET} & $${COPY_COMMAND} $${DEPLOY_TARGET} $$shell_quote($$shell_path($${dir})) &
+            cmd += $${DEPLOY_COMMAND} --dir $$shell_quote($$shell_path($${dir})) --qmldir $${PWD} $${DEPLOY_TARGET} &&
+            cmd += $${COPY_COMMAND} $${DEPLOY_TARGET} $$shell_quote($$shell_path($${dir})) &&
+            win32: cmd += $${COPY_COMMAND} $$shell_quote($$shell_path($${PWD}/../deploy/D3DCompiler_43.dll)) $$shell_quote($$shell_path($${dir})) &
         }
         return($$cmd)
     }
