@@ -48,4 +48,5 @@ HEADERS += \
 
 win32:RC_ICONS += ../qml/com/hgmelectronics/utils/hgmutils.ico
 
+DEPLOY_DIRS = $$OUT_PWD/../../deploy $${OUT_PWD}/../deploy
 include($$PWD/../../winmacdeploy.pri)

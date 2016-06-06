@@ -25,10 +25,18 @@ else {
 CONFIG( release, debug|release ) {
     # deploy on release only
     DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
-    DEPLOY_DIR = $$shell_quote($$shell_path($${OUT_PWD}/../deploy))
+
+    defineReplace(deploycmds) {
+        in = $$1
+        dirs = $$eval($$in)
+        cmd =
+        for(dir, $$1) {
+            cmd += $${DEPLOY_COMMAND} --dir $$shell_quote($$shell_path($${dir})) --qmldir $${PWD} $${DEPLOY_TARGET} & $${COPY_COMMAND} $${DEPLOY_TARGET} $$shell_quote($$shell_path($${dir})) &
+        }
+        return($$cmd)
+    }
     win32 | macx {
-        QMAKE_CLEAN += $${DEPLOY_DIR}
-        QMAKE_POST_LINK += $${DEPLOY_COMMAND} --dir $${DEPLOY_DIR} --qmldir $${PWD} $${DEPLOY_TARGET} &
-        QMAKE_POST_LINK += $${COPY_COMMAND} $${DEPLOY_TARGET} $${DEPLOY_DIR}
+        QMAKE_CLEAN += $${DEPLOY_DIRS}
+        QMAKE_POST_LINK += $$deploycmds(DEPLOY_DIRS)
     }
 }

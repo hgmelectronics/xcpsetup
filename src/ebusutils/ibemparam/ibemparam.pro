@@ -43,4 +43,5 @@ DEPENDPATH += $$PWD/../../libsetuptools
 
 HEADERS +=
 
+DEPLOY_DIRS = $$OUT_PWD/../../deploy
 include($$PWD/../../winmacdeploy.pri)
