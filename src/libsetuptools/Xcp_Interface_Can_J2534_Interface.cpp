@@ -411,15 +411,13 @@ QString Registry::desc(QUrl uri)
 #else /* J2534_INTFC */
 
 Interface::Interface(QObject *parent) :
-    ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mSocket(-1)
+    ::SetupTools::Xcp::Interface::Can::Interface(parent)
 {}
 
-Interface::Interface(QString ifName, QObject *parent) :
-    ::SetupTools::Xcp::Interface::Can::Interface(parent),
-    mSocket(-1)
+Interface::Interface(QString dllPath, QObject *parent) :
+    ::SetupTools::Xcp::Interface::Can::Interface(parent)
 {
-    Q_UNUSED(ifName);
+    Q_UNUSED(dllPath);
 }
 
 Interface::~Interface() {
@@ -488,6 +486,12 @@ OpResult Interface::setFilter(Filter filt)
     return OpResult::InvalidOperation;
 }
 
+OpResult Interface::setPacketLog(bool enable)
+{
+    Q_UNUSED(enable);
+    return OpResult::InvalidOperation;
+}
+
 bool Interface::hasReliableTx()
 {
     return true;
@@ -499,12 +503,6 @@ bool Interface::allowsMultipleReplies()
 int Interface::maxReplyTimeout()
 {
     return std::numeric_limits<int>::max();
-}
-
-OpResult Interface::doSetFilter(const Filter & filter)
-{
-    Q_UNUSED(filter);
-    return OpResult::InvalidOperation;
 }
 
 QList<QUrl> Registry::avail()

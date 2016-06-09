@@ -58,6 +58,7 @@ public:
     virtual bool hasReliableTx() override;
     virtual bool allowsMultipleReplies() override;
     virtual int maxReplyTimeout() override;
+#ifdef J2534_INTFC
 private:
     OpResult doSetFilterBitrate();
 
@@ -70,6 +71,7 @@ private:
     Filter mFilter;
     boost::optional<Filter> mActiveFilter;
     int mBitrate;
+#endif
 };
 
 class Registry
