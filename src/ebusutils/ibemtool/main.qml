@@ -160,17 +160,17 @@ ApplicationWindow {
     Window {
         id: helpDialog
         title: "IBEMTool help"
-            width: helpCol.implicitWidth + 20
-            height: helpCol.implicitHeight + 20
-            Column {
-                id: helpCol
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 5
-                Label {
-                    width: 500
-                    wrapMode: Text.WordWrap
-                    text:   "<h2>Program</h2>
+        width: helpCol.implicitWidth + 20
+        height: helpCol.implicitHeight + 20
+        Column {
+            id: helpCol
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 5
+            Label {
+                width: 500
+                wrapMode: Text.WordWrap
+                text:   "<h2>Program</h2>
 <p>Use the Open command in the File menu to select an S-record program file to load on the target boards. Once it is successfully loaded, the fields in the Program area will show information about the file.</p>
 <h2>Interface</h2>
 <p>Select an interface from the drop-down menu. If you have built-in serial ports on your system, you will see an entry for each one, even though only one corresponds to the ELM327 compatible interface. You can try each port in turn, or look at your system's Device Manager or equivalent to find which port to use. If you do not see the port you are looking for, try closing and reopening the program.</p>
@@ -180,13 +180,19 @@ ApplicationWindow {
 <p>To flash only one board, select it by clicking on its ID number. To select multiple boards, hold down the Control key while clicking, or click on the first board you wish to flash and then hold down the Shift key while clicking on the last board you wish to flash to select the entire range.</p>
 <p>Once you have selected the boards you wish to flash, click the Start button. The progress bar at the bottom of the window will show how many of the boards have been completed; in addition, each board will be deselected as it is completed. The Abort button will deselect all boards and stop the reflash process after the board presently being reflashed is complete. A dialog box will appear when the process is done. If you see an error message, please contact Ebus for further instructions.</p>
 "
-                }
-                Button {
-                    anchors.right: parent.right
-                    text: "Close"
-                    isDefault: true
-                    onClicked: { helpDialog.visible = false }
-                }
             }
+            Button {
+                anchors.right: parent.right
+                text: "Close"
+                isDefault: true
+                onClicked: { helpDialog.visible = false }
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        // make sure the window doesn't completely disappear from the screen due to prefs save with a bigger monitor than current
+        x = Math.min(x, Screen.desktopAvailableWidth - 30)
+        y = Math.min(y, Screen.desktopAvailableWidth - 30)
     }
 }
