@@ -19,7 +19,7 @@ ApplicationWindow {
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property alias paramFileDir: paramFileDialog.folder
-    property alias interfaceUri: interfaceChooser.uri
+    property alias interfaceUri: interfaceChooser.saveUri
     property CS2Defaults cs2Defaults:  CS2Defaults {
                                       }
 

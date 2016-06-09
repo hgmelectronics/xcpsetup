@@ -6,6 +6,7 @@ import com.hgmelectronics.setuptools.xcp 1.0
 GroupBox {
     title: "Interface"
     property string uri
+    property string saveUri // URI saved by QSettings. May be something not available in current registry. If user has not picked an entry from the registry and this one becomes available, it gets set as uri.
 
     property Action updateAvail: Action {
         text: qsTr("Update");
@@ -14,50 +15,29 @@ GroupBox {
         onTriggered: registry.updateAvail()
     }
 
-    function setIndexByUri(newUri) {
-        //console.log("setIndexByUri: begins with", newUri)
-        var i = 0
-        while(1) {
-            if(i >= registry.rowCount()) {
-                //console.log("setIndexByUri: Ran out of entries")
-                comboBox.currentIndex = registry.rowCount() > 0 ? 0 : -1
-                break
-            }
-            else if(newUri === registry.uri(i).toString()) {
-                //console.log("setIndexByUri: Found index", i)
-                comboBox.currentIndex = i
-                break
-            }
-            //console.log("setIndexByUri: Non-matching entry", registry.uri(i))
-            ++i
-        }
-    }
-
-    onUriChanged: {
-        setIndexByUri(uri)
-        uri = registry.uri(comboBox.currentIndex).toString()
-    }
-
     RowLayout {
         anchors.fill: parent
         ComboBox {
             id: comboBox
 
             Layout.fillWidth: true
-            currentIndex: -1
 
             model: registry
             textRole: "display"
             visible: true
 
             onCurrentIndexChanged: {
-                //console.log("onCurrentIndexChanged", currentIndex)
-                uri = registry.uri(currentIndex).toString()
+                uri = registry.uri(comboBox.currentIndex).toString()
+                if(uri !== "")
+                    saveUri = uri
             }
 
             Connections {
                 target: registry
-                onDataChanged: setIndexByUri(uri)
+                onDataChanged: {
+                    uri = registry.uri(comboBox.currentIndex).toString()
+                    updateFromSaveUri()
+                }
             }
         }
 
@@ -68,5 +48,25 @@ GroupBox {
         InterfaceRegistry {
             id: registry
         }
+    }
+
+    function updateFromSaveUri() {
+        var saveUriIndex = registry.find(saveUri)
+        if(saveUriIndex >= 0) { // saveUri exists in registry
+            comboBox.currentIndex = saveUriIndex    // set it as the current index, this will also update uri
+        }
+        else {
+            if(registry.rowCount()) {    // does not exist - if there is anything in the registry use that instead
+                comboBox.currentIndex = 0
+            }
+            else {
+                comboBox.currentIndex = -1
+            }
+        }
+        comboBox.onCurrentIndexChanged()    // force update
+    }
+
+    onSaveUriChanged: {
+        updateFromSaveUri()
     }
 }

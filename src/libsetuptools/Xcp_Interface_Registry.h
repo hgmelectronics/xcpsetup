@@ -33,6 +33,7 @@ public:
     virtual QHash<int, QByteArray> roleNames() const;
     Q_INVOKABLE QString text(int index) const;
     Q_INVOKABLE QUrl uri(int index) const;
+    Q_INVOKABLE int find(QUrl url) const;
 private:
     static const QHash<int, QByteArray> ROLE_NAMES;
 

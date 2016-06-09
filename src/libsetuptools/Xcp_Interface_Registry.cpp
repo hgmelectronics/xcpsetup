@@ -1,5 +1,6 @@
 #include "Xcp_Interface_Registry.h"
 #include "Xcp_Interface_Can_Registry.h"
+#include <QDebug>
 
 namespace SetupTools {
 namespace Xcp {
@@ -90,6 +91,14 @@ QUrl QmlRegistry::uri(int index) const
         return mAvail[index].first;
 }
 
+int QmlRegistry::find(QUrl url) const
+{
+    for(int i = 0; i < mAvail.size(); ++i)
+        if(url == mAvail[i].first)
+            return i;
+    return -1;
+}
+
 void QmlRegistry::updateAvail()
 {
     QList<QUrl> newUris = Registry::avail();
@@ -100,7 +109,7 @@ void QmlRegistry::updateAvail()
     if(newCount == oldCount)
     {
         bool equal = true;
-        for(int i = newCount; i < newCount; ++i)
+        for(int i = 0; i < newCount; ++i)
         {
             if(newUris[i] != mAvail[i].first)
             {
