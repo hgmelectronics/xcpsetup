@@ -16,7 +16,7 @@ ApplicationWindow {
     height: 600
     visible: true
     property alias progFileDir: mainForm.progFileDir
-    property alias interfaceUri: mainForm.unmodifiedInterfaceUri
+    property alias interfaceSaveUri: mainForm.interfaceSaveUri
 
     Settings {
         category: "application"
@@ -25,7 +25,7 @@ ApplicationWindow {
         property alias windowHeight: application.height
         property alias windowX: application.x
         property alias windowY: application.y
-        property alias interfaceUri: application.interfaceUri
+        property alias interfaceSaveUri: application.interfaceSaveUri
     }
 
     menuBar: MenuBar {

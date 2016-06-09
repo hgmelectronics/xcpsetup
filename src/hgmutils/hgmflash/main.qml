@@ -38,7 +38,7 @@ ApplicationWindow {
         property alias windowHeight: application.height
         property alias windowX: application.x
         property alias windowY: application.y
-        property alias interfaceUri: interfaceChooser.uri
+        property alias interfaceUri: interfaceChooser.saveUri
     }
 
     Cs2Tool {
@@ -129,10 +129,9 @@ ApplicationWindow {
         text: qsTr("Open")
         enabled: !cs2Tool.intfcOk
         onTriggered: {
-            if (interfaceChooser.uri !== "") {
-                application.intfcUri = interfaceChooser.uri.replace(
-                            /bitrate=[0-9]*/,
-                            "bitrate=%1".arg(bitRateChooser.bps))
+            onTriggered: {
+                interfaceChooser.saveUri = interfaceChooser.uri
+                paramLayer.intfcUri = interfaceChooser.uri + "?bitrate=%1".arg(bitRateChooser.bps)
             }
         }
     }

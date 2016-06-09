@@ -5,7 +5,7 @@ import com.hgmelectronics.setuptools.xcp 1.0
 
 GroupBox {
     title: "Interface"
-    property string uri
+    property string uri     // URI corresponding to current combobox index. Can't use binding since QML doesn't know that registry data changes require an update.
     property string saveUri // URI saved by QSettings. May be something not available in current registry. If user has not picked an entry from the registry and this one becomes available, it gets set as uri.
 
     property Action updateAvail: Action {
@@ -28,15 +28,13 @@ GroupBox {
 
             onCurrentIndexChanged: {
                 uri = registry.uri(comboBox.currentIndex).toString()
-                if(uri !== "")
-                    saveUri = uri
             }
 
             Connections {
                 target: registry
                 onDataChanged: {
+                    setIndexFromUri(saveUri)    // if user previously opened something, try to preserve its index
                     uri = registry.uri(comboBox.currentIndex).toString()
-                    updateFromSaveUri()
                 }
             }
         }
@@ -50,10 +48,10 @@ GroupBox {
         }
     }
 
-    function updateFromSaveUri() {
-        var saveUriIndex = registry.find(saveUri)
-        if(saveUriIndex >= 0) { // saveUri exists in registry
-            comboBox.currentIndex = saveUriIndex    // set it as the current index, this will also update uri
+    function setIndexFromUri(newUri) {
+        var newUriIndex = registry.find(newUri)
+        if(newUriIndex >= 0) { // saveUri exists in registry
+            comboBox.currentIndex = newUriIndex    // set it as the current index, this will also update uri
         }
         else {
             if(registry.rowCount()) {    // does not exist - if there is anything in the registry use that instead
@@ -63,10 +61,9 @@ GroupBox {
                 comboBox.currentIndex = -1
             }
         }
-        comboBox.onCurrentIndexChanged()    // force update
     }
 
     onSaveUriChanged: {
-        updateFromSaveUri()
+        setIndexFromUri(saveUri)
     }
 }

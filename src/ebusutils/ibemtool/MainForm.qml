@@ -23,7 +23,7 @@ ColumnLayout {
     property string intfcUri: ""
     property bool intfcOpen
     property alias progressValue: progressBar.value
-    property alias unmodifiedInterfaceUri: interfaceChooser.uri
+    property alias interfaceSaveUri: interfaceChooser.saveUri
     property bool toolReady
     property bool toolBusy
     signal progFileAccepted()
@@ -164,11 +164,10 @@ ColumnLayout {
                 id: intfcOpenButton
                 text: qsTr("Open")
                 onClicked: {
-                    if (interfaceChooser.uri !== "")
-                        root.intfcUri = interfaceChooser.uri.replace(
-                                    /bitrate=[0-9]*/,
-                                    "bitrate=" + bitRateChooser.bps.toString(
-                                        ))
+                    if (interfaceChooser.uri !== "") {
+                        interfaceChooser.saveUri = interfaceChooser.uri
+                        root.intfcUri = interfaceChooser.uri + "?bitrate=%1".arg(bitRateChooser.bps)
+                    }
                 }
                 enabled: !intfcOpen
             }

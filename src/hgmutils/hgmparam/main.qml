@@ -63,7 +63,7 @@ ApplicationWindow {
         property alias windowHeight: application.height
         property alias windowX: application.x
         property alias windowY: application.y
-        property alias interfaceUri: application.interfaceUri
+        property alias interfaceSaveUri: application.interfaceUri
     }
 
     ParamLayer {
@@ -354,10 +354,8 @@ ApplicationWindow {
         text: qsTr("Open")
         tooltip: qsTr("Opens the CAN network adapter")
         onTriggered: {
-            if (interfaceChooser.uri !== "")
-                paramLayer.intfcUri = interfaceChooser.uri.replace(
-                            /bitrate=[0-9]*/,
-                            "bitrate=%1".arg(bitRateChooser.bps))
+            interfaceChooser.saveUri = interfaceChooser.uri
+            paramLayer.intfcUri = interfaceChooser.uri + "?bitrate=%1".arg(bitRateChooser.bps)
         }
         enabled: !paramLayer.intfcOk && interfaceChooser.uri !== ""
     }

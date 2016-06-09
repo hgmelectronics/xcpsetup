@@ -828,7 +828,7 @@ QList<QUrl> Registry::avail()
 {
     QList<QUrl> ret;
     for(QSerialPortInfo portInfo : getPortsAvail())
-        ret.append(QString("elm327:%1?bitrate=250000&filter=00000000:00000000").arg(portInfo.portName()));
+        ret.append(QString("elm327:%1").arg(portInfo.portName()));
     return ret;
 }
 
