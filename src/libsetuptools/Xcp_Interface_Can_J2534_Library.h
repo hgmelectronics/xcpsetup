@@ -1,6 +1,7 @@
 #ifndef J2534LIBRARY_H
 #define J2534LIBRARY_H
 
+#ifdef J2534_INTFC
 #include <QString>
 #include <QLibrary>
 
@@ -199,4 +200,5 @@ private:
 }   // namespace Xcp
 }   // namespace SetupTools
 
+#endif
 #endif // J2534LIBRARY_H

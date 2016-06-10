@@ -1,3 +1,4 @@
+#ifdef J2534_INTFC
 #include "Xcp_Interface_Can_J2534_Library.h"
 #include <QMap>
 #include <QDebug>
@@ -289,3 +290,4 @@ void Library::clearPtrs()
 }   // namespace Interface
 }   // namespace Xcp
 }   // namespace SetupTools
+#endif
