@@ -6,6 +6,7 @@ namespace SetupTools {
 SlotProxyModel::SlotProxyModel(QObject *parent) :
     QAbstractProxyModel(parent),
     mTargetAllRoles(true),
+    mSlot(nullptr),
     mStringFormat(true)
 {
     connect(this, &QAbstractProxyModel::sourceModelChanged, this, &SlotProxyModel::onSourceModelChanged);

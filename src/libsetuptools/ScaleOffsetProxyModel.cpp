@@ -7,7 +7,8 @@ ScaleOffsetProxyModel::ScaleOffsetProxyModel(QObject *parent) :
     QAbstractProxyModel(parent),
     mScale(1),
     mOffset(0),
-    mTargetAllRoles(true)
+    mTargetAllRoles(true),
+    mFormatSlot(nullptr)
 {
     connect(this, &QAbstractProxyModel::sourceModelChanged, this, &ScaleOffsetProxyModel::onSourceModelChanged);
     updateTargetRoles();

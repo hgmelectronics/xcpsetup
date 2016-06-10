@@ -23,7 +23,7 @@ QList<QUrl> Registry::avail()
 
 Interface *Registry::make(QUrl uri)
 {
-    Interface *ret;
+    Interface *ret = nullptr;
     ret = J2534::Registry::make(uri);
     if(!ret)
         ret = Elm327::Registry::make(uri);

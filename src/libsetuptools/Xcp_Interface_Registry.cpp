@@ -15,7 +15,7 @@ QList<QUrl> Registry::avail()
 
 Interface *Registry::make(QUrl uri)
 {
-    Interface *ret;
+    Interface *ret = nullptr;
     ret = Can::Registry::make(uri);
     /*if(!ret)
         ret = Usb::Registry::make(uri);*/
