@@ -31,56 +31,56 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.evMotorSpeedMax
         }
-        TableParamEditButton {
-            tableParam: parameters.evTorqueRampDownTime
-            xLabel: "Gear"
-            valueLabel: "Time"
-            hasPlot: false
-            hasShapers: false
-        }
-        TableParamEditButton {
-            tableParam: parameters.evTorqueRampUpTime
-            xLabel: "Gear"
-            valueLabel: "Time"
-            hasPlot: false
-            hasShapers: false
-        }
+//        TableParamEditButton {
+//            tableParam: parameters.evTorqueRampDownTime
+//            xLabel: "Gear"
+//            valueLabel: "Time"
+//            hasPlot: false
+//            hasShapers: false
+//        }
+//        TableParamEditButton {
+//            tableParam: parameters.evTorqueRampUpTime
+//            xLabel: "Gear"
+//            valueLabel: "Time"
+//            hasPlot: false
+//            hasShapers: false
+//        }
     }
 
     ColumnLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
-        TableParamEditButton {
-            tableParam: parameters.evMotorTorqueMaxA
-            xLabel: "Gear"
-            valueLabel: "Torque %"
-            hasPlot: false
-            hasShapers: false
-        }
-        TableParamEditButton {
-            tableParam: parameters.evRegenTorqueMaxA
-            xLabel: "Gear"
-            valueLabel: "Torque %"
-            hasPlot: false
-            hasShapers: false
-        }
+//        TableParamEditButton {
+//            tableParam: parameters.evMotorTorqueMaxA
+//            xLabel: "Gear"
+//            valueLabel: "Torque %"
+//            hasPlot: false
+//            hasShapers: false
+//        }
+//        TableParamEditButton {
+//            tableParam: parameters.evRegenTorqueMaxA
+//            xLabel: "Gear"
+//            valueLabel: "Torque %"
+//            hasPlot: false
+//            hasShapers: false
+//        }
         ScalarParamSpinBox {
             metaParam: parameters.evMaxRegenSpeedA
         }
-        TableParamEditButton {
-            tableParam: parameters.evMotorTorqueMaxB
-            xLabel: "Gear"
-            valueLabel: "Torque %"
-            hasPlot: false
-            hasShapers: false
-        }
-        TableParamEditButton {
-            tableParam: parameters.evRegenTorqueMaxB
-            xLabel: "Gear"
-            valueLabel: "Torque %"
-            hasPlot: false
-            hasShapers: false
-        }
+//        TableParamEditButton {
+//            tableParam: parameters.evMotorTorqueMaxB
+//            xLabel: "Gear"
+//            valueLabel: "Torque %"
+//            hasPlot: false
+//            hasShapers: false
+//        }
+//        TableParamEditButton {
+//            tableParam: parameters.evRegenTorqueMaxB
+//            xLabel: "Gear"
+//            valueLabel: "Torque %"
+//            hasPlot: false
+//            hasShapers: false
+//        }
         ScalarParamSpinBox {
             metaParam: parameters.evMaxRegenSpeedB
         }
@@ -96,7 +96,7 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.ebusShiftSyncDuration
         }
-        ScalarParamEdit {
+        /*ScalarParamEdit {
             metaParam: parameters.evJ1939CtlSourceAddress
         }
         ScalarParamEdit {
@@ -104,6 +104,6 @@ RowLayout {
         }
         ScalarParamEdit {
             metaParam: parameters.evDriveLastFaultType
-        }
+        }*/
     }
 }

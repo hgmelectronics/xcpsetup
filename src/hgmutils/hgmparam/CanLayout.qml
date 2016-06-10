@@ -16,31 +16,31 @@ RowLayout {
     ColumnLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
-        EncodingParamEdit {
-            metaParam: parameters.can0BaudRate
-        }
-        EncodingParamEdit {
-            metaParam: parameters.can1BaudRate
-        }
+//        EncodingParamEdit {
+//            metaParam: parameters.can0BaudRate
+//        }
+//        EncodingParamEdit {
+//            metaParam: parameters.can1BaudRate
+//        }
     }
 
     ColumnLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignTop
-        ScalarParamEdit {
-            metaParam: parameters.j1939TransmissionAddress
-        }
-        ScalarParamEdit {
-            metaParam: parameters.j1939EngineAddress
-        }
-        ScalarParamEdit {
-            metaParam: parameters.j1939ShiftSelectorAddress
-        }
-        ScalarParamEdit {
-            metaParam: parameters.xcpCTOId
-        }
-        ScalarParamEdit {
-            metaParam: parameters.xcpDTOId
-        }
+//        ScalarParamEdit {
+//            metaParam: parameters.j1939TransmissionAddress
+//        }
+//        ScalarParamEdit {
+//            metaParam: parameters.j1939EngineAddress
+//        }
+//        ScalarParamEdit {
+//            metaParam: parameters.j1939ShiftSelectorAddress
+//        }
+//        ScalarParamEdit {
+//            metaParam: parameters.xcpCTOId
+//        }
+//        ScalarParamEdit {
+//            metaParam: parameters.xcpDTOId
+//        }
     }
 }

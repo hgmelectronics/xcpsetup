@@ -16,9 +16,9 @@ GridLayout {
     rows: 6
     flow: GridLayout.TopToBottom
 
-    EncodingParamEdit {
-        metaParam: parameters.displayUnits
-    }
+//    EncodingParamEdit {
+//        metaParam: parameters.displayUnits
+//    }
     ScalarParamSpinBox {
         metaParam: parameters.displayBrightness
     }

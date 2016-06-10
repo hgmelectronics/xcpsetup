@@ -148,31 +148,31 @@ QtObject {
         immediateWrite: true
     }
 
-    property TableMetaParam controllerSwitchState: TableMetaParam {
-        param: TableParam {
-            x: switchIdAxisModel
-            value: registry.addArrayParam(MemoryRange.S32, paramId.controller_switch_state, switchIdAxisModel.count, false, false, slots.booleanOnOff1, "", qsTr("Switch Monitor Input"))
-        }
-    }
+//    property TableMetaParam controllerSwitchState: TableMetaParam {
+//        param: TableParam {
+//            x: switchIdAxisModel
+//            value: registry.addArrayParam(MemoryRange.S32, paramId.controller_switch_state, switchIdAxisModel.count, false, false, slots.booleanOnOff1, "", qsTr("Switch Monitor Input"))
+//        }
+//    }
 
-    property TableMetaParam controllerSwitchCurrent: TableMetaParam {
-        param: TableParam {
-            x: switchIdAxisModel
-            value: registry.addArrayParam(MemoryRange.S32, paramId.controller_switch_current, switchIdAxisModel.count, false, false, slots.booleanOnOff1, "", qsTr("Switch Monitor Output"))
-        }
-    }
+//    property TableMetaParam controllerSwitchCurrent: TableMetaParam {
+//        param: TableParam {
+//            x: switchIdAxisModel
+//            value: registry.addArrayParam(MemoryRange.S32, paramId.controller_switch_current, switchIdAxisModel.count, false, false, slots.booleanOnOff1, "", qsTr("Switch Monitor Output"))
+//        }
+//    }
 
-    property MultiroleTableMetaParam controllerSwitchMonitor: MultiroleTableMetaParam {
-        param: MultiroleTableParam {
-            roleMapping: {
-                "x": switchIdAxisModel,
-                "input": controllerSwitchState.param.value,
-                "output": controllerSwitchCurrent.param.value
-            }
-        }
-        isLiveData: true
-        name: qsTr("Switch Monitor")
-    }
+//    property MultiroleTableMetaParam controllerSwitchMonitor: MultiroleTableMetaParam {
+//        param: MultiroleTableParam {
+//            roleMapping: {
+//                "x": switchIdAxisModel,
+//                "input": controllerSwitchState.param.value,
+//                "output": controllerSwitchCurrent.param.value
+//            }
+//        }
+//        isLiveData: true
+//        name: qsTr("Switch Monitor")
+//    }
 
     property ScalarMetaParam controllerSDCardWriteProtect: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.controller_sd_card_write_protect, false, false, slots.booleanOnOff1, "", qsTr("SD Card Protect"))
@@ -236,17 +236,17 @@ QtObject {
         count: 12
     }
 
-    property MultiroleTableMetaParam controllerPWMDrivers: MultiroleTableMetaParam {
-        param: MultiroleTableParam {
-            roleMapping: {
-                "x": controllerPWMDriverIdModel,
-                "frequency": controllerPWMDriverFrequency,
-                "dutyCycle": controllerPWMDriverDutyCycle,
-                "mode": controllerPWMDriverMode
-            }
-        }
-        isLiveData: true
-    }
+//    property MultiroleTableMetaParam controllerPWMDrivers: MultiroleTableMetaParam {
+//        param: MultiroleTableParam {
+//            roleMapping: {
+//                "x": controllerPWMDriverIdModel,
+//                "frequency": controllerPWMDriverFrequency,
+//                "dutyCycle": controllerPWMDriverDutyCycle,
+//                "mode": controllerPWMDriverMode
+//            }
+//        }
+//        isLiveData: true
+//    }
 
 //    property ScalarMetaParam controllerAccelerometer: ScalarMetaParam {
 //        param: registry.addScalarParam(MemoryRange.S32, paramId.controller_acclerometer, false, false, slots)
@@ -510,12 +510,12 @@ QtObject {
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_st_transfer_time, true, true, slots.timeMilliseconds1, "", qsTr("ST Transfer Time 6-5"))
         }
     }
-    property TableMetaParam transmissionTemperaturePressureCompensation: TableMetaParam {
-        param: TableParam {
-            x: tempAxisModel
-            value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_pressure_temperature_compensation, tempAxisModel.count, true, true, slots.percentage1, "", qsTr("Trans Temp Pressure Compensation"))
-        }
-    }
+//    property TableMetaParam transmissionTemperaturePressureCompensation: TableMetaParam {
+//        param: TableParam {
+//            x: tempAxisModel
+//            value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_pressure_temperature_compensation, tempAxisModel.count, true, true, slots.percentage1, "", qsTr("Trans Temp Pressure Compensation"))
+//        }
+//    }
 
     property ScalarMetaParam garageShiftTime: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.garage_shift_time, true, true, slots.timeMilliseconds1, "", qsTr("Garage Shift Time"))
@@ -547,370 +547,370 @@ QtObject {
         immediateWrite: true
     }
 
-    property
-    list<TableMetaParam> transmissionUpshiftApplyPressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_n_1_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift N-1 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 1-2 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 2-3 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 3-4 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 4-5 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 5-6 Apply"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionUpshiftApplyPressure: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_n_1_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift N-1 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 1-2 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 2-3 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 3-4 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 4-5 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 5-6 Apply"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> transmissionDownshiftApplyPressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 2-1 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 3-2 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 4-3 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 5-4 Apply"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 6-5 Apply"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionDownshiftApplyPressure: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 2-1 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 3-2 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 4-3 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 5-4 Apply"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_apply_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 6-5 Apply"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> transmissionUpshiftReleasePressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 1-2 Release"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 2-3 Release"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 3-4 Release"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 4-5 Release"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 5-6 Release"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionUpshiftReleasePressure: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 1-2 Release"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 2-3 Release"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 3-4 Release"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 4-5 Release"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 5-6 Release"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> transmissionDownshiftReleasePressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 2-1 Release"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 3-2 Release"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 4-3 Release"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 5-4 Release"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 6-5 Release"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionDownshiftReleasePressure: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 2-1 Release"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 3-2 Release"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 4-3 Release"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 5-4 Release"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_release_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Shift 6-5 Release"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> transmissionMainPressure: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_1_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 1 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_2_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 2 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_3_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 3 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_4_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 4 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_5_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 5 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_6_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 6 Main Pressure"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionMainPressure: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_1_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 1 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_2_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 2 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_3_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 3 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_4_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 4 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_5_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 5 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_6_main_pressure, pressureAxisModel.count, true, true, slots.pressure, "", qsTr("Gear 6 Main Pressure"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> transmissionUpshiftApplyPercentage: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_n_1_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift N-1 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 1-2 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-3 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-4 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-5 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-6 Apply Pressure"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionUpshiftApplyPercentage: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_n_1_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift N-1 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 1-2 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-3 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-4 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-5 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-6 Apply Pressure"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> transmissionDownshiftApplyPercentage: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-1 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-2 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-3 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-4 Apply Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 6-5 Apply Pressure"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionDownshiftApplyPercentage: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-1 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-2 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-3 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-4 Apply Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_apply_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 6-5 Apply Pressure"))
+//            }
+//        }
+//    ]
 
 
-    property
-    list<TableMetaParam> transmissionUpshiftReleasePercentage: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 1-2 Release Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-3 Release Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-4 Release Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-5 Release Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-6 Release Pressure"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionUpshiftReleasePercentage: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_1_2_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 1-2 Release Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_3_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-3 Release Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_4_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-4 Release Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_5_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-5 Release Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_6_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-6 Release Pressure"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> transmissionDownshiftReleasePercentage: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-1 Release Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-2 Release Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-3 Release Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-4 Release Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 6-5 Release Pressure"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionDownshiftReleasePercentage: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_2_1_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-1 Release Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_3_2_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-2 Release Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_4_3_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-3 Release Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_5_4_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-4 Release Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_shift_6_5_release_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 6-5 Release Pressure"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> transmissionMainPercentage: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_1_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 1 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_2_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 2 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_3_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 3 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_4_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 4 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_5_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 5 Main Pressure"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_6_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 6 Main Pressure"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> transmissionMainPercentage: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_1_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 1 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_2_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 2 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_3_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 3 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_4_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 4 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_5_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 5 Main Pressure"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.transmission_gear_6_main_percentage, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Gear 6 Main Pressure"))
+//            }
+//        }
+//    ]
 
     property ScalarMetaParam powertrainType: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_type, true, true, slots.transmissionType1, "", qsTr("Powertrain Type"))
@@ -980,19 +980,19 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.engine_idle_shutdown_time, true, true, slots.timeInSecondsZeroIsDisabled, "", qsTr("Engine Idle Shutdown Time"))
     }
 
-    property TableMetaParam engineMotoringMaxTorque: TableMetaParam {
-        param: TableParam {
-            x: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_speed, 16, true, true, slots.rpm1, "", qsTr("Engine Motoring Torque Speed"))
-            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_max_torque, 16, true, true, slots.torque, "", qsTr("Engine Motoring Torque"))
-        }
-    }
+//    property TableMetaParam engineMotoringMaxTorque: TableMetaParam {
+//        param: TableParam {
+//            x: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_speed, 16, true, true, slots.rpm1, "", qsTr("Engine Motoring Torque Speed"))
+//            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_motoring_max_torque, 16, true, true, slots.torque, "", qsTr("Engine Motoring Torque"))
+//        }
+//    }
 
-    property TableMetaParam engineBrakingMaxTorque: TableMetaParam {
-        param: TableParam {
-            x: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_speed, 16, true, true, slots.rpm1, "", qsTr("Engine Braking Torque Speed"))
-            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_max_torque, 16, true, true, slots.torque, "", qsTr("Engine Braking Torque"))
-        }
-    }
+//    property TableMetaParam engineBrakingMaxTorque: TableMetaParam {
+//        param: TableParam {
+//            x: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_speed, 16, true, true, slots.rpm1, "", qsTr("Engine Braking Torque Speed"))
+//            value: registry.addArrayParam(MemoryRange.S32, paramId.engine_braking_max_torque, 16, true, true, slots.torque, "", qsTr("Engine Braking Torque"))
+//        }
+//    }
 
     property ScalarMetaParam finalDriveRatio: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.final_drive_ratio, true, true, slots.ratio1, "", qsTr("Final Drive Ratio"))
@@ -1069,595 +1069,595 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.pressure_adjust_b, true, true, slots.percentage1, "", qsTr("Pressure Adjust B"))
     }
 
-    property
-    list<TableMetaParam> pressureTablesA: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_1, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 1 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_2, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 2 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_3, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 3 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_4, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 4 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_5, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 5 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_6, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 6 A"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> pressureTablesA: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_1, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 1 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_2, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 2 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_3, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 3 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_4, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 4 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_5, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 5 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_a_6, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 6 A"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> pressureTablesB: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_1, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 1 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_2, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 2 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_3, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 3 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_4, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 4 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_5, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 5 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_6, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 6 B"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> pressureTablesB: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_1, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 1 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_2, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 2 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_3, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 3 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_4, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 4 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_5, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 5 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.pressure_tables_b_6, percentage1AxisModel.count, true, true, slots.percentage1, "", qsTr("Shift Pressure 6 B"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> solenoidPIMap: [
-        TableMetaParam {
-            param: TableParam {
-                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 1 Pressure"))
-                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 1 Current"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 2 Pressure"))
-                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 2 Current"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 3 Pressure"))
-                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 3 Current"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 4 Pressure"))
-                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 4 Current"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 5 Pressure"))
-                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 5 Current"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 6 Pressure"))
-                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 6 Current"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 7 Pressure"))
-                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 7 Current"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 7 Pressure"))
-                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 8 Current"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> solenoidPIMap: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 1 Pressure"))
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_1_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 1 Current"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 2 Pressure"))
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_2_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 2 Current"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 3 Pressure"))
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_3_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 3 Current"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 4 Pressure"))
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_4_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 4 Current"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 5 Pressure"))
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_5_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 5 Current"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 6 Pressure"))
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_6_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 6 Current"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 7 Pressure"))
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_7_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 7 Current"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_pressure, 16, true, true, slots.pressure, "", qsTr("Sol 7 Pressure"))
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.clutch_8_solenoid_current, 16, true, true, slots.current, "", qsTr("Sol 8 Current"))
+//            }
+//        }
+//    ]
 
-    property ScalarMetaParam reverseLockoutSpeed: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.reverse_lockout_speed, true, true, slots.tossRPMAsSpeed, "", qsTr("Reverse Lockout Speed"))
-    }
+//    property ScalarMetaParam reverseLockoutSpeed: ScalarMetaParam {
+//        param: registry.addScalarParam(MemoryRange.S32, paramId.reverse_lockout_speed, true, true, slots.tossRPMAsSpeed, "", qsTr("Reverse Lockout Speed"))
+//    }
 
-    property ScalarMetaParam shiftSpeedAdjustA: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_speed_adjust_a, true, true, slots.percentage1, "", qsTr("Shift Speed Adjust A"))
-    }
+//    property ScalarMetaParam shiftSpeedAdjustA: ScalarMetaParam {
+//        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_speed_adjust_a, true, true, slots.percentage1, "", qsTr("Shift Speed Adjust A"))
+//    }
 
-    property ScalarMetaParam shiftSpeedAdjustB: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_speed_adjust_b, true, true, slots.percentage1, "", qsTr("Shift Speed Adjust B"))
-    }
+//    property ScalarMetaParam shiftSpeedAdjustB: ScalarMetaParam {
+//        param: registry.addScalarParam(MemoryRange.S32, paramId.shift_speed_adjust_b, true, true, slots.percentage1, "", qsTr("Shift Speed Adjust B"))
+//    }
 
-    property
-    list<TableMetaParam> upshiftTablesA: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 1-2 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 2-3 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 3-4 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 4-5 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 5-6 A"))
-            }
-        }
-    ]
-    property
-    list<TableMetaParam> rpmUpshiftTablesA: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesA[0].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 1-2 A")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesA[1].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 2-3 A")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesA[2].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 3-4 A")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesA[3].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 4-5 A")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesA[4].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 5-6 A")
-        }
-    ]
+//    property
+//    list<TableMetaParam> upshiftTablesA: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 1-2 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 2-3 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 3-4 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 4-5 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_up_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 5-6 A"))
+//            }
+//        }
+//    ]
+//    property
+//    list<TableMetaParam> rpmUpshiftTablesA: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesA[0].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 1-2 A")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesA[1].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 2-3 A")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesA[2].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 3-4 A")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesA[3].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 4-5 A")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesA[4].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 5-6 A")
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> upshiftTablesB: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 1-2 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 2-3 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 3-4 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 4-5 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 5-6 B"))
-            }
-        }
-    ]
-    property
-    list<TableMetaParam> rpmUpshiftTablesB: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesB[0].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 1-2 B")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesB[1].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 2-3 B")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesB[2].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 3-4 B")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesB[3].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 4-5 B")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: upshiftTablesB[4].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 5-6 B")
-        }
-    ]
+//    property
+//    list<TableMetaParam> upshiftTablesB: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 1-2 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 2-3 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 3-4 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 4-5 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_up_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 5-6 B"))
+//            }
+//        }
+//    ]
+//    property
+//    list<TableMetaParam> rpmUpshiftTablesB: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesB[0].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 1-2 B")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesB[1].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 2-3 B")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesB[2].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 3-4 B")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesB[3].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 4-5 B")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: upshiftTablesB[4].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 5-6 B")
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> downshiftTablesA: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 2-1 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 3-2 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 4-3 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 5-4 A"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 6-5 A"))
-            }
-        }
-    ]
-    property
-    list<TableMetaParam> rpmDownshiftTablesA: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesA[0].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 2-1 A")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesA[1].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 3-2 A")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesA[2].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 4-3 A")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesA[3].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 5-4 A")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesA[4].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 6-5 A")
-        }
-    ]
+//    property
+//    list<TableMetaParam> downshiftTablesA: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 2-1 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 3-2 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 4-3 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 5-4 A"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_a_down_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 6-5 A"))
+//            }
+//        }
+//    ]
+//    property
+//    list<TableMetaParam> rpmDownshiftTablesA: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesA[0].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 2-1 A")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesA[1].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 3-2 A")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesA[2].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 4-3 A")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesA[3].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 5-4 A")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesA[4].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 6-5 A")
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> downshiftTablesB: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 2-1 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 3-2 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 4-3 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 5-4 B"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 6-5 B"))
-            }
-        }
-    ]
-    property
-    list<TableMetaParam> rpmDownshiftTablesB: [
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesB[0].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 2-1 B")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesB[1].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 3-2 B")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesB[2].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 4-3 B")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesB[3].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 5-4 B")
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: percentage1AxisModel
-                value: SlotProxyModel {
-                    sourceModel: downshiftTablesB[4].param.value.rawModel
-                    slot: slots.rpm1
-                }
-            }
-            name: qsTr("Shift RPM 6-5 B")
-        }
-    ]
+//    property
+//    list<TableMetaParam> downshiftTablesB: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_1, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 2-1 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_2, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 3-2 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_3, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 4-3 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_4, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 5-4 B"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_tables_b_down_5, percentage1AxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("Shift Speed 6-5 B"))
+//            }
+//        }
+//    ]
+//    property
+//    list<TableMetaParam> rpmDownshiftTablesB: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesB[0].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 2-1 B")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesB[1].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 3-2 B")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesB[2].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 4-3 B")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesB[3].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 5-4 B")
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: percentage1AxisModel
+//                value: SlotProxyModel {
+//                    sourceModel: downshiftTablesB[4].param.value.rawModel
+//                    slot: slots.rpm1
+//                }
+//            }
+//            name: qsTr("Shift RPM 6-5 B")
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> shiftTorqueLimits: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_1_2, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 1-2 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_3, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-3 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_4, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-4 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_5, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-5 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_6, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-6 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_1, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-1 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_2, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-2 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_3, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-3 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_4, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-4 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_6_5, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 6-5 Torque Limit"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> shiftTorqueLimits: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_1_2, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 1-2 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_3, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-3 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_4, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-4 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_5, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-5 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_6, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-6 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_1, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-1 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_2, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-2 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_3, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-3 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_4, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-4 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_6_5, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 6-5 Torque Limit"))
+//            }
+//        }
+//    ]
 
-    property
-    list<TableMetaParam> downshiftTorqueLimit: [
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_1, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-1 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_2, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-2 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_3, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-3 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_4, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-4 Torque Limit"))
-            }
-        },
-        TableMetaParam {
-            param: TableParam {
-                x: pressureAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_6_5, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 6-5 Torque Limit"))
-            }
-        }
-    ]
+//    property
+//    list<TableMetaParam> downshiftTorqueLimit: [
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_2_1, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 2-1 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_3_2, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 3-2 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_4_3, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 4-3 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_5_4, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 5-4 Torque Limit"))
+//            }
+//        },
+//        TableMetaParam {
+//            param: TableParam {
+//                x: pressureAxisModel
+//                value: registry.addArrayParam(MemoryRange.S32, paramId.shift_torque_limit_6_5, pressureAxisModel.count, true, true, slots.percentage1, "", qsTr("Shift 6-5 Torque Limit"))
+//            }
+//        }
+//    ]
 
     property ScalarMetaParam shiftTorqueLimitGarageShift: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.shift_torque_limit_garage_shift, true, true, slots.percentage1, "", qsTr("Garage Shift Torque Limit"))
@@ -1763,12 +1763,12 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.tcc_stroke_percentage, true, true, slots.percentage2, "", qsTr("TCC Stroke Percentage"))
     }
 
-    property TableMetaParam torqueConverterMult: TableMetaParam {
-        param: TableParam {
-            x: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_speedratio, 16, true, true, slots.ratio1, "", qsTr("Torque Converter Mult Speed Ratio"))
-            value: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_torqueratio, 16, true, true, slots.ratio1, "", qsTr("Torque Converter Multiplication"))
-        }
-    }
+//    property TableMetaParam torqueConverterMult: TableMetaParam {
+//        param: TableParam {
+//            x: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_speedratio, 16, true, true, slots.ratio1, "", qsTr("Torque Converter Mult Speed Ratio"))
+//            value: registry.addArrayParam(MemoryRange.S32, paramId.tc_mult_torqueratio, 16, true, true, slots.ratio1, "", qsTr("Torque Converter Multiplication"))
+//        }
+//    }
 
     property ScalarMetaParam vehicleVariation: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.variation, true, true, slots.variationTypes, "", qsTr("Engine Type"))
@@ -1852,12 +1852,12 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.pressure_control_source, true, true, slots.torqueSignalSource, "", qsTr("Pressure Control Source"))
     }
 
-    property TableMetaParam shiftSelectorGearVoltages: TableMetaParam {
-        param: TableParam {
-            x: hgmShiftSelectorCalibrationGearAxisModel
-            value: registry.addArrayParam(MemoryRange.S32, paramId.shift_selector_gear_voltages, hgmShiftSelectorCalibrationGearAxisModel.count, true, true, slots.hgmShiftSelectorCalibrationSensorVoltage, "", qsTr("Shift Selector Gear Voltages"))
-        }
-    }
+//    property TableMetaParam shiftSelectorGearVoltages: TableMetaParam {
+//        param: TableParam {
+//            x: hgmShiftSelectorCalibrationGearAxisModel
+//            value: registry.addArrayParam(MemoryRange.S32, paramId.shift_selector_gear_voltages, hgmShiftSelectorCalibrationGearAxisModel.count, true, true, slots.hgmShiftSelectorCalibrationSensorVoltage, "", qsTr("Shift Selector Gear Voltages"))
+//        }
+//    }
 
     property ScalarMetaParam shiftSelectorODCancelAtStartup: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.shift_selector_overdrive_cancel_at_startup, true, true, slots.booleanOnOff1, "", qsTr("Shift Selector OD Cancel At Startup"))
@@ -1879,12 +1879,12 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.vehicle_speed_sensor_pulse_count, true, true, slots.count3, "", qsTr("Vehicle Speed Sensor Pulses"))
     }
 
-    property TableMetaParam transmissionGearNumbersRatios: TableMetaParam {
-        param: TableParam {
-            x: registry.addVarArrayParam(MemoryRange.S32, paramId.transmission_gears, 3, 8, false, false, slots.gear1, "", qsTr(""))
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.transmission_ratios, 3, 8, false, false, slots.ratio1, "", qsTr("Gear Ratios"))
-        }
-    }
+//    property TableMetaParam transmissionGearNumbersRatios: TableMetaParam {
+//        param: TableParam {
+//            x: registry.addVarArrayParam(MemoryRange.S32, paramId.transmission_gears, 3, 8, false, false, slots.gear1, "", qsTr(""))
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.transmission_ratios, 3, 8, false, false, slots.ratio1, "", qsTr("Gear Ratios"))
+//        }
+//    }
 
     property ScalarMetaParam evTorqueFilterOrder: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_torque_filter_order, true, true, slots.timeMilliseconds1, "", qsTr("Torque Filter Length"))
@@ -1901,69 +1901,69 @@ QtObject {
     property ScalarMetaParam evMotorSpeedMax: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_motor_speed_max, true, true, slots.rpm1, "", qsTr("Max Motor Speed"))
     }
-    property TableMetaParam evTorqueRampDownTime: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: evTorqueRampDownTime.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_torque_ramp_down_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Torque Ramp Down Time"))
-        }
-    }
-    property TableMetaParam evTorqueRampUpTime: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: evTorqueRampUpTime.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_torque_ramp_up_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Torque Ramp Up Time"))
-        }
-    }
-    property TableMetaParam evMotorTorqueMaxA: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: evMotorTorqueMaxA.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_motor_torque_max_a, 1, 8, true, true, slots.percentage1, "", qsTr("Max Motoring Torque A"))
-        }
-    }
-    property TableMetaParam evRegenTorqueMaxA: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: evRegenTorqueMaxA.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_regen_torque_max_a, 1, 8, true, true, slots.percentage1, "", qsTr("Max Regen Torque A"))
-        }
-    }
+//    property TableMetaParam evTorqueRampDownTime: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: evTorqueRampDownTime.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_torque_ramp_down_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Torque Ramp Down Time"))
+//        }
+//    }
+//    property TableMetaParam evTorqueRampUpTime: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: evTorqueRampUpTime.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_torque_ramp_up_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Torque Ramp Up Time"))
+//        }
+//    }
+//    property TableMetaParam evMotorTorqueMaxA: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: evMotorTorqueMaxA.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_motor_torque_max_a, 1, 8, true, true, slots.percentage1, "", qsTr("Max Motoring Torque A"))
+//        }
+//    }
+//    property TableMetaParam evRegenTorqueMaxA: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: evRegenTorqueMaxA.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_regen_torque_max_a, 1, 8, true, true, slots.percentage1, "", qsTr("Max Regen Torque A"))
+//        }
+//    }
     property ScalarMetaParam evMaxRegenSpeedA: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_max_regen_speed_a, true, true, slots.tossRPMAsSpeed, "", qsTr("Full Regen Speed A"))
     }
-    property TableMetaParam evMotorTorqueMaxB: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: evMotorTorqueMaxB.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_motor_torque_max_b, 1, 8, true, true, slots.percentage1, "", qsTr("Max Motoring Torque B"))
-        }
-    }
-    property TableMetaParam evRegenTorqueMaxB: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: evRegenTorqueMaxB.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_regen_torque_max_b, 1, 8, true, true, slots.percentage1, "", qsTr("Max Regen Torque B"))
-        }
-    }
+//    property TableMetaParam evMotorTorqueMaxB: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: evMotorTorqueMaxB.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_motor_torque_max_b, 1, 8, true, true, slots.percentage1, "", qsTr("Max Motoring Torque B"))
+//        }
+//    }
+//    property TableMetaParam evRegenTorqueMaxB: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: evRegenTorqueMaxB.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.ev_regen_torque_max_b, 1, 8, true, true, slots.percentage1, "", qsTr("Max Regen Torque B"))
+//        }
+//    }
     property ScalarMetaParam evMaxRegenSpeedB: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_max_regen_speed_b, true, true, slots.tossRPMAsSpeed, "", qsTr("Full Regen Speed B"))
     }
@@ -1973,66 +1973,66 @@ QtObject {
     property ScalarMetaParam ebusShiftSyncDuration: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ebus_shift_synchronization_duration, true, true, slots.timeMilliseconds1, "", qsTr("Shift Sync Duration"))
     }
-    property TableMetaParam clutchReleaseTime: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: clutchReleaseTime.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_release_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Clutch Release Time"))
-        }
-    }
-    property TableMetaParam clutchPrefillTime: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: clutchPrefillTime.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Clutch Prefill Time"))
-        }
-    }
-    property TableMetaParam clutchPrefillPressure: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: clutchPrefillPressure.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_pressure, 1, 8, true, true, slots.pressure, "", qsTr("Clutch Prefill Pressure"))
-        }
-    }
-    property TableMetaParam clutchPrefillPercentage: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: clutchPrefillPercentage.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_percentage, 1, 8, true, true, slots.percentage2, "", qsTr("Clutch Prefill Pressure %"))
-        }
-    }
-    property TableMetaParam clutchStrokeTime: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: clutchStrokeTime.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_stroke_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Clutch Stroke Time"))
-        }
-    }
-    property TableMetaParam clutchStrokePressure: TableMetaParam {
-        param: TableParam {
-            x: SlotArrayModel {
-                slot: slots.count
-                min: 1
-                count: clutchStrokeTime.param.value.count
-            }
-            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_stroke_pressure, 1, 8, true, true, slots.pressure, "", qsTr("Clutch Stroke Pressure"))
-        }
-    }
+//    property TableMetaParam clutchReleaseTime: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: clutchReleaseTime.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_release_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Clutch Release Time"))
+//        }
+//    }
+//    property TableMetaParam clutchPrefillTime: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: clutchPrefillTime.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Clutch Prefill Time"))
+//        }
+//    }
+//    property TableMetaParam clutchPrefillPressure: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: clutchPrefillPressure.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_pressure, 1, 8, true, true, slots.pressure, "", qsTr("Clutch Prefill Pressure"))
+//        }
+//    }
+//    property TableMetaParam clutchPrefillPercentage: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: clutchPrefillPercentage.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_prefill_percentage, 1, 8, true, true, slots.percentage2, "", qsTr("Clutch Prefill Pressure %"))
+//        }
+//    }
+//    property TableMetaParam clutchStrokeTime: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: clutchStrokeTime.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_stroke_time, 1, 8, true, true, slots.timeMilliseconds1, "", qsTr("Clutch Stroke Time"))
+//        }
+//    }
+//    property TableMetaParam clutchStrokePressure: TableMetaParam {
+//        param: TableParam {
+//            x: SlotArrayModel {
+//                slot: slots.count
+//                min: 1
+//                count: clutchStrokeTime.param.value.count
+//            }
+//            value: registry.addVarArrayParam(MemoryRange.S32, paramId.clutch_stroke_pressure, 1, 8, true, true, slots.pressure, "", qsTr("Clutch Stroke Pressure"))
+//        }
+//    }
     property ScalarMetaParam evJ1939CtlSourceAddress: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_j1939_ctl_source_address, true, true, slots.hex32bit, "", qsTr("J1939 CTL Source Address"))
     }

@@ -6,7 +6,7 @@ QtObject {
     id: root
     property var roleMapping    // e.g. "x": xArray, "value": valueArray
 
-    property var roleNames: {
+    /*property var roleNames: {
         var ret = ([])
         for(var role in roleMapping) {
             if(roleMapping.hasOwnProperty(role)) {
@@ -97,5 +97,5 @@ QtObject {
         for(var i = 1; i < roleNames.length; ++i) {
             console.assert(stringModelMapping[roleNames[0]].count === stringModelMapping[roleNames[i]].count, "MultiroleTableParam instantiated with mismatched row counts", stringModelMapping[roleNames[0]].count, "and", stringModelMapping[roleNames[i]].count)
         }
-    }
+    }*/
 }

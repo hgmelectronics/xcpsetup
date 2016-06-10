@@ -53,19 +53,6 @@ ApplicationWindow {
             errorDialog.show(qsTr("Failed to set slave device ID"))
     }
 
-    Settings {
-        category: "application"
-        property alias saveReadOnlyParameters: application.saveReadOnlyParameters
-        property alias useMetricUnits: application.useMetricUnits
-        property alias saveOnWrite: application.saveParametersOnWrite
-        property alias paramFileDir: application.paramFileDir
-        property alias windowWidth: application.width
-        property alias windowHeight: application.height
-        property alias windowX: application.x
-        property alias windowY: application.y
-        property alias interfaceSaveUri: application.interfaceUri
-    }
-
     ParamLayer {
         id: paramLayer
         addrGran: 4

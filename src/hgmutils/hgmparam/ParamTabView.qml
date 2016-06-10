@@ -23,7 +23,7 @@ Item {
         id: tabView
         anchors.fill: parent
 
-        Tab {
+/*        Tab {
             active: true
             title: qsTr("Vehicle")
             VehicleLayout {
@@ -78,7 +78,7 @@ Item {
             DiagnosticsLayout {
                 parameters: params
             }
-        }
+        }*/
 
         Tab {
             active: true
@@ -88,20 +88,20 @@ Item {
             }
         }
 
-        Tab {
-            active: true
-            title: qsTr("CAN")
-            CanLayout {
-                parameters: params
-            }
-        }
+//        Tab {
+//            active: true
+//            title: qsTr("CAN")
+//            CanLayout {
+//                parameters: params
+//            }
+//        }
 
-        Tab {
-            active: true
-            title: qsTr("EV")
-            EvLayout {
-                parameters: params
-            }
-        }
+//        Tab {
+//            active: true
+//            title: qsTr("EV")
+//            EvLayout {
+//                parameters: params
+//            }
+//        }
     }
 }
