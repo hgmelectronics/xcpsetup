@@ -534,6 +534,7 @@ QtObject {
             { raw: 502, engr: "Toyota A340" },
             { raw: 503, engr: "Toyota A341" },
             { raw: 505, engr: "Toyota AB60" },
+            { raw: 506, engr: "Toyota A750" },
             { raw: 600, engr: "Allison 3000 Gen 3" },
             { raw: 610, engr: "Ebus MRPCS" },
             { raw: 620, engr: "Ebus SRMCS" },
