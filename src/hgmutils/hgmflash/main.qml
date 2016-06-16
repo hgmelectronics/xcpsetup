@@ -22,7 +22,6 @@ ApplicationWindow {
 
     property alias targetCmdId: cs2Tool.slaveCmdId
     property alias targetResId: cs2Tool.slaveResId
-    property string intfcUri: ""
 
     title: programName
     visible: true
@@ -44,7 +43,7 @@ ApplicationWindow {
     Cs2Tool {
         id: cs2Tool
         programData: application.progFileData
-        intfcUri: application.intfcUri
+        intfcUri: ""
         onProgrammingDone: {
             if (result === OpResult.Success)
                 messageDialog.show(qsTr("Programming complete"))
@@ -129,10 +128,8 @@ ApplicationWindow {
         text: qsTr("Open")
         enabled: !cs2Tool.intfcOk
         onTriggered: {
-            onTriggered: {
                 interfaceChooser.saveUri = interfaceChooser.uri
-                paramLayer.intfcUri = interfaceChooser.uri + "?bitrate=%1".arg(bitRateChooser.bps)
-            }
+                cs2Tool.intfcUri = interfaceChooser.uri + "?bitrate=%1".arg(bitRateChooser.bps)
         }
     }
 
@@ -140,7 +137,7 @@ ApplicationWindow {
         id: intfcCloseAction
         text: qsTr("Close")
         onTriggered: {
-            application.intfcUri = ""
+            cs2Tool.intfcUri = ""
         }
         enabled: cs2Tool.intfcOk && cs2Tool.idle
     }
