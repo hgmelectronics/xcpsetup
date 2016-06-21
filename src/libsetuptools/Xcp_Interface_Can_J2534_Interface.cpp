@@ -360,7 +360,7 @@ QList<QUrl> Registry::avail()
         QUrl uri = QUrl::fromLocalFile(dllPath);
         uri.setScheme("j2534");
         QUrlQuery nameQuery;
-        nameQuery.addQueryItem("name", name);
+        nameQuery.addQueryItem("name", QUrl::toPercentEncoding(name));
         uri.setQuery(nameQuery);
         uris.append(uri);
     }

@@ -94,8 +94,10 @@ QUrl QmlRegistry::uri(int index) const
 int QmlRegistry::find(QUrl url) const
 {
     for(int i = 0; i < mAvail.size(); ++i)
-        if(url == mAvail[i].first)
+    {
+        if(url.toString() == mAvail[i].first.toString())
             return i;
+    }
     return -1;
 }
 
