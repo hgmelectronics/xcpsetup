@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[])
 {
+    qputenv("QMLSCENE_DEVICE", "softwarecontext");
+
     QApplication app(argc, argv);
     app.setOrganizationName("Ebus");
     app.setOrganizationDomain("ebus.com");
