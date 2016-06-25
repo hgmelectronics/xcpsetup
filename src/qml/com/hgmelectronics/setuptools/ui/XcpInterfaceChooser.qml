@@ -66,4 +66,8 @@ GroupBox {
     onSaveUriChanged: {
         setIndexFromUri(saveUri)
     }
+
+    Component.onCompleted: {
+        setIndexFromUri(saveUri)
+    }
 }
