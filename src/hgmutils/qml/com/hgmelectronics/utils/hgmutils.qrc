@@ -5,10 +5,10 @@
         <file>AboutDialog.qml</file>
         <file>COMPUSHIFT logo.svg</file>
         <file>hgmutils.ico</file>
-        <file>Splash.qml</file>
         <file>qmldir</file>
         <file>HexEntryField.qml</file>
         <file>CS2Defaults.qml</file>
         <file>ColumnEditDelegate.qml</file>
+        <file>COMPUSHIFT logo.png</file>
     </qresource>
 </RCC>

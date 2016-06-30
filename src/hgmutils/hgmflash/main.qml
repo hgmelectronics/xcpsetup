@@ -433,9 +433,6 @@ ApplicationWindow {
         id: helpDialog
     }
 
-    Splash {
-    }
-
     Component.onCompleted: {
         // make sure the window doesn't completely disappear from the screen due to prefs save with a bigger monitor than current
         x = Math.min(x, Screen.desktopAvailableWidth - 30)
