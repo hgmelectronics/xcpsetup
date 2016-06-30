@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     QPixmap logo(":/com/hgmelectronics/utils/COMPUSHIFT logo.png");
     QSplashScreen splash(logo);
     splash.show();
+    QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
     QQmlApplicationEngine engine;
 
@@ -33,6 +34,7 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
+    QGuiApplication::restoreOverrideCursor();
     splash.close();
 
     return app.exec();
