@@ -2,7 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QtQml>
 #include <SetupTools.h>
-#include <QProcessEnvironment>
+#include <QPixmap>
+#include <QSplashScreen>
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +14,11 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("hgmelectronics.com");
     app.setApplicationName("CS2 Parameter Editor");
 
+    QPixmap logo(":/com/hgmelectronics/utils/COMPUSHIFT logo.png");
+    QSplashScreen splash(logo);
+    splash.show();
+
+
     QQmlApplicationEngine engine;
 
 #ifdef STATICQT
@@ -22,8 +28,9 @@ int main(int argc, char *argv[])
 #endif
 
     SetupTools::registerTypes();
-
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    splash.close();
 
     return app.exec();
 }
