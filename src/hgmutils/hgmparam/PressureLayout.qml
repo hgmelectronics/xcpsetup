@@ -146,46 +146,6 @@ RowLayout {
                     }
                 }
             }
-
-            GroupBox {
-                title: "Garage Shift"
-                Button {
-                    text: "Edit"
-                    onClicked: {
-                        garageShiftDialog.showNormal()
-                        garageShiftDialog.raise()
-                    }
-                    enabled: parameters.garageShiftMaxPressure.param.valid || parameters.garageShiftProportionalConstant.param.valid
-                }
-            }
-            Window {
-                id: garageShiftDialog
-
-                height: 25 + (stalkingHorse.implicitHeight + 5) * 7
-                width: 35 + stalkingHorse.implicitWidth + 5
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-
-                    ScalarParamSpinBox {
-                        id: stalkingHorse
-                        metaParam: parameters.garageShiftTime
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftMaxPressure
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftProportionalConstant
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftIntegralConstant
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftDerivativeConstant
-                    }
-                }
-            }
         }
     }
     GroupBox {
@@ -306,43 +266,6 @@ RowLayout {
                     parameters.transmissionShiftPrefillTime
                 ]
             }
-
-            GroupBox {
-                title: "Garage Shift"
-                Button {
-                    text: "Edit"
-                    onClicked: {
-                        garageShiftDialogPct.showNormal()
-                        garageShiftDialogPct.raise()
-                    }
-                    enabled: parameters.garageShiftMaxPercentage.param.valid || parameters.garageShiftProportionalConstant.param.valid
-                }
-            }
-            Window {
-                id: garageShiftDialogPct
-
-                height: 25 + (stalkingHorse2.implicitHeight + 5) * 7
-                width: 35 + stalkingHorse2.implicitWidth + 5
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-
-                    ScalarParamSpinBox {
-                        id: stalkingHorse2
-                        metaParam: parameters.garageShiftMaxPercentage
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftProportionalConstant
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftIntegralConstant
-                    }
-                    ScalarParamSpinBox {
-                        metaParam: parameters.garageShiftDerivativeConstant
-                    }
-                }
-            }
         }
     }
     GroupBox {
@@ -402,6 +325,46 @@ RowLayout {
                 xLabel: qsTr("Driver Torque")
                 valueLabel: qsTr("Limit")
                 tableParam: parameters.shiftTorqueLimits
+            }
+
+            Button {
+                text: "Garage Shift"
+                onClicked: {
+                    garageShiftDialog.showNormal()
+                    garageShiftDialog.raise()
+                }
+                enabled: parameters.garageShiftProportionalConstant.param.valid
+            }
+            Window {
+                id: garageShiftDialog
+
+                height: 25 + (stalkingHorse.implicitHeight + 5) * 7
+                width: 35 + stalkingHorse.implicitWidth + 5
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+
+                    ScalarParamSpinBox {
+                        id: stalkingHorse
+                        metaParam: parameters.garageShiftTime
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.garageShiftMaxPressure
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.garageShiftMaxPercentage
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.garageShiftProportionalConstant
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.garageShiftIntegralConstant
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.garageShiftDerivativeConstant
+                    }
+                }
             }
         }
     }
