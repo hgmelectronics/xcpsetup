@@ -175,9 +175,9 @@ Window {
             tabSeparated.text = Clipboard.text
             if(tabSeparated.rows == tableParam.param.value.count && tabSeparated.columns == tableColumns) {
                 for(var i = 0; i < tabSeparated.rows; ++i) {
-                    if(tableParam.param.xModel.flags(i) & Qt.ItemIsEditable)
+                    if(tableParam.param.xStringModel.flags(i) & Qt.ItemIsEditable)
                         tableParam.param.x.set(i, tabSeparated.get(i, 0));
-                    if(tableParam.param.valueModel.flags(i) & Qt.ItemIsEditable)
+                    if(tableParam.param.valueStringModel.flags(i) & Qt.ItemIsEditable)
                         tableParam.param.value.set(i, tabSeparated.get(i, 1));
                 }
             }
