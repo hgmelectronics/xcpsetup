@@ -224,9 +224,9 @@ Window {
             tabSeparated.text = Clipboard.text
             if(tabSeparated.rows == speedTableParam.param.value.count && tabSeparated.columns == tableColumns) {
                 for(var i = 0; i < tabSeparated.rows; ++i) {
-                    if(speedTableParam.param.xModel.flags(i) & Qt.ItemIsEditable)
+                    if(speedTableParam.param.xStringModel.flags(i) & Qt.ItemIsEditable)
                         speedTableParam.param.x.set(i, tabSeparated.get(i, 0));
-                    if(speedTableParam.param.valueModel.flags(i) & Qt.ItemIsEditable)
+                    if(speedTableParam.param.valueStringModel.flags(i) & Qt.ItemIsEditable)
                         speedTableParam.param.value.set(i, tabSeparated.get(i, 1));
                 }
             }
