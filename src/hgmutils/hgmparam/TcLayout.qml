@@ -562,7 +562,7 @@ RowLayout {
                                     model: parameters.tccDisableSpeedTablesA.length
                                     CheckBox {
                                         checked: false
-                                        enabled: parameters.tccDisableSpeedTablesA[index].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                                        enabled: parameters.tccDisableSpeedTablesA[index].param.value.valid
                                         text: parameters.tccDisableSpeedTablesA[index].name.replace(/TCC Disable Speed Gear ([1-9RN]).*/, "Unlock $1")
                                         onCheckedChanged: {
                                             setTraceVisible(true, false, index, checked)
@@ -649,7 +649,7 @@ RowLayout {
                                     model: parameters.tccDisableSpeedTablesB.length
                                     CheckBox {
                                         checked: false
-                                        enabled: parameters.tccDisableSpeedTablesB[index].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                                        enabled: parameters.tccDisableSpeedTablesB[index].param.value.valid
                                         text: parameters.tccDisableSpeedTablesB[index].name.replace(/TCC Disable Speed Gear ([1-9RN]).*/, "Unlock $1")
                                         onCheckedChanged: {
                                             setTraceVisible(true, true, index, checked)
