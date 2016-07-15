@@ -22,6 +22,11 @@ Window {
     property double steeperFlatterRatio: 1.1
     property double increaseDecreaseDelta: 1.0
 
+    onVisibleChanged: {
+        width = width + 1   // hack to force redraw of plot - there is a bug with the QPainter scenegraph renderer that causes it to not show on closing and reopening window
+        width = width - 1
+    }
+
     title: name
     width: (hasShapers || hasPlot) ? 420 : 240
     height: 350 + plot.height
@@ -232,14 +237,6 @@ Window {
                 pasteTable.trigger()
             else
                 event.accepted = false
-        }
-
-          // dreadful hack because making chart invisible causes QML to hang
-        handleDelegate: Rectangle {
-            SystemPalette { id: pal }
-            width: 1
-            height: 1
-            color: hasPlot ? Qt.darker(pal.window, 1.5) : "transparent"
         }
 
         ChartView {
