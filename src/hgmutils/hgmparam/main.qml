@@ -55,6 +55,7 @@ ApplicationWindow {
 
     Settings {
         category: "application"
+        property alias readParametersOnConnect: application.readParametersOnConnect
         property alias saveReadOnlyParameters: application.saveReadOnlyParameters
         property alias useMetricUnits: application.useMetricUnits
         property alias saveOnWrite: application.saveParametersOnWrite
