@@ -16,6 +16,11 @@ Window {
     minimumWidth: 500
     minimumHeight: 220 + speedPlot.height
 
+    onVisibleChanged: {
+        width = width + 1   // hack to force redraw of plot - there is a bug with the QPainter scenegraph renderer that causes it to not show on closing and reopening window
+        width = width - 1
+    }
+
     function isDefined(val) {
         return (typeof(val) !== "undefined") && (val !== null)
     }
