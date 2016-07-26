@@ -777,4 +777,38 @@ QtObject {
         name: qsTr("")
     }
 
+    property ScalarMetaParam eventBeginSerial: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.eventBeginSerial, false, false, slots.raw32)
+        name: qsTr("")
+    }
+
+    property ScalarMetaParam eventEndSerial: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.eventEndSerial, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property ScalarMetaParam eventClearToSerial: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.eventClearToSerial, true, false, slots.raw32)
+        name: qsTr("")
+        immediateWrite: true
+    }
+    property ScalarMetaParam eventViewSerial: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.eventViewSerial, true, false, slots.raw32)
+        name: qsTr("")
+        immediateWrite: true
+    }
+    property ScalarMetaParam eventViewKey: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.U32, paramId.eventViewKey, false, false, slots.rawu32hex)
+        name: qsTr("")
+    }
+    property ScalarMetaParam eventViewFreezeSize: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.U32, paramId.eventViewFreezeSize, false, false, slots.raw32)
+        name: qsTr("")
+    }
+    property TableParam eventViewFreeze: TableParam {
+        x: SlotArrayModel {
+            slot: slots.raw32
+            count: 16
+        }
+        value: registry.addArrayParam(MemoryRange.U32, paramId.eventViewFreeze, 16, false, false, slots.rawu32hex)
+    }
 }

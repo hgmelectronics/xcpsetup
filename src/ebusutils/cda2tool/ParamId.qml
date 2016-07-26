@@ -214,4 +214,12 @@ QtObject {
     readonly property double sysHeapFreeBytes:                  4*0x000A1013
     readonly property double sysHeapNFrees:                     4*0x000A1014
     readonly property double sysRtDbRows:                       4*0x000A1015
+
+    readonly property double eventBeginSerial:                  0x10000000
+    readonly property double eventEndSerial:                    0x10000008
+    readonly property double eventClearToSerial:                0x10000010
+    readonly property double eventViewSerial:                   0x10000018
+    readonly property double eventViewKey:                      0x10000020
+    readonly property double eventViewFreezeSize:               0x10000038
+    readonly property double eventViewFreeze:                   0x10000040
 }

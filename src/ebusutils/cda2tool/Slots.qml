@@ -11,6 +11,14 @@ Item {
         unit: ""
         precision: 0
     }
+    property LinearSlot rawu32: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 0xFFFFFFFF
+        engrB: 0xFFFFFFFF
+        unit: ""
+        precision: 0
+    }
     property LinearSlot bool01: LinearSlot {
         rawA: 0
         engrA: 0
@@ -24,6 +32,15 @@ Item {
         engrA: -0x7FFFFFFF
         rawB: 0x7FFFFFFF
         engrB: 0x7FFFFFFF
+        unit: ""
+        precision: 0
+        base: 16
+    }
+    property LinearSlot rawu32hex: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 0xFFFFFFFF
+        engrB: 0xFFFFFFFF
         unit: ""
         precision: 0
         base: 16

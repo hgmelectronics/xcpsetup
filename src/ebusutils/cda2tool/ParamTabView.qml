@@ -1196,5 +1196,49 @@ Item {
                 }
             }
         }
+
+        Tab {
+            title: "Event Log"
+            active: true
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "Begin Serial"
+                            metaParam: parameters.eventBeginSerial
+                        }
+                        ScalarParamEdit {
+                            name: "End Serial"
+                            metaParam: parameters.eventEndSerial
+                        }
+                        ScalarParamEdit {
+                            name: "Clear To Serial"
+                            metaParam: parameters.eventClearToSerial
+                        }
+                        ScalarParamEdit {
+                            name: "View Serial"
+                            metaParam: parameters.eventViewSerial
+                        }
+                        ScalarParamEdit {
+                            name: "View Key"
+                            metaParam: parameters.eventViewKey
+                        }
+                        ScalarParamEdit {
+                            name: "View Freeze Size"
+                            metaParam: parameters.eventViewFreezeSize
+                        }
+                        TableParamEdit {
+                            tableParam: parameters.eventViewFreeze
+                        }
+                    }
+                }
+            }
+        }
     }
 }
