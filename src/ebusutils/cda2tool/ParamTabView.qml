@@ -270,6 +270,7 @@ Item {
                                     min: 0
                                     max: parameters.cbtmCellVolt.value.count
                                     tickCount: parameters.cbtmCellVolt.value.count / 8 + 1
+                                    labelFormat: "%d"
                                 }
 
                                 axisY: cellVoltAutoAxis.yAxis
@@ -285,6 +286,7 @@ Item {
                                     min: 0
                                     max: parameters.cbtmTabTemp.value.count
                                     tickCount: parameters.cbtmTabTemp.value.count / 9 + 1
+                                    labelFormat: "%d"
                                 }
 
                                 axisY: tabTempAutoAxis.yAxis
