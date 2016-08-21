@@ -944,6 +944,22 @@ QtObject {
         param: registry.addScalarParam(MemoryRange.S32, paramId.display_contrast, true, true, slots.percentage1, "", qsTr("Display Contrast"))
     }
 
+    property ScalarMetaParam displayMixedMeterConfig1: ScalarMetaParam {
+        param: registry.addArrayParam(MemoryRange.S32, paramId.display_mixed_meter_1_config, 8, true, true, slots.count, "", qsTr("Mixed Meter 1 Config"))
+    }
+
+    property ScalarMetaParam displayMixedMeterConfig2: ScalarMetaParam {
+        param: registry.addArrayParam(MemoryRange.S32, paramId.display_mixed_meter_2_config, 8, true, true, slots.count, "", qsTr("Mixed Meter 2 Config"))
+    }
+
+    property ScalarMetaParam displayMixedMeterConfig3: ScalarMetaParam {
+        param: registry.addArrayParam(MemoryRange.S32, paramId.display_mixed_meter_3_config, 8, true, true, slots.count, "", qsTr("Mixed Meter 3 Config"))
+    }
+
+    property ScalarMetaParam displayMixedMeterConfig4: ScalarMetaParam {
+        param: registry.addArrayParam(MemoryRange.S32, paramId.display_mixed_meter_4_config, 8, true, true, slots.count, "", qsTr("Mixed Meter 4 Config"))
+    }
+
     property ScalarMetaParam shiftDownshiftOffsetA: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.shift_downshift_offset_a, true, true, slots.percentage1, "", qsTr("Downshift Offset A"))
     }
