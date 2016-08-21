@@ -106,7 +106,7 @@ HEADERS += \
     Xcp_Interface_Can_J2534_Interface.h \
     Xcp_Interface_Can_J2534_Library.h
 
-unix {
+unix:!android {
     target.path = /usr/lib
     INSTALLS += target
     DEFINES += SOCKETCAN

@@ -332,11 +332,11 @@ void IbemTool::startProgramming()
         return;
     }
 
-    int firstPage = mInfilledProgData.base() / PAGE_SIZE;
-    int lastPage = (mInfilledProgData.base() + mInfilledProgData.size() - 1) / PAGE_SIZE;
+    int firstPage = mInfilledProgData.base() / ST_PAGE_SIZE;
+    int lastPage = (mInfilledProgData.base() + mInfilledProgData.size() - 1) / ST_PAGE_SIZE;
     int nPages = lastPage - firstPage + 1;
     int maxProgClearPages = (mProgLayer->intfc()->maxReplyTimeout() - PROG_CLEAR_BASE_TIMEOUT_MSEC) / PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC;
-    mProgLayer->setMaxEraseSize(maxProgClearPages * PAGE_SIZE);
+    mProgLayer->setMaxEraseSize(maxProgClearPages * ST_PAGE_SIZE);
     mProgLayer->setSlaveProgClearTimeout(PROG_CLEAR_BASE_TIMEOUT_MSEC + PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC * std::min(nPages, maxProgClearPages));
     mProgLayer->program(&mInfilledProgData, 0, false);
 }

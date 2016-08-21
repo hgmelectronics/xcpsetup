@@ -106,7 +106,7 @@ private:
     static constexpr int RESET_TIMEOUT_MSEC = 2000;
     static constexpr int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
     static constexpr int PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC = 40;
-    static constexpr int PAGE_SIZE = 2048;
+    static constexpr int ST_PAGE_SIZE = 2048;
     static constexpr Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::ST_CRC_32;
     static constexpr int N_POLL_ITER = 20;
     static constexpr int N_PROGRAMMODE_TRIES = 25;
