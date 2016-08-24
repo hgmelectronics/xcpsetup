@@ -23,6 +23,9 @@ RowLayout {
         EncodingParamEdit {
             metaParam: parameters.transmissionType
         }
+        EncodingParamEdit {
+            metaParam: parameters.remoteMode
+        }
         ScalarParamSpinBox {
             metaParam: parameters.vehicleMass
         }

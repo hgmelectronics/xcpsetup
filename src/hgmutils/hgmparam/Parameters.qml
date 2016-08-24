@@ -912,6 +912,49 @@ QtObject {
         }
     ]
 
+    property ScalarMetaParam transmissionMainLinePressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_main_pressure, true, false, slots.pressure, "", qsTr("Main Line Pressure"))
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionTccPressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_tcc_pressure, true, false, slots.pressure, "", qsTr("TCC Pressure"))
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch1Pressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_clutch_1_pressure, true, false, slots.pressure, "", qsTr("Clutch 1 Pressure"))
+        immediateWrite: true
+    }
+    property ScalarMetaParam transmissionClutch2Pressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_clutch_2_pressure, true, false, slots.pressure, "", qsTr("Clutch 2 Pressure"))
+        immediateWrite: true
+    }
+    property ScalarMetaParam transmissionClutch3Pressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_clutch_3_pressure, true, false, slots.pressure, "", qsTr("Clutch 3 Pressure"))
+        immediateWrite: true
+    }
+    property ScalarMetaParam transmissionClutch4Pressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_clutch_4_pressure, true, false, slots.pressure, "", qsTr("Clutch 4 Pressure"))
+        immediateWrite: true
+    }
+    property ScalarMetaParam transmissionClutch5Pressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_clutch_5_pressure, true, false, slots.pressure, "", qsTr("Clutch 5 Pressure"))
+        immediateWrite: true
+    }
+    property ScalarMetaParam transmissionClutch6Pressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_clutch_6_pressure, true, false, slots.pressure, "", qsTr("Clutch 6 Pressure"))
+        immediateWrite: true
+    }
+    property ScalarMetaParam transmissionClutch7Pressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_clutch_7_pressure, true, false, slots.pressure, "", qsTr("Clutch 7 Pressure"))
+        immediateWrite: true
+    }
+    property ScalarMetaParam transmissionClutch8Pressure: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_clutch_8_pressure, true, false, slots.pressure, "", qsTr("Clutch 8 Pressure"))
+        immediateWrite: true
+    }
+
     property ScalarMetaParam powertrainType: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_type, true, true, slots.transmissionType1, "", qsTr("Powertrain Type"))
     }
@@ -2057,5 +2100,8 @@ QtObject {
     }
     property ScalarMetaParam evDriveLastFaultType: ScalarMetaParam {
         param: registry.addScalarParam(MemoryRange.S32, paramId.ev_drive_last_fault_type, false, false, slots.evDriveFault, "", qsTr("EV Drive Last Fault"))
+    }
+    property ScalarMetaParam remoteMode: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.remote_mode, true, true, slots.booleanYesNo1, "", qsTr("Remote Mode"))
     }
 }

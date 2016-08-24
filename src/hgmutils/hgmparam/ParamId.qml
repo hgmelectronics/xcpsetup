@@ -659,5 +659,6 @@ QtObject {
     // ab mode
     readonly property double controller_mode: 0x8f000000
     readonly property double diagnostic_mode: 0x8f010000
+    readonly property double remote_mode: 0x8f020000
     readonly property double security_level: 0x8f800000
 }
