@@ -367,6 +367,14 @@ RowLayout {
                 metaParam: parameters.transmissionSTUpshiftTorqueThreshold
             }
 
+            ScalarParamSpinBox {
+                metaParam: parameters.transmissionTSSpeedSyncTime
+            }
+
+            ScalarParamSpinBox {
+                metaParam: parameters.transmissionSTSpeedSyncTime
+            }
+
             Button {
                 text: "TS Torque Transfer Time"
                 onClicked: {
@@ -395,14 +403,6 @@ RowLayout {
                 paramLists: [
                     parameters.transmissionSpeedTorqueTransferTime
                 ]
-            }
-
-            ScalarParamSpinBox {
-                metaParam: parameters.transmissionTSSpeedSyncTime
-            }
-
-            ScalarParamSpinBox {
-                metaParam: parameters.transmissionSTSpeedSyncTime
             }
 
             TableByShiftEditMenuButton {
