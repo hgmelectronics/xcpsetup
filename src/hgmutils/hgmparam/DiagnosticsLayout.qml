@@ -56,13 +56,7 @@ ColumnLayout {
                             parameters.controllerTachInputFrequency,
                             parameters.controllerTissInputFrequency,
                             parameters.controllerTossInputFrequency,
-                            parameters.controllerSpareInputFrequency,
-                            parameters.transmissionInputShaftSpeed,
-                            parameters.transmissionOutputShaftSpeed,
-                            parameters.leftFrontWheelSpeed,
-                            parameters.rightFrontWheelSpeed,
-                            parameters.leftRearWheelSpeed,
-                            parameters.rightRearWheelSpeed
+                            parameters.controllerSpareInputFrequency
                         ]
                     }
                 ]
