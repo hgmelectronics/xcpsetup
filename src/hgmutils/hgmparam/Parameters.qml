@@ -225,6 +225,30 @@ QtObject {
         immediateWrite: true
     }
 
+    property ScalarMetaParam transmissionInputShaftSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_input_shaft_speed, false, false, slots.rpm1, "", qsTr("Input Shaft Speed"))
+    }
+
+    property ScalarMetaParam transmissionOutputShaftSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_output_shaft_speed, false, false, slots.rpm1, "", qsTr("Output Shaft Speed"))
+    }
+
+    property ScalarMetaParam leftFrontWheelSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.left_front_wheel_speed, false, false, slots.rpm1, "", qsTr("Left Front Wheel Speed"))
+    }
+
+    property ScalarMetaParam rightFrontWheelSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.right_front_wheel_speed, false, false, slots.rpm1, "", qsTr("Right Front Wheel Speed"))
+    }
+
+    property ScalarMetaParam leftRearWheelSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.left_rear_wheel_speed, false, false, slots.rpm1, "", qsTr("Left Rear Wheel Speed"))
+    }
+
+    property ScalarMetaParam rightRearWheelSpeed: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.right_rear_wheel_speed, false, false, slots.rpm1, "", qsTr("Right Rear Wheel Speed"))
+    }
+
     readonly property ArrayParam controllerPWMDriverFrequency: registry.addArrayParam(MemoryRange.S32, paramId.controller_pwmdriver_frequency, 12, true, false, slots.frequency, "", qsTr(""))
 
     readonly property ArrayParam controllerPWMDriverDutyCycle: registry.addArrayParam(MemoryRange.S32, paramId.controller_pwmdriver_duty_cycle, 12, true, false, slots.percentage2, "", qsTr(""))
@@ -510,6 +534,15 @@ QtObject {
             param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_6_5_st_transfer_time, true, true, slots.timeMilliseconds1, "", qsTr("ST Transfer Time 6-5"))
         }
     }
+
+    property ScalarMetaParam transmissionTSSpeedSyncTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_ts_speed_sync_time, true, true, slots.timeMilliseconds1, "", qsTr("TS Speed Sync Time"))
+    }
+
+    property ScalarMetaParam transmissionSTSpeedSyncTime: ScalarMetaParam {
+        param: registry.addScalarParam(MemoryRange.S32, paramId.transmission_shift_st_speed_sync_time, true, true, slots.timeMilliseconds1, "", qsTr("ST Speed Sync Time"))
+    }
+
     property TableMetaParam transmissionTemperaturePressureCompensation: TableMetaParam {
         param: TableParam {
             x: tempAxisModel

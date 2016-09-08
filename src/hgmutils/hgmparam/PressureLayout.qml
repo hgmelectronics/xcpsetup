@@ -397,6 +397,14 @@ RowLayout {
                 ]
             }
 
+            ScalarParamSpinBox {
+                metaParam: parameters.transmissionTSSpeedSyncTime
+            }
+
+            ScalarParamSpinBox {
+                metaParam: parameters.transmissionSTSpeedSyncTime
+            }
+
             TableByShiftEditMenuButton {
                 text: qsTr("Shift Torque Limits")
                 xLabel: qsTr("Driver Torque")

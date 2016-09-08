@@ -289,6 +289,9 @@ QtObject {
     readonly property double transmission_shift_5_6_st_transfer_time: 0x03e2000c
     readonly property double transmission_shift_6_5_st_transfer_time: 0x03e2000d
 
+    readonly property double transmission_shift_ts_speed_sync_time: 0x03e70000
+    readonly property double transmission_shift_st_speed_sync_time: 0x03eb0000
+
     readonly property double garage_shift_time: 0x03f00000
     readonly property double garage_shift_max_pressure: 0x03f40000
     readonly property double garage_shift_max_percentage: 0x03f50000
