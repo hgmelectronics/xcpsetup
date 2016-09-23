@@ -197,7 +197,8 @@ ApplicationWindow {
                 if (selectExisting) {
                     var rawData = jsonParamFileIo.read()
                     paramReg.beginHistoryElide()
-                    paramReg.setValidAll(false)
+                    if(!paramLayer.slaveConnected)
+                        paramReg.setValidAll(false)
                     paramLayer.setRawData(rawData, false)
                     paramLayer.setRawData(rawData, true)    // second time in case of param dependencies in wrong order
                     paramReg.endHistoryElide()
@@ -211,7 +212,8 @@ ApplicationWindow {
                     var saveUnits = setStandardUnits()
                     var data = csvParamFileIo.read()
                     paramReg.beginHistoryElide()
-                    paramReg.setValidAll(false)
+                    if(!paramLayer.slaveConnected)
+                        paramReg.setValidAll(false)
                     paramLayer.setData(data, false)
                     paramLayer.setData(data, true)    // second time in case of param dependencies in wrong order
                     paramReg.endHistoryElide()
