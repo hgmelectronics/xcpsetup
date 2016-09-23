@@ -208,19 +208,20 @@ QPair<quint32, quint32> Param::changedBytes() const
     return {begin, end};
 }
 
-void Param::setBytes(boost::iterator_range<const quint8 *> data, quint32 offset)
+void Param::setBytes(boost::iterator_range<const quint8 *> data, quint32 offset, bool eraseExisting)
 {
     Q_ASSERT(data.size() + offset <= quint32(mBytes.size()));
 
     bool changed = false;
+
+    if(eraseExisting)
+        mBytesLoaded.reset();
 
     if(!std::equal(data.begin(), data.end(), mBytes.begin() + offset))
     {
         changed = true;
         std::copy(data.begin(), data.end(), mBytes.begin() + offset);
     }
-
-
 
     for(quint32 i = offset, end = offset + data.size(); i != end; ++i)
     {
@@ -240,11 +241,11 @@ void Param::setBytes(boost::iterator_range<const quint8 *> data, quint32 offset)
             if(updateDelta<>(mValid, true))
                 emit validChanged(mKey);
         }
-        setWriteCacheDirty(mBytesLoaded != mSlaveBytesLoaded
-                || !std::equal(mBytes.begin(), mBytes.begin() + mNumBytesLoaded, mSlaveBytes.begin()));
         updateEngrFromRaw(offset, offset + data.size());
         emit rawValueChanged(mKey);
     }
+    setWriteCacheDirty(mBytesLoaded != mSlaveBytesLoaded
+            || !std::equal(mBytes.begin(), mBytes.begin() + mNumBytesLoaded, mSlaveBytes.begin()));
 }
 
 void Param::setSlaveBytes(boost::iterator_range<const quint8 *> data, quint32 offset)
@@ -386,7 +387,7 @@ bool Param::isCompleted()
 
 void Param::registerIfCompleted()
 {
-    if(isCompleted())
+    if(isCompleted() && !mCompleted)
     {
         mCompleted = true;
 

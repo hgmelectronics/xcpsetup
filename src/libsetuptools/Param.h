@@ -172,7 +172,7 @@ public:
     {
         return mNumBytesLoaded;
     }
-    void setBytes(boost::iterator_range<const quint8 *> data, quint32 offset);  // used to make host-only changes
+    void setBytes(boost::iterator_range<const quint8 *> data, quint32 offset, bool eraseExisting = false);  // used to make host-only changes
     void setSlaveBytes(boost::iterator_range<const quint8 *> data, quint32 offset);  // called by ParamRegistry when it dispatches uploaded data - also sets host bytes
 
     template <typename T>

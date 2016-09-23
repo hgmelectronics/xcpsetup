@@ -107,14 +107,18 @@ QString EncodingSlot::asString(QVariant raw) const
 {
     bool convOk;
     double rawDouble = raw.toDouble(&convOk);
-    if(!convOk)
-        rawDouble = NAN;
 
-    if(mRawToEngr.count(rawDouble))
-        return mRawToEngr[rawDouble];
-    if(mUnencodedSlot)
-        return mUnencodedSlot->asString(raw);
-    return oorString;
+    QString str = oorString;
+
+    if(convOk)
+    {
+        if(mRawToEngr.count(rawDouble))
+            str = mRawToEngr[rawDouble];
+        else if(mUnencodedSlot)
+            str = mUnencodedSlot->asString(raw);
+    }
+
+    return str;
 }
 
 QVariant EncodingSlot::asRaw(QVariant engr) const

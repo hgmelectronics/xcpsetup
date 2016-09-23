@@ -12,6 +12,7 @@ ArrayParam::ArrayParam(Param *parent) :
     mFloatModel(new ArrayParamModel(false, false, this)),
     mRawModel(new ArrayParamModel(true, true, this))
 {
+    connect(this, &Param::validChanged, this, &ArrayParam::onValidChanged);
 }
 
 QVariant ArrayParam::get(int row) const
@@ -112,23 +113,26 @@ bool ArrayParam::setSerializableRawValue(const QVariant &val)
             || list.size() > maxCount())
         return false;
 
-    for(QVariant elem : list)
+    std::vector<quint8> data;
+    data.resize(list.size() * dataTypeSize());
+
+    for(size_t i = 0; i < size_t(list.size()); ++i)
     {
-        if(!slot()->rawInRange(elem))
+        if(!slot()->rawInRange(list[i]))
+            return false;
+        if(!convertToSlave(list[i], data.data() + i * dataTypeSize()))
             return false;
     }
 
-    bool ok = true;
+    setBytes({data.begin().base(), data.end().base()}, 0, true);
 
-    for(int i = 0; i < list.size(); ++i)
-        ok = ok && setRawVal(i, list[i]);
+    return true;
+}
 
-    if(updateDelta<>(mActualDim, list.size()))
-        emit countChanged();
+void ArrayParam::onValidChanged()
+{
     emit modelChanged();
-    emit rawValueChanged(key());
-    emit modelDataChanged(0, list.size());
-    return ok;
+    emit modelDataChanged(0, mActualDim);
 }
 
 void ArrayParam::updateEngrFromRaw(quint32 begin, quint32 end)  // called from Param when data or its presence changes via XCP or setValid()
@@ -185,7 +189,7 @@ quint32 ArrayParam::maxSize()
 
 QVariant ArrayParam::rawVal(int row) const
 {
-    if(row < 0 || row >= mActualDim)
+    if(row < 0 || row >= mActualDim || !valid())
         return QVariant();
 
     return convertFromSlave(bytes().begin() + row * dataTypeSize());

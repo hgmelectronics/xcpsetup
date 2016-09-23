@@ -93,9 +93,9 @@ signals:
     void maxCountChanged();
 
 public slots:
+    void onValidChanged();
 
 private:
-    void emitDataChanged(bool forceModelChanged = false);
     virtual void updateEngrFromRaw(quint32 begin, quint32 end);
     QVariant rawVal(int row) const;
     bool setRawVal(int row, const QVariant & val);
