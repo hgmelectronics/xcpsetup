@@ -9,15 +9,10 @@ import com.hgmelectronics.setuptools.ui 1.0
 
 Item {
     id: root
-    property alias useMetricUnits: params.useMetricUnits
-    property ParamRegistry registry
+    property Parameters registry
     anchors.left: parent.left
     anchors.right: parent.right
 
-    Parameters {
-        id: params
-        registry: root.registry
-    }
 
     TabView {
         id: tabView
@@ -27,7 +22,7 @@ Item {
             active: true
             title: qsTr("Vehicle")
             VehicleLayout {
-                parameters: params
+                parameters: root.registry
             }
             visible: false
         }
@@ -36,7 +31,7 @@ Item {
             active: true
             title: qsTr("Engine")
             EngineLayout {
-                parameters: params
+                parameters: registry
             }
         }
 
@@ -44,7 +39,7 @@ Item {
             active: true
             title: qsTr("Trans")
             TransmissionLayout {
-                parameters: params
+                parameters: registry
             }
         }
 
@@ -52,7 +47,7 @@ Item {
             active: true
             title: qsTr("Shift Speeds")
             ShiftSpeedsLayout {
-                parameters: params
+                parameters: registry
             }
         }
 
@@ -60,7 +55,7 @@ Item {
             active: true
             title: qsTr("Shift Control")
             PressureLayout {
-                parameters: params
+                parameters: registry
             }
         }
 
@@ -68,7 +63,7 @@ Item {
             active: true
             title: qsTr("TC")
             TcLayout {
-                parameters: params
+                parameters: registry
             }
         }
 
@@ -76,7 +71,7 @@ Item {
             active: true
             title: qsTr("Diagnostics")
             DiagnosticsLayout {
-                parameters: params
+                parameters: registry
             }
         }
 
@@ -84,7 +79,7 @@ Item {
             active: true
             title: qsTr("Keypad")
             KeypadDisplayLayout {
-                parameters: params
+                parameters: registry
             }
         }
 
@@ -92,7 +87,7 @@ Item {
             active: true
             title: qsTr("CAN")
             CanLayout {
-                parameters: params
+                parameters: registry
             }
         }
 
@@ -100,7 +95,7 @@ Item {
             active: true
             title: qsTr("EV")
             EvLayout {
-                parameters: params
+                parameters: registry
             }
         }
     }

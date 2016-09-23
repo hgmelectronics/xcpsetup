@@ -33,6 +33,10 @@ ApplicationWindow {
         property alias interfaceSaveUri: application.interfaceSaveUri
     }
 
+    Parameters {
+        id: paramReg
+    }
+
     MainForm {
         id: mainForm
         anchors.fill: parent
@@ -57,13 +61,13 @@ ApplicationWindow {
         onUserShowParamEdit: paramWindow.show()
         targetCmdId: "1F000090"
         targetResId: "1F000091"
-        registry: paramLayer.registry
+        registry: paramReg
     }
 
     ParamLayer {
         id: paramLayer
+        registry: paramReg
         intfcUri: mainForm.intfcUri
-        addrGran: 1
         slaveTimeout: 100
         slaveNvWriteTimeout: 400
 
@@ -292,28 +296,28 @@ ApplicationWindow {
         id: undoAction
         text: qsTr("Undo")
         shortcut: StandardKey.Undo
-        enabled: paramLayer.registry.currentRevNum > paramLayer.registry.minRevNum
-        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum - 1
+        enabled: paramReg.currentRevNum > paramReg.minRevNum
+        onTriggered: paramReg.currentRevNum = paramReg.currentRevNum - 1
     }
 
     Action {
         id: redoAction
         text: qsTr("Redo")
         shortcut: StandardKey.Redo
-        enabled: paramLayer.registry.currentRevNum < paramLayer.registry.maxRevNum
-        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum + 1
+        enabled: paramReg.currentRevNum < paramReg.maxRevNum
+        onTriggered: paramReg.currentRevNum = paramReg.currentRevNum + 1
     }
 
     Action {
         id: enableAllParametersAction
         text: qsTr("Enable all parameters")
-        onTriggered: paramLayer.registry.setValidAll(true)
+        onTriggered: paramReg.setValidAll(true)
     }
 
     Action {
         id: disableAllParametersAction
         text: qsTr("Disable all parameters")
-        onTriggered: paramLayer.registry.setValidAll(false)
+        onTriggered: paramReg.setValidAll(false)
     }
 
     menuBar: MenuBar {

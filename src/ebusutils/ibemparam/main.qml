@@ -110,6 +110,10 @@ ApplicationWindow {
         id: disableAllParametersAction
         text: qsTr("Disable all parameters")
         onTriggered: paramLayer.registry.setValidAll(false)
+    }    
+    
+    Parameters {
+        id: paramReg
     }
 
     MainForm {
@@ -145,17 +149,17 @@ ApplicationWindow {
         onUserDisconnectParam: paramLayer.disconnectSlave()
         onUserShowParamEdit: paramWindow.show()
         boardId: -120
-        registry: paramLayer.registry
+        registry: paramReg
     }
 
     ParamLayer {
         id: paramLayer
         intfcUri: mainForm.intfcUri
-        addrGran: 1
         slaveTimeout: 100
         slaveNvWriteTimeout: 200
         Component.onCompleted: AutoRefreshManager.paramLayer = this
         onConnectSlaveDone: paramLayer.setSlaveCalPage()
+        registry: paramReg
     }
 
     JSONParamFile {

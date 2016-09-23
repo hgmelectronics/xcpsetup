@@ -1,16 +1,14 @@
 #include <QQmlApplicationEngine>
 #include <QtQml>
 #include "SetupTools.h"
+#include "ParamRegistry.h"
 #include "ProgFile.h"
 #include "Xcp_ProgramLayer.h"
 #include "Xcp_Connection.h"
 #include "Xcp_Interface_Registry.h"
 #include "Xcp_ParamLayer.h"
-#include "Xcp_ParamRegistry.h"
-#include "Xcp_ScalarParam.h"
-#include "Xcp_ScalarMemoryRange.h"
-#include "Xcp_ArrayParam.h"
-#include "Xcp_ArrayMemoryRange.h"
+#include "ScalarParam.h"
+#include "ArrayParam.h"
 #include "LinearSlot.h"
 #include "EncodingSlot.h"
 #include "JSONParamFile.h"
@@ -38,29 +36,20 @@ void registerTypes()
     qmlRegisterType<SetupTools::Xcp::Connection>("com.hgmelectronics.setuptools.xcp", major, minor, "ConnectionState");  // for State enum
     qmlRegisterSingletonType<SetupTools::ProgFile>("com.hgmelectronics.setuptools.xcp", major, minor, "ProgFile", &SetupTools::ProgFile::create);  // for its static functions
     qmlRegisterType<SetupTools::FlashProg>("com.hgmelectronics.setuptools", major, minor, "FlashProg");
-    qmlRegisterSingletonType<SetupTools::Xcp::OpResultWrapper>("com.hgmelectronics.setuptools.xcp", major, minor, "OpResult", &SetupTools::Xcp::OpResultWrapper::create);
+    qmlRegisterSingletonType<SetupTools::OpResultWrapper>("com.hgmelectronics.setuptools.xcp", major, minor, "OpResult", &SetupTools::OpResultWrapper::create);
     qmlRegisterSingletonType<SetupTools::UrlUtil>("com.hgmelectronics.setuptools.xcp", major, minor, "UrlUtil", &SetupTools::UrlUtil::create);
     qmlRegisterSingletonType<SetupTools::Clipboard>("com.hgmelectronics.setuptools", major, minor, "Clipboard", &SetupTools::Clipboard::create);
     qmlRegisterSingletonType<SetupTools::AppVersion>("com.hgmelectronics.setuptools", major, minor, "AppVersion", &SetupTools::AppVersion::create);
     qmlRegisterType<SetupTools::Xcp::ParamLayer>("com.hgmelectronics.setuptools.xcp", major, minor, "ParamLayer");
     qmlRegisterType<SetupTools::TabSeparated>("com.hgmelectronics.setuptools", major, minor, "TabSeparated");
 
-    qmlRegisterType<SetupTools::Xcp::ParamRegistry>("com.hgmelectronics.setuptools.xcp", major, minor, "ParamRegistry");
+    qmlRegisterType<SetupTools::ParamRegistry>("com.hgmelectronics.setuptools", major, minor, "ParamRegistry");
     qmlRegisterType<SetupTools::JSONParamFile>("com.hgmelectronics.setuptools", major, minor, "JSONParamFile");
     qmlRegisterType<SetupTools::CSVParamFile>("com.hgmelectronics.setuptools", major, minor, "CSVParamFile");
 
-    qmlRegisterUncreatableType<SetupTools::Xcp::Param>("com.hgmelectronics.setuptools.xcp", major, minor, "Param", "SetupTools::Xcp::Param is uncreatable from within QML");
-    qmlRegisterUncreatableType<SetupTools::Xcp::MemoryRange>("com.hgmelectronics.setuptools.xcp", major, minor, "MemoryRange", "SetupTools::Xcp::MemoryRange is uncreatable from within QML");
-
-    qmlRegisterType<SetupTools::Xcp::ScalarParam>("com.hgmelectronics.setuptools.xcp", major, minor, "ScalarParam");
-    qmlRegisterUncreatableType<SetupTools::Xcp::ScalarMemoryRange>("com.hgmelectronics.setuptools.xcp", major, minor, "ScalarMemoryRange", "SetupTools::Xcp::ScalarMemoryRange is uncreatable from within QML");
-
-    qmlRegisterType<SetupTools::Xcp::ArrayParam>("com.hgmelectronics.setuptools.xcp", major, minor, "ArrayParam");
-    qmlRegisterUncreatableType<SetupTools::Xcp::ArrayMemoryRange>("com.hgmelectronics.setuptools.xcp", major, minor, "ArrayMemoryRange", "SetupTools::Xcp::ArrayMemoryRange is uncreatable from within QML");
-    qmlRegisterUncreatableType<SetupTools::Xcp::ArrayParamModel>("com.hgmelectronics.setuptools.xcp", major, minor, "ArrayParamModel", "SetupTools::Xcp::ArrayParamModel is uncreatable from within QML");
-
-    qmlRegisterType<SetupTools::Xcp::VarArrayParam>("com.hgmelectronics.setuptools.xcp", major, minor, "VarArrayParam");
-    qmlRegisterUncreatableType<SetupTools::Xcp::VarArrayParamModel>("com.hgmelectronics.setuptools.xcp", major, minor, "VarArrayParamModel", "SetupTools::Xcp::VarArrayParamModel is uncreatable from within QML");
+    qmlRegisterUncreatableType<SetupTools::Param>("com.hgmelectronics.setuptools.xcp", major, minor, "Param", "SetupTools::Param is uncreatable from within QML");
+    qmlRegisterType<SetupTools::ScalarParam>("com.hgmelectronics.setuptools", major, minor, "ScalarParam");
+    qmlRegisterType<SetupTools::ArrayParam>("com.hgmelectronics.setuptools", major, minor, "ArrayParam");
 
     qmlRegisterUncreatableType<SetupTools::Slot>("com.hgmelectronics.setuptools", major, minor, "Slot", "SetupTools::Slot is uncreatable from within QML");
     qmlRegisterType<SetupTools::LinearSlot>("com.hgmelectronics.setuptools", major, minor, "LinearSlot");

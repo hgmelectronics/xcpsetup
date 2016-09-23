@@ -154,8 +154,8 @@ Connection::Connection(QObject *parent) :
     mOpProgressFracs(0)
 {
     qRegisterMetaType<SetupTools::Xcp::XcpPtr>("XcpPtr");
-    qRegisterMetaType<SetupTools::Xcp::OpResult>();
-    qRegisterMetaType<SetupTools::Xcp::OpResultWrapper::OpResult>();
+    qRegisterMetaType<SetupTools::OpResult>();
+    qRegisterMetaType<SetupTools::OpResultWrapper::OpResult>();
     qRegisterMetaType<SetupTools::Xcp::Connection::OpExtInfo>();
     qRegisterMetaType<SetupTools::Xcp::CksumType>();
     qRegisterMetaType<std::vector<quint8> >();
@@ -383,8 +383,10 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
         OpResult segResult = uploadSegment(packetPtr, packetBytes, seg, OpType::Upload);
         if(segResult != OpResult::Success)
         {
+            if(out)
+                *out = data;
             updateEmitOpProgress(0);
-            emit uploadDone(segResult, base, len);
+            emit uploadDone(segResult, base, len, data);
             return segResult;
         }
         data.insert(data.end(), seg.begin(), seg.end());
@@ -392,10 +394,10 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
         packetPtr.addr += packetBytes / mAddrGran;
         updateEmitOpProgress(double(len - remBytes) / len);
     }
-    emit uploadDone(OpResult::Success, base, len, data);
-    updateEmitOpProgress(0);
     if(out)
         *out = data;
+    emit uploadDone(OpResult::Success, base, len, data);
+    updateEmitOpProgress(0);
     return OpResult::Success;
 }
 

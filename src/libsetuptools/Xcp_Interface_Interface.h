@@ -4,7 +4,7 @@
 #include <QtCore>
 #include <list>
 #include <QException>
-#include "Xcp_Exception.h"
+#include "Exception.h"
 #include "util.h"
 
 namespace SetupTools
@@ -14,7 +14,7 @@ namespace Xcp
 namespace Interface
 {
 
-class Exception : public ::SetupTools::Xcp::Exception {};
+class Exception : public ::SetupTools::Exception {};
 
 /*!
  * \brief Base class for interfaces (not abstract so dummies can be created by QML, but will fail assertion if dummy used.)

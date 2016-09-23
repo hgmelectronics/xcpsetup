@@ -14,7 +14,7 @@ ApplicationWindow {
     id: application
     property string programName: qsTr("COMPUSHIFT Parameter Editor")
     property string programVersion: ""
-    property alias useMetricUnits: paramTabView.useMetricUnits
+    property alias useMetricUnits: paramReg.useMetricUnits
     property alias readParametersOnConnect: readParametersOnConnectAction.checked
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
@@ -67,11 +67,15 @@ ApplicationWindow {
         property alias interfaceSaveUri: application.interfaceUri
     }
 
+    Parameters {
+        id: paramReg
+    }
+
     ParamLayer {
         id: paramLayer
-        addrGran: 4
         slaveTimeout: 100
         slaveNvWriteTimeout: 1000
+        registry: paramReg
 
         function checkImmediateWrite() {
             if(slaveConnected && idle && ImmediateWrite.keys.length > 0) {
@@ -192,11 +196,11 @@ ApplicationWindow {
                 jsonParamFileIo.name = name
                 if (selectExisting) {
                     var rawData = jsonParamFileIo.read()
-                    paramLayer.registry.beginHistoryElide()
-                    paramLayer.registry.setValidAll(false)
+                    paramReg.beginHistoryElide()
+                    paramReg.setValidAll(false)
                     paramLayer.setRawData(rawData, false)
                     paramLayer.setRawData(rawData, true)    // second time in case of param dependencies in wrong order
-                    paramLayer.registry.endHistoryElide()
+                    paramReg.endHistoryElide()
                 } else {
                     saveJsonParamFile()
                 }
@@ -206,11 +210,11 @@ ApplicationWindow {
                 if (selectExisting) {
                     var saveUnits = setStandardUnits()
                     var data = csvParamFileIo.read()
-                    paramLayer.registry.beginHistoryElide()
-                    paramLayer.registry.setValidAll(false)
+                    paramReg.beginHistoryElide()
+                    paramReg.setValidAll(false)
                     paramLayer.setData(data, false)
                     paramLayer.setData(data, true)    // second time in case of param dependencies in wrong order
-                    paramLayer.registry.endHistoryElide()
+                    paramReg.endHistoryElide()
                     restoreUnits(saveUnits)
                 } else {
                     saveCsvParamFile()
@@ -417,28 +421,28 @@ ApplicationWindow {
         id: undoAction
         text: qsTr("Undo")
         shortcut: StandardKey.Undo
-        enabled: paramLayer.registry.currentRevNum > paramLayer.registry.minRevNum
-        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum - 1
+        enabled: paramReg.currentRevNum > paramReg.minRevNum
+        onTriggered: paramReg.currentRevNum = paramReg.currentRevNum - 1
     }
 
     Action {
         id: redoAction
         text: qsTr("Redo")
         shortcut: StandardKey.Redo
-        enabled: paramLayer.registry.currentRevNum < paramLayer.registry.maxRevNum
-        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum + 1
+        enabled: paramReg.currentRevNum < paramReg.maxRevNum
+        onTriggered: paramReg.currentRevNum = paramReg.currentRevNum + 1
     }
 
     Action {
         id: enableAllParametersAction
         text: qsTr("Enable All Parameters")
-        onTriggered: paramLayer.registry.setValidAll(true)
+        onTriggered: paramReg.setValidAll(true)
     }
 
     Action {
         id: disableAllParametersAction
         text: qsTr("Disable All Parameters")
-        onTriggered: paramLayer.registry.setValidAll(false)
+        onTriggered: paramReg.setValidAll(false)
     }
 
     menuBar: MenuBar {
@@ -607,7 +611,7 @@ ApplicationWindow {
     ParamTabView {
         id: paramTabView
         anchors.fill: parent
-        registry: paramLayer.registry
+        registry: paramReg
     }
 
     statusBar: StatusBar {

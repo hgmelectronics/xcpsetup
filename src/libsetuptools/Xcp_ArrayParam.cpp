@@ -152,12 +152,12 @@ bool ArrayParam::setSerializableRawValue(const QVariant &val)
     return mRange->setDataRange(val.toList(), 0);
 }
 
-void ArrayParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
+void ArrayParam::onRangeUploadDone(SetupTools::OpResult result)
 {
     emit uploadDone(result);
 }
 
-void ArrayParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
+void ArrayParam::onRangeDownloadDone(SetupTools::OpResult result)
 {
     emit downloadDone(result);
 }

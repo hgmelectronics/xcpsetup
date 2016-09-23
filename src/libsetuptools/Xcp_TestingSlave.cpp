@@ -28,7 +28,7 @@ TestingSlave::TestingSlave(SetupTools::Xcp::Interface::Loopback::Interface *intf
     mIsConnected(false),
     mIsProgramMode(false),
     mStoreCalReqSet(false),
-    mMta({0, 0})
+    mMta(XcpPtr(0, 0))
 {
     mNvWriteTimer.invalidate();
     start();

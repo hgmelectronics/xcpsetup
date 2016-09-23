@@ -68,13 +68,13 @@ public slots:
     void abort();
 
 private:
-    void onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-    void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
-    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
+    void onGetAvailSlavesStrDone(SetupTools::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void onProgramDone(SetupTools::OpResult result, FlashProg *prog, quint8 addrExt);
+    void onProgramVerifyDone(SetupTools::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
     void onWatchdogExpired();
-    void onProgramResetDone(SetupTools::Xcp::OpResult result);
-    void onProgramModeDone(SetupTools::Xcp::OpResult result);
-    void onDisconnectDone(SetupTools::Xcp::OpResult result);
+    void onProgramResetDone(SetupTools::OpResult result);
+    void onProgramModeDone(SetupTools::OpResult result);
+    void onDisconnectDone(SetupTools::OpResult result);
     void onProgFileChanged();
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();

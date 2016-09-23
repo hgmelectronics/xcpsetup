@@ -7,7 +7,7 @@
 QT       -= gui
 QT       += quick
 
-QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections
+QMAKE_CXXFLAGS += -std=c++14 -ffunction-sections -fdata-sections
 
 TARGET = ebussetuptools
 TEMPLATE = lib

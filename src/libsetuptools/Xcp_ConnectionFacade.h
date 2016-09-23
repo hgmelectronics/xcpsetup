@@ -67,18 +67,18 @@ public:
     int addrGran();
 
 signals:
-    void uploadDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
-    void downloadDone(SetupTools::Xcp::OpResult result, XcpPtr base, const std::vector<quint8> &data);
-    void nvWriteDone(SetupTools::Xcp::OpResult result);
-    void setCalPageDone(SetupTools::Xcp::OpResult result, quint8 segment, quint8 page);
-    void programClearDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len);
-    void programRangeDone(SetupTools::Xcp::OpResult result, XcpPtr base, const std::vector<quint8> &data, bool finalEmptyPacket);
-    void programVerifyDone(SetupTools::Xcp::OpResult result, XcpPtr mta, quint32 crc);
-    void programResetDone(SetupTools::Xcp::OpResult result);
-    void buildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
-    void getAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-    void setStateDone(SetupTools::Xcp::OpResult result);
-    void opMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void uploadDone(SetupTools::OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
+    void downloadDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data);
+    void nvWriteDone(SetupTools::OpResult result);
+    void setCalPageDone(SetupTools::OpResult result, quint8 segment, quint8 page);
+    void programClearDone(SetupTools::OpResult result, XcpPtr base, int len);
+    void programRangeDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data, bool finalEmptyPacket);
+    void programVerifyDone(SetupTools::OpResult result, XcpPtr mta, quint32 crc);
+    void programResetDone(SetupTools::OpResult result);
+    void buildChecksumDone(SetupTools::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
+    void getAvailSlavesStrDone(SetupTools::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void setStateDone(SetupTools::OpResult result);
+    void opMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void stateChanged();
     void opProgressChanged();
     void slaveIdChanged();
@@ -108,18 +108,18 @@ public slots:
     void getAvailSlavesStr(QString bcastId, QString filter);
 
 private:
-    void onConnSetStateDone(SetupTools::Xcp::OpResult);
-    void onConnUploadDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, std::vector<quint8> data);
-    void onConnDownloadDone(SetupTools::Xcp::OpResult result, XcpPtr base, std::vector<quint8> data);
-    void onConnNvWriteDone(SetupTools::Xcp::OpResult result);
-    void onConnSetCalPageDone(SetupTools::Xcp::OpResult result, quint8 segment, quint8 page);
-    void onConnProgramClearDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len);
-    void onConnProgramRangeDone(SetupTools::Xcp::OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
-    void onConnProgramVerifyDone(SetupTools::Xcp::OpResult result, XcpPtr mta, quint32 crc);
-    void onConnProgramResetDone(SetupTools::Xcp::OpResult result);
-    void onConnBuildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
-    void onConnGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-    void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void onConnSetStateDone(SetupTools::OpResult);
+    void onConnUploadDone(SetupTools::OpResult result, XcpPtr base, int len, std::vector<quint8> data);
+    void onConnDownloadDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data);
+    void onConnNvWriteDone(SetupTools::OpResult result);
+    void onConnSetCalPageDone(SetupTools::OpResult result, quint8 segment, quint8 page);
+    void onConnProgramClearDone(SetupTools::OpResult result, XcpPtr base, int len);
+    void onConnProgramRangeDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
+    void onConnProgramVerifyDone(SetupTools::OpResult result, XcpPtr mta, quint32 crc);
+    void onConnProgramResetDone(SetupTools::OpResult result);
+    void onConnBuildChecksumDone(SetupTools::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
+    void onConnGetAvailSlavesStrDone(SetupTools::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void onConnOpMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void onConnStateChanged();
     void onConnOpProgressChanged();
 
@@ -151,8 +151,8 @@ public slots:
     void downloadUint32(quint32 base, quint32 data);
 
 private:
-    void onConnUploadDone(SetupTools::Xcp::OpResult, XcpPtr, int, const std::vector<quint8> &);
-    void onConnDownloadDone(SetupTools::Xcp::OpResult, XcpPtr, const std::vector<quint8> &);
+    void onConnUploadDone(SetupTools::OpResult, XcpPtr, int, const std::vector<quint8> &);
+    void onConnDownloadDone(SetupTools::OpResult, XcpPtr, const std::vector<quint8> &);
     ConnectionFacade *mConn;
 };
 

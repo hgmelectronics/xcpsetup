@@ -17,11 +17,6 @@ Item {
         id: tabView
         anchors.fill: parent
 
-        Parameters {
-            id: parameters
-            registry: root.registry
-        }
-
         Tab {
             title: "Analog I/O"
             active: true
@@ -33,11 +28,11 @@ Item {
                     anchors.margins: 10
                     spacing: 10
                     TableParamEdit {
-                        tableParam: parameters.aioAiCts
+                        tableParam: registry.aioAiCts
                     }
                     ScalarParamEdit {
                         name: "VBat"
-                        metaParam: parameters.aioVbatEv01
+                        metaParam: registry.aioVbatEv01
                     }
                 }
             }
@@ -57,97 +52,97 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "AuxBattCnvtCmdOn"
-                            metaParam: parameters.canAuxBattCnvtCmdOn
+                            metaParam: registry.canAuxBattCnvtCmdOn
                         }
                         ScalarParamEdit {
                             name: "AuxBattCnvtCmdVolt"
-                            metaParam: parameters.canAuxBattCnvtCmdVolt
+                            metaParam: registry.canAuxBattCnvtCmdVolt
                         }
                         ScalarParamEdit {
                             name: "CtlMaxMotoringTorque"
-                            metaParam: parameters.canCtlMaxMotoringTorque
+                            metaParam: registry.canCtlMaxMotoringTorque
                         }
                         ScalarParamEdit {
                             name: "CtlMaxRegenTorque"
-                            metaParam: parameters.canCtlMaxRegenTorque
+                            metaParam: registry.canCtlMaxRegenTorque
                         }
                         ScalarParamEdit {
                             name: "TracMotorSpeed"
-                            metaParam: parameters.canTracMotorSpeed
+                            metaParam: registry.canTracMotorSpeed
                         }
                         ScalarParamEdit {
                             name: "LimpHomeCmdOn"
-                            metaParam: parameters.canLimpHomeCmdOn
+                            metaParam: registry.canLimpHomeCmdOn
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "BattMaxDischCurrCmd"
-                            metaParam: parameters.canBattMaxDischCurrCmd
+                            metaParam: registry.canBattMaxDischCurrCmd
                         }
                         ScalarParamEdit {
                             name: "BattMaxChgCurrCmd"
-                            metaParam: parameters.canBattMaxChgCurrCmd
+                            metaParam: registry.canBattMaxChgCurrCmd
                         }
                         ScalarParamEdit {
                             name: "AuxBattCnvtState"
-                            metaParam: parameters.canAuxBattCnvtState
+                            metaParam: registry.canAuxBattCnvtState
                         }
                         ScalarParamEdit {
                             name: "AuxBattCnvtTemp"
-                            metaParam: parameters.canAuxBattCnvtTemp
+                            metaParam: registry.canAuxBattCnvtTemp
                         }
                         ScalarParamEdit {
                             name: "AuxBattCnvtInputVolt"
-                            metaParam: parameters.canAuxBattCnvtInputVolt
+                            metaParam: registry.canAuxBattCnvtInputVolt
                         }
                         ScalarParamEdit {
                             name: "AuxBattCnvtOutputVolt"
-                            metaParam: parameters.canAuxBattCnvtOutputVolt
+                            metaParam: registry.canAuxBattCnvtOutputVolt
                         }
                         ScalarParamEdit {
                             name: "AuxBattCnvtOutputCurr"
-                            metaParam: parameters.canAuxBattCnvtOutputCurr
+                            metaParam: registry.canAuxBattCnvtOutputCurr
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "ExtChgCtcRqst"
-                            metaParam: parameters.canExtChgCtcRqst
+                            metaParam: registry.canExtChgCtcRqst
                         }
                         ScalarParamEdit {
                             name: "AuxCtcRqrd"
-                            metaParam: parameters.canAuxCtcRqrd
+                            metaParam: registry.canAuxCtcRqrd
                         }
                         ScalarParamEdit {
                             name: "XcpProgramRequested"
-                            metaParam: parameters.canXcpProgramRequested
+                            metaParam: registry.canXcpProgramRequested
                         }
                         ScalarParamEdit {
                             name: "Can1RxErrCount"
-                            metaParam: parameters.canCan1RxErrCount
+                            metaParam: registry.canCan1RxErrCount
                         }
                         ScalarParamEdit {
                             name: "Can1TxErrCount"
-                            metaParam: parameters.canCan1TxErrCount
+                            metaParam: registry.canCan1TxErrCount
                         }
                         ScalarParamEdit {
                             name: "Can1BufferFull"
-                            metaParam: parameters.canCan1BufferFull
+                            metaParam: registry.canCan1BufferFull
                         }
                         ScalarParamEdit {
                             name: "Can2RxErrCount"
-                            metaParam: parameters.canCan2RxErrCount
+                            metaParam: registry.canCan2RxErrCount
                         }
                         ScalarParamEdit {
                             name: "Can2TxErrCount"
-                            metaParam: parameters.canCan2TxErrCount
+                            metaParam: registry.canCan2TxErrCount
                         }
                         ScalarParamEdit {
                             name: "Can2BufferFull"
-                            metaParam: parameters.canCan2BufferFull
+                            metaParam: registry.canCan2BufferFull
                         }
                     }
                 }
@@ -168,51 +163,51 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "Fault Decay"
-                            metaParam: parameters.cbtmFaultDecayCyc
+                            metaParam: registry.cbtmFaultDecayCyc
                         }
                         ScalarParamEdit {
                             name: "Non-Quiescent Trip"
-                            metaParam: parameters.cbtmNonQuiescentTripCyc
+                            metaParam: registry.cbtmNonQuiescentTripCyc
                         }
                         ScalarParamEdit {
                             name: "Non-Quiescent Decay"
-                            metaParam: parameters.cbtmNonQuiescentDecayCyc
+                            metaParam: registry.cbtmNonQuiescentDecayCyc
                         }
                         ScalarParamEdit {
                             name: "Balance Open Delta-V"
-                            metaParam: parameters.cbtmBalanceOpenDeltaVThresh
+                            metaParam: registry.cbtmBalanceOpenDeltaVThresh
                         }
                         ScalarParamEdit {
                             name: "Balance Short Delta-V"
-                            metaParam: parameters.cbtmBalanceShortDeltaVThresh
+                            metaParam: registry.cbtmBalanceShortDeltaVThresh
                         }
                         ScalarParamEdit {
                             name: "Quiescent Delta-V"
-                            metaParam: parameters.cbtmQuiescentDeltaVThresh
+                            metaParam: registry.cbtmQuiescentDeltaVThresh
                         }
                         ScalarParamEdit {
                             name: "IsoSPI #1 First ID"
-                            metaParam: parameters.cbtmIsospi1FirstBoard
+                            metaParam: registry.cbtmIsospi1FirstBoard
                         }
                         ScalarParamEdit {
                             name: "IsoSPI #1 Last ID"
-                            metaParam: parameters.cbtmIsospi1LastBoard
+                            metaParam: registry.cbtmIsospi1LastBoard
                         }
                         ScalarParamEdit {
                             name: "IsoSPI #2 First ID"
-                            metaParam: parameters.cbtmIsospi2FirstBoard
+                            metaParam: registry.cbtmIsospi2FirstBoard
                         }
                         ScalarParamEdit {
                             name: "IsoSPI #2 Last ID"
-                            metaParam: parameters.cbtmIsospi2LastBoard
+                            metaParam: registry.cbtmIsospi2LastBoard
                         }
                         ScalarParamEdit {
                             name: "Comm Fault Trip Cycles"
-                            metaParam: parameters.cbtmCommFaultTripCyc
+                            metaParam: registry.cbtmCommFaultTripCyc
                         }
                         ScalarParamEdit {
                             name: "Comm Fault Clear Cycles"
-                            metaParam: parameters.cbtmCommFaultClearCyc
+                            metaParam: registry.cbtmCommFaultClearCyc
                         }
                     }
                     ColumnLayout {
@@ -221,25 +216,25 @@ Item {
                             Layout.fillHeight: true
                             xLabel: "Board #"
                             valueLabel: "Disch"
-                            tableParam: parameters.cbtmDisch
+                            tableParam: registry.cbtmDisch
                         }
                         TableParamEdit {
                             Layout.fillHeight: true
                             xLabel: "Board #"
                             valueLabel: "Status"
-                            tableParam: parameters.cbtmStatus
+                            tableParam: registry.cbtmStatus
                         }
                     }
 
                     TableParamEdit {
                         Layout.fillHeight: true
                         xLabel: "Cell #"
-                        tableParam: parameters.cbtmCellVolt
+                        tableParam: registry.cbtmCellVolt
                     }
                     TableParamEdit {
                         Layout.fillHeight: true
                         xLabel: "Tab #"
-                        tableParam: parameters.cbtmTabTemp
+                        tableParam: registry.cbtmTabTemp
                     }
                     ColumnLayout {
                         id: graphsLayout
@@ -262,14 +257,14 @@ Item {
 
                             RoleModeledLineSeries {
                                 id: cellVoltSeries
-                                visible: parameters.cbtmCellVolt.value.valid
-                                model: parameters.cbtmCellVolt.stringModel
+                                visible: registry.cbtmCellVolt.value.valid
+                                model: registry.cbtmCellVolt.stringModel
                                 name: qsTr("Cell Voltage")
 
                                 axisX: ValueAxis {
                                     min: 0
-                                    max: parameters.cbtmCellVolt.value.count
-                                    tickCount: parameters.cbtmCellVolt.value.count / 8 + 1
+                                    max: registry.cbtmCellVolt.value.count
+                                    tickCount: registry.cbtmCellVolt.value.count / 8 + 1
                                     labelFormat: "%d"
                                 }
 
@@ -278,14 +273,14 @@ Item {
 
                             RoleModeledLineSeries {
                                 id: tabTempSeries
-                                visible: parameters.cbtmTabTemp.value.valid
-                                model: parameters.cbtmTabTemp.stringModel
+                                visible: registry.cbtmTabTemp.value.valid
+                                model: registry.cbtmTabTemp.stringModel
                                 name: qsTr("Tab Temp degC")
 
                                 axisX: ValueAxis {
                                     min: 0
-                                    max: parameters.cbtmTabTemp.value.count
-                                    tickCount: parameters.cbtmTabTemp.value.count / 9 + 1
+                                    max: registry.cbtmTabTemp.value.count
+                                    tickCount: registry.cbtmTabTemp.value.count / 9 + 1
                                     labelFormat: "%d"
                                 }
 
@@ -318,32 +313,32 @@ Item {
                     spacing: 10
                     ScalarParamEdit {
                         name: "Max Simul Pickups"
-                        metaParam: parameters.ctcMaxSimulPickup
+                        metaParam: registry.ctcMaxSimulPickup
                     }
                     TableParamEdit {
                         xLabel: "Ctc #"
                         valueLabel: "Feedback Inputs"
-                        tableParam: parameters.ctcNFeedbackInput
+                        tableParam: registry.ctcNFeedbackInput
                     }
                     TableParamEdit {
                         xLabel: "Ctc #"
                         valueLabel: "On"
-                        tableParam: parameters.ctcOn
+                        tableParam: registry.ctcOn
                     }
                     TableParamEdit {
                         xLabel: "Ctc #"
                         valueLabel: "OK"
-                        tableParam: parameters.ctcOk
+                        tableParam: registry.ctcOk
                     }
                     TableParamEdit {
                         xLabel: "Ctc #"
                         valueLabel: "A Closed"
-                        tableParam: parameters.ctcAClosed
+                        tableParam: registry.ctcAClosed
                     }
                     TableParamEdit {
                         xLabel: "Ctc #"
                         valueLabel: "B Closed"
-                        tableParam: parameters.ctcBClosed
+                        tableParam: registry.ctcBClosed
                     }
                 }
             }
@@ -362,12 +357,12 @@ Item {
                     TableParamEdit {
                         xLabel: "DI #"
                         valueLabel: "On"
-                        tableParam: parameters.dioDi
+                        tableParam: registry.dioDi
                     }
                     TableParamEdit {
                         xLabel: "DO #"
                         valueLabel: "On"
-                        tableParam: parameters.dioDo
+                        tableParam: registry.dioDo
                     }
                 }
             }
@@ -385,28 +380,28 @@ Item {
                     spacing: 10
                     TableParamEdit {
                         xLabel: "IAI #"
-                        tableParam: parameters.iaiDiffCts
+                        tableParam: registry.iaiDiffCts
                     }
                     TableParamEdit {
                         xLabel: "IAI #"
                         valueLabel: "OK"
-                        tableParam: parameters.iaiOk
+                        tableParam: registry.iaiOk
                     }
                     ScalarParamEdit {
                         name: "IAI #4 Pos"
-                        metaParam: parameters.iai4PosCts
+                        metaParam: registry.iai4PosCts
                     }
                     ScalarParamEdit {
                         name: "IAI #4 Neg"
-                        metaParam: parameters.iai4NegCts
+                        metaParam: registry.iai4NegCts
                     }
                     ScalarParamEdit {
                         name: "IAI #4 Pullup"
-                        metaParam: parameters.iai4Pullup
+                        metaParam: registry.iai4Pullup
                     }
                     ScalarParamEdit {
                         name: "IAI #4 Pulldown"
-                        metaParam: parameters.iai4Pulldown
+                        metaParam: registry.iai4Pulldown
                     }
                 }
             }
@@ -426,123 +421,123 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         EncodingParamEdit {
                             name: "CnvtType"
-                            metaParam: parameters.auxBattCnvtType
+                            metaParam: registry.auxBattCnvtType
                         }
                         ScalarParamEdit {
                             name: "CnvtInputVoltMin"
-                            metaParam: parameters.auxBattCnvtInputVoltMin
+                            metaParam: registry.auxBattCnvtInputVoltMin
                         }
                         ScalarParamEdit {
                             name: "CnvtStartTemp"
-                            metaParam: parameters.auxBattCnvtStartTemp
+                            metaParam: registry.auxBattCnvtStartTemp
                         }
                         ScalarParamEdit {
                             name: "CnvtStopTemp"
-                            metaParam: parameters.auxBattCnvtStopTemp
+                            metaParam: registry.auxBattCnvtStopTemp
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "FloatVolt"
-                            metaParam: parameters.auxBattFloatVolt
+                            metaParam: registry.auxBattFloatVolt
                         }
                         ScalarParamEdit {
                             name: "FloatVoltTempCoeff"
-                            metaParam: parameters.auxBattFloatVoltTempCoeff
+                            metaParam: registry.auxBattFloatVoltTempCoeff
                         }
                         ScalarParamEdit {
                             name: "FloatVoltMin"
-                            metaParam: parameters.auxBattFloatVoltMin
+                            metaParam: registry.auxBattFloatVoltMin
                         }
                         ScalarParamEdit {
                             name: "FloatVoltMax"
-                            metaParam: parameters.auxBattFloatVoltMax
+                            metaParam: registry.auxBattFloatVoltMax
                         }
                         ScalarParamEdit {
                             name: "FloatVoltFailsafe"
-                            metaParam: parameters.auxBattFloatVoltFailsafe
+                            metaParam: registry.auxBattFloatVoltFailsafe
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "RestartVoltHysteresis"
-                            metaParam: parameters.auxBattRestartVoltHysteresis
+                            metaParam: registry.auxBattRestartVoltHysteresis
                         }
                         ScalarParamEdit {
                             name: "RestartVoltTime"
-                            metaParam: parameters.auxBattRestartVoltTime
+                            metaParam: registry.auxBattRestartVoltTime
                         }
                         ScalarParamEdit {
                             name: "RestartAlwaysTime"
-                            metaParam: parameters.auxBattRestartAlwaysTime
+                            metaParam: registry.auxBattRestartAlwaysTime
                         }
                         ScalarParamEdit {
                             name: "StopOutCurr"
-                            metaParam: parameters.auxBattStopOutCurr
+                            metaParam: registry.auxBattStopOutCurr
                         }
                         ScalarParamEdit {
                             name: "StopOutCurrTime"
-                            metaParam: parameters.auxBattStopOutCurrTime
+                            metaParam: registry.auxBattStopOutCurrTime
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "BattOkTemp"
-                            metaParam: parameters.auxBattBattOkTemp
+                            metaParam: registry.auxBattBattOkTemp
                         }
                         ScalarParamEdit {
                             name: "BattWarmTemp"
-                            metaParam: parameters.auxBattBattWarmTemp
+                            metaParam: registry.auxBattBattWarmTemp
                         }
                         ScalarParamEdit {
                             name: "BattHotTemp"
-                            metaParam: parameters.auxBattBattHotTemp
+                            metaParam: registry.auxBattBattHotTemp
                         }
                         ScalarParamEdit {
                             name: "BattTemp0AiChan"
-                            metaParam: parameters.auxBattBattTemp0AiChan
+                            metaParam: registry.auxBattBattTemp0AiChan
                         }
                         ScalarParamEdit {
                             name: "BattTemp1AiChan"
-                            metaParam: parameters.auxBattBattTemp1AiChan
+                            metaParam: registry.auxBattBattTemp1AiChan
                         }
                         EncodingParamEdit {
                             name: "BattTemp0Curve"
-                            metaParam: parameters.auxBattBattTemp0Curve
+                            metaParam: registry.auxBattBattTemp0Curve
                         }
                         EncodingParamEdit {
                             name: "BattTemp1Curve"
-                            metaParam: parameters.auxBattBattTemp1Curve
+                            metaParam: registry.auxBattBattTemp1Curve
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "RestartVoltTimeCount"
-                            metaParam: parameters.auxBattRestartVoltTimeCount
+                            metaParam: registry.auxBattRestartVoltTimeCount
                         }
                         ScalarParamEdit {
                             name: "RestartAlwaysTimeCount"
-                            metaParam: parameters.auxBattRestartAlwaysTimeCount
+                            metaParam: registry.auxBattRestartAlwaysTimeCount
                         }
                         ScalarParamEdit {
                             name: "StopOutCurrTimeCount"
-                            metaParam: parameters.auxBattStopOutCurrTimeCount
+                            metaParam: registry.auxBattStopOutCurrTimeCount
                         }
                         ScalarParamEdit {
                             name: "BattTemp0"
-                            metaParam: parameters.auxBattBattTemp0
+                            metaParam: registry.auxBattBattTemp0
                         }
                         ScalarParamEdit {
                             name: "BattTemp1"
-                            metaParam: parameters.auxBattBattTemp1
+                            metaParam: registry.auxBattBattTemp1
                         }
                         ScalarParamEdit {
                             name: "Status"
-                            metaParam: parameters.auxBattStatus
+                            metaParam: registry.auxBattStatus
                         }
                     }
                 }
@@ -563,46 +558,46 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "FailsafeSpeed"
-                            metaParam: parameters.motorFailsafeSpeed
+                            metaParam: registry.motorFailsafeSpeed
                         }
                         ScalarParamEdit {
                             name: "MinEffSpeed"
-                            metaParam: parameters.motorMinEffSpeed
+                            metaParam: registry.motorMinEffSpeed
                         }
                         ScalarParamEdit {
                             name: "RatedTorque"
-                            metaParam: parameters.motorRatedTorque
+                            metaParam: registry.motorRatedTorque
                         }
                         ScalarParamEdit {
                             name: "CurrRegPropCoeff"
-                            metaParam: parameters.motorCurrRegPropCoeff
+                            metaParam: registry.motorCurrRegPropCoeff
                         }
                         ScalarParamEdit {
                             name: "CurrRegIntCoeff"
-                            metaParam: parameters.motorCurrRegIntCoeff
+                            metaParam: registry.motorCurrRegIntCoeff
                         }
                         ScalarParamEdit {
                             name: "MaxTorqueRefErr"
-                            metaParam: parameters.motorMaxTorqueRefErr
+                            metaParam: registry.motorMaxTorqueRefErr
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "MotoringIntegrator"
-                            metaParam: parameters.motorMotoringIntegrator
+                            metaParam: registry.motorMotoringIntegrator
                         }
                         ScalarParamEdit {
                             name: "RegenIntegrator"
-                            metaParam: parameters.motorRegenIntegrator
+                            metaParam: registry.motorRegenIntegrator
                         }
                         ScalarParamEdit {
                             name: "AdjMaxMotoringCurr"
-                            metaParam: parameters.motorAdjMaxMotoringCurr
+                            metaParam: registry.motorAdjMaxMotoringCurr
                         }
                         ScalarParamEdit {
                             name: "AdjMaxRegenCurr"
-                            metaParam: parameters.motorAdjMaxRegenCurr
+                            metaParam: registry.motorAdjMaxRegenCurr
                         }
                     }
                 }
@@ -623,39 +618,39 @@ Item {
                     ColumnLayout {
                         EncodingParamEdit {
                             name: "Mapping"
-                            metaParam: parameters.packIaiFunc
+                            metaParam: registry.packIaiFunc
                         }
                         ScalarParamEdit {
                             name: "#1 Scale"
-                            metaParam: parameters.packIai1Scale
+                            metaParam: registry.packIai1Scale
                         }
                         ScalarParamEdit {
                             name: "#2 Scale"
-                            metaParam: parameters.packIai2Scale
+                            metaParam: registry.packIai2Scale
                         }
                         ScalarParamEdit {
                             name: "#3 Scale"
-                            metaParam: parameters.packIai3Scale
+                            metaParam: registry.packIai3Scale
                         }
                         ScalarParamEdit {
                             name: "#4 Scale"
-                            metaParam: parameters.packIai4Scale
+                            metaParam: registry.packIai4Scale
                         }
                         ScalarParamEdit {
                             name: "#1 Zero"
-                            metaParam: parameters.packIai1Zero
+                            metaParam: registry.packIai1Zero
                         }
                         ScalarParamEdit {
                             name: "#2 Zero"
-                            metaParam: parameters.packIai2Zero
+                            metaParam: registry.packIai2Zero
                         }
                         ScalarParamEdit {
                             name: "#3 Zero"
-                            metaParam: parameters.packIai3Zero
+                            metaParam: registry.packIai3Zero
                         }
                         ScalarParamEdit {
                             name: "#4 Zero"
-                            metaParam: parameters.packIai4Zero
+                            metaParam: registry.packIai4Zero
                         }
                     }
                 }
@@ -665,43 +660,43 @@ Item {
                     ColumnLayout {
                         ScalarParamEdit {
                             name: "Limp Home Disch"
-                            metaParam: parameters.packLimpHomeDischCurr
+                            metaParam: registry.packLimpHomeDischCurr
                         }
                         ScalarParamEdit {
                             name: "Limp Home Chg"
-                            metaParam: parameters.packLimpHomeChgCurr
+                            metaParam: registry.packLimpHomeChgCurr
                         }
                         ScalarParamEdit {
                             name: "Safety Margin"
-                            metaParam: parameters.packCellProtMarginCurr
+                            metaParam: registry.packCellProtMarginCurr
                         }
                         ScalarParamEdit {
                             name: "Current Reg Fault Trip"
-                            metaParam: parameters.packCurrRegFltTripCyc
+                            metaParam: registry.packCurrRegFltTripCyc
                         }
                         ScalarParamEdit {
                             name: "Current Reg Fault Decay"
-                            metaParam: parameters.packCurrRegFltDecayCyc
+                            metaParam: registry.packCurrRegFltDecayCyc
                         }
                         SimpleTableParamEditButton {
                             name: "Max Disch Current"
-                            tableParam: parameters.packMaxCurrDisch
+                            tableParam: registry.packMaxCurrDisch
                         }
                         SimpleTableParamEditButton {
                             name: "Max Chg Current"
-                            tableParam: parameters.packMaxCurrChg
+                            tableParam: registry.packMaxCurrChg
                         }
                         SimpleTableParamEditButton {
                             name: "Max Cell V"
-                            tableParam: parameters.packCellVLimitMax
+                            tableParam: registry.packCellVLimitMax
                         }
                         SimpleTableParamEditButton {
                             name: "Min Cell V"
-                            tableParam: parameters.packCellVLimitMin
+                            tableParam: registry.packCellVLimitMin
                         }
                         SimpleTableParamEditButton {
                             name: "Cell Prot Resistance"
-                            tableParam: parameters.packCellProtResTable
+                            tableParam: registry.packCellProtResTable
                         }
                     }
                 }
@@ -711,27 +706,27 @@ Item {
                     ColumnLayout {
                         ScalarParamEdit {
                             name: "Active Band"
-                            metaParam: parameters.packBalBandVolt
+                            metaParam: registry.packBalBandVolt
                         }
                         ScalarParamEdit {
                             name: "Minimum Difference"
-                            metaParam: parameters.packBalDiffVolt
+                            metaParam: registry.packBalDiffVolt
                         }
                         ScalarParamEdit {
                             name: "Minimum Voltage"
-                            metaParam: parameters.packBalMinVolt
+                            metaParam: registry.packBalMinVolt
                         }
                         ScalarParamEdit {
                             name: "Sample Wait Time"
-                            metaParam: parameters.packBalSampleWaitCyc
+                            metaParam: registry.packBalSampleWaitCyc
                         }
                         ScalarParamEdit {
                             name: "High Cell Disch Time"
-                            metaParam: parameters.packBalDischHighCyc
+                            metaParam: registry.packBalDischHighCyc
                         }
                         ScalarParamEdit {
                             name: "All Cell Disch Time"
-                            metaParam: parameters.packBalDischAllCyc
+                            metaParam: registry.packBalDischAllCyc
                         }
                     }
                 }
@@ -741,27 +736,27 @@ Item {
                     ColumnLayout {
                         ScalarParamEdit {
                             name: "Sample Time"
-                            metaParam: parameters.packGndFltDetectAvgCyc
+                            metaParam: registry.packGndFltDetectAvgCyc
                         }
                         ScalarParamEdit {
                             name: "Cycle Period"
-                            metaParam: parameters.packGndFltDetectPeriodCyc
+                            metaParam: registry.packGndFltDetectPeriodCyc
                         }
                         ScalarParamEdit {
                             name: "Fault Threshold"
-                            metaParam: parameters.packGndFltTripConduct
+                            metaParam: registry.packGndFltTripConduct
                         }
                         ScalarParamEdit {
                             name: "Fault Threshold Ext Chg"
-                            metaParam: parameters.packGndFltTripConductExtChg
+                            metaParam: registry.packGndFltTripConductExtChg
                         }
                         ScalarParamEdit {
                             name: "Fault Trip Cycles"
-                            metaParam: parameters.packGndFltTripCyc
+                            metaParam: registry.packGndFltTripCyc
                         }
                         ScalarParamEdit {
                             name: "Fault Decay Cycles"
-                            metaParam: parameters.packGndFltDecayCyc
+                            metaParam: registry.packGndFltDecayCyc
                         }
                     }
                 }
@@ -771,23 +766,23 @@ Item {
                     ColumnLayout {
                         ScalarParamEdit {
                             name: "Traction Current Decay Time"
-                            metaParam: parameters.packTracCurrDecayCyc
+                            metaParam: registry.packTracCurrDecayCyc
                         }
                         ScalarParamEdit {
                             name: "Charge Current Decay Time"
-                            metaParam: parameters.packChgCurrDecayCyc
+                            metaParam: registry.packChgCurrDecayCyc
                         }
                         ScalarParamEdit {
                             name: "Max Traction Precharge Time"
-                            metaParam: parameters.packMaxTracPrechgCyc
+                            metaParam: registry.packMaxTracPrechgCyc
                         }
                         ScalarParamEdit {
                             name: "Low Voltage Trip"
-                            metaParam: parameters.packLowStringVoltTrip
+                            metaParam: registry.packLowStringVoltTrip
                         }
                         ScalarParamEdit {
                             name: "Low Voltage Reset"
-                            metaParam: parameters.packLowStringVoltReset
+                            metaParam: registry.packLowStringVoltReset
                         }
                     }
                 }
@@ -811,31 +806,31 @@ Item {
                         ColumnLayout {
                             ScalarParamEdit {
                                 name: "Battery Voltage"
-                                metaParam: parameters.packString1Volt
+                                metaParam: registry.packString1Volt
                             }
                             ScalarParamEdit {
                                 name: "Battery Current"
-                                metaParam: parameters.packString1Curr
+                                metaParam: registry.packString1Curr
                             }
                             ScalarParamEdit {
                                 name: "Traction Motor"
-                                metaParam: parameters.packTracMtrCurr
+                                metaParam: registry.packTracMtrCurr
                             }
                             ScalarParamEdit {
                                 name: "Traction Aux"
-                                metaParam: parameters.packTracAuxCurr
+                                metaParam: registry.packTracAuxCurr
                             }
                             ScalarParamEdit {
                                 name: "Traction Total"
-                                metaParam: parameters.packTracTotalCurr
+                                metaParam: registry.packTracTotalCurr
                             }
                             ScalarParamEdit {
                                 name: "Hybrid"
-                                metaParam: parameters.packHybrCurr
+                                metaParam: registry.packHybrCurr
                             }
                             ScalarParamEdit {
                                 name: "Non-Traction Aux"
-                                metaParam: parameters.packNonTracAuxCurr
+                                metaParam: registry.packNonTracAuxCurr
                             }
                         }
                     }
@@ -846,31 +841,31 @@ Item {
                         ColumnLayout {
                             ScalarParamEdit {
                                 name: "Pulldown Pos Voltage"
-                                metaParam: parameters.packGndFltDetectPulldownPosVolt
+                                metaParam: registry.packGndFltDetectPulldownPosVolt
                             }
                             ScalarParamEdit {
                                 name: "Pulldown Neg Voltage"
-                                metaParam: parameters.packGndFltDetectPulldownNegVolt
+                                metaParam: registry.packGndFltDetectPulldownNegVolt
                             }
                             ScalarParamEdit {
                                 name: "Pullup Pos Voltage"
-                                metaParam: parameters.packGndFltDetectPullupPosVolt
+                                metaParam: registry.packGndFltDetectPullupPosVolt
                             }
                             ScalarParamEdit {
                                 name: "Pullup Neg Voltage"
-                                metaParam: parameters.packGndFltDetectPullupNegVolt
+                                metaParam: registry.packGndFltDetectPullupNegVolt
                             }
                             ScalarParamEdit {
                                 name: "Center Voltage"
-                                metaParam: parameters.packGndFltCenterVolt
+                                metaParam: registry.packGndFltCenterVolt
                             }
                             ScalarParamEdit {
                                 name: "Location In Pack"
-                                metaParam: parameters.packGndFltFrac
+                                metaParam: registry.packGndFltFrac
                             }
                             ScalarParamEdit {
                                 name: "Conductance"
-                                metaParam: parameters.packGndFltConduct
+                                metaParam: registry.packGndFltConduct
                             }
                         }
                     }
@@ -881,27 +876,27 @@ Item {
                         ColumnLayout {
                             ScalarParamEdit {
                                 name: "Max Voltage"
-                                metaParam: parameters.packMaxCellVolt
+                                metaParam: registry.packMaxCellVolt
                             }
                             ScalarParamEdit {
                                 name: "Mean Voltage"
-                                metaParam: parameters.packMeanCellVolt
+                                metaParam: registry.packMeanCellVolt
                             }
                             ScalarParamEdit {
                                 name: "Min Voltage"
-                                metaParam: parameters.packMinCellVolt
+                                metaParam: registry.packMinCellVolt
                             }
                             ScalarParamEdit {
                                 name: "Max Temp"
-                                metaParam: parameters.packMaxCellTemp
+                                metaParam: registry.packMaxCellTemp
                             }
                             ScalarParamEdit {
                                 name: "Mean Temp"
-                                metaParam: parameters.packMeanCellTemp
+                                metaParam: registry.packMeanCellTemp
                             }
                             ScalarParamEdit {
                                 name: "Min Temp"
-                                metaParam: parameters.packMinCellTemp
+                                metaParam: registry.packMinCellTemp
                             }
                         }
                     }
@@ -912,31 +907,31 @@ Item {
                         ColumnLayout {
                             ScalarParamEdit {
                                 name: "Max Voltage"
-                                metaParam: parameters.packCellProtMaxVolt
+                                metaParam: registry.packCellProtMaxVolt
                             }
                             ScalarParamEdit {
                                 name: "Min Voltage"
-                                metaParam: parameters.packCellProtMinVolt
+                                metaParam: registry.packCellProtMinVolt
                             }
                             ScalarParamEdit {
                                 name: "Resistance For Calc"
-                                metaParam: parameters.packCellProtRes
+                                metaParam: registry.packCellProtRes
                             }
                             ScalarParamEdit {
                                 name: "Max Disch (Voltage)"
-                                metaParam: parameters.packCellProtVoltageMaxDischCurr
+                                metaParam: registry.packCellProtVoltageMaxDischCurr
                             }
                             ScalarParamEdit {
                                 name: "Max Chg (Voltage)"
-                                metaParam: parameters.packCellProtVoltageMaxChgCurr
+                                metaParam: registry.packCellProtVoltageMaxChgCurr
                             }
                             ScalarParamEdit {
                                 name: "Max Disch (Thermal)"
-                                metaParam: parameters.packCellProtThermalMaxDischCurr
+                                metaParam: registry.packCellProtThermalMaxDischCurr
                             }
                             ScalarParamEdit {
                                 name: "Max Chg (Thermal)"
-                                metaParam: parameters.packCellProtThermalMaxChgCurr
+                                metaParam: registry.packCellProtThermalMaxChgCurr
                             }
                         }
                     }
@@ -947,19 +942,19 @@ Item {
                         ColumnLayout {
                             ScalarParamEdit {
                                 name: "String Max Disch"
-                                metaParam: parameters.packString1MaxDischCurr
+                                metaParam: registry.packString1MaxDischCurr
                             }
                             ScalarParamEdit {
                                 name: "String Max Chg"
-                                metaParam: parameters.packString1MaxChgCurr
+                                metaParam: registry.packString1MaxChgCurr
                             }
                             ScalarParamEdit {
                                 name: "Trac Max Disch"
-                                metaParam: parameters.packTracMaxDischCurr
+                                metaParam: registry.packTracMaxDischCurr
                             }
                             ScalarParamEdit {
                                 name: "Trac Max Chg"
-                                metaParam: parameters.packTracMaxChgCurr
+                                metaParam: registry.packTracMaxChgCurr
                             }
                         }
                     }
@@ -970,147 +965,147 @@ Item {
                         ColumnLayout {
                             ScalarParamEdit {
                                 name: "Ctc Ctrl State"
-                                metaParam: parameters.packCtcCtrlStateCode
+                                metaParam: registry.packCtcCtrlStateCode
                             }
                             ScalarParamEdit {
                                 name: "Balancer State"
-                                metaParam: parameters.packBalancerStateCode
+                                metaParam: registry.packBalancerStateCode
                             }
                             ScalarParamIndicator {
                                 name: "CBTM Open Wire"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000001
                             }
                             ScalarParamIndicator {
                                 name: "CBTM Thermistor Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000002
                             }
                             ScalarParamIndicator {
                                 name: "CBTM Balance Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000004
                             }
                             ScalarParamIndicator {
                                 name: "CBTM Internal Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000008
                             }
                             ScalarParamIndicator {
                                 name: "CBTM Power Supply Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000010
                             }
                             ScalarParamIndicator {
                                 name: "CBTM I2C Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000020
                             }
                             ScalarParamIndicator {
                                 name: "CBTM Overtemp"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000040
                             }
                             ScalarParamIndicator {
                                 name: "CBTM Comm Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000100
                             }
                             ScalarParamIndicator {
                                 name: "CBTM Open Wire"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000100
                             }
                             ScalarParamIndicator {
                                 name: "Cell Voltage Sense Lost"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000200
                             }
                             ScalarParamIndicator {
                                 name: "Cell Temp Sense Lost"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000400
                             }
                             ScalarParamIndicator {
                                 name: "Adjacent Cell Temp Sense Lost"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00000800
                             }
                             ScalarParamIndicator {
                                 name: "Ground Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00001000
                             }
                             ScalarParamIndicator {
                                 name: "Limp Home Engaged"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00002000
                             }
                             ScalarParamIndicator {
                                 name: "String Current Reg Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00004000
                             }
                             ScalarParamIndicator {
                                 name: "CDA2 Vbat (12/24V) Low"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00008000
                             }
                             ScalarParamIndicator {
                                 name: "Contactor Inoperative"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00010000
                             }
                             ScalarParamIndicator {
                                 name: "Traction Precharge Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00020000
                             }
                             ScalarParamIndicator {
                                 name: "Aux Precharge Fault"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00040000
                             }
                             ScalarParamIndicator {
                                 name: "String Voltage Low"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x00080000
                             }
 
 
                             ScalarParamIndicator {
                                 name: "CBTM Non-Quiescent"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x40000000
                                 color: "yellow"
                             }
                             ScalarParamIndicator {
                                 name: "Batt Contactor Closed"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x20000000
                                 color: "yellow"
                             }
                             ScalarParamIndicator {
                                 name: "Pos Trac Contactor Closed"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x10000000
                                 color: "yellow"
                             }
                             ScalarParamIndicator {
                                 name: "Pos Aux Contactor Closed"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x08000000
                                 color: "yellow"
                             }
                             ScalarParamIndicator {
                                 name: "Neg Contactor Closed"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x04000000
                                 color: "yellow"
                             }
                             ScalarParamIndicator {
                                 name: "HV Present"
-                                metaParam: parameters.packStatus
+                                metaParam: registry.packStatus
                                 bitMask: 0x02000000
                                 color: "yellow"
                             }
@@ -1134,65 +1129,65 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "Idle Time"
-                            metaParam: parameters.sysCycleIdleTicks
+                            metaParam: registry.sysCycleIdleTicks
                         }
                         ScalarParamEdit {
                             name: "CBTM Input"
-                            metaParam: parameters.sysCycleDrvCbtmInTicks
+                            metaParam: registry.sysCycleDrvCbtmInTicks
                         }
                         ScalarParamEdit {
                             name: "IAI Input"
-                            metaParam: parameters.sysCycleDrvIaiInTicks
+                            metaParam: registry.sysCycleDrvIaiInTicks
                         }
                         ScalarParamEdit {
                             name: "Aux Batt Ctrl"
-                            metaParam: parameters.sysCycleCtlAuxBattTicks
+                            metaParam: registry.sysCycleCtlAuxBattTicks
                         }
                         ScalarParamEdit {
                             name: "Lamp Ctrl"
-                            metaParam: parameters.sysCycleCtlLampTicks
+                            metaParam: registry.sysCycleCtlLampTicks
                         }
                         ScalarParamEdit {
                             name: "Motor Ctrl"
-                            metaParam: parameters.sysCycleCtlMotorTicks
+                            metaParam: registry.sysCycleCtlMotorTicks
                         }
                         ScalarParamEdit {
                             name: "Pack Ctrl"
-                            metaParam: parameters.sysCycleCtlPackTicks
+                            metaParam: registry.sysCycleCtlPackTicks
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamIndicator {
                             name: "Watchdog Reset"
-                            metaParam: parameters.sysFlags
+                            metaParam: registry.sysFlags
                             bitMask: 0x00000001
                         }
                         ScalarParamIndicator {
                             name: "Stack Overflow"
-                            metaParam: parameters.sysFlags
+                            metaParam: registry.sysFlags
                             bitMask: 0x00000004
                         }
                         ScalarParamIndicator {
                             name: "Cycle Time Violation"
-                            metaParam: parameters.sysFlags
+                            metaParam: registry.sysFlags
                             bitMask: 0x00000002
                         }
                         ScalarParamEdit {
                             name: "Heap Alloc Bytes"
-                            metaParam: parameters.sysHeapAllocBytes
+                            metaParam: registry.sysHeapAllocBytes
                         }
                         ScalarParamEdit {
                             name: "Heap Avail Bytes"
-                            metaParam: parameters.sysHeapFreeBytes
+                            metaParam: registry.sysHeapFreeBytes
                         }
                         ScalarParamEdit {
                             name: "Heap Free Count"
-                            metaParam: parameters.sysHeapNFrees
+                            metaParam: registry.sysHeapNFrees
                         }
                         ScalarParamEdit {
                             name: "RTDB rows"
-                            metaParam: parameters.sysRtDbRows
+                            metaParam: registry.sysRtDbRows
                         }
                     }
                 }
@@ -1213,30 +1208,30 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             name: "Begin Serial"
-                            metaParam: parameters.eventBeginSerial
+                            metaParam: registry.eventBeginSerial
                         }
                         ScalarParamEdit {
                             name: "End Serial"
-                            metaParam: parameters.eventEndSerial
+                            metaParam: registry.eventEndSerial
                         }
                         ScalarParamEdit {
                             name: "Clear To Serial"
-                            metaParam: parameters.eventClearToSerial
+                            metaParam: registry.eventClearToSerial
                         }
                         ScalarParamEdit {
                             name: "View Serial"
-                            metaParam: parameters.eventViewSerial
+                            metaParam: registry.eventViewSerial
                         }
                         ScalarParamEdit {
                             name: "View Key"
-                            metaParam: parameters.eventViewKey
+                            metaParam: registry.eventViewKey
                         }
                         ScalarParamEdit {
                             name: "View Freeze Size"
-                            metaParam: parameters.eventViewFreezeSize
+                            metaParam: registry.eventViewFreezeSize
                         }
                         TableParamEdit {
-                            tableParam: parameters.eventViewFreeze
+                            tableParam: registry.eventViewFreeze
                         }
                     }
                 }

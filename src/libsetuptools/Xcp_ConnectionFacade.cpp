@@ -252,7 +252,7 @@ void ConnectionFacade::getAvailSlavesStr(QString bcastId, QString filter)
     emit connGetAvailSlavesStr(bcastId, filter, NULL);
 }
 
-void ConnectionFacade::onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext)
+void ConnectionFacade::onConnOpMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext)
 {
     emit opMsg(result, info, ext);
 }

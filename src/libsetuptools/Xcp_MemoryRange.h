@@ -113,15 +113,15 @@ signals:
     void validChanged();
     void fullReloadChanged();
     void writeCacheDirtyChanged();
-    void uploadDone(SetupTools::Xcp::OpResult result);
-    void downloadDone(SetupTools::Xcp::OpResult result);
+    void uploadDone(SetupTools::OpResult result);
+    void downloadDone(SetupTools::OpResult result);
 
 public slots:
     void upload();
     virtual void download() = 0;
     void onConnectionChanged(bool ok);
-    virtual void onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ()) = 0;
-    void onDownloadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
+    virtual void onUploadDone(SetupTools::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ()) = 0;
+    void onDownloadDone(SetupTools::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data);
 
 protected:
     Xcp::ConnectionFacade *connectionFacade() const;
