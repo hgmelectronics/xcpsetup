@@ -147,6 +147,16 @@ ApplicationWindow {
                                      OpResult.asString(result)))
             }
         }
+        onCopyCalPageDone: {
+            if(result === OpResult.Success) {
+                paramLayer.calResetSlave()
+                resetNeededDialog.open()
+            }
+            else {
+                errorDialog.show(qsTr("Calibration page copy failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
+        }
 
         onIdleChanged: checkImmediateWrite()
         onSlaveConnectedChanged: checkImmediateWrite()
@@ -252,6 +262,13 @@ ApplicationWindow {
                 : qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
 
         standardButtons: StandardButton.Ok
+    }
+    MessageDialog {
+        id: confirmRestoreCalDialog
+        title: qsTr("Confirm Restore Calibration")
+        text: qsTr("This will erase all custom settings on the CS2 and restore the factory calibration. Are you sure you want to do this?")
+        standardButtons: StandardButton.Ok | StandardButton.Cancel
+        onAccepted: paramLayer.copyCalPage(0, 1, 0, 0)
     }
     function saveJsonParamFile() {
         if (saveReadOnlyParameters) {
@@ -474,6 +491,13 @@ ApplicationWindow {
         enabled: paramLayer.slaveConnected
     }
 
+    Action {
+        id: restoreFactoryCalAction
+        text: qsTr("Restore Factory Calibration")
+        onTriggered: confirmRestoreCalDialog.open()
+        enabled: paramLayer.slaveConnected
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -507,6 +531,9 @@ ApplicationWindow {
             }
             MenuItem {
                 action: resetSlaveAction
+            }
+            MenuItem {
+                action: restoreFactoryCalAction
             }
             MenuItem {
                 action: AutoRefreshSelector.modeAction
