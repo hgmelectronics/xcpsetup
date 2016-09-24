@@ -579,6 +579,34 @@ OpResult Connection::setCalPage(quint8 segment, quint8 page)
     EMIT_RETURN(setCalPageDone, tryQuery(action, OpType::SetCalPage), segment, page);
 }
 
+OpResult Connection::copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    if(!mConnected)
+        EMIT_RETURN(copyCalPageDone, OpResult::NotConnected, fromSegment, fromPage, toSegment, toPage);
+    if(mPgmStarted)
+        EMIT_RETURN(copyCalPageDone, OpResult::WrongMode, fromSegment, fromPage, toSegment, toPage);
+    if(!mSupportsCalPage)
+        EMIT_RETURN(copyCalPageDone, OpResult::InvalidOperation, fromSegment, fromPage, toSegment, toPage);
+
+    std::vector<quint8> query({CmdCode_CopyCalPage, fromSegment, fromPage, toSegment, toPage});
+
+    mCalcMta.reset();   // standard does not define what happens to MTA
+
+    std::function<OpResult (void)> action = [this, query]()
+    {
+        QString msg = tr("copying calibration page");
+
+        std::vector<quint8> reply;
+        RETURN_ON_FAIL(transact(query, 1, reply, msg, {OpType::CopyCalPage, CmdCode_CopyCalPage}));
+        if(reply[0] != 0xFF)
+            return getReplyResult(reply, msg, {OpType::CopyCalPage, CmdCode_CopyCalPage});
+
+        return OpResult::Success;
+    };
+
+    EMIT_RETURN(copyCalPageDone, tryQuery(action, OpType::CopyCalPage), fromSegment, fromPage, toSegment, toPage);
+}
+
 OpResult Connection::programStart()
 {
     if(!mConnected)

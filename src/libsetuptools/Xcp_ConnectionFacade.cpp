@@ -21,6 +21,7 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(this, &ConnectionFacade::connDownload, mConn, &Connection::download, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connNvWrite, mConn, &Connection::nvWrite, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connSetCalPage, mConn, &Connection::setCalPage, Qt::QueuedConnection);
+    connect(this, &ConnectionFacade::connCopyCalPage, mConn, &Connection::copyCalPage, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connProgramClear, mConn, &Connection::programClear, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connProgramRange, mConn, &Connection::programRange, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connProgramVerify, mConn, &Connection::programVerify, Qt::QueuedConnection);
@@ -33,6 +34,7 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(mConn, &Connection::downloadDone, this, &ConnectionFacade::onConnDownloadDone, Qt::QueuedConnection);
     connect(mConn, &Connection::nvWriteDone, this, &ConnectionFacade::onConnNvWriteDone, Qt::QueuedConnection);
     connect(mConn, &Connection::setCalPageDone, this, &ConnectionFacade::onConnSetCalPageDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::copyCalPageDone, this, &ConnectionFacade::onConnCopyCalPageDone, Qt::QueuedConnection);
     connect(mConn, &Connection::programClearDone, this, &ConnectionFacade::onConnProgramClearDone, Qt::QueuedConnection);
     connect(mConn, &Connection::programRangeDone, this, &ConnectionFacade::onConnProgramRangeDone, Qt::QueuedConnection);
     connect(mConn, &Connection::programVerifyDone, this, &ConnectionFacade::onConnProgramVerifyDone, Qt::QueuedConnection);
@@ -222,6 +224,11 @@ void ConnectionFacade::setCalPage(quint8 segment, quint8 page)
     emit connSetCalPage(segment, page);
 }
 
+void ConnectionFacade::copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    emit connCopyCalPage(fromSegment, fromPage, toSegment, toPage);
+}
+
 void ConnectionFacade::programClear(XcpPtr base, int len)
 {
     emit connProgramClear(base, len);
@@ -290,6 +297,11 @@ void ConnectionFacade::onConnNvWriteDone(OpResult result)
 void ConnectionFacade::onConnSetCalPageDone(OpResult result, quint8 segment, quint8 page)
 {
     emit setCalPageDone(result, segment, page);
+}
+
+void ConnectionFacade::onConnCopyCalPageDone(OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    emit copyCalPageDone(result, fromSegment, fromPage, toSegment, toPage);
 }
 
 void ConnectionFacade::onConnProgramClearDone(OpResult result, XcpPtr base, int len)

@@ -71,6 +71,7 @@ signals:
     void downloadDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data);
     void nvWriteDone(SetupTools::OpResult result);
     void setCalPageDone(SetupTools::OpResult result, quint8 segment, quint8 page);
+    void copyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     void programClearDone(SetupTools::OpResult result, XcpPtr base, int len);
     void programRangeDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data, bool finalEmptyPacket);
     void programVerifyDone(SetupTools::OpResult result, XcpPtr mta, quint32 crc);
@@ -88,6 +89,7 @@ signals:
     void connDownload(XcpPtr base, const std::vector<quint8> data); // must pass by value, reference gets invalidated when caller returns but Connection thread is still using it
     void connNvWrite();
     void connSetCalPage(quint8 segment, quint8 page);
+    void connCopyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     void connProgramClear(XcpPtr base, int len);
     void connProgramRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket);
     void connProgramVerify(XcpPtr mta, quint32 crc);
@@ -100,6 +102,7 @@ public slots:
     void download(XcpPtr base, const std::vector<quint8> data);
     void nvWrite();
     void setCalPage(quint8 segment, quint8 page);
+    void copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     void programClear(XcpPtr base, int len);
     void programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket = true);
     void programVerify(XcpPtr mta, quint32 crc);
@@ -113,6 +116,7 @@ private:
     void onConnDownloadDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data);
     void onConnNvWriteDone(SetupTools::OpResult result);
     void onConnSetCalPageDone(SetupTools::OpResult result, quint8 segment, quint8 page);
+    void onConnCopyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     void onConnProgramClearDone(SetupTools::OpResult result, XcpPtr base, int len);
     void onConnProgramRangeDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
     void onConnProgramVerifyDone(SetupTools::OpResult result, XcpPtr mta, quint32 crc);

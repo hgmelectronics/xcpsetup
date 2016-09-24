@@ -15,6 +15,7 @@ ParamLayer::ParamLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::opMsg, this, &ParamLayer::onConnOpMsg);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
+    connect(mConn, &ConnectionFacade::copyCalPageDone, this, &ParamLayer::onConnCopyCalPageDone);
     connect(mConn, &ConnectionFacade::uploadDone, this, &ParamLayer::onParamUploadDone);
     connect(mConn, &ConnectionFacade::downloadDone, this, &ParamLayer::onParamDownloadDone);
 }
@@ -85,6 +86,7 @@ bool ParamLayer::idle()
     case State::Download:       return false;
     case State::Upload:         return false;
     case State::NvWrite:        return false;
+    case State::CopyCalPage:    return false;
     case State::Disconnect:     return false;
     default:                    return true;
     }
@@ -407,6 +409,21 @@ void ParamLayer::nvWrite()
         mConn->nvWrite();
 }
 
+void ParamLayer::copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    if(mConn->state() != Connection::State::CalMode)
+    {
+        emit copyCalPageDone(OpResult::InvalidOperation, fromSegment, fromPage, toSegment, toPage);
+        return;
+    }
+
+    mActiveResult = OpResult::Success;
+
+    setState(State::CopyCalPage);
+
+    mConn->copyCalPage(fromSegment, fromPage, toSegment, toPage);
+}
+
 void ParamLayer::connectSlave()
 {
     if(!(mState == State::Disconnected || mState == State::Connected)
@@ -563,6 +580,14 @@ void ParamLayer::onConnNvWriteDone(OpResult result)
         setState(State::Connected); // the user probably aborted the operation with a disconnect
 
     emit nvWriteDone(result);
+}
+
+void ParamLayer::onConnCopyCalPageDone(OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    if(mState == State::CopyCalPage)
+        setState(State::Connected);
+
+    emit copyCalPageDone(result, fromSegment, fromPage, toSegment, toPage);
 }
 
 void ParamLayer::onParamDownloadDone(OpResult result, XcpPtr base, const std::vector<quint8> &data)

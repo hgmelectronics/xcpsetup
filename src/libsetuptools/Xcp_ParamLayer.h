@@ -72,6 +72,7 @@ signals:
     void connectSlaveDone(SetupTools::OpResult result);
     void disconnectSlaveDone(SetupTools::OpResult result);
     void nvWriteDone(SetupTools::OpResult result);
+    void copyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     void fault(SetupTools::OpResult result, QString info);
     void warn(SetupTools::OpResult result, QString info);
     void info(SetupTools::OpResult result, QString info);
@@ -88,6 +89,7 @@ public slots:
     void download(QStringList keys);
     void upload(QStringList keys);
     void nvWrite();
+    void copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     void connectSlave();
     void disconnectSlave();
 
@@ -96,6 +98,7 @@ private:
     void onConnOpMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void onConnStateChanged();
     void onConnNvWriteDone(SetupTools::OpResult result);
+    void onConnCopyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     void onParamDownloadDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data);
     void onParamUploadDone(SetupTools::OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
     void onRegistryWriteCacheDirtyChanged();
@@ -110,6 +113,7 @@ private:
         Download,
         Upload,
         NvWrite,
+        CopyCalPage,
         Disconnect
     };
 

@@ -240,6 +240,7 @@ public:
         Download,
         NvWrite,
         SetCalPage,
+        CopyCalPage,
         ProgramStart,
         ProgramClear,
         ProgramRange,
@@ -362,6 +363,7 @@ signals:
     void downloadDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data);
     void nvWriteDone(SetupTools::OpResult result);
     void setCalPageDone(SetupTools::OpResult result, quint8 segment, quint8 page);
+    void copyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     void programStartDone(SetupTools::OpResult result);
     void programClearDone(SetupTools::OpResult result, XcpPtr base, int len);
     void programRangeDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
@@ -381,6 +383,7 @@ public slots:
     SetupTools::OpResult download(XcpPtr base, const std::vector<quint8> data);
     SetupTools::OpResult nvWrite();
     SetupTools::OpResult setCalPage(quint8 segment, quint8 page);
+    SetupTools::OpResult copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
     SetupTools::OpResult programStart();
     SetupTools::OpResult programClear(XcpPtr base, int len);
     SetupTools::OpResult programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket = true);
