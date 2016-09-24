@@ -75,6 +75,8 @@ ApplicationWindow {
         id: paramLayer
         slaveTimeout: 100
         slaveNvWriteTimeout: 1000
+        slaveBootDelay: 2000
+        slaveProgResetIsAcked: false
         registry: paramReg
 
         function checkImmediateWrite() {
@@ -113,7 +115,7 @@ ApplicationWindow {
         onNvWriteDone: {
             if(result === OpResult.Success) {
                 if(ParamResetNeeded.set) {
-                    disconnectSlave()
+                    paramLayer.calResetSlave()
                     resetNeededDialog.open()
                 }
             }
@@ -125,6 +127,23 @@ ApplicationWindow {
         onUploadDone: {
             if(result !== OpResult.Success) {
                 errorDialog.show(qsTr("Upload failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
+        }
+        onProgramResetSlaveDone: {
+            ParamResetNeeded.set = false
+            if(result !== OpResult.Success) {
+                errorDialog.show(qsTr("Program mode reset failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
+        }
+        onCalResetSlaveDone: {
+            ParamResetNeeded.set = false
+            if(result === OpResult.Success) {
+                paramLayer.programResetSlave()
+            }
+            else {
+                errorDialog.show(qsTr("Cal mode reset failed: %1").arg(
                                      OpResult.asString(result)))
             }
         }
@@ -229,8 +248,9 @@ ApplicationWindow {
         id: resetNeededDialog
         title: qsTr("Reset Needed")
         text: readParametersOnConnect
-                ? qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power and reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
-                : qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+                ? qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete and then reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+                : qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+
         standardButtons: StandardButton.Ok
     }
     function saveJsonParamFile() {
@@ -447,6 +467,13 @@ ApplicationWindow {
         onTriggered: paramReg.setValidAll(false)
     }
 
+    Action {
+        id: resetSlaveAction
+        text: qsTr("Reset Slave")
+        onTriggered: paramLayer.calResetSlave()
+        enabled: paramLayer.slaveConnected
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -477,6 +504,9 @@ ApplicationWindow {
             }
             MenuItem {
                 action: disableAllParametersAction
+            }
+            MenuItem {
+                action: resetSlaveAction
             }
             MenuItem {
                 action: AutoRefreshSelector.modeAction

@@ -30,6 +30,8 @@ class ParamLayer : public QObject
     Q_PROPERTY(int opProgressNotifyPeriod READ opProgressNotifyPeriod WRITE setOpProgressNotifyPeriod)
     Q_PROPERTY(double opProgress READ opProgress NOTIFY opProgressChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
+    Q_PROPERTY(int slaveBootDelay READ slaveBootDelay WRITE setSlaveBootDelay)
+    Q_PROPERTY(bool slaveProgResetIsAcked READ slaveProgResetIsAcked WRITE setSlaveProgResetIsAcked)
 public:
     explicit ParamLayer(QObject *parent = nullptr);
     virtual ~ParamLayer() {}
@@ -49,6 +51,10 @@ public:
     void setSlaveTimeout(int);
     int slaveNvWriteTimeout();
     void setSlaveNvWriteTimeout(int);
+    int slaveBootDelay();
+    void setSlaveBootDelay(int);
+    bool slaveProgResetIsAcked();
+    void setSlaveProgResetIsAcked(bool);
     int opProgressNotifyPeriod();
     void setOpProgressNotifyPeriod(int);
     Q_INVOKABLE void forceSlaveSupportCalPage();    //!< Call after connecting for slaves that erroneously report they do not support calibration/paging
@@ -73,6 +79,8 @@ signals:
     void disconnectSlaveDone(SetupTools::OpResult result);
     void nvWriteDone(SetupTools::OpResult result);
     void copyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
+    void programResetSlaveDone(SetupTools::OpResult result);
+    void calResetSlaveDone(SetupTools::OpResult result);
     void fault(SetupTools::OpResult result, QString info);
     void warn(SetupTools::OpResult result, QString info);
     void info(SetupTools::OpResult result, QString info);
@@ -90,6 +98,8 @@ public slots:
     void upload(QStringList keys);
     void nvWrite();
     void copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
+    void programResetSlave();   // Switch to program mode and then reset
+    void calResetSlave();       // Issue PROGRAM_RESET while still in cal mode
     void connectSlave();
     void disconnectSlave();
 
@@ -99,6 +109,7 @@ private:
     void onConnStateChanged();
     void onConnNvWriteDone(SetupTools::OpResult result);
     void onConnCopyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
+    void onConnProgramResetDone(SetupTools::OpResult result);
     void onParamDownloadDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data);
     void onParamUploadDone(SetupTools::OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
     void onRegistryWriteCacheDirtyChanged();
@@ -114,6 +125,8 @@ private:
         Upload,
         NvWrite,
         CopyCalPage,
+        ProgramReset,
+        CalReset,
         Disconnect
     };
 

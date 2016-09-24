@@ -16,6 +16,7 @@ ParamLayer::ParamLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
     connect(mConn, &ConnectionFacade::copyCalPageDone, this, &ParamLayer::onConnCopyCalPageDone);
+    connect(mConn, &ConnectionFacade::programResetDone, this, &ParamLayer::onConnProgramResetDone);
     connect(mConn, &ConnectionFacade::uploadDone, this, &ParamLayer::onParamUploadDone);
     connect(mConn, &ConnectionFacade::downloadDone, this, &ParamLayer::onParamDownloadDone);
 }
@@ -87,6 +88,8 @@ bool ParamLayer::idle()
     case State::Upload:         return false;
     case State::NvWrite:        return false;
     case State::CopyCalPage:    return false;
+    case State::ProgramReset:   return false;
+    case State::CalReset:       return false;
     case State::Disconnect:     return false;
     default:                    return true;
     }
@@ -120,6 +123,26 @@ int ParamLayer::slaveNvWriteTimeout()
 void ParamLayer::setSlaveNvWriteTimeout(int timeout)
 {
     mConn->setNvWriteTimeout(timeout);
+}
+
+int ParamLayer::slaveBootDelay()
+{
+    return mConn->bootDelay();
+}
+
+void ParamLayer::setSlaveBootDelay(int timeout)
+{
+    mConn->setBootDelay(timeout);
+}
+
+bool ParamLayer::slaveProgResetIsAcked()
+{
+    return mConn->progResetIsAcked();
+}
+
+void ParamLayer::setSlaveProgResetIsAcked(bool val)
+{
+    mConn->setProgResetIsAcked(val);
 }
 
 int ParamLayer::opProgressNotifyPeriod()
@@ -424,6 +447,52 @@ void ParamLayer::copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegme
     mConn->copyCalPage(fromSegment, fromPage, toSegment, toPage);
 }
 
+void ParamLayer::programResetSlave()
+{
+    if(!(mState == State::Disconnected || mState == State::Connected)
+            || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode || mConn->state() == Connection::State::PgmMode))
+    {
+        emit programResetSlaveDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    setState(State::ProgramReset);
+
+    if(mConn->state() == Connection::State::PgmMode)
+    {
+        mConn->programReset();
+    }
+    else
+    {
+        mConn->setState(Connection::State::PgmMode);
+    }
+}
+
+void ParamLayer::calResetSlave()
+{
+    if(!(mState == State::Disconnected || mState == State::Connected)
+            || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode || mConn->state() == Connection::State::PgmMode))
+    {
+        emit calResetSlaveDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    setState(State::CalReset);
+
+    if(mConn->state() == Connection::State::CalMode)
+    {
+        mConn->programReset();
+    }
+    else if(mConn->state() == Connection::State::PgmMode)   // not sure how we got here, but try program reset anyway...
+    {
+        mConn->programReset();
+    }
+    else
+    {
+        mConn->setState(Connection::State::CalMode);
+    }
+}
+
 void ParamLayer::connectSlave()
 {
     if(!(mState == State::Disconnected || mState == State::Connected)
@@ -523,6 +592,52 @@ void ParamLayer::onConnSetStateDone(OpResult result)
             emit nvWriteDone(result);
         }
         break;
+    case State::ProgramReset:
+        if(result == OpResult::Success)
+        {
+            if(mConn->state() == Connection::State::PgmMode)
+            {
+                mConn->programReset();
+            }
+            else if(mConn->state() == Connection::State::Closed)
+            {
+                setState(State::Disconnected);
+                emit programResetSlaveDone(OpResult::Success);
+            }
+            else
+            {
+                Q_ASSERT(mConn->state() == Connection::State::PgmMode || mConn->state() == Connection::State::Closed);
+            }
+        }
+        else
+        {
+            setState(State::Disconnected);
+            emit programResetSlaveDone(result);
+        }
+        break;
+    case State::CalReset:
+        if(result == OpResult::Success)
+        {
+            if(mConn->state() == Connection::State::CalMode)
+            {
+                mConn->programReset();
+            }
+            else if(mConn->state() == Connection::State::Closed)
+            {
+                setState(State::Disconnected);
+                emit calResetSlaveDone(OpResult::Success);
+            }
+            else
+            {
+                Q_ASSERT(mConn->state() == Connection::State::CalMode || mConn->state() == Connection::State::Closed);
+            }
+        }
+        else
+        {
+            setState(State::Disconnected);
+            emit calResetSlaveDone(result);
+        }
+        break;
     case State::Disconnect:
         setState(State::Disconnected);
         emit disconnectSlaveDone(result);
@@ -588,6 +703,22 @@ void ParamLayer::onConnCopyCalPageDone(OpResult result, quint8 fromSegment, quin
         setState(State::Connected);
 
     emit copyCalPageDone(result, fromSegment, fromPage, toSegment, toPage);
+}
+
+void ParamLayer::onConnProgramResetDone(OpResult result)
+{
+    if(result != OpResult::Success)
+    {
+        setState(State::Disconnected);
+        if(mState == State::ProgramReset)
+            emit programResetSlaveDone(result);
+        else if(mState == State::CalReset)
+            emit calResetSlaveDone(result);
+    }
+    else
+    {
+        mConn->setState(Connection::State::Closed);
+    }
 }
 
 void ParamLayer::onParamDownloadDone(OpResult result, XcpPtr base, const std::vector<quint8> &data)
@@ -755,6 +886,7 @@ Param *ParamLayer::getNextParam()
 
 void ParamLayer::setState(State val)
 {
+    qDebug() << "State" << int(val);
     if(updateDelta<>(mState, val))
         emit stateChanged();
 }
