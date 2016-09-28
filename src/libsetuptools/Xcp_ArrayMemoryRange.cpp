@@ -158,11 +158,11 @@ void ArrayMemoryRange::download(quint32 beginIndex, const QList<QVariant> &data)
     }
 }
 
-void ArrayMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr baseAddr, int len, std::vector<quint8> data)
+void ArrayMemoryRange::onUploadDone(SetupTools::OpResult result, Xcp::XcpPtr baseAddr, int len, std::vector<quint8> data)
 {
     Q_UNUSED(len);
 
-    if(result == SetupTools::Xcp::OpResult::Success)
+    if(result == SetupTools::OpResult::Success)
     {
         if(baseAddr.ext != base().ext)
             return;
@@ -229,7 +229,7 @@ void ArrayMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPt
         emit uploadDone(result);
         setWriteCacheDirty(mData != mSlaveData);
     }
-    else if(result == SetupTools::Xcp::OpResult::SlaveErrorOutOfRange)
+    else if(result == SetupTools::OpResult::SlaveErrorOutOfRange)
     {
         setValid(false);
         std::fill(mData.begin(), mData.end(), QVariant());

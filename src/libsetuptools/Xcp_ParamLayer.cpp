@@ -15,12 +15,10 @@ ParamLayer::ParamLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::opMsg, this, &ParamLayer::onConnOpMsg);
     connect(mConn, &ConnectionFacade::stateChanged, this, &ParamLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::nvWriteDone, this, &ParamLayer::onConnNvWriteDone);
-}
-
-ParamLayer::ParamLayer(quint32 addrGran, QObject *parent) :
-    ParamLayer(parent)
-{
-    setAddrGran(addrGran);
+    connect(mConn, &ConnectionFacade::copyCalPageDone, this, &ParamLayer::onConnCopyCalPageDone);
+    connect(mConn, &ConnectionFacade::programResetDone, this, &ParamLayer::onConnProgramResetDone);
+    connect(mConn, &ConnectionFacade::uploadDone, this, &ParamLayer::onParamUploadDone);
+    connect(mConn, &ConnectionFacade::downloadDone, this, &ParamLayer::onParamDownloadDone);
 }
 
 QUrl ParamLayer::intfcUri()
@@ -82,15 +80,18 @@ bool ParamLayer::idle()
 {
     switch(mState)
     {
-    case State::IntfcNotOk:     return true;    break;
-    case State::Disconnected:   return true;    break;
-    case State::Connect:        return false;   break;
-    case State::Connected:      return true;    break;
-    case State::Download:       return false;   break;
-    case State::Upload:         return false;   break;
-    case State::NvWrite:        return false;   break;
-    case State::Disconnect:     return false;   break;
-    default:                    return true;    break;
+    case State::IntfcNotOk:     return true;
+    case State::Disconnected:   return true;
+    case State::Connect:        return false;
+    case State::Connected:      return true;
+    case State::Download:       return false;
+    case State::Upload:         return false;
+    case State::NvWrite:        return false;
+    case State::CopyCalPage:    return false;
+    case State::ProgramReset:   return false;
+    case State::CalReset:       return false;
+    case State::Disconnect:     return false;
+    default:                    return true;
     }
 }
 
@@ -124,6 +125,26 @@ void ParamLayer::setSlaveNvWriteTimeout(int timeout)
     mConn->setNvWriteTimeout(timeout);
 }
 
+int ParamLayer::slaveBootDelay()
+{
+    return mConn->bootDelay();
+}
+
+void ParamLayer::setSlaveBootDelay(int timeout)
+{
+    mConn->setBootDelay(timeout);
+}
+
+bool ParamLayer::slaveProgResetIsAcked()
+{
+    return mConn->progResetIsAcked();
+}
+
+void ParamLayer::setSlaveProgResetIsAcked(bool val)
+{
+    mConn->setProgResetIsAcked(val);
+}
+
 int ParamLayer::opProgressNotifyPeriod()
 {
     return mOpProgressNotifyPeriod;
@@ -154,33 +175,14 @@ double ParamLayer::opProgress()
     return mActiveKeyIdx / double(mActiveKeys.size());
 }
 
-ConnectionFacade *ParamLayer::conn()
+ConnectionFacade * ParamLayer::conn()
 {
     return mConn;
 }
 
-ParamRegistry *ParamLayer::registry()
+ParamRegistry * ParamLayer::registry()
 {
     return mRegistry;
-}
-
-quint32 ParamLayer::addrGran()
-{
-    if(mRegistry)
-        return mRegistry->addrGran();
-    else
-        return 0;
-}
-
-void ParamLayer::setAddrGran(quint32 val)
-{
-    if(!mRegistry)
-    {
-        mRegistry = new ParamRegistry(val, this);
-        mRegistry->setConnectionFacade(mConn);
-    }
-
-    emit addrGranChanged();
 }
 
 bool ParamLayer::writeCacheDirty()
@@ -228,7 +230,7 @@ QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
 
 QStringList ParamLayer::setData(QVariantMap data, bool eraseOld)
 {
-    ParamRegistryHistoryElide elide = mRegistry->historyElide();
+    ParamHistoryElide elide = mRegistry->historyElide();
 
     QStringList failedKeys;
 
@@ -282,7 +284,7 @@ QMap<QString, QVariant> ParamLayer::rawData(const QStringList &keys)
 
 QStringList ParamLayer::setRawData(QVariantMap data, bool eraseOld)
 {
-    ParamRegistryHistoryElide elide = mRegistry->historyElide();
+    ParamHistoryElide elide = mRegistry->historyElide();
 
     QStringList failedKeys;
 
@@ -330,7 +332,7 @@ QMap<QString, QVariant> ParamLayer::names(const QStringList &keys)
         if(param == nullptr)
             continue;
 
-        map.insert(key, param->name);
+        map.insert(key, param->name());
     }
     return map;
 }
@@ -430,6 +432,67 @@ void ParamLayer::nvWrite()
         mConn->nvWrite();
 }
 
+void ParamLayer::copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    if(mConn->state() != Connection::State::CalMode)
+    {
+        emit copyCalPageDone(OpResult::InvalidOperation, fromSegment, fromPage, toSegment, toPage);
+        return;
+    }
+
+    mActiveResult = OpResult::Success;
+
+    setState(State::CopyCalPage);
+
+    mConn->copyCalPage(fromSegment, fromPage, toSegment, toPage);
+}
+
+void ParamLayer::programResetSlave()
+{
+    if(!(mState == State::Disconnected || mState == State::Connected)
+            || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode || mConn->state() == Connection::State::PgmMode))
+    {
+        emit programResetSlaveDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    setState(State::ProgramReset);
+
+    if(mConn->state() == Connection::State::PgmMode)
+    {
+        mConn->programReset();
+    }
+    else
+    {
+        mConn->setState(Connection::State::PgmMode);
+    }
+}
+
+void ParamLayer::calResetSlave()
+{
+    if(!(mState == State::Disconnected || mState == State::Connected)
+            || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode || mConn->state() == Connection::State::PgmMode))
+    {
+        emit calResetSlaveDone(OpResult::InvalidOperation);
+        return;
+    }
+
+    setState(State::CalReset);
+
+    if(mConn->state() == Connection::State::CalMode)
+    {
+        mConn->programReset();
+    }
+    else if(mConn->state() == Connection::State::PgmMode)   // not sure how we got here, but try program reset anyway...
+    {
+        mConn->programReset();
+    }
+    else
+    {
+        mConn->setState(Connection::State::CalMode);
+    }
+}
+
 void ParamLayer::connectSlave()
 {
     if(!(mState == State::Disconnected || mState == State::Connected)
@@ -439,7 +502,6 @@ void ParamLayer::connectSlave()
         return;
     }
 
-    disconnect(mActiveParamConnection);
     mActiveKeys.clear();
     mActiveKeyIdx = -1;
 
@@ -463,7 +525,6 @@ void ParamLayer::disconnectSlave()
         return;
     }
 
-    disconnect(mActiveParamConnection);
     mActiveKeys.clear();
     mActiveKeyIdx = -1;
 
@@ -531,6 +592,52 @@ void ParamLayer::onConnSetStateDone(OpResult result)
             emit nvWriteDone(result);
         }
         break;
+    case State::ProgramReset:
+        if(result == OpResult::Success)
+        {
+            if(mConn->state() == Connection::State::PgmMode)
+            {
+                mConn->programReset();
+            }
+            else if(mConn->state() == Connection::State::Closed)
+            {
+                setState(State::Disconnected);
+                emit programResetSlaveDone(OpResult::Success);
+            }
+            else
+            {
+                Q_ASSERT(mConn->state() == Connection::State::PgmMode || mConn->state() == Connection::State::Closed);
+            }
+        }
+        else
+        {
+            setState(State::Disconnected);
+            emit programResetSlaveDone(result);
+        }
+        break;
+    case State::CalReset:
+        if(result == OpResult::Success)
+        {
+            if(mConn->state() == Connection::State::CalMode)
+            {
+                mConn->programReset();
+            }
+            else if(mConn->state() == Connection::State::Closed)
+            {
+                setState(State::Disconnected);
+                emit calResetSlaveDone(OpResult::Success);
+            }
+            else
+            {
+                Q_ASSERT(mConn->state() == Connection::State::CalMode || mConn->state() == Connection::State::Closed);
+            }
+        }
+        else
+        {
+            setState(State::Disconnected);
+            emit calResetSlaveDone(result);
+        }
+        break;
     case State::Disconnect:
         setState(State::Disconnected);
         emit disconnectSlaveDone(result);
@@ -545,18 +652,22 @@ void ParamLayer::onConnSetStateDone(OpResult result)
     }
 }
 
-void ParamLayer::onConnOpMsg(SetupTools::Xcp::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
+void ParamLayer::onConnOpMsg(SetupTools::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
 {
     QString extStr = str;
-    if(ext.addr)
+    if(ext.addr && mActiveParam)
     {
-        auto paramInfo = mRegistry->findParamByAddr(ext.addr.get());
-        if(paramInfo.first != nullptr)
+        if(mActiveParam->minSize() > mActiveParam->dataTypeSize())
         {
-            if(paramInfo.second < 0)
-                extStr = tr("%1 (%2)").arg(str).arg(paramInfo.first->name);
-            else
-                extStr = tr("%1 (%2, offset %3)").arg(str).arg(paramInfo.first->name).arg(paramInfo.second);
+            // looks like an array
+            XcpPtr paramAddr = XcpPtr::fromVariant(mActiveParam->addr());
+            quint32 offset = (ext.addr.get().addr - paramAddr.addr) * mConn->addrGran() / mActiveParam->dataTypeSize();
+
+            extStr = tr("%1 (%2, offset %3)").arg(str).arg(mActiveParam->name()).arg(offset);
+        }
+        else
+        {
+            extStr = tr("%1 (%2)").arg(str).arg(mActiveParam->name());
         }
     }
 
@@ -586,30 +697,105 @@ void ParamLayer::onConnNvWriteDone(OpResult result)
     emit nvWriteDone(result);
 }
 
-void ParamLayer::onParamDownloadDone(OpResult result)
+void ParamLayer::onConnCopyCalPageDone(OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    if(mState == State::CopyCalPage)
+        setState(State::Connected);
+
+    emit copyCalPageDone(result, fromSegment, fromPage, toSegment, toPage);
+}
+
+void ParamLayer::onConnProgramResetDone(OpResult result)
+{
+    if(result != OpResult::Success)
+    {
+        setState(State::Disconnected);
+        if(mState == State::ProgramReset)
+            emit programResetSlaveDone(result);
+        else if(mState == State::CalReset)
+            emit calResetSlaveDone(result);
+    }
+    else
+    {
+        mConn->setState(Connection::State::Closed);
+    }
+}
+
+void ParamLayer::onParamDownloadDone(OpResult result, XcpPtr base, const std::vector<quint8> &data)
 {
     Q_ASSERT(mState == State::Download);
     if(result != OpResult::Success && mActiveResult == OpResult::Success)
         mActiveResult = result;
 
-    disconnect(mActiveParamConnection);
-
-    ++mActiveKeyIdx;
-    notifyProgress();
-    downloadKey();
+    if(mActiveParam->fullReload())
+        mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->loadedBytes());
+    else
+        mConn->upload(base, data.size());
 }
 
-void ParamLayer::onParamUploadDone(OpResult result)
+void ParamLayer::onParamUploadDone(OpResult result, XcpPtr base, int len, const std::vector<quint8> &data)
 {
-    Q_ASSERT(mState == State::Upload);
-    if(result != OpResult::Success && mActiveResult == OpResult::Success)
-        mActiveResult = result;
+    XcpPtr paramBase = XcpPtr::fromVariant(mActiveParam->addr());
+    quint32 offset = (base.addr - paramBase.addr) * mConn->addrGran();
 
-    disconnect(mActiveParamConnection);
+    bool doNotAdvance = false;
+
+    if(mState == State::Upload)
+    {
+        Q_ASSERT(offset > 0 || len == int(mActiveParam->minSize()));   // if upload base is param base, upload should be of minSize
+
+        if(result == OpResult::Success && mActiveParam->maxSize() > (offset + len))
+        {
+            // can do another element
+            XcpPtr newBase = base;
+            newBase.addr += len / mConn->addrGran();
+            mConn->upload(newBase, mActiveParam->dataTypeSize());
+            doNotAdvance = true;
+        }
+        else if(result == OpResult::SlaveErrorOutOfRange)
+        {
+            if(offset < mActiveParam->minSize())
+                mActiveParam->setValid(false);  // slave does not have the minimum number of bytes, param is invalid, but do not capture the error
+
+            // otherwise, out of range, but we already have min size loaded; do not capture this result
+        }
+        else if(result != OpResult::Success && mActiveResult == OpResult::Success)
+        {
+            mActiveResult = result;
+        }
+    }
+    else if(mState == State::Download)
+    {
+        if(result != OpResult::Success && mActiveResult == OpResult::Success)
+            mActiveResult = result;
+    }
+    else if(mState == State::Disconnect)
+    {
+        return;
+    }
+    else
+    {
+        Q_ASSERT(mState == State::Upload || mState == State::Download || mState == State::Disconnect);
+    }
+
+    if(!data.empty())
+        mActiveParam->setSlaveBytes({data.data(), data.data() + data.size()}, offset);
+
+    if(doNotAdvance)
+        return;
+
+    if(mState == State::Upload)
+        emit mActiveParam->uploadDone(result);
+    else if(mState == State::Download)
+        emit mActiveParam->downloadDone(result);
 
     ++mActiveKeyIdx;
     notifyProgress();
-    uploadKey();
+
+    if(mState == State::Upload)
+        uploadKey();
+    else // if(mState == State::Download)
+        downloadKey();
 }
 
 void ParamLayer::onRegistryWriteCacheDirtyChanged()
@@ -624,8 +810,8 @@ void ParamLayer::downloadKey()
 
     while(1)
     {
-        Param *param = getNextParam();
-        if(param == nullptr)
+        mActiveParam = getNextParam();
+        if(mActiveParam == nullptr)
         {
             setState(State::Connected);
             mParamHistoryElide.reset();
@@ -634,10 +820,16 @@ void ParamLayer::downloadKey()
             emit downloadDone(mActiveResult, mActiveKeys);
             break;
         }
-        if(param->writeCacheDirty())
+        if(mActiveParam->writeCacheDirty() && mActiveParam->valid())
         {
-            mActiveParamConnection = QObject::connect(param, &Param::downloadDone, this, &ParamLayer::onParamDownloadDone);
-            param->download();
+            qDebug() << mActiveParam->name() << "dirty";
+            int ag = mConn->addrGran();
+            QPair<quint32, quint32> changed = mActiveParam->changedBytes();
+            std::vector<quint8> data(mActiveParam->bytes().begin() + changed.first / ag * ag,               // round down to next AG
+                                     mActiveParam->bytes().begin() + (changed.second + ag - 1) / ag * ag);  // round up to next AG
+            XcpPtr base = XcpPtr::fromVariant(mActiveParam->addr());
+            base.addr += changed.first / mConn->addrGran();
+            mConn->download(base, data);
             break;
         }
         ++mActiveKeyIdx;
@@ -649,8 +841,8 @@ void ParamLayer::uploadKey()
     Q_ASSERT(mState == State::Upload);
     Q_ASSERT(mActiveKeyIdx >= 0 && mActiveKeyIdx <= mActiveKeys.size());
 
-    Param *param = getNextParam();
-    if(param == nullptr)
+    mActiveParam = getNextParam();
+    if(mActiveParam == nullptr)
     {
         setState(State::Connected);
         mParamHistoryElide.reset();
@@ -659,8 +851,8 @@ void ParamLayer::uploadKey()
         emit uploadDone(mActiveResult, mActiveKeys);
         return;
     }
-    mActiveParamConnection = QObject::connect(param, &Param::uploadDone, this, &ParamLayer::onParamUploadDone);
-    param->upload();
+
+    mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->minSize());
 }
 
 void ParamLayer::onIntfcSlaveIdChanged()
@@ -694,6 +886,7 @@ Param *ParamLayer::getNextParam()
 
 void ParamLayer::setState(State val)
 {
+    qDebug() << "State" << int(val);
     if(updateDelta<>(mState, val))
         emit stateChanged();
 }

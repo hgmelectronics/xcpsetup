@@ -1,12 +1,7 @@
 #ifndef SETUPTOOLS_XCP_PARAMREGISTRY_H
 #define SETUPTOOLS_XCP_PARAMREGISTRY_H
-
-#include "Xcp_MemoryRangeTable.h"
-#include "Slot.h"
-#include "Xcp_Param.h"
-#include "Xcp_ScalarParam.h"
-#include "Xcp_ArrayParam.h"
-#include "Xcp_VarArrayParam.h"
+/*
+#include "ParamRegistry.h"
 #include "Xcp_ConnectionFacade.h"
 
 #include <QObject>
@@ -40,25 +35,11 @@ private:
     QVector<ArrayAddrEntry> mVector;
 };
 
-class ParamRegistryHistoryElide
-{
-    friend class ParamRegistry;
-    ParamRegistryHistoryElide(ParamRegistry & registry);
-public:
-    ParamRegistryHistoryElide(const ParamRegistryHistoryElide & other);
-    ParamRegistryHistoryElide & operator =(const ParamRegistryHistoryElide &);
-    ~ParamRegistryHistoryElide();
-
-    ParamRegistryHistoryElide() = delete;
-private:
-    ParamRegistry * mRegistry;
-};
-
-class ParamRegistry : public QObject
+class ParamRegistry : public SetupTools::ParamRegistry
 {
     Q_OBJECT
 
-    Q_PROPERTY(quint32 addrGran READ addrGran)
+    Q_PROPERTY(quint32 addrGran READ addrGran WRITE setAddrGran NOTIFY addrGranChanged)
     Q_PROPERTY(SetupTools::Xcp::ConnectionFacade *connectionFacade READ connectionFacade WRITE setConnectionFacade NOTIFY connectionChanged)
     Q_PROPERTY(bool connectionOk READ connectionOk NOTIFY connectionChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
@@ -149,5 +130,5 @@ private:
 
 } // namespace Xcp
 } // namespace SetupTools
-
+*/
 #endif // SETUPTOOLS_XCP_PARAMREGISTRY_H

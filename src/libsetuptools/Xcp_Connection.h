@@ -15,7 +15,7 @@ namespace SetupTools
 namespace Xcp
 {
 
-class ConnException : public ::SetupTools::Xcp::Exception {};
+class ConnException : public ::SetupTools::Exception {};
 
 class Timeout : public ConnException {};
 class InvalidOperation : public ConnException {};
@@ -70,9 +70,14 @@ public:
     XcpPtr() : addr(0), ext(0) {}
     XcpPtr(quint64 addrAndExt) : addr(addrAndExt), ext(addrAndExt >> 32) {}
     XcpPtr(quint32 addr_in, quint8 ext_in) : addr(addr_in), ext(ext_in) {}
+    XcpPtr(QVariant addr);
     QString toString() const;
 
     static XcpPtr fromString(QString str, bool *ok = nullptr);
+    static XcpPtr fromVariant(const QVariant & var, bool * ok = nullptr)
+    {
+        return fromString(var.toString(), ok);
+    }
 
     inline XcpPtr &operator+=(quint32 offset)
     {
@@ -235,6 +240,7 @@ public:
         Download,
         NvWrite,
         SetCalPage,
+        CopyCalPage,
         ProgramStart,
         ProgramClear,
         ProgramRange,
@@ -350,51 +356,53 @@ public:
     int addrGran();
 
 signals:
-    void setStateDone(SetupTools::Xcp::OpResult result);
-    void openDone(SetupTools::Xcp::OpResult result);
-    void closeDone(SetupTools::Xcp::OpResult result);
-    void uploadDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
-    void downloadDone(SetupTools::Xcp::OpResult result, XcpPtr base, std::vector<quint8> data);
-    void nvWriteDone(SetupTools::Xcp::OpResult result);
-    void setCalPageDone(SetupTools::Xcp::OpResult result, quint8 segment, quint8 page);
-    void programStartDone(SetupTools::Xcp::OpResult result);
-    void programClearDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len);
-    void programRangeDone(SetupTools::Xcp::OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
-    void programVerifyDone(SetupTools::Xcp::OpResult result, XcpPtr mta, quint32 crc);
-    void programResetDone(SetupTools::Xcp::OpResult result);
-    void buildChecksumDone(SetupTools::Xcp::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
-    void getAvailSlavesDone(SetupTools::Xcp::OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
-    void getAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-    void opMsg(SetupTools::Xcp::OpResult result, QString info, OpExtInfo ext);
+    void setStateDone(SetupTools::OpResult result);
+    void openDone(SetupTools::OpResult result);
+    void closeDone(SetupTools::OpResult result);
+    void uploadDone(SetupTools::OpResult result, XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    void downloadDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data);
+    void nvWriteDone(SetupTools::OpResult result);
+    void setCalPageDone(SetupTools::OpResult result, quint8 segment, quint8 page);
+    void copyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
+    void programStartDone(SetupTools::OpResult result);
+    void programClearDone(SetupTools::OpResult result, XcpPtr base, int len);
+    void programRangeDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
+    void programVerifyDone(SetupTools::OpResult result, XcpPtr mta, quint32 crc);
+    void programResetDone(SetupTools::OpResult result);
+    void buildChecksumDone(SetupTools::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
+    void getAvailSlavesDone(SetupTools::OpResult result, Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> slaveIds);
+    void getAvailSlavesStrDone(SetupTools::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void opMsg(SetupTools::OpResult result, QString info, OpExtInfo ext);
     void stateChanged();
     void opProgressChanged();
 public slots:
-    SetupTools::Xcp::OpResult setState(State);
-    SetupTools::Xcp::OpResult open(boost::optional<int> timeoutMsec = boost::optional<int>());
-    SetupTools::Xcp::OpResult close();
-    SetupTools::Xcp::OpResult upload(XcpPtr base, int len, std::vector<quint8> *out=nullptr);
-    SetupTools::Xcp::OpResult download(XcpPtr base, const std::vector<quint8> data);
-    SetupTools::Xcp::OpResult nvWrite();
-    SetupTools::Xcp::OpResult setCalPage(quint8 segment, quint8 page);
-    SetupTools::Xcp::OpResult programStart();
-    SetupTools::Xcp::OpResult programClear(XcpPtr base, int len);
-    SetupTools::Xcp::OpResult programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket = true);
-    SetupTools::Xcp::OpResult programVerify(XcpPtr mta, quint32 crc);
-    SetupTools::Xcp::OpResult programReset();
-    SetupTools::Xcp::OpResult buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
-    SetupTools::Xcp::OpResult getAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
-    SetupTools::Xcp::OpResult getAvailSlaves(Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> *out);
+    SetupTools::OpResult setState(State);
+    SetupTools::OpResult open(boost::optional<int> timeoutMsec = boost::optional<int>());
+    SetupTools::OpResult close();
+    SetupTools::OpResult upload(XcpPtr base, int len, std::vector<quint8> *out=nullptr);
+    SetupTools::OpResult download(XcpPtr base, const std::vector<quint8> data);
+    SetupTools::OpResult nvWrite();
+    SetupTools::OpResult setCalPage(quint8 segment, quint8 page);
+    SetupTools::OpResult copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
+    SetupTools::OpResult programStart();
+    SetupTools::OpResult programClear(XcpPtr base, int len);
+    SetupTools::OpResult programRange(XcpPtr base, const std::vector<quint8> data, bool finalEmptyPacket = true);
+    SetupTools::OpResult programVerify(XcpPtr mta, quint32 crc);
+    SetupTools::OpResult programReset();
+    SetupTools::OpResult buildChecksum(XcpPtr base, int len, CksumType *typeOut, quint32 *cksumOut);
+    SetupTools::OpResult getAvailSlavesStr(QString bcastId, QString filter, QList<QString> *out);
+    SetupTools::OpResult getAvailSlaves(Xcp::Interface::Can::Id bcastId, Xcp::Interface::Can::Filter filter, std::vector<Xcp::Interface::Can::SlaveId> *out);
 private:
-    SetupTools::Xcp::OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, QString info, OpExtInfo ext);
-    SetupTools::Xcp::OpResult getReplyResult(const std::vector<quint8> &reply, QString info, OpExtInfo ext);
-    SetupTools::Xcp::OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, QString info, OpExtInfo ext, boost::optional<int> timeoutMsec = boost::optional<int>());
-    SetupTools::Xcp::OpResult uploadSegment(XcpPtr base, int len, std::vector<quint8> &out, OpType type);
-    SetupTools::Xcp::OpResult downloadSegment(XcpPtr base, const std::vector<quint8> &data, OpType type);
-    SetupTools::Xcp::OpResult programPacket(XcpPtr base, const std::vector<quint8> &data, OpType type);
-    SetupTools::Xcp::OpResult programBlock(XcpPtr base, const std::vector<quint8> &data, OpType type);
-    SetupTools::Xcp::OpResult setMta(XcpPtr ptr, OpType type);
-    SetupTools::Xcp::OpResult tryQuery(std::function<SetupTools::Xcp::OpResult (void)> &action, OpType type);
-    SetupTools::Xcp::OpResult synch(OpType type);
+    SetupTools::OpResult getRepliesResult(const std::vector<std::vector<quint8> > &replies, QString info, OpExtInfo ext);
+    SetupTools::OpResult getReplyResult(const std::vector<quint8> &reply, QString info, OpExtInfo ext);
+    SetupTools::OpResult transact(const std::vector<quint8> &cmd, int minReplyBytes, std::vector<quint8> &out, QString info, OpExtInfo ext, boost::optional<int> timeoutMsec = boost::optional<int>());
+    SetupTools::OpResult uploadSegment(XcpPtr base, int len, std::vector<quint8> &out, OpType type);
+    SetupTools::OpResult downloadSegment(XcpPtr base, const std::vector<quint8> &data, OpType type);
+    SetupTools::OpResult programPacket(XcpPtr base, const std::vector<quint8> &data, OpType type);
+    SetupTools::OpResult programBlock(XcpPtr base, const std::vector<quint8> &data, OpType type);
+    SetupTools::OpResult setMta(XcpPtr ptr, OpType type);
+    SetupTools::OpResult tryQuery(std::function<SetupTools::OpResult (void)> &action, OpType type);
+    SetupTools::OpResult synch(OpType type);
     void updateEmitOpProgress(double newVal);
 
     constexpr static const int MAX_RETRIES = 10;

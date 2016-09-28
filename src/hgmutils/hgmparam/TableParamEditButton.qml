@@ -15,7 +15,7 @@ Button {
     property alias hasPlot: table.hasPlot
     property alias hasShapers: table.hasShapers
 
-    enabled: table.tableParam.param.value.range.valid
+    enabled: table.tableParam.param.value.valid
     onClicked: {
         table.showNormal()
         table.raise()

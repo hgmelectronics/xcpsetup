@@ -1,4 +1,4 @@
-#include "Xcp_ParamRegistry.h"
+/*#include "Xcp_ParamRegistry.h"
 #include "Xcp_ScalarMemoryRange.h"
 #include "Xcp_ScalarParam.h"
 #include "Xcp_ArrayMemoryRange.h"
@@ -558,3 +558,4 @@ void ParamRegistry::insertParam(Param * param, bool saveable)
 } // namespace Xcp
 } // namespace SetupTools
 
+*/

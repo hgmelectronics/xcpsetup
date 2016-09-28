@@ -154,8 +154,8 @@ Connection::Connection(QObject *parent) :
     mOpProgressFracs(0)
 {
     qRegisterMetaType<SetupTools::Xcp::XcpPtr>("XcpPtr");
-    qRegisterMetaType<SetupTools::Xcp::OpResult>();
-    qRegisterMetaType<SetupTools::Xcp::OpResultWrapper::OpResult>();
+    qRegisterMetaType<SetupTools::OpResult>();
+    qRegisterMetaType<SetupTools::OpResultWrapper::OpResult>();
     qRegisterMetaType<SetupTools::Xcp::Connection::OpExtInfo>();
     qRegisterMetaType<SetupTools::Xcp::CksumType>();
     qRegisterMetaType<std::vector<quint8> >();
@@ -383,8 +383,10 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
         OpResult segResult = uploadSegment(packetPtr, packetBytes, seg, OpType::Upload);
         if(segResult != OpResult::Success)
         {
+            if(out)
+                *out = data;
             updateEmitOpProgress(0);
-            emit uploadDone(segResult, base, len);
+            emit uploadDone(segResult, base, len, data);
             return segResult;
         }
         data.insert(data.end(), seg.begin(), seg.end());
@@ -392,10 +394,10 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
         packetPtr.addr += packetBytes / mAddrGran;
         updateEmitOpProgress(double(len - remBytes) / len);
     }
-    emit uploadDone(OpResult::Success, base, len, data);
-    updateEmitOpProgress(0);
     if(out)
         *out = data;
+    emit uploadDone(OpResult::Success, base, len, data);
+    updateEmitOpProgress(0);
     return OpResult::Success;
 }
 
@@ -575,6 +577,34 @@ OpResult Connection::setCalPage(quint8 segment, quint8 page)
     };
 
     EMIT_RETURN(setCalPageDone, tryQuery(action, OpType::SetCalPage), segment, page);
+}
+
+OpResult Connection::copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    if(!mConnected)
+        EMIT_RETURN(copyCalPageDone, OpResult::NotConnected, fromSegment, fromPage, toSegment, toPage);
+    if(mPgmStarted)
+        EMIT_RETURN(copyCalPageDone, OpResult::WrongMode, fromSegment, fromPage, toSegment, toPage);
+    if(!mSupportsCalPage)
+        EMIT_RETURN(copyCalPageDone, OpResult::InvalidOperation, fromSegment, fromPage, toSegment, toPage);
+
+    std::vector<quint8> query({CmdCode_CopyCalPage, fromSegment, fromPage, toSegment, toPage});
+
+    mCalcMta.reset();   // standard does not define what happens to MTA
+
+    std::function<OpResult (void)> action = [this, query]()
+    {
+        QString msg = tr("copying calibration page");
+
+        std::vector<quint8> reply;
+        RETURN_ON_FAIL(transact(query, 1, reply, msg, {OpType::CopyCalPage, CmdCode_CopyCalPage}));
+        if(reply[0] != 0xFF)
+            return getReplyResult(reply, msg, {OpType::CopyCalPage, CmdCode_CopyCalPage});
+
+        return OpResult::Success;
+    };
+
+    EMIT_RETURN(copyCalPageDone, tryQuery(action, OpType::CopyCalPage), fromSegment, fromPage, toSegment, toPage);
 }
 
 OpResult Connection::programStart()

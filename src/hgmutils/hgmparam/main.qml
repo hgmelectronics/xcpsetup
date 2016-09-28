@@ -14,7 +14,7 @@ ApplicationWindow {
     id: application
     property string programName: qsTr("COMPUSHIFT Parameter Editor")
     property string programVersion: ""
-    property alias useMetricUnits: paramTabView.useMetricUnits
+    property alias useMetricUnits: paramReg.useMetricUnits
     property alias readParametersOnConnect: readParametersOnConnectAction.checked
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
@@ -67,11 +67,17 @@ ApplicationWindow {
         property alias interfaceSaveUri: application.interfaceUri
     }
 
+    Parameters {
+        id: paramReg
+    }
+
     ParamLayer {
         id: paramLayer
-        addrGran: 4
         slaveTimeout: 100
         slaveNvWriteTimeout: 1000
+        slaveBootDelay: 2000
+        slaveProgResetIsAcked: false
+        registry: paramReg
 
         function checkImmediateWrite() {
             if(slaveConnected && idle && ImmediateWrite.keys.length > 0) {
@@ -109,7 +115,7 @@ ApplicationWindow {
         onNvWriteDone: {
             if(result === OpResult.Success) {
                 if(ParamResetNeeded.set) {
-                    disconnectSlave()
+                    paramLayer.calResetSlave()
                     resetNeededDialog.open()
                 }
             }
@@ -121,6 +127,33 @@ ApplicationWindow {
         onUploadDone: {
             if(result !== OpResult.Success) {
                 errorDialog.show(qsTr("Upload failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
+        }
+        onProgramResetSlaveDone: {
+            ParamResetNeeded.set = false
+            if(result !== OpResult.Success) {
+                errorDialog.show(qsTr("Program mode reset failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
+        }
+        onCalResetSlaveDone: {
+            ParamResetNeeded.set = false
+            if(result === OpResult.Success) {
+                paramLayer.programResetSlave()
+            }
+            else {
+                errorDialog.show(qsTr("Cal mode reset failed: %1").arg(
+                                     OpResult.asString(result)))
+            }
+        }
+        onCopyCalPageDone: {
+            if(result === OpResult.Success) {
+                paramLayer.calResetSlave()
+                resetNeededDialog.open()
+            }
+            else {
+                errorDialog.show(qsTr("Calibration page copy failed: %1").arg(
                                      OpResult.asString(result)))
             }
         }
@@ -192,11 +225,12 @@ ApplicationWindow {
                 jsonParamFileIo.name = name
                 if (selectExisting) {
                     var rawData = jsonParamFileIo.read()
-                    paramLayer.registry.beginHistoryElide()
-                    paramLayer.registry.setValidAll(false)
+                    paramReg.beginHistoryElide()
+                    if(!paramLayer.slaveConnected)
+                        paramReg.setValidAll(false)
                     paramLayer.setRawData(rawData, false)
                     paramLayer.setRawData(rawData, true)    // second time in case of param dependencies in wrong order
-                    paramLayer.registry.endHistoryElide()
+                    paramReg.endHistoryElide()
                 } else {
                     saveJsonParamFile()
                 }
@@ -206,11 +240,12 @@ ApplicationWindow {
                 if (selectExisting) {
                     var saveUnits = setStandardUnits()
                     var data = csvParamFileIo.read()
-                    paramLayer.registry.beginHistoryElide()
-                    paramLayer.registry.setValidAll(false)
+                    paramReg.beginHistoryElide()
+                    if(!paramLayer.slaveConnected)
+                        paramReg.setValidAll(false)
                     paramLayer.setData(data, false)
                     paramLayer.setData(data, true)    // second time in case of param dependencies in wrong order
-                    paramLayer.registry.endHistoryElide()
+                    paramReg.endHistoryElide()
                     restoreUnits(saveUnits)
                 } else {
                     saveCsvParamFile()
@@ -223,9 +258,17 @@ ApplicationWindow {
         id: resetNeededDialog
         title: qsTr("Reset Needed")
         text: readParametersOnConnect
-                ? qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power and reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
-                : qsTr("The CS2 needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+                ? qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete and then reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+                : qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+
         standardButtons: StandardButton.Ok
+    }
+    MessageDialog {
+        id: confirmRestoreCalDialog
+        title: qsTr("Confirm Restore Calibration")
+        text: qsTr("This will erase all custom settings on the CS2 and restore the factory calibration. Are you sure you want to do this?")
+        standardButtons: StandardButton.Ok | StandardButton.Cancel
+        onAccepted: paramLayer.copyCalPage(0, 1, 0, 0)
     }
     function saveJsonParamFile() {
         if (saveReadOnlyParameters) {
@@ -417,28 +460,42 @@ ApplicationWindow {
         id: undoAction
         text: qsTr("Undo")
         shortcut: StandardKey.Undo
-        enabled: paramLayer.registry.currentRevNum > paramLayer.registry.minRevNum
-        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum - 1
+        enabled: paramReg.currentRevNum > paramReg.minRevNum
+        onTriggered: paramReg.currentRevNum = paramReg.currentRevNum - 1
     }
 
     Action {
         id: redoAction
         text: qsTr("Redo")
         shortcut: StandardKey.Redo
-        enabled: paramLayer.registry.currentRevNum < paramLayer.registry.maxRevNum
-        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum + 1
+        enabled: paramReg.currentRevNum < paramReg.maxRevNum
+        onTriggered: paramReg.currentRevNum = paramReg.currentRevNum + 1
     }
 
     Action {
         id: enableAllParametersAction
         text: qsTr("Enable All Parameters")
-        onTriggered: paramLayer.registry.setValidAll(true)
+        onTriggered: paramReg.setValidAll(true)
     }
 
     Action {
         id: disableAllParametersAction
         text: qsTr("Disable All Parameters")
-        onTriggered: paramLayer.registry.setValidAll(false)
+        onTriggered: paramReg.setValidAll(false)
+    }
+
+    Action {
+        id: resetSlaveAction
+        text: qsTr("Reset Slave")
+        onTriggered: paramLayer.calResetSlave()
+        enabled: paramLayer.slaveConnected
+    }
+
+    Action {
+        id: restoreFactoryCalAction
+        text: qsTr("Restore Factory Calibration")
+        onTriggered: confirmRestoreCalDialog.open()
+        enabled: paramLayer.slaveConnected
     }
 
     menuBar: MenuBar {
@@ -471,6 +528,12 @@ ApplicationWindow {
             }
             MenuItem {
                 action: disableAllParametersAction
+            }
+            MenuItem {
+                action: resetSlaveAction
+            }
+            MenuItem {
+                action: restoreFactoryCalAction
             }
             MenuItem {
                 action: AutoRefreshSelector.modeAction
@@ -607,7 +670,7 @@ ApplicationWindow {
     ParamTabView {
         id: paramTabView
         anchors.fill: parent
-        registry: paramLayer.registry
+        registry: paramReg
     }
 
     statusBar: StatusBar {

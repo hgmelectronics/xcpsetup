@@ -59,7 +59,7 @@ void MemoryRangeList::onConnectionChanged(bool ok)
         range->onConnectionChanged(ok);
 }
 
-void MemoryRangeList::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
+void MemoryRangeList::onUploadDone(SetupTools::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data)
 {
     for(MemoryRange *range : mRanges)
         range->onUploadDone(result, base, len, data);

@@ -25,7 +25,7 @@ public:
     virtual OpResult clearReceived();
     void slaveTransmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the master
     std::vector<std::vector<quint8> > slaveReceive(int timeoutMsec);   //!< Fetch all packets from the master currently in the Tx buffer, returning after timeout if no packets
-    virtual SetupTools::Xcp::OpResult setPacketLog(bool enable);
+    virtual SetupTools::OpResult setPacketLog(bool enable);
     void setHasReliableTx(bool val);
     virtual bool hasReliableTx() override;
     virtual bool allowsMultipleReplies() override;
