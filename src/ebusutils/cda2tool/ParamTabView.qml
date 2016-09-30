@@ -10,7 +10,7 @@ import com.hgmelectronics.setuptools.ui 1.0
 
 Item {
     id: root
-    property ParamRegistry registry
+    property Parameters registry
     anchors.left: parent.left
     anchors.right: parent.right
     TabView {

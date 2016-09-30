@@ -8,7 +8,7 @@ ScalarParam::ScalarParam(Param *parent) : Param(parent)
 
 double ScalarParam::floatVal() const
 {
-    if(valid())
+    if(valid() && slot())
         return slot()->asFloat(rawVal());
     else
         return NAN;
@@ -16,7 +16,7 @@ double ScalarParam::floatVal() const
 
 QString ScalarParam::stringVal() const
 {
-    if(valid())
+    if(valid() && slot())
         return slot()->asString(rawVal());
     else
         return QString();
@@ -24,18 +24,20 @@ QString ScalarParam::stringVal() const
 
 void ScalarParam::setFloatVal(double val)
 {
-    setRawVal(slot()->asRaw(val));
+    if(slot())
+        setRawVal(slot()->asRaw(val));
 }
 
 void ScalarParam::setStringVal(QString val)
 {
-    setRawVal(slot()->asRaw(val));
+    if(slot())
+        setRawVal(slot()->asRaw(val));
 }
 
 QVariant ScalarParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 {
     QVariant value = rawVal();
-    if(valid())
+    if(valid() && slot())
     {
         bool inRange = slot()->rawInRange(value);
         if(allInRange)
@@ -53,7 +55,7 @@ QVariant ScalarParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 QVariant ScalarParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
 {
     QVariant value = rawVal();
-    if(valid())
+    if(valid() && slot())
     {
         bool inRange = slot()->rawInRange(value);
         if(allInRange)
@@ -74,7 +76,7 @@ bool ScalarParam::setSerializableValue(const QVariant &val)
         return true;
     }
     QString str = val.toString();
-    if(!slot()->engrInRange(str))
+    if(!slot() || !slot()->engrInRange(str))
         return false;
 
     setStringVal(str);
@@ -88,7 +90,7 @@ bool ScalarParam::setSerializableRawValue(const QVariant &val)
         setValid(false);
         return true;
     }
-    if(!slot()->rawInRange(val))
+    if(!slot() || !slot()->rawInRange(val))
         return false;
 
     setRawVal(val);
