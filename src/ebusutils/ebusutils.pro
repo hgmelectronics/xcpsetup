@@ -5,7 +5,8 @@ SUBDIRS += \
     ebussetuptools \
 	ibemparam \
     ibemtool \
-    multilist_demo
+    multilist_demo \
+	ytbtool
 
 ibemtool.depends = ebussetuptools
 multilist_demo.depends = ebussetuptools
