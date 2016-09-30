@@ -17,11 +17,17 @@ ArrayParam::ArrayParam(Param *parent) :
 
 QVariant ArrayParam::get(int row) const
 {
+    if(!slot())
+        return QVariant();
+
     return slot()->asFloat(rawVal(row));
 }
 
 bool ArrayParam::set(int row, const QVariant &value)
 {
+    if(!slot())
+        return false;
+
     bool ok = setRawVal(row, slot()->asRaw(value));
     if(ok)
     {
@@ -39,9 +45,12 @@ QVariant ArrayParam::getSerializableValue(bool *allInRange, bool *anyInRange)
         return raw;
 
     QStringList ret;
-    ret.reserve(raw.toList().size());
-    for(QVariant elem : raw.toList())
-        ret.append(slot()->asString(elem));
+    if(slot())
+    {
+        ret.reserve(raw.toList().size());
+        for(QVariant elem : raw.toList())
+            ret.append(slot()->asString(elem));
+    }
     return ret;
 }
 
@@ -60,7 +69,7 @@ QVariant ArrayParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
     {
         QVariant elem = rawVal(i);
 
-        bool inRange = slot()->rawInRange(elem);
+        bool inRange = slot() && slot()->rawInRange(elem);
         allInRangeAccum &= inRange;
         anyInRangeAccum |= inRange;
         ret.append(elem);
@@ -84,6 +93,9 @@ bool ArrayParam::setSerializableValue(const QVariant &val)
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     QStringList stringList = val.toStringList();
+
+    if(!slot())
+        return false;
 
     for(QString str : stringList)
     {
@@ -115,6 +127,9 @@ bool ArrayParam::setSerializableRawValue(const QVariant &val)
 
     std::vector<quint8> data;
     data.resize(list.size() * dataTypeSize());
+
+    if(!slot())
+        return false;
 
     for(size_t i = 0; i < size_t(list.size()); ++i)
     {
@@ -245,6 +260,8 @@ QVariant ArrayParamModel::data(const QModelIndex &index, int role) const
 
     if(mRaw)
         return rawData;
+    else if(!mParam->slot())
+        return QVariant();
     else if(mStringFormat)
         return mParam->slot()->asString(rawData);
     else
@@ -258,6 +275,9 @@ bool ArrayParamModel::setData(const QModelIndex &index, const QVariant &value, i
             || index.row() < 0
             || index.row() >= mParam->count()
             || role != Qt::DisplayRole)
+        return false;
+
+    if(!mRaw && !mParam->slot())
         return false;
 
     QVariant toSet = mRaw ? value : mParam->slot()->asRaw(value);

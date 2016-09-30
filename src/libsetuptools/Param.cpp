@@ -42,8 +42,8 @@ void Param::setValid(bool valid)
             mNumBytesLoaded = 0;
         }
         updateEngrFromRaw(0, mBytes.size());
-        emit validChanged(mAddr.toString());
-        emit rawValueChanged(mAddr.toString());
+        emit validChanged(mKey);
+        emit rawValueChanged(mKey);
     }
 }
 
@@ -119,16 +119,22 @@ void Param::setAddr(const QVariant & val)
     QVariant newAddr = val;
     QString newKey = val.toString();
 
-    if(val.type() == QVariant::Double)
+    auto type = val.type();
+    if(type == QVariant::Int
+       || type == QVariant::UInt
+       || type == QVariant::LongLong
+       || type == QVariant::ULongLong
+       || type == QVariant::Double)
     {
         newAddr = val.toULongLong();
         newKey = QString("%1").arg(val.toULongLong(), 0, 16);
     }
-    else if(val.type() == QVariant::String)
+    else if(type == QVariant::String)
     {
         QString str = val.toString();
         if(str.startsWith("$"))
             newAddr = str.mid(1).toULongLong(nullptr, 16);
+        qDebug() << "string addr" << newAddr << newKey;
     }
 
     bool updated = false;
