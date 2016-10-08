@@ -25,40 +25,88 @@ QString XcpPtr::toString() const
 
 XcpPtr XcpPtr::fromString(QString str, bool *ok)
 {
+    XcpPtr out;
+    bool isOk = false;
+
     QStringList split = str.split(QChar(':'));
 
-    if(split.size() < 1 || split.size() > 2)
+    if(split.size() >= 1 && split.size() << 2)
     {
-        if(ok)
-            *ok = false;
-        return XcpPtr();
-    }
-
-    QList<quint32> num;
-    for(const QString &splitStr : split)
-    {
-        bool convOk;
-        num.push_back(splitStr.toULong(&convOk, 16));
-        if(!convOk)
+        QList<quint32> num;
+        bool convOk = true;
+        for(const QString &splitStr : split)
         {
-            if(ok)
-                *ok = false;
-            return XcpPtr();
+            num.push_back(splitStr.toULong(&convOk, 16));
+            if(!convOk)
+                break;
+        }
+
+        if(convOk)
+        {
+            Q_ASSERT(num.size() == split.size());
+            if(num.size() == 1)
+            {
+                out = XcpPtr(num[0]);
+                isOk = true;
+            }
+            else if(num[0] <= std::numeric_limits<quint8>::max())
+            {
+                Q_ASSERT(num.size() == 2);
+                out = XcpPtr(num[1], quint8(num[0]));
+                isOk = true;
+            }
         }
     }
 
-    Q_ASSERT(num.size() == split.size());
-    if(num.size() == 2 && num[0] > std::numeric_limits<quint8>::max())
+    if(ok)
+        *ok = isOk;
+    return out;
+}
+
+static bool isNumType(QVariant::Type type)
+{
+    return type == QVariant::Type::Int
+            || type == QVariant::Type::UInt
+            || type == QVariant::Type::LongLong
+            || type == QVariant::Type::ULongLong
+            || type == QVariant::Type::Double;
+}
+
+XcpPtr XcpPtr::fromVariant(const QVariant & var, bool * ok)
+{
+    XcpPtr out;
+    bool isOk = false;
+    if(isNumType(var.type()))
     {
-        if(ok)
-            *ok = false;
-        return XcpPtr();
+        quint32 addr = var.toUInt(&isOk);
+        out = XcpPtr(addr);
+    }
+    else if(var.type() == QVariant::Type::List)
+    {
+        QVariantList list = var.toList();
+        if(list.size() == 1 && isNumType(list[0].type()))
+        {
+            quint32 addr = var.toUInt(&isOk);
+            out = XcpPtr(addr);
+        }
+        else if(list.size() == 2 && isNumType(list[0].type()) && isNumType(list[1].type()))
+        {
+            bool extOk = false;
+            quint32 ext = list[0].toUInt(&extOk);
+            if(extOk)
+            {
+                quint32 addr = list[1].toUInt(&isOk);
+                out = XcpPtr(addr, quint8(ext));
+            }
+        }
     }
 
-    if(num.size() == 1)
-        return XcpPtr(num[0]);
-    else
-        return XcpPtr(num[1], quint8(num[0]));
+    if(!isOk)
+        out = fromString(var.toString(), &isOk);
+
+    if(ok)
+        *ok = isOk;
+    return out;
 }
 
 #define RESETMTA_RETURN_ON_FAIL(value) { OpResult EMIT_RETURN__ret = value; if(EMIT_RETURN__ret != OpResult::Success) { mCalcMta.reset(); return EMIT_RETURN__ret; } }

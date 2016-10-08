@@ -211,7 +211,7 @@ QPair<quint32, quint32> Param::changedBytes() const
           && (!mBytesLoaded[begin] || (mBytesLoaded[begin] && mSlaveBytesLoaded[begin] && mBytes[begin] == mSlaveBytes[begin])))
         ++begin;
 
-    return {begin, end};
+    return {begin / mDataTypeSize * mDataTypeSize, (end + mDataTypeSize - 1) / mDataTypeSize * mDataTypeSize};
 }
 
 void Param::setBytes(boost::iterator_range<const quint8 *> data, quint32 offset, bool eraseExisting)

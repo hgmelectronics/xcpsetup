@@ -74,10 +74,7 @@ public:
     QString toString() const;
 
     static XcpPtr fromString(QString str, bool *ok = nullptr);
-    static XcpPtr fromVariant(const QVariant & var, bool * ok = nullptr)
-    {
-        return fromString(var.toString(), ok);
-    }
+    static XcpPtr fromVariant(const QVariant & var, bool * ok = nullptr);
 
     inline XcpPtr &operator+=(quint32 offset)
     {
