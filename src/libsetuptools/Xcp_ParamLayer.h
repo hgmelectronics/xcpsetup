@@ -145,6 +145,7 @@ private:
     QStringList mActiveKeys;
     int mActiveKeyIdx;
     Param * mActiveParam;
+    std::vector<quint8> mActiveParamUploadedData;
     SetupTools::OpResult mActiveResult;
 };
 

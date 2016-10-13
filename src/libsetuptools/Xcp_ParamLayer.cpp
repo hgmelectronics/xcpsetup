@@ -779,10 +779,16 @@ void ParamLayer::onParamUploadDone(OpResult result, XcpPtr base, int len, const 
     }
 
     if(!data.empty())
-        mActiveParam->setSlaveBytes({data.data(), data.data() + data.size()}, offset);
+    {
+        Q_ASSERT(offset == mActiveParamUploadedData.size());
+        mActiveParamUploadedData.resize(offset + data.size());
+        std::copy(data.begin(), data.end(), mActiveParamUploadedData.begin() + offset);
+    }
 
     if(doNotAdvance)
         return;
+
+    mActiveParam->setSlaveBytes({mActiveParamUploadedData.data(), mActiveParamUploadedData.data() + mActiveParamUploadedData.size()}, 0);
 
     if(mState == State::Upload)
         emit mActiveParam->uploadDone(result);
@@ -811,6 +817,7 @@ void ParamLayer::downloadKey()
     while(1)
     {
         mActiveParam = getNextParam();
+        mActiveParamUploadedData.clear();
         if(mActiveParam == nullptr)
         {
             setState(State::Connected);
@@ -841,6 +848,7 @@ void ParamLayer::uploadKey()
     Q_ASSERT(mActiveKeyIdx >= 0 && mActiveKeyIdx <= mActiveKeys.size());
 
     mActiveParam = getNextParam();
+    mActiveParamUploadedData.clear();
     if(mActiveParam == nullptr)
     {
         setState(State::Connected);
