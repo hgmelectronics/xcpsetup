@@ -593,7 +593,8 @@ QtObject {
             { raw: 17, engr: "AEM Series 2 CAN" },
             { raw: 18, engr: "VW GTI MKV" },
             { raw: 19, engr: "Ebus Yaskawa G5" },
-            { raw: 20, engr: "Nissan ZD30" }
+            { raw: 20, engr: "Nissan ZD30" },
+            { raw: 21, engr: "Ebus YTB" }
         ]
         unencodedSlot: count
     }
