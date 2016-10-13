@@ -859,7 +859,10 @@ void ParamLayer::uploadKey()
         return;
     }
 
-    mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->minSize());
+    if(mActiveParam->size() >= mActiveParam->minSize())
+        mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->size());     // we know the actual size, upload that
+    else
+        mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->minSize());  // size has not yet been determined
 }
 
 void ParamLayer::onIntfcSlaveIdChanged()

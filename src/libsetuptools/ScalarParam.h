@@ -27,8 +27,9 @@ public:
     virtual QVariant getSerializableRawValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
     virtual bool setSerializableRawValue(const QVariant &val);
 
-    virtual quint32 minSize();
-    virtual quint32 maxSize();
+    virtual quint32 minSize() override;
+    virtual quint32 maxSize() override;
+    virtual quint32 size() override;
 signals:
     void valChanged();
 

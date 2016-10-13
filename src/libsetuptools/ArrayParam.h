@@ -82,8 +82,9 @@ public:
 
     void setMinCount(int val);
     void setMaxCount(int val);
-    virtual quint32 minSize();
-    virtual quint32 maxSize();
+    virtual quint32 minSize() override;
+    virtual quint32 maxSize() override;
+    virtual quint32 size() override;
 
 signals:
     void modelChanged();

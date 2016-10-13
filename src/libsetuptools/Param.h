@@ -223,6 +223,7 @@ public:
 
     virtual quint32 minSize() = 0;  // called to find out if enough data is present for param to be valid
     virtual quint32 maxSize() = 0;  // called to find out if enough data is present for param to be valid
+    virtual quint32 size() = 0;     // actual size of the param
 
 signals:
     void registryChanged();
