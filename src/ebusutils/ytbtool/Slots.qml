@@ -166,7 +166,24 @@ Item {
             { raw: 12, engr: qsTr("Speed Readback Fault") },
             { raw: 13, engr: qsTr("Torque Readback Fault") },
             { raw: 14, engr: qsTr("Current Regulation Fault") },
-            { raw: 15, engr: qsTr("Motor Overtemp") }
+            { raw: 15, engr: qsTr("Motor Overtemp") },
+            { raw: 16, engr: qsTr("CAN Comm Fault") },
+            { raw: 17, engr: qsTr("Power Supply Fault") }
+        ]
+    }
+    property EncodingSlot tracState: EncodingSlot {
+        encodingList: [
+            { raw: 0, engr: qsTr("Init") },
+            { raw: 1, engr: qsTr("Coast") },
+            { raw: 2, engr: qsTr("Direction Setup") },
+            { raw: 3, engr: qsTr("Speed") },
+            { raw: 4, engr: qsTr("Torque") },
+            { raw: 5, engr: qsTr("MODBUS Timeout") },
+            { raw: 6, engr: qsTr("Drive Fault") },
+            { raw: 7, engr: qsTr("Drive Fault Recovery") },
+            { raw: 8, engr: qsTr("Motor Overtemp") },
+            { raw: 9, engr: qsTr("CAN Timeout") },
+            { raw: 10, engr: qsTr("Fault Halt") }
         ]
     }
     property EncodingSlot modbusPduResult: EncodingSlot {
@@ -182,6 +199,13 @@ Item {
             { raw: 8, engr: qsTr("Value Exception") },
             { raw: 9, engr: qsTr("Slave Failure") },
             { raw: 10, engr: qsTr("Unknown Exception") }
+        ]
+    }
+    property EncodingSlot tempSensorType: EncodingSlot {
+        encodingList: [
+            { raw: 0, engr: qsTr("None") },
+            { raw: 1, engr: qsTr("Thermistor") },
+            { raw: 2, engr: qsTr("RTD") }
         ]
     }
     property LinearSlot conductance1: LinearSlot {
@@ -262,6 +286,22 @@ Item {
         rawB: 64255
         engrB: 64255
         unit: "rpm"
+        precision: 0
+    }
+    property LinearSlot percent: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 100
+        engrB: 100
+        unit: "%"
+        precision: 0
+    }
+    property LinearSlot torquePositive: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1e9
+        engrB: 1e9
+        unit: "Nm"
         precision: 0
     }
     property LinearSlot signedDeciPercent: LinearSlot {

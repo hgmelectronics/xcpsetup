@@ -247,6 +247,12 @@ Item {
                         ScalarParamEdit {
                             metaParam: registry.tracInvRevBrakingTorqueLimit
                         }
+                        EncodingParamEdit {
+                            metaParam: registry.tracInvCmdMode
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracInvReverseDir
+                        }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
@@ -408,6 +414,68 @@ Item {
                         ScalarParamEdit {
                             name: "RTDB rows"
                             metaParam: registry.sysRtDbRows
+                        }
+                    }
+                }
+            }
+        }
+
+        Tab {
+            title: "Trac"
+            active: true
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        EncodingParamEdit {
+                            metaParam: registry.tracTempSensorType
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracCurrentRegUpRelax
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracCurrentRegDownRelax
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracCurrentRegRatedTorque
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            metaParam: registry.tracAnalogSpeedOffset
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracAnalogTorqueOffset
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracAnalogSpeedCmdOffset
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracAnalogTorqueCmdOffset
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracPositiveTorqueLimit
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracNegativeTorqueLimit
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracMotorSpeed
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracMotorTorque
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracMotorDcCurr
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracState
                         }
                     }
                 }

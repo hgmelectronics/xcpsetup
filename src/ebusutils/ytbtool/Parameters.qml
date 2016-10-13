@@ -755,6 +755,17 @@ ParamRegistry {
             name: qsTr("MODBUS Trac Cmd Mode")
         }
     }
+    property ScalarMetaParam tracInvReverseDir: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00061005
+            writable: isDriverOnly
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("MODBUS Trac Reverse")
+        }
+    }
     property ScalarMetaParam tracInvFreqRef: ScalarMetaParam {
         param: ScalarParam {
             registry: root
@@ -1251,6 +1262,198 @@ ParamRegistry {
             saveable: false
             slot: slots.raw32
             name: qsTr("RTDB Rows")
+        }
+    }
+
+    property ScalarMetaParam tracTempSensorType: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00080000
+            writable: true
+            saveable: true
+            slot: slots.tempSensorType
+            name: qsTr("Trac Motor Temp Sensor Type")
+        }
+    }
+
+    property ScalarMetaParam tracCurrentRegUpRelax: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00080001
+            writable: true
+            saveable: true
+            slot: slots.percent
+            name: qsTr("Trac Curr Up Relax")
+        }
+    }
+
+    property ScalarMetaParam tracCurrentRegDownRelax: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00080002
+            writable: true
+            saveable: true
+            slot: slots.percent
+            name: qsTr("Trac Curr Down Relax")
+        }
+    }
+
+    property ScalarMetaParam tracCurrentRegRatedTorque: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00080003
+            writable: true
+            saveable: true
+            slot: slots.torquePositive
+            name: qsTr("Trac Rated Torque")
+        }
+    }
+
+    property ScalarMetaParam tracAnalogSpeedOffset: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081000
+            writable: false
+            saveable: false
+            slot: slots.rpm1Signed
+            name: qsTr("Analog Speed Offset")
+        }
+    }
+
+    property ScalarMetaParam tracAnalogTorqueOffset: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081001
+            writable: false
+            saveable: false
+            slot: slots.signedDeciPercent
+            name: qsTr("Analog Torque Offset")
+        }
+    }
+
+    property ScalarMetaParam tracAnalogSpeedCmdOffset: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081002
+            writable: false
+            saveable: false
+            slot: slots.rpm1Signed
+            name: qsTr("Analog Speed Cmd Offset")
+        }
+    }
+
+    property ScalarMetaParam tracAnalogTorqueCmdOffset: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081003
+            writable: false
+            saveable: false
+            slot: slots.signedDeciPercent
+            name: qsTr("Analog Torque Cmd Offset")
+        }
+    }
+
+    property ScalarMetaParam tracMotoringCurrentIntegrator: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081004
+            writable: false
+            saveable: false
+            slot: slots.saeEc05Signed
+            name: qsTr("Motoring Current Integrator")
+        }
+    }
+
+    property ScalarMetaParam tracBrakingCurrentIntegrator: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081005
+            writable: false
+            saveable: false
+            slot: slots.saeEc05Signed
+            name: qsTr("Braking Current Integrator")
+        }
+    }
+
+    property ScalarMetaParam tracPositiveTorqueLimit: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081006
+            writable: false
+            saveable: false
+            slot: slots.signedDeciPercent
+            name: qsTr("Positive Torque Limit")
+        }
+    }
+
+    property ScalarMetaParam tracNegativeTorqueLimit: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081007
+            writable: false
+            saveable: false
+            slot: slots.signedDeciPercent
+            name: qsTr("Negative Torque Limit")
+        }
+    }
+
+    property ScalarMetaParam tracMotorSpeed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081008
+            writable: false
+            saveable: false
+            slot: slots.rpm1Signed
+            name: qsTr("Trac Motor Speed")
+        }
+    }
+
+    property ScalarMetaParam tracMotorTorque: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00081009
+            writable: false
+            saveable: false
+            slot: slots.signedDeciPercent
+            name: qsTr("Trac Motor Torque")
+        }
+    }
+
+    property ScalarMetaParam tracMotorDcCurr: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x0008100A
+            writable: false
+            saveable: false
+            slot: slots.saeEc05Signed
+            name: qsTr("Trac Motor DC Curr")
+        }
+    }
+
+    property ScalarMetaParam tracState: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x0008100B
+            writable: false
+            saveable: false
+            slot: slots.tracState
+            name: qsTr("Trac State")
         }
     }
 
