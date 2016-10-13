@@ -822,7 +822,6 @@ void ParamLayer::downloadKey()
         }
         if(mActiveParam->writeCacheDirty() && mActiveParam->valid())
         {
-            qDebug() << mActiveParam->name() << "dirty";
             int ag = mConn->addrGran();
             QPair<quint32, quint32> changed = mActiveParam->changedBytes();
             std::vector<quint8> data(mActiveParam->bytes().begin() + changed.first / ag * ag,               // round down to next AG
@@ -886,7 +885,6 @@ Param *ParamLayer::getNextParam()
 
 void ParamLayer::setState(State val)
 {
-    qDebug() << "State" << int(val);
     if(updateDelta<>(mState, val))
         emit stateChanged();
 }

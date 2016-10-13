@@ -134,7 +134,6 @@ void Param::setAddr(const QVariant & val)
         QString str = val.toString();
         if(str.startsWith("$"))
             newAddr = str.mid(1).toULongLong(nullptr, 16);
-        qDebug() << "string addr" << newAddr << newKey;
     }
 
     bool updated = false;
