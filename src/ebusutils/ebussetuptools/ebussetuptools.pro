@@ -13,9 +13,14 @@ TARGET = ebussetuptools
 TEMPLATE = lib
 CONFIG += staticlib
 
-SOURCES += MultiselectList.cpp
+INCLUDEPATH += $$PWD/../../libsetuptools
+DEPENDPATH += $$PWD/../../libsetuptools
 
-HEADERS += MultiselectList.h
+SOURCES += MultiselectList.cpp \
+    Xcp_EbusEventLogInterface.cpp
+
+HEADERS += MultiselectList.h \
+    Xcp_EbusEventLogInterface.h
 
 unix {
     target.path = /usr/lib

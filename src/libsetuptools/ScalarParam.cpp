@@ -2,7 +2,7 @@
 
 namespace SetupTools {
 
-ScalarParam::ScalarParam(Param *parent) : Param(parent)
+ScalarParam::ScalarParam(QObject *parent) : Param(parent)
 {
 }
 

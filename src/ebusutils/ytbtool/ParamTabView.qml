@@ -11,6 +11,7 @@ import com.hgmelectronics.setuptools.ui 1.0
 Item {
     id: root
     property Parameters registry
+    property ParamLayer paramLayer
     anchors.left: parent.left
     anchors.right: parent.right
 
@@ -485,44 +486,10 @@ Item {
         Tab {
             title: "Event Log"
             active: true
-            AutoRefreshArea {
-                base: this
-                RowLayout {
-                    Layout.alignment: Qt.AlignLeft
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    spacing: 10
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignTop
-                        ScalarParamEdit {
-                            name: "Begin Serial"
-                            metaParam: registry.eventBeginSerial
-                        }
-                        ScalarParamEdit {
-                            name: "End Serial"
-                            metaParam: registry.eventEndSerial
-                        }
-                        ScalarParamEdit {
-                            name: "Clear To Serial"
-                            metaParam: registry.eventClearToSerial
-                        }
-                        ScalarParamEdit {
-                            name: "View Serial"
-                            metaParam: registry.eventViewSerial
-                        }
-                        ScalarParamEdit {
-                            name: "View Key"
-                            metaParam: registry.eventViewKey
-                        }
-                        ScalarParamEdit {
-                            name: "View Freeze Size"
-                            metaParam: registry.eventViewFreezeSize
-                        }
-                        TableParamEdit {
-                            tableParam: registry.eventViewFreeze
-                        }
-                    }
-                }
+
+            EventLogTab {
+                paramLayer: root.paramLayer
+                parameters: root.registry
             }
         }
     }

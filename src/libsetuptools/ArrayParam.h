@@ -25,7 +25,7 @@ class ArrayParam : public Param
     Q_PROPERTY(int maxCount READ maxCount WRITE setMaxCount NOTIFY maxCountChanged)
 
 public:
-    explicit ArrayParam(Param *parent = 0);
+    explicit ArrayParam(QObject *parent = 0);
     virtual ~ArrayParam() = default;
 
     // gets the value in enginering units

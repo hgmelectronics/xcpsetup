@@ -3,7 +3,7 @@
 
 namespace SetupTools {
 
-ArrayParam::ArrayParam(Param *parent) :
+ArrayParam::ArrayParam(QObject *parent) :
     Param(parent),
     mActualDim(),
     mMinCount(),

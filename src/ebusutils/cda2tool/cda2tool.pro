@@ -39,6 +39,22 @@ else:unix: {
 INCLUDEPATH += $$PWD/../../libsetuptools
 DEPENDPATH += $$PWD/../../libsetuptools
 
+win32:CONFIG(release, debug|release): {
+    LIBS += -L$$OUT_PWD/../ebussetuptools/release/ -lebussetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../ebussetuptools/release/libebussetuptools.a
+}
+else:win32:CONFIG(debug, debug|release): {
+    LIBS += -L$$OUT_PWD/../ebussetuptools/debug/ -lebussetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../ebussetuptools/debug/libebussetuptools.a
+}
+else:unix: {
+    LIBS += -L$$OUT_PWD/../ebussetuptools/ -lebussetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../ebussetuptools/libebussetuptools.a
+}
+
+INCLUDEPATH += $$PWD/../ebussetuptools
+DEPENDPATH += $$PWD/../ebussetuptools
+
 HEADERS +=
 
 DEPLOY_DIRS = $$OUT_PWD/../../deploy

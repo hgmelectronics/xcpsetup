@@ -2,10 +2,11 @@
 #include <QQmlApplicationEngine>
 #include <QtQml>
 #include <SetupTools.h>
+#include "Xcp_EbusEventLogInterface.h"
 
 int main(int argc, char *argv[])
 {
-    qputenv("QMLSCENE_DEVICE", "softwarecontext");
+//    qputenv("QMLSCENE_DEVICE", "softwarecontext");
 
     QApplication app(argc, argv);
     app.setOrganizationName("Ebus");
@@ -21,6 +22,7 @@ int main(int argc, char *argv[])
 #endif
 
     SetupTools::registerTypes();
+    qmlRegisterType<SetupTools::Xcp::EbusEventLogInterface>("com.hgmelectronics.setuptools.xcp", 1, 0, "EbusEventLogInterface");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

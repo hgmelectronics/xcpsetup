@@ -19,6 +19,7 @@ ApplicationWindow {
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property alias paramFileDir: paramLoadFileDialog.folder
     property alias interfaceSaveUri: mainForm.interfaceSaveUri
+    property alias paramLayer: paramLayer
 
     Settings {
         category: "application"
@@ -62,6 +63,7 @@ ApplicationWindow {
         targetCmdId: "1F000090"
         targetResId: "1F000091"
         registry: paramReg
+        paramLayer: application.paramLayer
     }
 
     ParamLayer {

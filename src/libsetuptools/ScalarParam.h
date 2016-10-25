@@ -13,7 +13,7 @@ class ScalarParam : public Param
     Q_PROPERTY(QString stringVal READ stringVal WRITE setStringVal NOTIFY valChanged)
 
 public:
-    explicit ScalarParam(Param *parent = 0);
+    explicit ScalarParam(QObject *parent = 0);
     virtual ~ScalarParam() = default;
 
     double floatVal() const;
