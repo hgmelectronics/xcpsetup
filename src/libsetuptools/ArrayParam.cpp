@@ -204,7 +204,7 @@ quint32 ArrayParam::maxSize()
 
 quint32 ArrayParam::size()
 {
-    return count() * dataTypeSize();
+    return mActualDim * dataTypeSize();
 }
 
 QVariant ArrayParam::rawVal(int row) const
