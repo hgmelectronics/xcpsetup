@@ -352,6 +352,7 @@ void ParamLayer::download(QStringList keys)
     if(!(mState == State::Disconnected || mState == State::Connected)
             || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode))
     {
+        qDebug() << "Download failed, param layer state" << int(mState) << "or conn state" << int(mConn->state()) << "invalid";
         emit downloadDone(OpResult::InvalidOperation, keys);
         return;
     }
@@ -385,6 +386,7 @@ void ParamLayer::upload(QStringList keys)
     if(!(mState == State::Disconnected || mState == State::Connected)
             || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode))
     {
+        qDebug() << "Upload failed, param layer state" << int(mState) << "or conn state" << int(mConn->state()) << "invalid";
         emit uploadDone(OpResult::InvalidOperation, keys);
         return;
     }
@@ -742,9 +744,12 @@ void ParamLayer::onParamUploadDone(OpResult result, XcpPtr base, int len, const 
 
     if(mState == State::Upload)
     {
-        Q_ASSERT(offset > 0 || len == int(mActiveParam->minSize()));   // if upload base is param base, upload should be of minSize
+        if(mActiveParamSizeIsKnown)
+            Q_ASSERT(offset == 0 && len == int(mActiveParam->size()));     // if size is known, we should be doing a single upload of that size
+        else
+            Q_ASSERT(offset > 0 || len == int(mActiveParam->minSize()));   // if upload base is param base, upload should be of minSize
 
-        if(result == OpResult::Success && mActiveParam->maxSize() > (offset + len))
+        if(!mActiveParamSizeIsKnown && result == OpResult::Success && mActiveParam->maxSize() > (offset + len))
         {
             // can do another element
             XcpPtr newBase = base;
@@ -763,6 +768,7 @@ void ParamLayer::onParamUploadDone(OpResult result, XcpPtr base, int len, const 
         {
             mActiveResult = result;
         }
+
     }
     else if(mState == State::Download)
     {
@@ -779,10 +785,16 @@ void ParamLayer::onParamUploadDone(OpResult result, XcpPtr base, int len, const 
     }
 
     if(!data.empty())
-        mActiveParam->setSlaveBytes({data.data(), data.data() + data.size()}, offset);
+    {
+        Q_ASSERT(offset == mActiveParamUploadedData.size());
+        mActiveParamUploadedData.resize(offset + data.size());
+        std::copy(data.begin(), data.end(), mActiveParamUploadedData.begin() + offset);
+    }
 
     if(doNotAdvance)
         return;
+
+    mActiveParam->setSlaveBytes({mActiveParamUploadedData.data(), mActiveParamUploadedData.data() + mActiveParamUploadedData.size()}, 0);
 
     if(mState == State::Upload)
         emit mActiveParam->uploadDone(result);
@@ -811,6 +823,8 @@ void ParamLayer::downloadKey()
     while(1)
     {
         mActiveParam = getNextParam();
+        mActiveParamSizeIsKnown = mActiveParam && mActiveParam->size() >= mActiveParam->minSize();
+        mActiveParamUploadedData.clear();
         if(mActiveParam == nullptr)
         {
             setState(State::Connected);
@@ -822,7 +836,6 @@ void ParamLayer::downloadKey()
         }
         if(mActiveParam->writeCacheDirty() && mActiveParam->valid())
         {
-            qDebug() << mActiveParam->name() << "dirty";
             int ag = mConn->addrGran();
             QPair<quint32, quint32> changed = mActiveParam->changedBytes();
             std::vector<quint8> data(mActiveParam->bytes().begin() + changed.first / ag * ag,               // round down to next AG
@@ -842,6 +855,8 @@ void ParamLayer::uploadKey()
     Q_ASSERT(mActiveKeyIdx >= 0 && mActiveKeyIdx <= mActiveKeys.size());
 
     mActiveParam = getNextParam();
+    mActiveParamSizeIsKnown = mActiveParam && mActiveParam->size() >= mActiveParam->minSize();
+    mActiveParamUploadedData.clear();
     if(mActiveParam == nullptr)
     {
         setState(State::Connected);
@@ -852,7 +867,10 @@ void ParamLayer::uploadKey()
         return;
     }
 
-    mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->minSize());
+    if(mActiveParamSizeIsKnown)
+        mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->size());     // we know the actual size, upload that
+    else
+        mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->minSize());  // size has not yet been determined
 }
 
 void ParamLayer::onIntfcSlaveIdChanged()
@@ -886,7 +904,6 @@ Param *ParamLayer::getNextParam()
 
 void ParamLayer::setState(State val)
 {
-    qDebug() << "State" << int(val);
     if(updateDelta<>(mState, val))
         emit stateChanged();
 }

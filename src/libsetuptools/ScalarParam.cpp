@@ -120,6 +120,11 @@ quint32 ScalarParam::maxSize()
     return dataTypeSize();
 }
 
+quint32 ScalarParam::size()
+{
+    return dataTypeSize();
+}
+
 QVariant ScalarParam::rawVal() const
 {
     if(valid())
