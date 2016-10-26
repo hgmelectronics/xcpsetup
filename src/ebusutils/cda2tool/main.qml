@@ -97,8 +97,14 @@ ApplicationWindow {
         }
         onDownloadDone: {
             if(result === OpResult.Success) {
-                if(saveParametersOnWrite)
-                    nvWrite()
+                if(saveParametersOnWrite) {
+                    for(var i = 0, end = keys.length; i < end; ++i) {
+                        if(paramLayer.registry.saveableParamKeys.indexOf(keys[i]) >= 0) {
+                            nvWrite()
+                            break
+                        }
+                    }
+                }
             }
             else {
                 errorDialog.show(qsTr("Download failed: %1").arg(
