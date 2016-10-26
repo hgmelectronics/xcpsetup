@@ -213,7 +213,7 @@ ColumnLayout {
 
         Button {
             text: "PWM Drivers"
-            enabled: parameters.controllerPWMDrivers.param.valid
+            enabled: true
             onClicked: {
                 pwmDriversWindow.showNormal()
                 pwmDriversWindow.raise()
@@ -245,7 +245,7 @@ ColumnLayout {
 
         Button {
             text: "Switch Monitor"
-            enabled: parameters.controllerSwitchCurrent.param.valid
+            enabled: true
             onClicked: {
                 switchMonitorWindow.showNormal()
                 switchMonitorWindow.raise()

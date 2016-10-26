@@ -4676,18 +4676,6 @@ ParamRegistry {
         }
     }
 
-    property ScalarMetaParam startInhibitRelayType: ScalarMetaParam {
-        param: ScalarParam {
-            registry: root
-            dataType: Param.S32
-            addr: paramId.start_inhibit_relay_type
-            writable: true
-            saveable: true
-            slot: slots.booleanNormalReversed
-            name: qsTr("Start Inhibit Relay Type")
-        }
-    }
-
     property ScalarMetaParam vehicleSpeedSensorPulseCount: ScalarMetaParam {
         param: ScalarParam {
             registry: root
