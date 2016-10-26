@@ -235,7 +235,7 @@ RowLayout {
     }
 
     function timestampFromView(view) {
-        return (view.getUint32(0x00, 1) + view.getUint32(0x00, 1) << 32) / 1000000
+        return (view.getUint32(0x00, 1) * 0.000001) + (view.getUint32(0x04, 1) * 4294.967296)
     }
 
     function decodeFaultHaltFreezeFrame(view) {
@@ -261,10 +261,10 @@ RowLayout {
         var str = ""
         str += "TimeSinceBoot=" + timestamp.toFixed(3)
         str += " PackStatus=" + packStatus
-        str += " StringI=" + stringI
-        str += " StringV=" + stringV
-        str += " MaxStringI=" + maxStringI
-        str += " MinStringI=" + minStringI
+        str += " StringI=" + stringI.toFixed(2)
+        str += " StringV=" + stringV.toFixed(2)
+        str += " MaxStringI=" + maxStringI.toFixed(2)
+        str += " MinStringI=" + minStringI.toFixed(2)
         if(maxCellV >= minCellV) {
             str += " MaxCellV=" + maxCellV.toFixed(4) + "@" + highVCellNum
             str += " MinCellV=" + minCellV.toFixed(4) + "@" + lowVCellNum
@@ -470,8 +470,23 @@ RowLayout {
                 var serial = logInterface.model.get(i, "serial")
                 var key = logInterface.model.get(i, "key")
                 var freeze = logInterface.model.get(i, "freeze")
-                if((typeof serial === "number") && (typeof key === "number") && Array.isArray(freeze))
-                    buffer += serial.toFixed() + "\t" + keyString(key) + "\t" + decodeFreezeFrame(freeze) + "\n"
+                if((typeof serial === "number") && (typeof key === "number") && Array.isArray(freeze)) {
+                    var freezeHexStr = ""
+                    var j = 0
+                    while(1) {
+                        if(j >= freeze.length)
+                            break
+                        var valueStr = freeze[j].toString(16)
+                        if(valueStr.length < 2)
+                            valueStr = "0" + valueStr
+                        freezeHexStr += valueStr
+                        ++j
+                        if(j < freeze.length)
+                            freezeHexStr += " "
+                    }
+
+                    buffer += serial.toFixed() + "\t" + keyString(key) + "\t" + decodeFreezeFrame(freeze) + "\t" + freezeHexStr + "\n"
+                }
             }
             textArea.text = buffer
         }
