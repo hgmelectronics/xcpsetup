@@ -730,9 +730,21 @@ void ParamLayer::onParamDownloadDone(OpResult result, XcpPtr base, const std::ve
         mActiveResult = result;
 
     if(mActiveParam->fullReload())
+    {
         mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->loadedBytes());
+    }
     else
+    {
+        Q_ASSERT(mActiveParamUploadedData.empty());
+        XcpPtr paramBase = XcpPtr::fromVariant(mActiveParam->addr());
+        quint32 offset = (base.addr - paramBase.addr) * mConn->addrGran();
+        if(offset)
+        {
+            mActiveParamUploadedData.resize(offset);
+            std::copy(mActiveParam->bytes().begin(), mActiveParam->bytes().begin() + offset, mActiveParamUploadedData.begin());
+        }
         mConn->upload(base, data.size());
+    }
 }
 
 void ParamLayer::onParamUploadDone(OpResult result, XcpPtr base, int len, const std::vector<quint8> &data)
