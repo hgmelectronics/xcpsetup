@@ -193,9 +193,9 @@ Item {
         precision: 0
     }
     property LinearSlot timeSysTick: LinearSlot {
-        rawA: -9000000
+        rawA: -1000000
         engrA: -1000
-        rawB: 9000000
+        rawB: 1000000
         engrB: 1000
         unit: "ms"
         precision: 4
