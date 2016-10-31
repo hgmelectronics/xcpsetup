@@ -103,14 +103,10 @@ ApplicationWindow {
             ParamResetNeeded.set = false
         }
         onDownloadDone: {
-            if(result === OpResult.Success) {
-                if(saveParametersOnWrite)
-                    nvWrite()
-            }
-            else {
-                errorDialog.show(qsTr("Download failed: %1").arg(
-                                     OpResult.asString(result)))
-            }
+            if(saveParametersOnWrite)
+                nvWrite()
+            if(result !== OpResult.Success)
+                errorDialog.show(qsTr("Download failed: %1").arg(OpResult.asString(result)))
         }
         onNvWriteDone: {
             if(result === OpResult.Success) {
