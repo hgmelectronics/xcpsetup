@@ -2,8 +2,6 @@ TEMPLATE = app
 
 QT += qml quick widgets serialport charts
 
-CONFIG += console
-
 SOURCES += main.cpp
 
 RESOURCES += qml.qrc \

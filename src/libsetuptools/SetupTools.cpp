@@ -66,4 +66,17 @@ void registerTypes()
     qmlRegisterType<SetupTools::XYSeriesAutoAxis>("com.hgmelectronics.setuptools.ui", major, minor, "XYSeriesAutoAxis");
 }
 
+void setupEnvironment()
+{
+    if(!qEnvironmentVariableIsSet("QMLSCENE_DEVICE"))
+    {
+        qputenv("QMLSCENE_DEVICE", "softwarecontext");
+        qDebug() << "QMLSCENE_DEVICE is unset, setting to \"softwarecontext\"";
+    }
+    else
+    {
+        qDebug() << "QMLSCENE_DEVICE is set, leaving as is";
+    }
+}
+
 }
