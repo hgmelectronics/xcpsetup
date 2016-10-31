@@ -225,11 +225,15 @@ ApplicationWindow {
                 jsonParamFileIo.name = name
                 if (selectExisting) {
                     var rawData = jsonParamFileIo.read()
+
                     paramReg.beginHistoryElide()
-                    if(!paramLayer.slaveConnected)
-                        paramReg.setValidAll(false)
-                    paramLayer.setRawData(rawData, false)
-                    paramLayer.setRawData(rawData, true)    // second time in case of param dependencies in wrong order
+                    if(paramLayer.slaveConnected) {
+                        paramLayer.setData(rawData, true, ParamLayer.KeepExisting)
+                    }
+                    else {
+                        paramLayer.setData(rawData, true, ParamLayer.Union)
+                        paramLayer.setData(rawData, true, ParamLayer.SetToNew)    // second time in case of param dependencies in wrong order
+                    }
                     paramReg.endHistoryElide()
                 } else {
                     saveJsonParamFile()
@@ -240,12 +244,17 @@ ApplicationWindow {
                 if (selectExisting) {
                     var saveUnits = setStandardUnits()
                     var data = csvParamFileIo.read()
+
                     paramReg.beginHistoryElide()
-                    if(!paramLayer.slaveConnected)
-                        paramReg.setValidAll(false)
-                    paramLayer.setData(data, false)
-                    paramLayer.setData(data, true)    // second time in case of param dependencies in wrong order
+                    if(paramLayer.slaveConnected) {
+                        paramLayer.setData(data, false, ParamLayer.KeepExisting)
+                    }
+                    else {
+                        paramLayer.setData(data, false, ParamLayer.Union)
+                        paramLayer.setData(data, false, ParamLayer.SetToNew)    // second time in case of param dependencies in wrong order
+                    }
                     paramReg.endHistoryElide()
+
                     restoreUnits(saveUnits)
                 } else {
                     saveCsvParamFile()

@@ -228,42 +228,6 @@ QMap<QString, QVariant> ParamLayer::data(const QStringList &keys)
     return ret;
 }
 
-QStringList ParamLayer::setData(QVariantMap data, bool eraseOld)
-{
-    ParamHistoryElide elide = mRegistry->historyElide();
-
-    QStringList failedKeys;
-
-    QStringList keys = data.keys();
-
-    for(QString key : keys)
-    {
-        Param *param = mRegistry->getParam(key);
-        if(param != nullptr)
-        {
-            if(param->setSerializableValue(data[key]))
-                param->setValid(true);
-            else
-                failedKeys.push_back(key);
-        }
-    }
-
-    if(eraseOld)
-    {
-        QSet<QString> keysSet = QSet<QString>::fromList(mRegistry->paramKeys());
-        keysSet.subtract(QSet<QString>::fromList(keys));    // remove the keys that were given as data
-        keysSet.unite(QSet<QString>::fromList(failedKeys)); // add back keys that didn't set successfully
-        for(QString key : keysSet)
-        {
-            Param *param = mRegistry->getParam(key);
-            if(param != nullptr)
-                param->setSerializableRawValue(QVariant());
-        }
-    }
-
-    return failedKeys;
-}
-
 QMap<QString, QVariant> ParamLayer::rawData(const QStringList &keys)
 {
     QMap<QString, QVariant> ret;
@@ -282,37 +246,71 @@ QMap<QString, QVariant> ParamLayer::rawData(const QStringList &keys)
     return ret;
 }
 
-QStringList ParamLayer::setRawData(QVariantMap data, bool eraseOld)
+QStringList ParamLayer::setData(QVariantMap data, bool raw, int policy)
 {
     ParamHistoryElide elide = mRegistry->historyElide();
 
-    QStringList failedKeys;
-
-    QStringList keys = data.keys();
-
-    for(QString key : keys)
+    QSet<QString> regKeys = QSet<QString>::fromList(mRegistry->paramKeys());
+    QSet<QString> dataKeys = QSet<QString>::fromList(data.keys());
+    QSet<QString> regValidKeys;
+    for(QString key : regKeys)
     {
-        Param *param = mRegistry->getParam(key);
-        if(param != nullptr)
-        {
-            if (param->setSerializableRawValue(data[key]))
-                param->setValid(true);
-            else
-                failedKeys.push_back(key);
-        }
+        Param * param = mRegistry->getParam(key);
+        Q_ASSERT(param);
+        if(param->valid())
+            regValidKeys.insert(key);
+    }
+    QSet<QString> dataKeysNotPresent = dataKeys - regKeys;
+
+    QSet<QString> keysToSet;
+    QSet<QString> keysToClear;
+    Q_ASSERT(policy == KeepExisting || policy == SetToNew || policy == Union || policy == Intersection);
+    switch(policy)
+    {
+    case SetDataPolicy::KeepExisting:
+        keysToSet = regValidKeys & dataKeys;
+        // keysToClear = nothing
+        break;
+    case SetDataPolicy::SetToNew:
+        keysToSet = regKeys & dataKeys;
+        keysToClear = regValidKeys - dataKeys;  // could be regKeys - dataKeys, but that would waste time clearing parameters that are already set invalid
+        break;
+    case SetDataPolicy::Union:
+        keysToSet = regKeys & dataKeys;
+        // keysToClear = nothing
+        break;
+    case SetDataPolicy::Intersection:
+        keysToSet = regValidKeys & dataKeys;
+        keysToClear = regValidKeys - keysToSet;
+        break;
+    default:
+        Q_ASSERT(policy != policy);
+        break;
     }
 
-    if(eraseOld)
+    QStringList failedKeys = dataKeysNotPresent.toList();
+
+    for(QString key : keysToSet)
     {
-        QSet<QString> keysSet = QSet<QString>::fromList(mRegistry->paramKeys());
-        keysSet.subtract(QSet<QString>::fromList(keys));    // remove the keys that were given as data
-        keysSet.unite(QSet<QString>::fromList(failedKeys)); // add back keys that didn't set successfully
-        for(QString key : keysSet)
-        {
-            Param *param = mRegistry->getParam(key);
-            if(param != nullptr)
-                param->setSerializableRawValue(QVariant());
-        }
+        Param *param = mRegistry->getParam(key);
+        Q_ASSERT(data.contains(key));
+        Q_ASSERT(param);
+
+        bool ok;
+        if(raw)
+            ok = param->setSerializableRawValue(data[key]);
+        else
+            ok = param->setSerializableValue(data[key]);
+
+        if(!ok)
+            failedKeys.push_back(key);
+    }
+
+    for(QString key : keysToClear)
+    {
+        Param *param = mRegistry->getParam(key);
+        Q_ASSERT(param);
+        param->setSerializableRawValue(QVariant());
     }
 
     return failedKeys;
