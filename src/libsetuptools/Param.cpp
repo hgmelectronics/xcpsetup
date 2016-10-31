@@ -127,7 +127,7 @@ void Param::setAddr(const QVariant & val)
        || type == QVariant::Double)
     {
         newAddr = val.toULongLong();
-        newKey = QString("%1").arg(val.toULongLong(), 0, 16);
+        newKey = QString("%1").arg(val.toULongLong(), 8, 16, QChar('0'));
     }
     else if(type == QVariant::String)
     {
