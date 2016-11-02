@@ -80,6 +80,15 @@ RowLayout {
         }
     }
 
+    function toDateTime(stamp) {
+        if(stamp < 1000000000)  // too low to be near present in UNIX epoch
+            return "Boot+" + stamp.toFixed(3)
+
+        var date = new Date(stamp * 1000);
+
+        return date.toLocaleString() + "(" + stamp.toFixed(3) + ")"
+    }
+
     function keyString(key) {
         if(typeof key !== "number")
             return ""
@@ -259,7 +268,7 @@ RowLayout {
                            decodeCbtmFaults(view.getUint32(0x24, 1))]
 
         var str = ""
-        str += "TimeSinceBoot=" + timestamp.toFixed(3)
+        str += "Time=" + toDateTime(timestamp)
         str += " PackStatus=" + packStatus
         str += " StringI=" + stringI.toFixed(2)
         str += " StringV=" + stringV.toFixed(2)
@@ -294,7 +303,7 @@ RowLayout {
         var center = view.getUint16(0x0A, 1) / 40000
 
         var str = ""
-        str += "TimeSinceBoot=" + timestamp.toFixed(3)
+        str += "Time=" + toDateTime(timestamp)
         str += " Conductance=" + conductance.toFixed(3) + "uS"
         str += " Center=" + center.toFixed(2) + "%"
 
@@ -307,7 +316,7 @@ RowLayout {
         var center = view.getUint32(0x0C, 1) / 400
 
         var str = ""
-        str += "TimeSinceBoot=" + timestamp.toFixed(3)
+        str += "Time=" + toDateTime(timestamp)
         str += " Conductance=" + conductance.toFixed(3) + "uS"
         str += " Center=" + center.toFixed(2) + "%"
 
@@ -366,7 +375,7 @@ RowLayout {
         var heapNFrees = view.getUint32(0x14, 1)
 
         var str = ""
-        str += "TimeSinceBoot=" + timestamp.toFixed(3)
+        str += "Time=" + toDateTime(timestamp)
         str += " Flags=" + flags
         str += " RTDBRows=" + rtdbRows
         str += " AllocBytes=" + heapAllocBytes
