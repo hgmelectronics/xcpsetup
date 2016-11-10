@@ -36,6 +36,16 @@ public:
     explicit ParamLayer(QObject *parent = nullptr);
     virtual ~ParamLayer() {}
 
+    enum SetDataPolicy
+    {
+        KeepExisting,   // validity is not changed; params that are valid in the registry and not present in supplied dataset are unchanged, params that are in supplied dataset but not valid in the registry are left invalid
+        SetToNew,       // params that are in supplied dataset are loaded and set to valid, params that are not in supplied dataset are invalidated
+        Union,          // params that are in supplied dataset are loaded and set to valid, params that are not in supplied dataset are unchanged
+        Intersection    // params that are in valid in the registry and present in the supplied dataset are loaded, all others are invalidated
+    };
+
+    Q_ENUMS(SetDataPolicy)
+
     QUrl intfcUri();
     void setIntfcUri(QUrl);
     Interface::Interface *intfc();
@@ -67,9 +77,8 @@ public:
     Q_INVOKABLE QMap<QString, QVariant> saveableData();
     Q_INVOKABLE QMap<QString, QVariant> saveableRawData();
     Q_INVOKABLE QMap<QString, QVariant> data(const QStringList &keys);
-    Q_INVOKABLE QStringList setData(QVariantMap data, bool eraseOld);   //!< Returns keys that did not set successfully
+    Q_INVOKABLE QStringList setData(QVariantMap data, bool raw, int policy);   //!< Returns keys that did not set successfully
     Q_INVOKABLE QMap<QString, QVariant> rawData(const QStringList &keys);
-    Q_INVOKABLE QStringList setRawData(QVariantMap data, bool eraseOld);   //!< Returns keys that did not set successfully
     Q_INVOKABLE QMap<QString, QVariant> names();
     Q_INVOKABLE QMap<QString, QVariant> names(const QStringList &keys);
 signals:

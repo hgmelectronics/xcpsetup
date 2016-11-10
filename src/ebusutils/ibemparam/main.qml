@@ -221,7 +221,7 @@ ApplicationWindow {
             console.log(folder)
             folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            paramLayer.setRawData(paramFileIo.read(), true)
+            paramLayer.setData(paramFileIo.read(), true, ParamLayer.SetToNew)
         }
         selectExisting: true
     }
