@@ -86,7 +86,6 @@ QtObject {
     readonly property string vehicle_mass: "02010000"
     readonly property string tire_diameter: "02020000"
     readonly property string speedometer_calibration: "02030000"
-    readonly property string start_inhibit_relay_type: "02040000"
     readonly property string vehicle_speed_sensor_pulse_count: "02050000"
 
     // 8200 vehicle data
