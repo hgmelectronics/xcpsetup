@@ -2907,37 +2907,91 @@ ParamRegistry {
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_1, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 1 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_a_1
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 1 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_2, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 2 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_a_2
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 2 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_3, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 3 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_a_3
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 3 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_4, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 4 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_a_4
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 4 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_5, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 5 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_a_5
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 5 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_a_6, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 6 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_a_6
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 6 A")
+                }
             }
         }
     ]
@@ -2947,37 +3001,91 @@ ParamRegistry {
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_1, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 1 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_a_1
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 1 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_2, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 2 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_a_2
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 2 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_3, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 3 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_a_3
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 3 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_4, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 4 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_a_4
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 4 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_5, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 5 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_a_5
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 5 A")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_a_6, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 6 A"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_a_6
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 6 A")
+                }
             }
         }
     ]
@@ -2987,37 +3095,91 @@ ParamRegistry {
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_1, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 1 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_b_1
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 1 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_2, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 2 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_b_2
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 2 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_3, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 3 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_b_3
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 3 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_4, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 4 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_b_4
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 4 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_5, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 5 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_b_5
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 5 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_lock_b_6, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Enable Speed Gear 6 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_lock_b_6
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Enable Speed Gear 6 B")
+                }
             }
         }
     ]
@@ -3027,37 +3189,91 @@ ParamRegistry {
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_1, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 1 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_b_1
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 1 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_2, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 2 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_b_2
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 2 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_3, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 3 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_b_3
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 3 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_4, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 4 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_b_4
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 4 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_5, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 5 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_b_5
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 5 B")
+                }
             }
         },
         TableMetaParam {
             param: TableParam {
                 x: tccTableAxisModel
-                value: registry.addArrayParam(MemoryRange.S32, paramId.tcc_tables_unlock_b_6, tccTableAxisModel.count, true, true, slots.tossRPMAsSpeed, "", qsTr("TCC Disable Speed Gear 6 B"))
+                value: ArrayParam {
+                    registry: root
+                    dataType: Param.S32
+                    addr: paramId.tcc_tables_unlock_b_6
+                    minCount: tccTableAxisModel.count
+                    writable: true
+                    saveable: true
+                    slot: slots.tossRPMAsSpeed
+                    name:  qsTr("TCC Disable Speed Gear 6 B")
+                }
             }
         }
     ]
