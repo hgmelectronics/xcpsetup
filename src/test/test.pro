@@ -1,6 +1,5 @@
 TEMPLATE = subdirs
 SUBDIRS = elm327 \
     xcpconnection \
-    memrange \
     qmlelements \
     util

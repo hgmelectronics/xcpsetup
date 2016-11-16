@@ -543,7 +543,8 @@ QtObject {
             { raw: 502, engr: "Toyota A340" },
             { raw: 503, engr: "Toyota A341" },
             { raw: 505, engr: "Toyota AB60" },
-            { raw: 506, engr: "Toyota A750" },
+            { raw: 506, engr: "Toyota A750 Switch Shift" },
+            { raw: 507, engr: "Toyota A750 Gate Shift" },
             { raw: 600, engr: "Allison 3000 Gen 3" },
             { raw: 610, engr: "Ebus MRPCS" },
             { raw: 620, engr: "Ebus SRMCS" },
@@ -601,7 +602,8 @@ QtObject {
             { raw: 17, engr: "AEM Series 2 CAN" },
             { raw: 18, engr: "VW GTI MKV" },
             { raw: 19, engr: "Ebus Yaskawa G5" },
-            { raw: 20, engr: "Nissan ZD30" }
+            { raw: 20, engr: "Nissan ZD30" },
+            { raw: 21, engr: "Ebus YTB" }
         ]
         unencodedSlot: count
     }

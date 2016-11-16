@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-    qputenv("QMLSCENE_DEVICE", "softwarecontext");
+    SetupTools::setupEnvironment();
 
     QApplication app(argc, argv);
     app.setOrganizationName("HGM Automotive Electronics");

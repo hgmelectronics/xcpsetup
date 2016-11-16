@@ -68,13 +68,13 @@ public slots:
     void abort();
 
 private:
-    void onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-    void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
-    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
+    void onGetAvailSlavesStrDone(SetupTools::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void onProgramDone(SetupTools::OpResult result, FlashProg *prog, quint8 addrExt);
+    void onProgramVerifyDone(SetupTools::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
     void onWatchdogExpired();
-    void onProgramResetDone(SetupTools::Xcp::OpResult result);
-    void onProgramModeDone(SetupTools::Xcp::OpResult result);
-    void onDisconnectDone(SetupTools::Xcp::OpResult result);
+    void onProgramResetDone(SetupTools::OpResult result);
+    void onProgramModeDone(SetupTools::OpResult result);
+    void onDisconnectDone(SetupTools::OpResult result);
     void onProgFileChanged();
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();
@@ -106,7 +106,7 @@ private:
     static constexpr int RESET_TIMEOUT_MSEC = 2000;
     static constexpr int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
     static constexpr int PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC = 40;
-    static constexpr int PAGE_SIZE = 2048;
+    static constexpr int ST_PAGE_SIZE = 2048;
     static constexpr Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::ST_CRC_32;
     static constexpr int N_POLL_ITER = 20;
     static constexpr int N_PROGRAMMODE_TRIES = 25;

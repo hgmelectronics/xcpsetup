@@ -8,7 +8,7 @@
 
 namespace QTest
 {
-char *toString(const SetupTools::Xcp::OpResult &res)
+char *toString(const SetupTools::OpResult &res)
 {
     QByteArray ba = "OpResult(";
     ba += QByteArray::number(static_cast<int>(res));
@@ -83,7 +83,7 @@ void Test::setWaitConnState(const MemoryRangeTable *table, Connection::State sta
 
 void Test::initTestCase()
 {
-    qRegisterMetaType<SetupTools::Xcp::OpResult>();
+    qRegisterMetaType<SetupTools::OpResult>();
     mIntfc = new Interface::Loopback::Interface();
     if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
         mIntfc->setPacketLog(true);

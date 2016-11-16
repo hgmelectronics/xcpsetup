@@ -320,6 +320,7 @@ Interface::Interface(const QSerialPortInfo portInfo, QObject *parent) :
 Interface::~Interface() {
 }
 
+#ifdef Q_OS_WIN
 static std::vector<wchar_t> wideString(const QString & str)
 {
     std::vector<wchar_t> out;
@@ -328,6 +329,7 @@ static std::vector<wchar_t> wideString(const QString & str)
     out[str.size()] = 0;
     return out;
 }
+#endif
 
 static void checkFixWinLatencyTimer(const QSerialPortInfo & info)
 {
@@ -379,6 +381,8 @@ static void checkFixWinLatencyTimer(const QSerialPortInfo & info)
         QFile regfile(fileName);
         regfile.remove();
     }
+#else
+    Q_UNUSED(info);
 #endif
 }
 

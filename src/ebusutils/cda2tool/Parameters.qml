@@ -3,9 +3,9 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
-QtObject {
-    id: parameters
-    property ParamRegistry registry;
+ParamRegistry {
+    id: root
+
     property ParamId paramId: ParamId {}
     property Slots slots: Slots {}
 
@@ -46,150 +46,404 @@ QtObject {
     }
 
     property ScalarMetaParam aioVbatEv01: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.aioVbatEv01, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.aioVbatEv01
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
 
     property TableParam aioAiCts: TableParam {
         x: aiAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.aioAiCts, aiAxisModel.count, false, false, slots.stAiVolts)
+        value: ArrayParam {
+                registry: root
+                dataType: Param.S32
+                addr: paramId.aioAiCts
+                minCount: aiAxisModel.count
+                writable: false
+                saveable: false
+                slot: slots.stAiVolts
+                name: qsTr("")
+            }
     }
 
     property ScalarMetaParam canAuxBattCnvtCmdOn: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtCmdOn, false, false, slots.bool01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canAuxBattCnvtCmdOn
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canAuxBattCnvtCmdVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtCmdVolt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canAuxBattCnvtCmdVolt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canCtlMaxMotoringTorque: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxMotoringTorque, false, false, slots.saePc06Ext)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canCtlMaxMotoringTorque
+            writable: false
+            saveable: false
+            slot: slots.saePc06Ext
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canCtlMaxRegenTorque: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canCtlMaxRegenTorque, false, false, slots.saePc06Ext)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canCtlMaxRegenTorque
+            writable: false
+            saveable: false
+            slot: slots.saePc06Ext
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canTracMotorSpeed: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canTracMotorSpeed, false, false, slots.saeVr01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canTracMotorSpeed
+            writable: false
+            saveable: false
+            slot: slots.saeVr01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canLimpHomeCmdOn: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canLimpHomeCmdOn, false, false, slots.bool01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canLimpHomeCmdOn
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canBattMaxDischCurrCmd: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canBattMaxDischCurrCmd, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canBattMaxDischCurrCmd
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canBattMaxChgCurrCmd: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canBattMaxChgCurrCmd, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canBattMaxChgCurrCmd
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canAuxBattCnvtState: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtState, false, false, slots.auxBattCnvtState)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canAuxBattCnvtState
+            writable: false
+            saveable: false
+            slot: slots.auxBattCnvtState
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canAuxBattCnvtTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtTemp, false, false, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canAuxBattCnvtTemp
+            writable: false
+            saveable: false
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canAuxBattCnvtInputVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtInputVolt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canAuxBattCnvtInputVolt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canAuxBattCnvtOutputVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtOutputVolt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canAuxBattCnvtOutputVolt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canAuxBattCnvtOutputCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxBattCnvtOutputCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canAuxBattCnvtOutputCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canExtChgCtcRqst: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canExtChgCtcRqst, false, false, slots.bool01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canExtChgCtcRqst
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canAuxCtcRqrd: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canAuxCtcRqrd, false, false, slots.bool01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canAuxCtcRqrd
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canXcpProgramRequested: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canXcpProgramRequested, false, false, slots.bool01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canXcpProgramRequested
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canCan1RxErrCount: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan1RxErrCount, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canCan1RxErrCount
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canCan1TxErrCount: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan1TxErrCount, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canCan1TxErrCount
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canCan2RxErrCount: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan2RxErrCount, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canCan2RxErrCount
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canCan2TxErrCount: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan2TxErrCount, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canCan2TxErrCount
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canCan1BufferFull: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan1BufferFull, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canCan1BufferFull
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam canCan2BufferFull: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.canCan2BufferFull, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.canCan2BufferFull
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmFaultDecayCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmFaultDecayCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmFaultDecayCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmNonQuiescentTripCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmNonQuiescentTripCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmNonQuiescentTripCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmNonQuiescentDecayCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmNonQuiescentDecayCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmNonQuiescentDecayCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmBalanceOpenDeltaVThresh: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmBalanceOpenDeltaVThresh, true, true, slots.ltcCellvExt)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmBalanceOpenDeltaVThresh
+            writable: true
+            saveable: true
+            slot: slots.ltcCellvExt
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmBalanceShortDeltaVThresh: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmBalanceShortDeltaVThresh, true, true, slots.ltcCellvExt)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmBalanceShortDeltaVThresh
+            writable: true
+            saveable: true
+            slot: slots.ltcCellvExt
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmQuiescentDeltaVThresh: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmQuiescentDeltaVThresh, true, true, slots.ltcCellvExt)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmQuiescentDeltaVThresh
+            writable: true
+            saveable: true
+            slot: slots.ltcCellvExt
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmIsospi1FirstBoard: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi1FirstBoard, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmIsospi1FirstBoard
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmIsospi1LastBoard: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi1LastBoard, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmIsospi1LastBoard
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmIsospi2FirstBoard: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2FirstBoard, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmIsospi2FirstBoard
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmIsospi2LastBoard: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmIsospi2LastBoard, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmIsospi2LastBoard
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmCommFaultTripCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmCommFaultTripCyc, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmCommFaultTripCyc
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam cbtmCommFaultClearCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.cbtmCommFaultClearCyc, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmCommFaultClearCyc
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
 
     property TableParam cbtmCellVolt: TableParam {
@@ -197,7 +451,17 @@ QtObject {
             slot: slots.raw32
             count: cbtmCellVolt.value.count
         }
-        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmCellVolt, cbtmCellsPerBoard, cbtmCellAxisModel.count, false, false, slots.ltcCellv)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmCellVolt
+            minCount: cbtmCellsPerBoard
+            maxCount: cbtmCellAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
 
     property TableParam cbtmTabTemp: TableParam {
@@ -205,7 +469,17 @@ QtObject {
             slot: slots.raw32
             count: cbtmTabTemp.value.count
         }
-        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmTabTemp, cbtmTabsPerBoard, cbtmTabAxisModel.count, false, false, slots.saeTp02)
+        value: ArrayParam {
+                registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmTabTemp
+            minCount: cbtmTabsPerBoard
+            maxCount: cbtmTabAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
 
     property TableParam cbtmDisch: TableParam {
@@ -213,7 +487,17 @@ QtObject {
             slot: slots.raw32
             count: cbtmDisch.value.count
         }
-        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmDisch, 1, cbtmBoardAxisModel.count, true, false, slots.raw32hex)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmDisch
+            minCount: 1
+            maxCount: cbtmBoardAxisModel.count
+            writable: true
+            saveable: false
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
     }
 
     property TableParam cbtmStatus: TableParam {
@@ -221,560 +505,1581 @@ QtObject {
             slot: slots.raw32
             count: cbtmStatus.value.count
         }
-        value: registry.addVarArrayParam(MemoryRange.S32, paramId.cbtmStatus, 1, cbtmBoardAxisModel.count, false, false, slots.raw32hex)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.cbtmStatus
+            minCount: 1
+            maxCount: cbtmBoardAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam ctcMaxSimulPickup: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.ctcMaxSimulPickup, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ctcMaxSimulPickup
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
 
 
     property TableParam ctcNFeedbackInput: TableParam {
         x: ctcAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.ctcNFeedbackInput, ctcAxisModel.count, true, true, slots.ctcFeedback)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ctcNFeedbackInput
+            minCount: ctcAxisModel.count
+            writable: true
+            saveable: true
+            slot: slots.ctcFeedback
+            name: qsTr("")
+        }
     }
 
     property TableParam ctcOn: TableParam {
         x: ctcAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.ctcOn, ctcAxisModel.count, true, false, slots.bool01)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ctcOn
+            minCount: ctcAxisModel.count
+            writable: true
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property TableParam ctcOk: TableParam {
         x: ctcAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.ctcOk, ctcAxisModel.count, false, false, slots.bool01)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ctcOk
+            minCount: ctcAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property TableParam ctcAClosed: TableParam {
         x: ctcAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.ctcAClosed, ctcAxisModel.count, false, false, slots.bool01)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ctcAClosed
+            minCount: ctcAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property TableParam ctcBClosed: TableParam {
         x: ctcAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.ctcBClosed, ctcAxisModel.count, false, false, slots.bool01)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ctcBClosed
+            minCount: ctcAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
 
     property TableParam dioDi: TableParam {
         x: diAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.dioDi, diAxisModel.count, false, false, slots.bool01)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.dioDi
+            minCount: diAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
 
     property TableParam dioDo: TableParam {
         x: doAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.dioDo, doAxisModel.count, true, false, slots.bool01)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.dioDo
+            minCount: doAxisModel.count
+            writable: true
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
 
     property TableParam iaiDiffCts: TableParam {
         x: iaiAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.iaiDiffCts, iaiAxisModel.count, false, false, slots.iaiMvScale)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.iaiDiffCts
+            minCount: iaiAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.iaiMvScale
+            name: qsTr("")
+        }
     }
 
     property TableParam iaiOk: TableParam {
         x: iaiAxisModel
-        value: registry.addArrayParam(MemoryRange.S32, paramId.iaiOk, iaiAxisModel.count, false, false, slots.bool01)
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.iaiOk
+            minCount: iaiAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam iai4PosCts: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.iai4PosCts, false, false, slots.iaiMvScale)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.iai4PosCts
+            writable: false
+            saveable: false
+            slot: slots.iaiMvScale
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam iai4NegCts: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.iai4NegCts, false, false, slots.iaiMvScale)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.iai4NegCts
+            writable: false
+            saveable: false
+            slot: slots.iaiMvScale
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam iai4Pullup: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.iai4Pullup, true, false, slots.bool01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.iai4Pullup
+            writable: true
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam iai4Pulldown: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.iai4Pulldown, true, false, slots.bool01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.iai4Pulldown
+            writable: true
+            saveable: false
+            slot: slots.bool01
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam auxBattCnvtType: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtType, true, true, slots.auxBattCnvtType)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattCnvtType
+            writable: true
+            saveable: true
+            slot: slots.auxBattCnvtType
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattCnvtInputVoltMin: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtInputVoltMin, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattCnvtInputVoltMin
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattCnvtStartTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtStartTemp, true, true, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattCnvtStartTemp
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattCnvtStopTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattCnvtStopTemp, true, true, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattCnvtStopTemp
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattFloatVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVolt, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattFloatVolt
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattFloatVoltTempCoeff: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltTempCoeff, true, true, slots.auxBattFloatCoeff)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattFloatVoltTempCoeff
+            writable: true
+            saveable: true
+            slot: slots.auxBattFloatCoeff
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattFloatVoltMin: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltMin, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattFloatVoltMin
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattFloatVoltMax: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltMax, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattFloatVoltMax
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattFloatVoltFailsafe: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattFloatVoltFailsafe, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattFloatVoltFailsafe
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattRestartVoltHysteresis: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltHysteresis, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattRestartVoltHysteresis
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattRestartVoltTime: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltTime, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattRestartVoltTime
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattRestartAlwaysTime: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartAlwaysTime, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattRestartAlwaysTime
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattStopOutCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurr, true, true, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattStopOutCurr
+            writable: true
+            saveable: true
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattStopOutCurrTime: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurrTime, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattStopOutCurrTime
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattBattOkTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattOkTemp, true, true, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattOkTemp
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattBattWarmTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattWarmTemp, true, true, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattWarmTemp
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattBattHotTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattHotTemp, true, true, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattHotTemp
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattBattTemp0AiChan: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0AiChan, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattTemp0AiChan
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattBattTemp1AiChan: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1AiChan, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattTemp1AiChan
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattBattTemp0Curve: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0Curve, true, true, slots.thermistorCurve)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattTemp0Curve
+            writable: true
+            saveable: true
+            slot: slots.thermistorCurve
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattBattTemp1Curve: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1Curve, true, true, slots.thermistorCurve)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattTemp1Curve
+            writable: true
+            saveable: true
+            slot: slots.thermistorCurve
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattRestartVoltTimeCount: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartVoltTimeCount, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattRestartVoltTimeCount
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattRestartAlwaysTimeCount: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattRestartAlwaysTimeCount, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattRestartAlwaysTimeCount
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattStopOutCurrTimeCount: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStopOutCurrTimeCount, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattStopOutCurrTimeCount
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam auxBattBattTemp0: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp0, false, false, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattTemp0
+            writable: false
+            saveable: false
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattBattTemp1: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattBattTemp1, false, false, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattBattTemp1
+            writable: false
+            saveable: false
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam auxBattStatus: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.auxBattStatus, false, false, slots.raw32hex)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.auxBattStatus
+            writable: false
+            saveable: false
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam motorFailsafeSpeed: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorFailsafeSpeed, true, true, slots.saeVr01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorFailsafeSpeed
+            writable: true
+            saveable: true
+            slot: slots.saeVr01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorMinEffSpeed: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorMinEffSpeed, true, true, slots.saeVr01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorMinEffSpeed
+            writable: true
+            saveable: true
+            slot: slots.saeVr01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorRatedTorque: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorRatedTorque, true, true, slots.torque1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorRatedTorque
+            writable: true
+            saveable: true
+            slot: slots.torque1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorCurrRegPropCoeff: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorCurrRegPropCoeff, true, true, slots.motorCurrRegPropCoeff)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorCurrRegPropCoeff
+            writable: true
+            saveable: true
+            slot: slots.motorCurrRegPropCoeff
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorCurrRegIntCoeff: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorCurrRegIntCoeff, true, true, slots.motorCurrRegIntCoeff)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorCurrRegIntCoeff
+            writable: true
+            saveable: true
+            slot: slots.motorCurrRegIntCoeff
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorMaxTorqueRefErr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorMaxTorqueRefErr, true, true, slots.saePc06Ext)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorMaxTorqueRefErr
+            writable: true
+            saveable: true
+            slot: slots.saePc06Ext
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorMotoringIntegrator: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorMotoringIntegrator, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorMotoringIntegrator
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorRegenIntegrator: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorRegenIntegrator, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorRegenIntegrator
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorAdjMaxMotoringCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxMotoringCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorAdjMaxMotoringCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam motorAdjMaxRegenCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.motorAdjMaxRegenCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.motorAdjMaxRegenCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam packBoardsPerString: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packBoardsPerString, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packBoardsPerString
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIaiFunc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIaiFunc, true, true, slots.iaiFunc)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIaiFunc
+            writable: true
+            saveable: true
+            slot: slots.iaiFunc
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIai1Scale: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai1Scale, true, true, slots.iaiScaleShunt)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIai1Scale
+            writable: true
+            saveable: true
+            slot: slots.iaiScaleShunt
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIai2Scale: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai2Scale, true, true, slots.iaiScaleShunt)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIai2Scale
+            writable: true
+            saveable: true
+            slot: slots.iaiScaleShunt
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIai3Scale: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai3Scale, true, true, slots.iaiScaleShunt)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIai3Scale
+            writable: true
+            saveable: true
+            slot: slots.iaiScaleShunt
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIai4Scale: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai4Scale, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIai4Scale
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIai1Zero: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai1Zero, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIai1Zero
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIai2Zero: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai2Zero, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIai2Zero
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIai3Zero: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai3Zero, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIai3Zero
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packIai4Zero: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packIai4Zero, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packIai4Zero
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packLimpHomeDischCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packLimpHomeDischCurr, true, true, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packLimpHomeDischCurr
+            writable: true
+            saveable: true
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packLimpHomeChgCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packLimpHomeChgCurr, true, true, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packLimpHomeChgCurr
+            writable: true
+            saveable: true
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCellProtMarginCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMarginCurr, true, true, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtMarginCurr
+            writable: true
+            saveable: true
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCurrRegFltTripCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCurrRegFltTripCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCurrRegFltTripCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCurrRegFltDecayCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCurrRegFltDecayCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCurrRegFltDecayCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltDetectAvgCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectAvgCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltDetectAvgCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltDetectPeriodCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPeriodCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltDetectPeriodCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltTripConduct: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripConduct, true, true, slots.conductance1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltTripConduct
+            writable: true
+            saveable: true
+            slot: slots.conductance1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltTripConductExtChg: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripConductExtChg, true, true, slots.conductance1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltTripConductExtChg
+            writable: true
+            saveable: true
+            slot: slots.conductance1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltTripCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltTripCyc, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltTripCyc
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltDecayCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDecayCyc, true, true, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltDecayCyc
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packTracCurrDecayCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracCurrDecayCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packTracCurrDecayCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packChgCurrDecayCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packChgCurrDecayCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packChgCurrDecayCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packMaxTracPrechgCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packMaxTracPrechgCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMaxTracPrechgCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packLowStringVoltTrip: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packLowStringVoltTrip, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packLowStringVoltTrip
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packLowStringVoltReset: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packLowStringVoltReset, true, true, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packLowStringVoltReset
+            writable: true
+            saveable: true
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packBalBandVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalBandVolt, true, true, slots.ltcCellv)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packBalBandVolt
+            writable: true
+            saveable: true
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packBalDiffVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalDiffVolt, true, true, slots.ltcCellv)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packBalDiffVolt
+            writable: true
+            saveable: true
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packBalMinVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalMinVolt, true, true, slots.ltcCellv)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packBalMinVolt
+            writable: true
+            saveable: true
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packBalSampleWaitCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalSampleWaitCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packBalSampleWaitCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packBalDischHighCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalDischHighCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packBalDischHighCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packBalDischAllCyc: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalDischAllCyc, true, true, slots.timeCycle)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packBalDischAllCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
     }
 
     property TableParam packMaxCurrDisch: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_DischCellTemp, 6, true, true, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_DischCurr, 6, true, true, slots.current1)
+        x: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMaxCurr_DischCellTemp
+            minCount: 6
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMaxCurr_DischCurr
+            minCount: 6
+            writable: true
+            saveable: true
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property TableParam packMaxCurrChg: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_ChgCellTemp, 6, true, true, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packMaxCurr_ChgCurr, 6, true, true, slots.current1)
+        x: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMaxCurr_ChgCellTemp
+            minCount: 6
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMaxCurr_ChgCurr
+            minCount: 6
+            writable: true
+            saveable: true
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property TableParam packCellVLimitMax: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MaxTemp, 4, true, true, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MaxVolt, 4, true, true, slots.ltcCellv)
+        x: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellVLimit_MaxTemp
+            minCount: 4
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellVLimit_MaxVolt
+            minCount: 4
+            writable: true
+            saveable: true
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property TableParam packCellVLimitMin: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MinTemp, 4, true, true, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellVLimit_MinVolt, 4, true, true, slots.ltcCellv)
+        x: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellVLimit_MinTemp
+            minCount: 4
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellVLimit_MinVolt
+            minCount: 4
+            writable: true
+            saveable: true
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property TableParam packCellProtResTable: TableParam {
-        x: registry.addArrayParam(MemoryRange.S32, paramId.packCellProtRes_Temp, 4, true, true, slots.saeTp02)
-        value: registry.addArrayParam(MemoryRange.S32, paramId.packCellProtRes_Res, 4, true, true, slots.cellProtRes)
+        x: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtRes_Temp
+            minCount: 4
+            writable: true
+            saveable: true
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtRes_Res
+            minCount: 4
+            writable: true
+            saveable: true
+            slot: slots.cellProtRes
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam packString1Volt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packString1Volt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packString1Volt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packString1Curr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packString1Curr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packString1Curr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packTracMtrCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracMtrCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packTracMtrCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packTracAuxCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracAuxCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packTracAuxCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packTracTotalCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracTotalCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packTracTotalCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packHybrCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packHybrCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packHybrCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packNonTracAuxCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packNonTracAuxCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packNonTracAuxCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packString1MaxDischCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packString1MaxDischCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packString1MaxDischCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packString1MaxChgCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packString1MaxChgCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packString1MaxChgCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packTracMaxDischCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracMaxDischCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packTracMaxDischCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packTracMaxChgCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packTracMaxChgCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packTracMaxChgCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCellProtMaxVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMaxVolt, false, false, slots.ltcCellv)
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtMaxVolt
+            writable: false
+            saveable: false
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
         name: qsTr("")
     }
     property ScalarMetaParam packCellProtMinVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtMinVolt, false, false, slots.ltcCellv)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtMinVolt
+            writable: false
+            saveable: false
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCellProtRes: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtRes, false, false, slots.cellProtRes)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtRes
+            writable: false
+            saveable: false
+            slot: slots.cellProtRes
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCellProtVoltageMaxDischCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtVoltageMaxDischCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtVoltageMaxDischCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCellProtVoltageMaxChgCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtVoltageMaxChgCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtVoltageMaxChgCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCellProtThermalMaxDischCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtThermalMaxDischCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtThermalMaxDischCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCellProtThermalMaxChgCurr: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCellProtThermalMaxChgCurr, false, false, slots.current1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCellProtThermalMaxChgCurr
+            writable: false
+            saveable: false
+            slot: slots.current1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packStatus: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packStatus, false, false, slots.raw32hex)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packStatus
+            writable: false
+            saveable: false
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packMaxCellVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packMaxCellVolt, false, false, slots.ltcCellv)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMaxCellVolt
+            writable: false
+            saveable: false
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packMeanCellVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packMeanCellVolt, false, false, slots.ltcCellv)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMeanCellVolt
+            writable: false
+            saveable: false
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packMinCellVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packMinCellVolt, false, false, slots.ltcCellv)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMinCellVolt
+            writable: false
+            saveable: false
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packMaxCellTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packMaxCellTemp, false, false, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMaxCellTemp
+            writable: false
+            saveable: false
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packMeanCellTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packMeanCellTemp, false, false, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMeanCellTemp
+            writable: false
+            saveable: false
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packMinCellTemp: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packMinCellTemp, false, false, slots.saeTp02)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packMinCellTemp
+            writable: false
+            saveable: false
+            slot: slots.saeTp02
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltDetectPulldownPosVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPulldownPosVolt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltDetectPulldownPosVolt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltDetectPulldownNegVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPulldownNegVolt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltDetectPulldownNegVolt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltDetectPullupPosVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPullupPosVolt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltDetectPullupPosVolt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltDetectPullupNegVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltDetectPullupNegVolt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltDetectPullupNegVolt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltCenterVolt: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltCenterVolt, false, false, slots.voltage1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltCenterVolt
+            writable: false
+            saveable: false
+            slot: slots.voltage1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltFrac: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltFrac, false, false, slots.saePc01)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltFrac
+            writable: false
+            saveable: false
+            slot: slots.saePc01
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packGndFltConduct: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packGndFltConduct, false, false, slots.conductance1)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packGndFltConduct
+            writable: false
+            saveable: false
+            slot: slots.conductance1
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packCtcCtrlStateCode: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packCtcCtrlStateCode, false, false, slots.ctcCtrlState)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packCtcCtrlStateCode
+            writable: false
+            saveable: false
+            slot: slots.ctcCtrlState
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam packBalancerStateCode: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.packBalancerStateCode, false, false, slots.balancerState)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packBalancerStateCode
+            writable: false
+            saveable: false
+            slot: slots.balancerState
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam sysCycleIdleTicks: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleIdleTicks, false, false, slots.timeSysTick)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysCycleIdleTicks
+            writable: false
+            saveable: false
+            slot: slots.timeSysTick
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysCycleDrvCbtmInTicks: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleDrvCbtmInTicks, false, false, slots.timeSysTick)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysCycleDrvCbtmInTicks
+            writable: false
+            saveable: false
+            slot: slots.timeSysTick
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysCycleDrvIaiInTicks: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleDrvIaiInTicks, false, false, slots.timeSysTick)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysCycleDrvIaiInTicks
+            writable: false
+            saveable: false
+            slot: slots.timeSysTick
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysCycleCtlAuxBattTicks: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlAuxBattTicks, false, false, slots.timeSysTick)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysCycleCtlAuxBattTicks
+            writable: false
+            saveable: false
+            slot: slots.timeSysTick
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysCycleCtlLampTicks: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlLampTicks, false, false, slots.timeSysTick)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysCycleCtlLampTicks
+            writable: false
+            saveable: false
+            slot: slots.timeSysTick
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysCycleCtlMotorTicks: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlMotorTicks, false, false, slots.timeSysTick)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysCycleCtlMotorTicks
+            writable: false
+            saveable: false
+            slot: slots.timeSysTick
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysCycleCtlPackTicks: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysCycleCtlPackTicks, false, false, slots.timeSysTick)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysCycleCtlPackTicks
+            writable: false
+            saveable: false
+            slot: slots.timeSysTick
+            name: qsTr("")
+        }
     }
 
     property ScalarMetaParam sysFlags: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysFlags, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysFlags
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysHeapAllocBytes: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysHeapAllocBytes, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysHeapAllocBytes
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysHeapFreeBytes: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysHeapFreeBytes, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysHeapFreeBytes
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysHeapNFrees: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysHeapNFrees, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysHeapNFrees
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
     property ScalarMetaParam sysRtDbRows: ScalarMetaParam {
-        param: registry.addScalarParam(MemoryRange.S32, paramId.sysRtDbRows, false, false, slots.raw32)
-        name: qsTr("")
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.sysRtDbRows
+            writable: false
+            saveable: false
+            slot: slots.raw32
+            name: qsTr("")
+        }
     }
-
 }

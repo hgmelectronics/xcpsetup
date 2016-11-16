@@ -9,5 +9,6 @@
         <file>Parameters.qml</file>
         <file>ParamId.qml</file>
         <file>SimpleTableParamEditButton.qml</file>
+        <file>EventLogTab.qml</file>
     </qresource>
 </RCC>

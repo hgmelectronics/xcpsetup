@@ -19,6 +19,7 @@ ColumnLayout {
     property string targetResId
     property string intfcUri: ""
     property alias progressValue: progressBar.value
+    property alias paramLayer: paramTabView.paramLayer
     property alias registry: paramTabView.registry
     property alias interfaceSaveUri: interfaceChooser.saveUri
     property bool intfcOpen

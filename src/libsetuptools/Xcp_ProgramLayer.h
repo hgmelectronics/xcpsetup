@@ -60,7 +60,7 @@ signals:
     void stateChanged();
     void opProgressChanged();
     void intfcChanged();
-    void opMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void opMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void slaveIdChanged();
 public slots:
     void program(FlashProg *prog, quint8 addrExt = 0, bool finalEmptyPacket = true);
@@ -80,7 +80,7 @@ private:
     void onConnProgramResetDone(OpResult result);
     void onConnStateChanged();
     void onConnOpProgressChanged();
-    void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void onConnOpMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void onIntfcSlaveIdChanged();
 
     void doProgramClear();   // Clear program bytes, as many as possible

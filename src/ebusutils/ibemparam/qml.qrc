@@ -6,8 +6,7 @@
         <file>HelpDialog.qml</file>
         <file>Slots.qml</file>
         <file>ParamTabView.qml</file>
-        <file>Parameters.qml</file>
-        <file>ParamId.qml</file>
         <file>SimpleTableParamEditButton.qml</file>
+        <file>Parameters.qml</file>
     </qresource>
 </RCC>

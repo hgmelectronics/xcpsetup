@@ -46,8 +46,8 @@ public slots:
 
 private:
     void onRangeValChanged();
-    void onRangeUploadDone(SetupTools::Xcp::OpResult result);
-    void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
+    void onRangeUploadDone(SetupTools::OpResult result);
+    void onRangeDownloadDone(SetupTools::OpResult result);
     void onSlotValueParamChanged();
     ScalarMemoryRange * const mRange;   // owned by the ParamRegistry
 };

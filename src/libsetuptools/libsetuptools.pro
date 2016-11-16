@@ -8,7 +8,7 @@ QT       += network serialport quick qml charts
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections -Wall -Wuninitialized
+QMAKE_CXXFLAGS += -std=c++14 -ffunction-sections -fdata-sections -Wall -Wuninitialized
 
 TARGET = setuptools
 TEMPLATE = lib
@@ -29,21 +29,11 @@ SOURCES += \
     FlashProg.cpp \
     ProgFile.cpp \
     Xcp_ProgramLayer.cpp \
-    Xcp_Exception.cpp \
     SetupTools.cpp \
-    Xcp_MemoryRangeTable.cpp \
-    Xcp_MemoryRangeList.cpp \
-    Xcp_MemoryRange.cpp \
-    Xcp_ScalarMemoryRange.cpp \
     Slot.cpp \
     LinearSlot.cpp \
-    Xcp_ParamRegistry.cpp \
-    Xcp_ScalarParam.cpp \
-    Xcp_Param.cpp \
     Xcp_ParamLayer.cpp \
     EncodingSlot.cpp \
-    Xcp_ArrayMemoryRange.cpp \
-    Xcp_ArrayParam.cpp \
     SlotArrayModel.cpp \
     TransposeProxyModel.cpp \
     TableMapperModel.cpp \
@@ -52,14 +42,18 @@ SOURCES += \
     Xcp_Interface_Can_Socket_Interface.cpp \
     ScaleOffsetProxyModel.cpp \
     SlotProxyModel.cpp \
-    Xcp_VarArrayParam.cpp \
     Xcp_TestingSlave.cpp \
     RoleXYModelMapper.cpp \
     XYSeriesAutoAxis.cpp \
     CSVParamFile.cpp \
     ModelStringProxy.cpp \
     Xcp_Interface_Can_J2534_Interface.cpp \
-    Xcp_Interface_Can_J2534_Library.cpp
+    Xcp_Interface_Can_J2534_Library.cpp \
+    ParamRegistry.cpp \
+    Param.cpp \
+    Exception.cpp \
+    ArrayParam.cpp \
+    ScalarParam.cpp
 
 HEADERS += \
     util.h \
@@ -67,7 +61,6 @@ HEADERS += \
     Xcp_Interface_Interface.h \
     Xcp_Interface_Can_Interface.h \
     Xcp_Interface_Can_Elm327_Interface.h \
-    Xcp_Exception.h \
     Xcp_Interface_Loopback_Interface.h \
     Xcp_Interface_Can_Registry.h \
     Xcp_ConnectionFacade.h \
@@ -76,19 +69,9 @@ HEADERS += \
     ProgFile.h \
     Xcp_ProgramLayer.h \
     SetupTools.h \
-    Xcp_MemoryRangeTable.h \
-    Xcp_MemoryRange.h \
-    Xcp_MemoryRangeList.h \
-    Xcp_ScalarMemoryRange.h \
     Slot.h \
     LinearSlot.h \
-    Xcp_ParamRegistry.h \
-    Xcp_ScalarParam.h \
-    Xcp_Param.h \
-    Xcp_ParamLayer.h \
     EncodingSlot.h \
-    Xcp_ArrayMemoryRange.h \
-    Xcp_ArrayParam.h \
     TransposeProxyModel.h \
     TableMapperModel.h \
     ModelListProxy.h \
@@ -97,16 +80,21 @@ HEADERS += \
     SlotArrayModel.h \
     ScaleOffsetProxyModel.h \
     SlotProxyModel.h \
-    Xcp_VarArrayParam.h \
     Xcp_TestingSlave.h \
     RoleXYModelMapper.h \
     XYSeriesAutoAxis.h \
     CSVParamFile.h \
     ModelStringProxy.h \
     Xcp_Interface_Can_J2534_Interface.h \
-    Xcp_Interface_Can_J2534_Library.h
+    Xcp_Interface_Can_J2534_Library.h \
+    ParamRegistry.h \
+    Param.h \
+    Exception.h \
+    ArrayParam.h \
+    ScalarParam.h \
+    Xcp_ParamLayer.h
 
-unix {
+unix:!android {
     target.path = /usr/lib
     INSTALLS += target
     DEFINES += SOCKETCAN

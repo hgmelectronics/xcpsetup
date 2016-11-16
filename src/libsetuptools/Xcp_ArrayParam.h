@@ -69,8 +69,8 @@ public slots:
     virtual void download();
 
 private slots:
-    void onRangeUploadDone(SetupTools::Xcp::OpResult result);
-    void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
+    void onRangeUploadDone(SetupTools::OpResult result);
+    void onRangeDownloadDone(SetupTools::OpResult result);
     void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
 private:
     ArrayMemoryRange* const mRange;    // owned by the ParamRegistry
