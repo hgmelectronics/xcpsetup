@@ -14,6 +14,7 @@ ApplicationWindow {
     id: application
     property string programName: qsTr("COMPUSHIFT Parameter Editor")
     property string programVersion: ""
+    property alias enableBetaFeatures: enableBetaFeaturesAction.checked
     property alias useMetricUnits: paramReg.useMetricUnits
     property alias readParametersOnConnect: readParametersOnConnectAction.checked
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
@@ -55,6 +56,7 @@ ApplicationWindow {
 
     Settings {
         category: "application"
+        property alias enableBetaFeatures: application.enableBetaFeatures
         property alias readParametersOnConnect: application.readParametersOnConnect
         property alias saveReadOnlyParameters: application.saveReadOnlyParameters
         property alias useMetricUnits: application.useMetricUnits
@@ -391,6 +393,14 @@ ApplicationWindow {
     }
 
     Action {
+        id: enableBetaFeaturesAction
+        text: qsTr("Enable beta features");
+        tooltip: qsTr("Enables features for beta testing.")
+        checkable: true
+        checked: false
+    }
+
+    Action {
         id: saveParametersOnWriteAction
         text: qsTr("Save parameters after write")
         tooltip: qsTr("Automatically saves parameters when they are written to the controller.")
@@ -575,6 +585,9 @@ ApplicationWindow {
             MenuItem {
                 action: saveParametersOnWriteAction
             }
+            MenuItem {
+                action: enableBetaFeaturesAction
+            }
         }
 
         Menu {
@@ -676,6 +689,7 @@ ApplicationWindow {
         id: paramTabView
         anchors.fill: parent
         registry: paramReg
+        enableBetaFeatures: application.enableBetaFeatures
     }
 
     statusBar: StatusBar {

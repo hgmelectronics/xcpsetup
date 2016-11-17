@@ -10,6 +10,7 @@ import com.hgmelectronics.setuptools.ui 1.0
 Item {
     id: root
     property Parameters registry
+    property bool enableBetaFeatures
     anchors.left: parent.left
     anchors.right: parent.right
 
@@ -62,8 +63,15 @@ Item {
         Tab {
             active: true
             title: qsTr("TC")
-            TcLayout {
-                parameters: registry
+            Item {
+                TcLayout {
+                    visible: !enableBetaFeatures
+                    parameters: registry
+                }
+                TcLayoutBeta {
+                    visible: enableBetaFeatures
+                    parameters: registry
+                }
             }
         }
 

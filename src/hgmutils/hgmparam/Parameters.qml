@@ -4450,7 +4450,7 @@ ParamRegistry {
             writable: true
             saveable: true
             slot: slots.percentage1
-            name: qsTr("TCC Disable TOSS Percent A")
+            name: qsTr("TCC Disable Speed Percent A")
         }
     }
 
@@ -4462,7 +4462,7 @@ ParamRegistry {
             writable: true
             saveable: true
             slot: slots.percentage1
-            name: qsTr("TCC Disable TOSS Percent B")
+            name: qsTr("TCC Disable Speed Percent B")
         }
     }
 
@@ -4498,7 +4498,7 @@ ParamRegistry {
             writable: true
             saveable: true
             slot: slots.tossRPMAsSpeed
-            name: qsTr("TCC Enable TOSS Speed A")
+            name: qsTr("TCC Enable Speed A")
         }
     }
 
@@ -4510,7 +4510,7 @@ ParamRegistry {
             writable: true
             saveable: true
             slot: slots.tossRPMAsSpeed
-            name: qsTr("TCC Enable TOSS Speed B")
+            name: qsTr("TCC Enable Speed B")
         }
     }
 
