@@ -15,7 +15,7 @@ Q_DECLARE_METATYPE(CksumPair)
 
 namespace QTest
 {
-char *toString(const SetupTools::Xcp::OpResult &res);
+char *toString(const SetupTools::OpResult &res);
 }
 
 void waitSignalSpyCount(int delay, int count, QSignalSpy &spy);

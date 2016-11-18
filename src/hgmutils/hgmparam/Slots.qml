@@ -302,6 +302,15 @@ QtObject {
         unit: "%"
     }
 
+    property LinearSlot tccTableAxis: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 20
+        engrB: 100
+        unit: "%"
+    }
+
+
     property LinearSlot percentage1Gauge: LinearSlot {
         rawA: 0
         engrA: 0
@@ -593,7 +602,8 @@ QtObject {
             { raw: 17, engr: "AEM Series 2 CAN" },
             { raw: 18, engr: "VW GTI MKV" },
             { raw: 19, engr: "Ebus Yaskawa G5" },
-            { raw: 20, engr: "Nissan ZD30" }
+            { raw: 20, engr: "Nissan ZD30" },
+            { raw: 21, engr: "Ebus YTB" }
         ]
         unencodedSlot: count
     }

@@ -213,7 +213,7 @@ ColumnLayout {
 
         Button {
             text: "PWM Drivers"
-            enabled: parameters.controllerPWMDrivers.param.valid
+            enabled: true
             onClicked: {
                 pwmDriversWindow.showNormal()
                 pwmDriversWindow.raise()
@@ -245,7 +245,7 @@ ColumnLayout {
 
         Button {
             text: "Switch Monitor"
-            enabled: parameters.controllerSwitchCurrent.param.valid
+            enabled: true
             onClicked: {
                 switchMonitorWindow.showNormal()
                 switchMonitorWindow.raise()
@@ -277,7 +277,7 @@ ColumnLayout {
         }
 
         Button {
-            text: "Pressures"
+            text: qsTr("Pressures")
             onClicked: {
                 pressureDialog.showNormal()
                 pressureDialog.raise()
@@ -285,7 +285,7 @@ ColumnLayout {
 
             ScalarListDialog {
                 id: pressureDialog
-                title: "Pressures"
+                title: qsTr("Pressures")
                 paramLists: [
                     ScalarMetaParamList {
                         params: [
@@ -304,6 +304,60 @@ ColumnLayout {
                 ]
             }
         }
+
+        Button {
+            text: qsTr("Shaft Speeds")
+            onClicked: {
+                shaftSpeedsDialog.showNormal()
+                shaftSpeedsDialog.raise()
+            }
+
+            ScalarListDialog {
+                id: shaftSpeedsDialog
+                title: qsTr("Shaft Speeds")
+                paramLists: [
+                    ScalarMetaParamList {
+                        params: [
+                            parameters.transmissionInputShaftSpeed,
+                            parameters.transmissionTurbineShaftSpeed,
+                            parameters.transmissionOutputShaftSpeed,
+                            parameters.transmissionShaft1Speed,
+                            parameters.transmissionShaft2Speed,
+                            parameters.transmissionShaft3Speed,
+                            parameters.transmissionShaft4Speed,
+                            parameters.transmissionShaft5Speed,
+                            parameters.transmissionShaft6Speed,
+                            parameters.transmissionShaft7Speed,
+                            parameters.transmissionShaft8Speed
+                        ]
+                    }
+                ]
+            }
+        }
+
+        Button {
+            text: qsTr("Wheel Speeds")
+            onClicked: {
+                wheelSpeedsDialog.showNormal()
+                wheelSpeedsDialog.raise()
+            }
+
+            ScalarListDialog {
+                id: wheelSpeedsDialog
+                title: qsTr("Wheel Speeds")
+                paramLists: [
+                    ScalarMetaParamList {
+                        params: [
+                            parameters.leftFrontWheelSpeed,
+                            parameters.rightFrontWheelSpeed,
+                            parameters.leftRearWheelSpeed,
+                            parameters.rightRearWheelSpeed
+                        ]
+                    }
+                ]
+            }
+        }
+
     }
 
     Flow {

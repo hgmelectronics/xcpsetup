@@ -8,7 +8,7 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
-ColumnLayout {
+RowLayout {
     property Parameters parameters
     anchors.fill: parent
     anchors.margins: 5
@@ -167,16 +167,15 @@ ColumnLayout {
         }
     }
 
-    RowLayout {
+    ColumnLayout {
+        Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.minimumHeight: 150
+
         ChartView {
             id: plot
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            anchors.bottom: parent.bottom
-            anchors.top: parent.top
             margins.left: 0
             margins.right: 0
             margins.bottom: 0
@@ -396,213 +395,210 @@ ColumnLayout {
                 axisY: autoAxis.yAxis
             }
         }
-
-        XYSeriesAutoAxis {
-            id: autoAxis
-            series: [
-                upshiftA0Series,
-                upshiftA1Series,
-                upshiftA2Series,
-                upshiftA3Series,
-                upshiftA4Series,
-                downshiftA0Series,
-                downshiftA1Series,
-                downshiftA2Series,
-                downshiftA3Series,
-                downshiftA4Series,
-                upshiftB0Series,
-                upshiftB1Series,
-                upshiftB2Series,
-                upshiftB3Series,
-                upshiftB4Series,
-                downshiftB0Series,
-                downshiftB1Series,
-                downshiftB2Series,
-                downshiftB3Series,
-                downshiftB4Series,
-            ]
-            xAxis.titleText: qsTr("Torque ") + parameters.upshiftTablesA[0].param.x.slot.unit
-            yAxis.titleText: qsTr("Speed ") + parameters.upshiftTablesA[0].param.value.slot.unit
-        }
-
         GroupBox {
-            title: "A"
+            title: "Common"
             RowLayout {
-                ColumnLayout {
-                    Repeater {
-                        id: upshiftAVisible
-                        model: parameters.upshiftTablesA.length
-                        CheckBox {
-                            checked: parameters.upshiftTablesA[index].param.value.valid
-                            enabled: parameters.upshiftTablesA[index].param.value.valid
-                            text: parameters.upshiftTablesA[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
-                            onCheckedChanged: {
-                                setShiftVisible(false, false, index, checked)
-                            }
-                            Layout.minimumWidth: 40
-                        }
-                    }
-                }
-                ColumnLayout {
-                    Repeater {
-                        model: parameters.downshiftTablesA.length
-                        CheckBox {
-                            checked: false
-                            enabled: parameters.downshiftTablesA[index].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
-                            text: parameters.downshiftTablesA[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
-                            onCheckedChanged: {
-                                setShiftVisible(true, false, index, checked)
-                            }
-                            Layout.minimumWidth: 40
-                        }
-                    }
-                }
-            }
-        }
-
-        GroupBox {
-            title: "B"
-            RowLayout {
-                ColumnLayout {
-                    Repeater {
-                        model: parameters.upshiftTablesB.length
-                        CheckBox {
-                            checked: false
-                            enabled: parameters.upshiftTablesB[index].param.value.valid
-                            text: parameters.upshiftTablesB[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
-                            onCheckedChanged: {
-                                setShiftVisible(false, true, index, checked)
-                            }
-                            Layout.minimumWidth: 40
-                        }
-                    }
-                }
-                ColumnLayout {
-                    Repeater {
-                        model: parameters.downshiftTablesB.length
-                        CheckBox {
-                            checked: false
-                            enabled: parameters.downshiftTablesB[index].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
-                            text: parameters.downshiftTablesB[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
-                            onCheckedChanged: {
-                                setShiftVisible(true, true, index, checked)
-                            }
-                            Layout.minimumWidth: 40
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-
-    GroupBox {
-        title: "Profile A"
-        Layout.fillWidth: true
-        ColumnLayout {
-            RowLayout {
-                ShiftTableByShiftEditMenuButton {
-                    text: qsTr("Upshift Tables")
-                    speedTableParams: parameters.upshiftTablesA
-                    rpmTableParams: parameters.rpmUpshiftTablesA
-                    gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-                }
-                ShiftTableByShiftEditMenuButton {
-                    text: qsTr("Downshift Tables")
-                    speedTableParams: parameters.downshiftTablesA
-                    rpmTableParams: parameters.rpmDownshiftTablesA
-                    gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-                    isDownshift: true
-                    enabled: (parameters.shiftTablesDownLockedA.param.floatVal == 0 && parameters.shiftTablesDownLockedA.param.valid)
-                }
-            }
-            RowLayout {
-                EncodingParamEdit {
-                    metaParam: parameters.shiftTablesDownLockedA
-                    name: qsTr("Downshift Locked")
-                    implicitWidth: 132
-                }
                 ScalarParamSpinBox {
-                    metaParam: parameters.shiftSpeedAdjustA
-                    name: qsTr("Shift Speed Adjust")
-                    implicitWidth: 132
-                }
-                ScalarParamSpinBox {
-                    metaParam: parameters.shiftDownshiftOffsetA
-                    name: qsTr("Downshift Offset")
-                    implicitWidth: 132
-                }
-                ScalarParamSpinBox {
-                    metaParam: parameters.shiftMaxEngineSpeedA
-                    name: qsTr("Max Engine Speed")
-                    implicitWidth: 132
-                }
-                EncodingParamEdit {
-                    metaParam: parameters.shiftManualModeA
-                    name: qsTr("Manual Mode")
-                    implicitWidth: 132
+                    metaParam: parameters.reverseLockoutSpeed
                 }
             }
         }
     }
 
-    GroupBox {
-        title: "Profile B"
-        Layout.fillWidth: true
-        ColumnLayout {
-            RowLayout {
-                ShiftTableByShiftEditMenuButton {
-                    text: qsTr("Upshift Tables")
-                    speedTableParams: parameters.upshiftTablesB
-                    rpmTableParams: parameters.rpmUpshiftTablesB
-                    gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-                }
-                ShiftTableByShiftEditMenuButton {
-                    text: qsTr("Downshift Tables")
-                    speedTableParams: parameters.downshiftTablesB
-                    rpmTableParams: parameters.rpmDownshiftTablesB
-                    gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
-                    isDownshift: true
-                    enabled: (parameters.shiftTablesDownLockedB.param.floatVal == 0 && parameters.shiftTablesDownLockedA.param.valid)
-                }
-            }
-            RowLayout {
-                EncodingParamEdit {
-                    metaParam: parameters.shiftTablesDownLockedB
-                    name: "Downshift Locked"
-                    implicitWidth: 132
-                }
-                ScalarParamSpinBox {
-                    metaParam: parameters.shiftSpeedAdjustB
-                    name: qsTr("Shift Speed Adjust")
-                    implicitWidth: 132
-                }
-                ScalarParamSpinBox {
-                    metaParam: parameters.shiftDownshiftOffsetB
-                    name: qsTr("Downshift Offset")
-                    implicitWidth: 132
-                }
-                ScalarParamSpinBox {
-                    metaParam: parameters.shiftMaxEngineSpeedB
-                    name: qsTr("Max Engine Speed")
-                    implicitWidth: 132
-                }
-                EncodingParamEdit {
-                    metaParam: parameters.shiftManualModeB
-                    name: qsTr("Manual Mode")
-                    implicitWidth: 132
-                }
-            }
-        }
 
+    XYSeriesAutoAxis {
+        id: autoAxis
+        series: [
+            upshiftA0Series,
+            upshiftA1Series,
+            upshiftA2Series,
+            upshiftA3Series,
+            upshiftA4Series,
+            downshiftA0Series,
+            downshiftA1Series,
+            downshiftA2Series,
+            downshiftA3Series,
+            downshiftA4Series,
+            upshiftB0Series,
+            upshiftB1Series,
+            upshiftB2Series,
+            upshiftB3Series,
+            upshiftB4Series,
+            downshiftB0Series,
+            downshiftB1Series,
+            downshiftB2Series,
+            downshiftB3Series,
+            downshiftB4Series,
+        ]
+        xAxis.titleText: qsTr("Torque ") + parameters.upshiftTablesA[0].param.x.slot.unit
+        yAxis.titleText: qsTr("Speed ") + parameters.upshiftTablesA[0].param.value.slot.unit
     }
-    GroupBox {
-        title: "Common"
-        Layout.fillWidth: true
+
+    ColumnLayout {
+        Layout.fillHeight: true
         RowLayout {
-            ScalarParamSpinBox {
-                Layout.alignment: Qt.AlignTop
-                metaParam: parameters.reverseLockoutSpeed
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            GroupBox {
+                title: "Profile A"
+                ColumnLayout {
+                    GroupBox {
+                        title: "Graph"
+                        RowLayout {
+                            ColumnLayout {
+                                Repeater {
+                                    id: upshiftAVisible
+                                    model: parameters.upshiftTablesA.length
+                                    CheckBox {
+                                        checked: parameters.upshiftTablesA[index].param.value.valid
+                                        enabled: parameters.upshiftTablesA[index].param.value.valid
+                                        text: parameters.upshiftTablesA[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
+                                        onCheckedChanged: {
+                                            setShiftVisible(false, false, index, checked)
+                                        }
+                                        Layout.minimumWidth: 40
+                                    }
+                                }
+                            }
+                            ColumnLayout {
+                                Repeater {
+                                    model: parameters.downshiftTablesA.length
+                                    CheckBox {
+                                        checked: false
+                                        enabled: parameters.downshiftTablesA[index].param.value.valid && (parameters.shiftTablesDownLockedA.param.floatVal == 0)
+                                        text: parameters.downshiftTablesA[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
+                                        onCheckedChanged: {
+                                            setShiftVisible(true, false, index, checked)
+                                        }
+                                        Layout.minimumWidth: 40
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        ShiftTableByShiftEditMenuButton {
+                            text: qsTr("Upshift")
+                            speedTableParams: parameters.upshiftTablesA
+                            rpmTableParams: parameters.rpmUpshiftTablesA
+                            gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                        }
+                        ShiftTableByShiftEditMenuButton {
+                            text: qsTr("Downshift")
+                            speedTableParams: parameters.downshiftTablesA
+                            rpmTableParams: parameters.rpmDownshiftTablesA
+                            gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                            isDownshift: true
+                            enabled: (parameters.shiftTablesDownLockedA.param.floatVal == 0 && parameters.shiftTablesDownLockedA.param.valid)
+                        }
+                    }
+                    EncodingParamEdit {
+                        metaParam: parameters.shiftTablesDownLockedA
+                        name: qsTr("Downshift Locked")
+                        implicitWidth: 132
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.shiftSpeedAdjustA
+                        name: qsTr("Shift Speed Adjust")
+                        implicitWidth: 132
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.shiftDownshiftOffsetA
+                        name: qsTr("Downshift Offset")
+                        implicitWidth: 132
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.shiftMaxEngineSpeedA
+                        name: qsTr("Max Engine Speed")
+                        implicitWidth: 132
+                    }
+                    EncodingParamEdit {
+                        metaParam: parameters.shiftManualModeA
+                        name: qsTr("Manual Mode")
+                        implicitWidth: 132
+                    }
+                }
+            }
+            GroupBox {
+                title: "Profile B"
+                ColumnLayout {
+                    GroupBox {
+                        title: "Graph"
+                        RowLayout {
+                            ColumnLayout {
+                                Repeater {
+                                    model: parameters.upshiftTablesB.length
+                                    CheckBox {
+                                        checked: false
+                                        enabled: parameters.upshiftTablesB[index].param.value.valid
+                                        text: parameters.upshiftTablesB[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
+                                        onCheckedChanged: {
+                                            setShiftVisible(false, true, index, checked)
+                                        }
+                                        Layout.minimumWidth: 40
+                                    }
+                                }
+                            }
+                            ColumnLayout {
+                                Repeater {
+                                    model: parameters.downshiftTablesB.length
+                                    CheckBox {
+                                        checked: false
+                                        enabled: parameters.downshiftTablesB[index].param.value.valid && (parameters.shiftTablesDownLockedB.param.floatVal == 0)
+                                        text: parameters.downshiftTablesB[index].name.replace(/Shift Speed ([1-9RN]-[1-9RN]).*/, "$1")
+                                        onCheckedChanged: {
+                                            setShiftVisible(true, true, index, checked)
+                                        }
+                                        Layout.minimumWidth: 40
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        ShiftTableByShiftEditMenuButton {
+                            text: qsTr("Upshift")
+                            speedTableParams: parameters.upshiftTablesB
+                            rpmTableParams: parameters.rpmUpshiftTablesB
+                            gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                        }
+                        ShiftTableByShiftEditMenuButton {
+                            text: qsTr("Downshift")
+                            speedTableParams: parameters.downshiftTablesB
+                            rpmTableParams: parameters.rpmDownshiftTablesB
+                            gearNumberRatioParam: parameters.transmissionGearNumbersRatios.param
+                            isDownshift: true
+                            enabled: (parameters.shiftTablesDownLockedB.param.floatVal == 0 && parameters.shiftTablesDownLockedA.param.valid)
+                        }
+                    }
+                    EncodingParamEdit {
+                        metaParam: parameters.shiftTablesDownLockedB
+                        name: "Downshift Locked"
+                        implicitWidth: 132
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.shiftSpeedAdjustB
+                        name: qsTr("Shift Speed Adjust")
+                        implicitWidth: 132
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.shiftDownshiftOffsetB
+                        name: qsTr("Downshift Offset")
+                        implicitWidth: 132
+                    }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.shiftMaxEngineSpeedB
+                        name: qsTr("Max Engine Speed")
+                        implicitWidth: 132
+                    }
+                    EncodingParamEdit {
+                        metaParam: parameters.shiftManualModeB
+                        name: qsTr("Manual Mode")
+                        implicitWidth: 132
+                    }
+                }
             }
         }
     }

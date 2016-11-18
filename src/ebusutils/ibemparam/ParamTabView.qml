@@ -14,18 +14,13 @@ Item {
     anchors.left: parent.left
     anchors.right: parent.right
 
-    Parameters {
-        id: parameters
-        registry: root.registry
-    }
-
     ColumnLayout {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 10
         spacing: 10
         ScalarParamEdit {
-            metaParam: parameters.boardId
+            metaParam: registry.boardId
         }
     }
 }

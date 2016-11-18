@@ -19,6 +19,7 @@ ApplicationWindow {
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property alias paramFileDir: paramLoadFileDialog.folder
     property alias interfaceSaveUri: mainForm.interfaceSaveUri
+    property alias paramLayer: paramLayer
 
     Settings {
         category: "application"
@@ -31,6 +32,10 @@ ApplicationWindow {
         property alias windowX: application.x
         property alias windowY: application.y
         property alias interfaceSaveUri: application.interfaceSaveUri
+    }
+
+    Parameters {
+        id: paramReg
     }
 
     MainForm {
@@ -57,13 +62,14 @@ ApplicationWindow {
         onUserShowParamEdit: paramWindow.show()
         targetCmdId: "1F000090"
         targetResId: "1F000091"
-        registry: paramLayer.registry
+        registry: paramReg
+        paramLayer: application.paramLayer
     }
 
     ParamLayer {
         id: paramLayer
+        registry: paramReg
         intfcUri: mainForm.intfcUri
-        addrGran: 1
         slaveTimeout: 100
         slaveNvWriteTimeout: 400
 
@@ -90,14 +96,16 @@ ApplicationWindow {
             ParamResetNeeded.set = false
         }
         onDownloadDone: {
-            if(result === OpResult.Success) {
-                if(saveParametersOnWrite)
-                    nvWrite()
+            if(saveParametersOnWrite) {
+                for(var i = 0, end = keys.length; i < end; ++i) {
+                    if(paramLayer.registry.saveableParamKeys.indexOf(keys[i]) >= 0) {
+                        nvWrite()
+                        break
+                    }
+                }
             }
-            else {
-                errorDialog.show(qsTr("Download failed: %1").arg(
-                                     OpResult.asString(result)))
-            }
+            if(result !== OpResult.Success)
+                errorDialog.show(qsTr("Download failed: %1").arg(OpResult.asString(result)))
         }
         onNvWriteDone: {
             if(result === OpResult.Success) {
@@ -164,7 +172,7 @@ ApplicationWindow {
             console.log(folder)
             folder = folder
             paramFileIo.name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            paramLayer.setRawData(paramFileIo.read(), true)
+            paramLayer.setData(paramFileIo.read(), true, ParamLayer.SetToNew)
         }
         selectExisting: true
     }
@@ -292,28 +300,28 @@ ApplicationWindow {
         id: undoAction
         text: qsTr("Undo")
         shortcut: StandardKey.Undo
-        enabled: paramLayer.registry.currentRevNum > paramLayer.registry.minRevNum
-        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum - 1
+        enabled: paramReg.currentRevNum > paramReg.minRevNum
+        onTriggered: paramReg.currentRevNum = paramReg.currentRevNum - 1
     }
 
     Action {
         id: redoAction
         text: qsTr("Redo")
         shortcut: StandardKey.Redo
-        enabled: paramLayer.registry.currentRevNum < paramLayer.registry.maxRevNum
-        onTriggered: paramLayer.registry.currentRevNum = paramLayer.registry.currentRevNum + 1
+        enabled: paramReg.currentRevNum < paramReg.maxRevNum
+        onTriggered: paramReg.currentRevNum = paramReg.currentRevNum + 1
     }
 
     Action {
         id: enableAllParametersAction
         text: qsTr("Enable all parameters")
-        onTriggered: paramLayer.registry.setValidAll(true)
+        onTriggered: paramReg.setValidAll(true)
     }
 
     Action {
         id: disableAllParametersAction
         text: qsTr("Disable all parameters")
-        onTriggered: paramLayer.registry.setValidAll(false)
+        onTriggered: paramReg.setValidAll(false)
     }
 
     menuBar: MenuBar {

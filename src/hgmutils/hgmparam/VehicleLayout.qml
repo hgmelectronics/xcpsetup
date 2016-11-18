@@ -50,9 +50,6 @@ RowLayout {
             metaParam: parameters.vehicleSpeedSensorPulseCount
         }
         EncodingParamEdit {
-            metaParam: parameters.startInhibitRelayType
-        }
-        EncodingParamEdit {
             metaParam: parameters.shiftSelectorODCancelAtStartup
         }
         TableParamEditButton {

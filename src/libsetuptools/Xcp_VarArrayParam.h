@@ -86,11 +86,11 @@ public slots:
 
 private slots:
     void onCachesReset();
-    void onRangeUploadDone(SetupTools::Xcp::OpResult result);
-    void onRangeDownloadDone(SetupTools::Xcp::OpResult result);
+    void onRangeUploadDone(SetupTools::OpResult result);
+    void onRangeDownloadDone(SetupTools::OpResult result);
     void onRangeDataChanged(quint32 beginChanged, quint32 endChanged);
-    void onExtRangeUploadDone(SetupTools::Xcp::OpResult result);
-    void onExtRangeDownloadDone(SetupTools::Xcp::OpResult result);
+    void onExtRangeUploadDone(SetupTools::OpResult result);
+    void onExtRangeDownloadDone(SetupTools::OpResult result);
     void onExtRangeValueChanged(int index);
 private:
     void emitDataChanged(bool forceModelChanged = false);

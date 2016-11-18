@@ -144,12 +144,12 @@ void ScalarParam::onSlotValueParamChanged()
     emit valChanged();
 }
 
-void ScalarParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
+void ScalarParam::onRangeUploadDone(SetupTools::OpResult result)
 {
     emit uploadDone(result);
 }
 
-void ScalarParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
+void ScalarParam::onRangeDownloadDone(SetupTools::OpResult result)
 {
     emit downloadDone(result);
 }

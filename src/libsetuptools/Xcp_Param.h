@@ -2,7 +2,7 @@
 #define SETUPTOOLS_XCP_PARAM_H
 
 #include <QObject>
-#include <Xcp_Exception.h>
+#include <Exception.h>
 #include <Xcp_MemoryRange.h>
 #include <Slot.h>
 #include <boost/dynamic_bitset.hpp>
@@ -56,8 +56,8 @@ signals:
     void keyChanged();
     void nameChanged();
     void rawValueChanged(QString key);
-    void uploadDone(SetupTools::Xcp::OpResult result);
-    void downloadDone(SetupTools::Xcp::OpResult result);
+    void uploadDone(SetupTools::OpResult result);
+    void downloadDone(SetupTools::OpResult result);
     void writeCacheDirtyChanged(QString key);
     void validChanged(QString key);
     void cachesReset();

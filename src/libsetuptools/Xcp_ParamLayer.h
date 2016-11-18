@@ -4,7 +4,7 @@
 #include <QObject>
 #include "Xcp_ConnectionFacade.h"
 #include "FlashProg.h"
-#include "Xcp_ParamRegistry.h"
+#include "ParamRegistry.h"
 
 namespace SetupTools {
 namespace Xcp {
@@ -21,8 +21,7 @@ class ParamLayer : public QObject
     Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri NOTIFY intfcChanged)
     Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId NOTIFY slaveIdChanged)
     Q_PROPERTY(ConnectionFacade *conn READ conn CONSTANT)
-    Q_PROPERTY(ParamRegistry *registry READ registry CONSTANT)
-    Q_PROPERTY(quint32 addrGran READ addrGran WRITE setAddrGran NOTIFY addrGranChanged)
+    Q_PROPERTY(ParamRegistry *registry MEMBER mRegistry)
     Q_PROPERTY(bool idle READ idle NOTIFY stateChanged)
     Q_PROPERTY(bool intfcOk READ intfcOk NOTIFY stateChanged)
     Q_PROPERTY(bool slaveConnected READ slaveConnected NOTIFY stateChanged)
@@ -31,10 +30,21 @@ class ParamLayer : public QObject
     Q_PROPERTY(int opProgressNotifyPeriod READ opProgressNotifyPeriod WRITE setOpProgressNotifyPeriod)
     Q_PROPERTY(double opProgress READ opProgress NOTIFY opProgressChanged)
     Q_PROPERTY(bool writeCacheDirty READ writeCacheDirty NOTIFY writeCacheDirtyChanged)
+    Q_PROPERTY(int slaveBootDelay READ slaveBootDelay WRITE setSlaveBootDelay)
+    Q_PROPERTY(bool slaveProgResetIsAcked READ slaveProgResetIsAcked WRITE setSlaveProgResetIsAcked)
 public:
     explicit ParamLayer(QObject *parent = nullptr);
-    explicit ParamLayer(quint32 addrGran, QObject *parent = nullptr);
     virtual ~ParamLayer() {}
+
+    enum SetDataPolicy
+    {
+        KeepExisting,   // validity is not changed; params that are valid in the registry and not present in supplied dataset are unchanged, params that are in supplied dataset but not valid in the registry are left invalid
+        SetToNew,       // params that are in supplied dataset are loaded and set to valid, params that are not in supplied dataset are invalidated
+        Union,          // params that are in supplied dataset are loaded and set to valid, params that are not in supplied dataset are unchanged
+        Intersection    // params that are in valid in the registry and present in the supplied dataset are loaded, all others are invalidated
+    };
+
+    Q_ENUMS(SetDataPolicy)
 
     QUrl intfcUri();
     void setIntfcUri(QUrl);
@@ -44,8 +54,6 @@ public:
     void setSlaveId(QString);
     ConnectionFacade *conn();
     ParamRegistry *registry();
-    quint32 addrGran();
-    void setAddrGran(quint32);
     bool idle();
     bool intfcOk();
     bool slaveConnected();
@@ -53,6 +61,10 @@ public:
     void setSlaveTimeout(int);
     int slaveNvWriteTimeout();
     void setSlaveNvWriteTimeout(int);
+    int slaveBootDelay();
+    void setSlaveBootDelay(int);
+    bool slaveProgResetIsAcked();
+    void setSlaveProgResetIsAcked(bool);
     int opProgressNotifyPeriod();
     void setOpProgressNotifyPeriod(int);
     Q_INVOKABLE void forceSlaveSupportCalPage();    //!< Call after connecting for slaves that erroneously report they do not support calibration/paging
@@ -65,20 +77,22 @@ public:
     Q_INVOKABLE QMap<QString, QVariant> saveableData();
     Q_INVOKABLE QMap<QString, QVariant> saveableRawData();
     Q_INVOKABLE QMap<QString, QVariant> data(const QStringList &keys);
-    Q_INVOKABLE QStringList setData(QVariantMap data, bool eraseOld);   //!< Returns keys that did not set successfully
+    Q_INVOKABLE QStringList setData(QVariantMap data, bool raw, int policy);   //!< Returns keys that did not set successfully
     Q_INVOKABLE QMap<QString, QVariant> rawData(const QStringList &keys);
-    Q_INVOKABLE QStringList setRawData(QVariantMap data, bool eraseOld);   //!< Returns keys that did not set successfully
     Q_INVOKABLE QMap<QString, QVariant> names();
     Q_INVOKABLE QMap<QString, QVariant> names(const QStringList &keys);
 signals:
-    void downloadDone(SetupTools::Xcp::OpResult result, QStringList keys);
-    void uploadDone(SetupTools::Xcp::OpResult result, QStringList keys);
-    void connectSlaveDone(SetupTools::Xcp::OpResult result);
-    void disconnectSlaveDone(SetupTools::Xcp::OpResult result);
-    void nvWriteDone(SetupTools::Xcp::OpResult result);
-    void fault(SetupTools::Xcp::OpResult result, QString info);
-    void warn(SetupTools::Xcp::OpResult result, QString info);
-    void info(SetupTools::Xcp::OpResult result, QString info);
+    void downloadDone(SetupTools::OpResult result, QStringList keys);
+    void uploadDone(SetupTools::OpResult result, QStringList keys);
+    void connectSlaveDone(SetupTools::OpResult result);
+    void disconnectSlaveDone(SetupTools::OpResult result);
+    void nvWriteDone(SetupTools::OpResult result);
+    void copyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
+    void programResetSlaveDone(SetupTools::OpResult result);
+    void calResetSlaveDone(SetupTools::OpResult result);
+    void fault(SetupTools::OpResult result, QString info);
+    void warn(SetupTools::OpResult result, QString info);
+    void info(SetupTools::OpResult result, QString info);
     void stateChanged();
     void opProgressChanged();
     void writeCacheDirtyChanged();
@@ -92,16 +106,21 @@ public slots:
     void download(QStringList keys);
     void upload(QStringList keys);
     void nvWrite();
+    void copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
+    void programResetSlave();   // Switch to program mode and then reset
+    void calResetSlave();       // Issue PROGRAM_RESET while still in cal mode
     void connectSlave();
     void disconnectSlave();
 
 private:
-    void onConnSetStateDone(SetupTools::Xcp::OpResult result);
-    void onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void onConnSetStateDone(SetupTools::OpResult result);
+    void onConnOpMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void onConnStateChanged();
-    void onConnNvWriteDone(SetupTools::Xcp::OpResult result);
-    void onParamDownloadDone(SetupTools::Xcp::OpResult result);
-    void onParamUploadDone(SetupTools::Xcp::OpResult result);
+    void onConnNvWriteDone(SetupTools::OpResult result);
+    void onConnCopyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
+    void onConnProgramResetDone(SetupTools::OpResult result);
+    void onParamDownloadDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data);
+    void onParamUploadDone(SetupTools::OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
     void onRegistryWriteCacheDirtyChanged();
     void onIntfcSlaveIdChanged();
 
@@ -114,6 +133,9 @@ private:
         Download,
         Upload,
         NvWrite,
+        CopyCalPage,
+        ProgramReset,
+        CalReset,
         Disconnect
     };
 
@@ -123,16 +145,18 @@ private:
     void setState(State);
     void notifyProgress();
 
-    ConnectionFacade *mConn;
-    ParamRegistry *mRegistry;
+    ConnectionFacade * mConn;
+    ParamRegistry * mRegistry;
     State mState;
-    boost::optional<ParamRegistryHistoryElide> mParamHistoryElide;
+    boost::optional<ParamHistoryElide> mParamHistoryElide;
     int mOpProgressNotifyPeriod;
 
     QStringList mActiveKeys;
     int mActiveKeyIdx;
-    QMetaObject::Connection mActiveParamConnection;
-    SetupTools::Xcp::OpResult mActiveResult;
+    Param * mActiveParam;
+    bool mActiveParamSizeIsKnown;
+    std::vector<quint8> mActiveParamUploadedData;
+    SetupTools::OpResult mActiveResult;
 };
 
 } // namespace Xcp
