@@ -19,6 +19,8 @@ ParamLayer::ParamLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::programResetDone, this, &ParamLayer::onConnProgramResetDone);
     connect(mConn, &ConnectionFacade::uploadDone, this, &ParamLayer::onParamUploadDone);
     connect(mConn, &ConnectionFacade::downloadDone, this, &ParamLayer::onParamDownloadDone);
+    connect(mConn, &ConnectionFacade::connectedTargetChanged, this, &ParamLayer::slaveIdChanged);
+    connect(mConn, &ConnectionFacade::setTargetDone, this, &ParamLayer::setSlaveIdDone);
 }
 
 QUrl ParamLayer::intfcUri()
@@ -28,13 +30,9 @@ QUrl ParamLayer::intfcUri()
 
 void ParamLayer::setIntfcUri(QUrl uri)
 {
-    if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
-        disconnect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ParamLayer::onIntfcSlaveIdChanged);
     mConn->setIntfcUri(uri);
     if(mConn->intfc())
     {
-        if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
-            connect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ParamLayer::onIntfcSlaveIdChanged);
         if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
             mConn->intfc()->setPacketLog(true);
         else
@@ -50,13 +48,9 @@ Interface::Interface *ParamLayer::intfc()
 
 void ParamLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
-    if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
-        disconnect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ParamLayer::onIntfcSlaveIdChanged);
     mConn->setIntfc(intfc, uri);
     if(mConn->intfc())
     {
-        if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
-            connect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ParamLayer::onIntfcSlaveIdChanged);
         if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
             mConn->intfc()->setPacketLog(true);
         else
@@ -67,13 +61,12 @@ void ParamLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
 
 QString ParamLayer::slaveId()
 {
-    return mConn->slaveId();
+    return mConn->connectedTarget();
 }
 
 void ParamLayer::setSlaveId(QString id)
 {
-    mConn->setSlaveId(id);
-    emit slaveIdChanged();
+    mConn->setTarget(id);
 }
 
 bool ParamLayer::idle()
@@ -881,11 +874,6 @@ void ParamLayer::uploadKey()
         mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->size());     // we know the actual size, upload that
     else
         mConn->upload(XcpPtr::fromVariant(mActiveParam->addr()), mActiveParam->minSize());  // size has not yet been determined
-}
-
-void ParamLayer::onIntfcSlaveIdChanged()
-{
-    emit slaveIdChanged();
 }
 
 Param *ParamLayer::getNextParam()

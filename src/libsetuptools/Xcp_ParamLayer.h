@@ -99,6 +99,7 @@ signals:
     void intfcChanged();
     void addrGranChanged();
     void slaveIdChanged();
+    void setSlaveIdDone(SetupTools::OpResult result);
 
 public slots:
     void download();
@@ -122,7 +123,6 @@ private:
     void onParamDownloadDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data);
     void onParamUploadDone(SetupTools::OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
     void onRegistryWriteCacheDirtyChanged();
-    void onIntfcSlaveIdChanged();
 
     enum class State
     {

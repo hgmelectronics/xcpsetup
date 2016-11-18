@@ -31,8 +31,6 @@ public:
     void setIntfcUri(QUrl);
     Interface::Interface *intfc();
     void setIntfc(Interface::Interface *intfc, QUrl uri = QUrl("testing")); // for interfaces shared between higher layers - use with caution!
-    QString slaveId();
-    void setSlaveId(QString);
     int timeout();
     void setTimeout(int);
     int nvWriteTimeout();
@@ -49,7 +47,12 @@ public:
     void forceSlaveSupportCalPage();
     ::SetupTools::Xcp::Connection::State state();
     void setState(::SetupTools::Xcp::Connection::State val);
+    void setTarget(QString target);
     quint32 computeCksum(CksumType type, const std::vector<quint8> &data);
+    QString connectedTarget()
+    {
+        return mConnectedTarget;
+    }
 
     template <typename T>
     T fromSlaveEndian(const uchar *src) { return mConn->fromSlaveEndian<T>(src); }
@@ -79,11 +82,13 @@ signals:
     void buildChecksumDone(SetupTools::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
     void getAvailSlavesStrDone(SetupTools::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
     void setStateDone(SetupTools::OpResult result);
+    void setTargetDone(SetupTools::OpResult result);
     void opMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
     void stateChanged();
     void opProgressChanged();
-    void slaveIdChanged();
+    void connectedTargetChanged(QString target);
 
+    void connSetTarget(QString target);
     void connSetState(Connection::State val);
     void connUpload(XcpPtr base, int len, std::vector<quint8> *out);
     void connDownload(XcpPtr base, const std::vector<quint8> data); // must pass by value, reference gets invalidated when caller returns but Connection thread is still using it
@@ -109,55 +114,15 @@ public slots:
     void programReset();
     void buildChecksum(XcpPtr base, int len);
     void getAvailSlavesStr(QString bcastId, QString filter);
-
 private:
-    void onConnSetStateDone(SetupTools::OpResult);
-    void onConnUploadDone(SetupTools::OpResult result, XcpPtr base, int len, std::vector<quint8> data);
-    void onConnDownloadDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data);
-    void onConnNvWriteDone(SetupTools::OpResult result);
-    void onConnSetCalPageDone(SetupTools::OpResult result, quint8 segment, quint8 page);
-    void onConnCopyCalPageDone(SetupTools::OpResult result, quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage);
-    void onConnProgramClearDone(SetupTools::OpResult result, XcpPtr base, int len);
-    void onConnProgramRangeDone(SetupTools::OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket);
-    void onConnProgramVerifyDone(SetupTools::OpResult result, XcpPtr mta, quint32 crc);
-    void onConnProgramResetDone(SetupTools::OpResult result);
-    void onConnBuildChecksumDone(SetupTools::OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum);
-    void onConnGetAvailSlavesStrDone(SetupTools::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-    void onConnOpMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
-    void onConnStateChanged();
-    void onConnOpProgressChanged();
+    void onConnConnectedTargetChanged(QString);
 
     Interface::Interface* mIntfc;
     bool mIntfcOwned;
     QUrl mIntfcUri;
     Connection *mConn;
     QThread *mConnThread;
-};
-
-class SimpleDataLayer : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QUrl intfcUri READ intfcUri WRITE setIntfcUri)
-    Q_PROPERTY(QString slaveId READ slaveId WRITE setSlaveId)
-public:
-    SimpleDataLayer();
-
-    QUrl intfcUri(void);
-    void setIntfcUri(QUrl);
-    QString slaveId();
-    void setSlaveId(QString);
-signals:
-    void uploadUint32Done(int result, quint32 data);
-    void downloadUint32Done(int result);
-
-public slots:
-    void uploadUint32(quint32 base);
-    void downloadUint32(quint32 base, quint32 data);
-
-private:
-    void onConnUploadDone(SetupTools::OpResult, XcpPtr, int, const std::vector<quint8> &);
-    void onConnDownloadDone(SetupTools::OpResult, XcpPtr, const std::vector<quint8> &);
-    ConnectionFacade *mConn;
+    QString mConnectedTarget;
 };
 
 } // namespace Xcp

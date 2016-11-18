@@ -219,8 +219,13 @@ void Connection::setIntfc(QObject *intfc)
 {
     {
         QWriteLocker lock(&mIntfcLock);
+        if(mIntfc)
+            disconnect(mIntfc, &Interface::Interface::connectedTargetChanged, this, &Connection::connectedTargetChanged);
         mIntfc = qobject_cast<Interface::Interface *>(intfc);
+        if(mIntfc)
+            connect(mIntfc, &Interface::Interface::connectedTargetChanged, this, &Connection::connectedTargetChanged);
     }
+
     emit stateChanged();
 }
 
@@ -308,6 +313,16 @@ Connection::State Connection::state()
         return State::CalMode;
     else
         return State::PgmMode;
+}
+
+OpResult Connection::setTarget(QString val)
+{
+    if(mIntfc == nullptr)
+        EMIT_RETURN(setTargetDone, OpResult::IntfcConfigError);
+    if(mConnected)
+        EMIT_RETURN(setTargetDone, OpResult::InvalidOperation);
+
+    EMIT_RETURN(setTargetDone, mIntfc->setTarget(val));
 }
 
 OpResult Connection::setState(State val)
