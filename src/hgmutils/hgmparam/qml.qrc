@@ -21,7 +21,7 @@
         <file>VehicleLayout.qml</file>
         <file>PressureLayout.qml</file>
         <file>KeypadDisplayLayout.qml</file>
-        <file>TcLayout.qml</file>
+        <file>TcLayoutBeta.qml</file>
         <file>CanLayout.qml</file>
         <file>EvLayout.qml</file>
         <file>TransmissionLayout.qml</file>
@@ -32,5 +32,6 @@
         <file>TableByClutchEditMenuButton.qml</file>
         <file>ShiftTableByShiftEditMenuButton.qml</file>
         <file>ShiftTableParamEditMenuItem.qml</file>
+        <file>TcLayout.qml</file>
     </qresource>
 </RCC>

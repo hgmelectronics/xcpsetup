@@ -302,6 +302,15 @@ QtObject {
         unit: "%"
     }
 
+    property LinearSlot tccTableAxis: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 20
+        engrB: 100
+        unit: "%"
+    }
+
+
     property LinearSlot percentage1Gauge: LinearSlot {
         rawA: 0
         engrA: 0
