@@ -11,6 +11,8 @@ static const QBluetoothUuid RX_CHAR_UUID(QString("89c5f9cf-b2a4-444f-ac01-8b87c8
 
 InterfaceTask::InterfaceTask(QObject * parent) :
     QObject(parent),
+    mState(State::Disconnected),
+    mError(OpResult::Success),
     mController(nullptr),
     mXcpService(nullptr),
     mPacketLog(false)
@@ -42,13 +44,15 @@ OpResult InterfaceTask::clearReceived()
 
 OpResult InterfaceTask::waitForConnect()
 {
+    bool firstTime = true;
     while(1)
     {
         QMutexLocker locker(&mStateMutex);
         if(mState == State::Connected)
             return OpResult::Success;
-        if(mState == State::Disconnected)
+        if(mState == State::Disconnected && !firstTime)
             return mError;
+        firstTime = false;
         mStateCondition.wait(locker.mutex());
     }
 }
@@ -109,6 +113,7 @@ void InterfaceTask::onCharacteristicChanged(const QLowEnergyCharacteristic &char
 
 void InterfaceTask::onControllerStateChanged(QLowEnergyController::ControllerState state)
 {
+    qDebug() << "Controller state" << int(state) << "task state" << int(mState);
     switch(state)
     {
     case QLowEnergyController::UnconnectedState:
@@ -116,16 +121,36 @@ void InterfaceTask::onControllerStateChanged(QLowEnergyController::ControllerSta
         QMutexLocker locker(&mStateMutex);
         if(mXcpService)
         {
+            if(mError == OpResult::Success)
+            {
+                auto error = mXcpService->error();
+                if(error != QLowEnergyService::NoError)
+                {
+                    qDebug() << "BLE service error" << int(error);
+                    mError = OpResult::IntfcIoError;
+                }
+            }
             disconnect(mXcpService, &QLowEnergyService::stateChanged, this, &InterfaceTask::onServiceStateChanged);
             delete mXcpService;
             mXcpService = nullptr;
         }
         if(mController)
         {
+            if(mError == OpResult::Success)
+            {
+                auto error = mController->error();
+                if(error != QLowEnergyController::NoError)
+                {
+                    qDebug() << "BLE controller error" << int(error);
+                    mError = OpResult::IntfcIoError;
+                }
+            }
             disconnect(mController, &QLowEnergyController::stateChanged, this, &InterfaceTask::onControllerStateChanged);
             delete mController;
             mController = nullptr;
         }
+        if(mState != State::Disconnecting && mError == OpResult::Success)
+            mError = OpResult::IntfcUnexpectedResponse;
         mTxChar = QLowEnergyCharacteristic();
         mRxChar = QLowEnergyCharacteristic();
         setState(State::Disconnected);
@@ -193,6 +218,7 @@ void InterfaceTask::onControllerStateChanged(QLowEnergyController::ControllerSta
 
 void InterfaceTask::onServiceStateChanged(QLowEnergyService::ServiceState state)
 {
+    qDebug() << "Service state" << int(state) << "task state" << int(mState);
     switch(state)
     {
     case QLowEnergyService::InvalidService:
@@ -237,14 +263,16 @@ void InterfaceTask::onServiceStateChanged(QLowEnergyService::ServiceState state)
 void InterfaceTask::setState(State val)
 {
     if(updateDelta<>(mState, val))
+    {
         emit stateChanged();
-    mStateCondition.wakeAll();
+        mStateCondition.wakeAll();
+    }
 }
 
 Interface::Interface(QObject *parent) :
     SetupTools::Xcp::Interface::Interface(parent),
     mThread(new QThread(this)),
-    mTask(new InterfaceTask(this))
+    mTask(new InterfaceTask(nullptr))
 {
     mTask->moveToThread(mThread);
     mThread->start();
@@ -256,7 +284,8 @@ Interface::Interface(QObject *parent) :
 
 Interface::~Interface()
 {
-
+    mThread->quit();
+    mThread->wait();
 }
 
 bool Interface::isConnected()
@@ -282,8 +311,10 @@ OpResult Interface::transmit(const std::vector<quint8> &data, bool replyExpected
 {
     Q_UNUSED(replyExpected);
 
-    if(mTask->state() != InterfaceTask::State::Connected)
+    if(mTask->state() != InterfaceTask::State::Connected) {
+        qDebug() << "Interface::transmit" << int(mTask->state());
         return OpResult::InvalidOperation;
+    }
 
     taskTransmit(data);
 
@@ -324,15 +355,21 @@ int Interface::maxReplyTimeout()
 
 void Interface::onTaskStateChanged()
 {
+    QBluetoothAddress oldAddress = mRemoteAddress;
     mRemoteAddress = mTask->remoteAddress();
-    emit connectedChanged();
-    emit connectedTargetChanged(connectedTarget());
+
+    if(oldAddress.isNull() != mRemoteAddress.isNull())
+        emit connectedChanged();
+    if(oldAddress != mRemoteAddress)
+        emit connectedTargetChanged(connectedTarget());
 }
 
 OpResult Interface::connectToDevice(QBluetoothAddress dev)
 {
-    if(mTask->state() != InterfaceTask::State::Disconnected)
+    if(mTask->state() != InterfaceTask::State::Disconnected) {
+        qDebug() << "Interface::connectToDevice" << int(mTask->state());
         return OpResult::InvalidOperation;
+    }
 
     taskStartConnect(dev);
 
