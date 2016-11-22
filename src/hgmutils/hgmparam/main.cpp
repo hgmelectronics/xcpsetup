@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setOrganizationName("HGM Automotive Electronics");
     app.setOrganizationDomain("hgmelectronics.com");
-    app.setApplicationName("CS2 Parameter Editor");
+    app.setApplicationName("COMPUSHIFT Parameter Editor");
 
     QPixmap logo(":/com/hgmelectronics/utils/COMPUSHIFT logo.png");
     QSplashScreen splash(logo);
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 #endif
 
     SetupTools::registerTypes();
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/hgmparam.qml")));
 
     QGuiApplication::restoreOverrideCursor();
     splash.close();
