@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
+        <file>hgmparam.qml</file>
         <file>HelpDialog.qml</file>
         <file>ParamTabView.qml</file>
         <file>Slots.qml</file>
