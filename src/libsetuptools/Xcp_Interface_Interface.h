@@ -28,6 +28,8 @@ class Interface : public QObject
 public:
     Interface(QObject *parent = NULL);
     virtual ~Interface() {}
+    virtual QString connectedTarget() = 0;
+    virtual OpResult setTarget(const QString & target) = 0;
     virtual OpResult transmit(const std::vector<quint8> & data, bool replyExpected = true);         //!< Send one XCP packet to the slave
     virtual OpResult receive(int timeoutMsec, std::vector<std::vector<quint8> > &out); //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
     virtual OpResult clearReceived() = 0;
@@ -35,6 +37,8 @@ public:
     virtual bool hasReliableTx() = 0;
     virtual bool allowsMultipleReplies() = 0;
     virtual int maxReplyTimeout() = 0;
+signals:
+    void connectedTargetChanged(QString val);
 };
 
 }   // namespace Interface

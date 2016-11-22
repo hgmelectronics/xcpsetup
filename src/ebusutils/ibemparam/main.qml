@@ -27,6 +27,8 @@ ApplicationWindow {
         property alias interfaceSaveUri: application.interfaceSaveUri
     }
 
+    property bool connecting: false
+
     menuBar: MenuBar {
         property alias fileMenu: fileMenu
         Menu {
@@ -125,23 +127,18 @@ ApplicationWindow {
         paramWriteCacheDirty: paramLayer.writeCacheDirty
         paramFilePath: paramFileIo.name
         progressValue: paramLayer.opProgress
-        onTargetChanged: {
-            var cmdId = boardId * 2 + 0x1F000100
-            var resId = boardId * 2 + 0x1F000101
-            var idString = cmdId.toString(16) + ":" + resId.toString(16)
-            paramLayer.slaveId = idString
-            console.log(idString)
-        }
 
         onUserConnectParam: {
             var cmdId = boardId * 2 + 0x1F000100    // convert again for luck and on startup
             var resId = boardId * 2 + 0x1F000101
             var slaveId = cmdId.toString(16) + ":" + resId.toString(16)
-            paramLayer.slaveId = slaveId
-            if(paramLayer.slaveId.toLowerCase() === slaveId.toLowerCase())
+
+            if(paramLayer.slaveId.toLowerCase() === slaveId.toLowerCase()) {
                 paramLayer.connectSlave()
-            else
-                errorDialog.show(qsTr("Failed to set slave device ID"))
+            }
+            else {
+                paramLayer.slaveId = slaveId
+            }
         }
         onUserDownloadParam: paramLayer.download()
         onUserUploadParam: paramLayer.upload()
@@ -160,6 +157,13 @@ ApplicationWindow {
         Component.onCompleted: AutoRefreshManager.paramLayer = this
         onConnectSlaveDone: paramLayer.setSlaveCalPage()
         registry: paramReg
+
+        onSetSlaveIdDone: {
+            if(result === OpResult.Success)
+                connectSlave()
+            else
+                errorDialog.show(qsTr("Setting slave ID failed: %1").arg(OpResult.asString(result)))
+        }
     }
 
     JSONParamFile {

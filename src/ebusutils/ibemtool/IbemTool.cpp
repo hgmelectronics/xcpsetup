@@ -12,6 +12,8 @@ const QString IbemTool::SLAVE_FILTER_STR = Xcp::Interface::Can::FilterToStr(Ibem
 constexpr Xcp::Interface::Can::SlaveId IbemTool::IBEM_RECOVERY_ID;
 constexpr Xcp::Interface::Can::SlaveId IbemTool::CDA_ID;
 constexpr Xcp::Interface::Can::SlaveId IbemTool::CDA2_ID;
+constexpr Xcp::Interface::Can::SlaveId IbemTool::YTB_ID;
+constexpr Xcp::Interface::Can::SlaveId IbemTool::IPC_ID;
 
 IbemTool::IbemTool(QObject *parent) :
     QObject(parent),
@@ -60,8 +62,10 @@ void IbemTool::setProgramData(FlashProg *prog)
         quint32 base = mInfilledProgData.base();
         quint32 top = base + mInfilledProgData.size();
 
-        if(base >= PROG_BASE
+        if((base >= PROG_BASE
              && top <= PROG_TOP)
+                || (base >= 0x10000
+                    && top <= 0x140000))
             mProgFileOkToFlash = true;
     }
 
@@ -242,6 +246,14 @@ void IbemTool::onGetAvailSlavesStrDone(SetupTools::OpResult result, QString bcas
         else if(id == CDA2_ID)
         {
             displayText = tr("CDA2");
+        }
+        else if(id == YTB_ID)
+        {
+            displayText = tr("YTB");
+        }
+        else if(id == IPC_ID)
+        {
+            displayText = tr("IPC");
         }
         else if(ibemId <= IBEM_ID_MAX)
         {

@@ -353,6 +353,7 @@ public:
     int addrGran();
 
 signals:
+    void setTargetDone(SetupTools::OpResult result);
     void setStateDone(SetupTools::OpResult result);
     void openDone(SetupTools::OpResult result);
     void closeDone(SetupTools::OpResult result);
@@ -372,7 +373,9 @@ signals:
     void opMsg(SetupTools::OpResult result, QString info, OpExtInfo ext);
     void stateChanged();
     void opProgressChanged();
+    void connectedTargetChanged(QString target);
 public slots:
+    SetupTools::OpResult setTarget(QString);
     SetupTools::OpResult setState(State);
     SetupTools::OpResult open(boost::optional<int> timeoutMsec = boost::optional<int>());
     SetupTools::OpResult close();

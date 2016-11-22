@@ -17,7 +17,13 @@ namespace Loopback
     mPacketTimer.start();
 }
 
-OpResult  Interface::transmit(const std::vector<quint8> & data, bool replyExpected)
+OpResult Interface::setTarget(const QString &target)
+{
+    Q_UNUSED(target);
+    return OpResult::Success;
+}
+
+OpResult Interface::transmit(const std::vector<quint8> & data, bool replyExpected)
 {
     Q_UNUSED(replyExpected);
     if(mPacketLogEnabled)
@@ -28,13 +34,13 @@ OpResult  Interface::transmit(const std::vector<quint8> & data, bool replyExpect
     return OpResult::Success;
 }
 
-OpResult  Interface::receive(int timeoutMsec, std::vector<std::vector<quint8> > &out)
+OpResult Interface::receive(int timeoutMsec, std::vector<std::vector<quint8> > &out)
 {
     out = mMasterReceiveQueue.getAll(timeoutMsec);
     return OpResult::Success;
 }
 
-OpResult  Interface::clearReceived()
+OpResult Interface::clearReceived()
 {
     mMasterReceiveQueue.getAll(0);
     return OpResult::Success;
@@ -58,6 +64,11 @@ SetupTools::OpResult Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
     return OpResult::Success;
+}
+
+QString Interface::connectedTarget()
+{
+    return QString();
 }
 
  void Interface::setHasReliableTx(bool val)

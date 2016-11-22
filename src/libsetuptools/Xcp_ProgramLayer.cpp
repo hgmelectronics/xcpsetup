@@ -24,6 +24,8 @@ ProgramLayer::ProgramLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::stateChanged, this, &ProgramLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::opProgressChanged, this, &ProgramLayer::onConnOpProgressChanged);
     connect(mConn, &ConnectionFacade::opMsg, this, &ProgramLayer::onConnOpMsg);
+    connect(mConn, &ConnectionFacade::connectedTargetChanged, this, &ProgramLayer::slaveIdChanged);
+    connect(mConn, &ConnectionFacade::setTargetDone, this, &ProgramLayer::setSlaveIdDone);
 }
 
 ProgramLayer::~ProgramLayer()
@@ -36,13 +38,9 @@ QUrl ProgramLayer::intfcUri()
 
 void ProgramLayer::setIntfcUri(QUrl uri)
 {
-    if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
-        QObject::disconnect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ProgramLayer::onIntfcSlaveIdChanged);
     mConn->setIntfcUri(uri);
     if(mConn->intfc())
     {
-        if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
-            QObject::connect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ProgramLayer::onIntfcSlaveIdChanged);
         if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
             mConn->intfc()->setPacketLog(true);
         else
@@ -58,13 +56,9 @@ Interface::Interface *ProgramLayer::intfc()
 
 void ProgramLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
-    if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
-        QObject::disconnect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ProgramLayer::onIntfcSlaveIdChanged);
     mConn->setIntfc(intfc, uri);
     if(mConn->intfc())
     {
-        if(mConn->intfc() && qobject_cast<Interface::Can::Interface *>(mConn->intfc()))
-            QObject::connect(qobject_cast<Interface::Can::Interface *>(mConn->intfc()), &Interface::Can::Interface::slaveIdChanged, this, &ProgramLayer::onIntfcSlaveIdChanged);
         if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
             mConn->intfc()->setPacketLog(true);
         else
@@ -75,13 +69,12 @@ void ProgramLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
 
 QString ProgramLayer::slaveId()
 {
-    return mConn->slaveId();
+    return mConn->connectedTarget();
 }
 
 void ProgramLayer::setSlaveId(QString id)
 {
-    mConn->setSlaveId(id);
-    emit slaveIdChanged();
+    mConn->setTarget(id);
 }
 
 bool ProgramLayer::idle()
@@ -540,11 +533,6 @@ void ProgramLayer::onConnOpProgressChanged()
 void ProgramLayer::onConnOpMsg(OpResult result, QString info, Connection::OpExtInfo ext)
 {
     emit opMsg(result, info, ext);
-}
-
-void ProgramLayer::onIntfcSlaveIdChanged()
-{
-    emit slaveIdChanged();
 }
 
 void ProgramLayer::doProgramClear()
