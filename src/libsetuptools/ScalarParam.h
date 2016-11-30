@@ -34,12 +34,14 @@ signals:
     void valChanged();
 
 public slots:
+    void onParamSlotChanged();
     void onSlotValueParamChanged();
 
 private:
     virtual void updateEngrFromRaw(quint32 begin, quint32 end);
     QVariant rawVal() const;
     bool setRawVal(const QVariant & val);
+    Slot * mConnectedSlot;
 };
 
 } // namespace SetupTools
