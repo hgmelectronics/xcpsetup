@@ -43,7 +43,7 @@ ApplicationWindow {
     }
 
     function isJsonParamFile(filename) {
-        return filename.search(/\.hgp$/i)
+        return filename.search(/\.hgp$/i) !== -1
     }
 
     function loadFileFromCommandLine() {
