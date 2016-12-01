@@ -192,26 +192,48 @@ RowLayout {
         title: "Percentage"
         Layout.alignment: Qt.AlignTop
         ColumnLayout {
-            GroupBox {
-                title: "Shift Pressure"
-
-                RowLayout {
-                    spacing: 8
-                    TableByShiftEditMenuButton {
-                        text: qsTr("A %")
-                        xLabel: qsTr("Torque")
-                        valueLabel: qsTr("%")
-                        tableParam: parameters.pressureTablesA
+            RowLayout{
+                spacing: 8
+                GroupBox {
+                    title: "Profile A"
+                    ColumnLayout {
+                        TableByShiftEditMenuButton {
+                            text: qsTr("Pressure Tables")
+                            xLabel: qsTr("Torque")
+                            valueLabel: qsTr("%")
+                            tableParam: parameters.pressureTablesA
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: parameters.pressureAdjustA
+                            name: qsTr("Pressure Adjust")
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: parameters.pressureR2LBoostA
+                            name: qsTr("R2L Pressure Boost")
+                        }
                     }
-
-                    TableByShiftEditMenuButton {
-                        text: qsTr("B %")
-                        xLabel: qsTr("Torque")
-                        valueLabel: qsTr("%")
-                        tableParam: parameters.pressureTablesB
+                }
+                GroupBox {
+                    title: "Profile B"
+                    ColumnLayout {
+                        TableByShiftEditMenuButton {
+                            text: qsTr("Pressure Tables")
+                            xLabel: qsTr("Torque")
+                            valueLabel: qsTr("%")
+                            tableParam: parameters.pressureTablesB
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: parameters.pressureAdjustB
+                            name: qsTr("Pressure Adjust")
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: parameters.pressureR2LBoostB
+                            name: qsTr("R2L Pressure Boost")
+                        }
                     }
                 }
             }
+
             GroupBox {
                 title: "Upshift"
 
@@ -346,17 +368,9 @@ RowLayout {
         }
     }
     GroupBox {
-        title: "Common"
+        title: qsTr("Torque and Timing")
         Layout.alignment: Qt.AlignTop
         ColumnLayout {
-            ScalarParamSpinBox {
-                metaParam: parameters.pressureAdjustA
-            }
-
-            ScalarParamSpinBox {
-                metaParam: parameters.pressureAdjustB
-            }
-
             ScalarParamSpinBox {
                 Layout.alignment: Qt.AlignTop
                 metaParam: parameters.transmissionSTDownshiftTorqueThreshold
@@ -367,8 +381,16 @@ RowLayout {
                 metaParam: parameters.transmissionSTUpshiftTorqueThreshold
             }
 
+            ScalarParamSpinBox {
+                metaParam: parameters.transmissionTSSpeedSyncTime
+            }
+
+            ScalarParamSpinBox {
+                metaParam: parameters.transmissionSTSpeedSyncTime
+            }
+
             Button {
-                text: "TS Torque Transfer Time"
+                text: qsTr("TS Torque Transfer Time")
                 onClicked: {
                     tsTorqueTransferDialog.showNormal()
                     tsTorqueTransferDialog.raise()
@@ -383,7 +405,7 @@ RowLayout {
             }
 
             Button {
-                text: "ST Torque Transfer Time"
+                text: qsTr("ST Torque Transfer Time")
                 onClicked: {
                     stTorqueTransferDialog.showNormal()
                     stTorqueTransferDialog.raise()

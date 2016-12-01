@@ -291,6 +291,9 @@ QtObject {
     readonly property string transmission_shift_5_6_st_transfer_time: "03e2000c"
     readonly property string transmission_shift_6_5_st_transfer_time: "03e2000d"
 
+    readonly property double transmission_shift_ts_speed_sync_time: 0x03e70000
+    readonly property double transmission_shift_st_speed_sync_time: 0x03eb0000
+
     readonly property string garage_shift_time: "03f00000"
     readonly property string garage_shift_max_pressure: "03f40000"
     readonly property string garage_shift_max_percentage: "03f50000"
@@ -690,5 +693,6 @@ QtObject {
     // ab mode
     readonly property string controller_mode: "8f000000"
     readonly property string diagnostic_mode: "8f010000"
+    readonly property double remote_mode: 0x8f020000
     readonly property string security_level: "8f800000"
 }

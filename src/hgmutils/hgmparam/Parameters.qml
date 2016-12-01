@@ -84,6 +84,7 @@ ParamRegistry {
         slot: slots.count
         name: qsTr("Controller Software Version")
     }
+
     property ModelStringProxy controllerSoftwareVersionStringProxy : ModelStringProxy {
         source: controllerSoftwareVersionArray.floatModel
         packing: ModelStringProxy.Char
@@ -550,6 +551,181 @@ ParamRegistry {
         name: qsTr("")
     }
 
+    property ScalarMetaParam transmissionInputShaftSpeed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_input_shaft_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name:qsTr("Input Shaft Speed")
+        }
+    }
+
+    property ScalarMetaParam transmissionTurbineShaftSpeed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_turbine_shaft_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name:qsTr("Turbine Shaft Speed")
+        }
+    }
+
+
+    property ScalarMetaParam transmissionOutputShaftSpeed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_output_shaft_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Output Shaft Speed")
+        }
+    }
+
+    property ScalarMetaParam transmissionShaft1Speed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shaft_1_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Shaft 1 Speed")
+        }
+    }
+
+    property ScalarMetaParam transmissionShaft2Speed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shaft_2_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Shaft 2 Speed")
+        }
+    }
+    property ScalarMetaParam transmissionShaft3Speed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shaft_3_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Shaft 3 Speed")
+        }
+    }
+    property ScalarMetaParam transmissionShaft4Speed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shaft_4_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Shaft 4 Speed")
+        }
+    }
+    property ScalarMetaParam transmissionShaft5Speed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shaft_5_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Shaft 6 Speed")
+        }
+    }
+    property ScalarMetaParam transmissionShaft6Speed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shaft_6_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Shaft 6 Speed")
+        }
+    }
+    property ScalarMetaParam transmissionShaft7Speed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shaft_7_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Shaft 7 Speed")
+        }
+    }
+    property ScalarMetaParam transmissionShaft8Speed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shaft_8_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Shaft 8 Speed")
+        }
+    }
+
+    property ScalarMetaParam leftFrontWheelSpeed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.left_front_wheel_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name:qsTr("Left Front Wheel Speed")
+        }
+    }
+
+    property ScalarMetaParam rightFrontWheelSpeed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.right_front_wheel_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Right Front Wheel Speed")
+        }
+    }
+
+    property ScalarMetaParam leftRearWheelSpeed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.left_rear_wheel_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Left Rear Wheel Speed")
+        }
+    }
+
+    property ScalarMetaParam rightRearWheelSpeed: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.right_rear_wheel_speed
+            writable: false
+            saveable: false
+            slot: slots.rpm1
+            name: qsTr("Right Rear Wheel Speed")
+        }
+    }
+
     /*readonly*/ property ArrayParam controllerPWMDriverDutyCycle: ArrayParam {
         registry: root
         dataType: Param.S32
@@ -558,7 +734,7 @@ ParamRegistry {
         writable: true
         saveable: false
         slot: slots.percentage2
-        name: qsTr("")
+        name: qsTr("PWM Driver Duty Cycle")
     }
 
     /*readonly*/ property ArrayParam controllerPWMDriverMode: ArrayParam {
@@ -569,7 +745,7 @@ ParamRegistry {
         writable: true
         saveable: false
         slot: slots.pwmDriverMode
-        name: qsTr("")
+        name: qsTr("PWM Driver Mode")
     }
 
     property SlotArrayModel controllerPWMDriverIdModel: SlotArrayModel {
@@ -590,12 +766,18 @@ ParamRegistry {
     }
 
     //    property ScalarMetaParam controllerAccelerometer: ScalarMetaParam {
-    //        param: registry.addScalarParam(MemoryRange.S32, paramId.controller_acclerometer, false, false, slots)
+    //        param: ScalarParam {
+    // registry: root
+    // dataType:Param.S32
+    //addr:  paramId.controller_acclerometer, false, false, slots)
     //        name: qsTr("")
     //    }
-
-    //    /*readonly*/ property ArrayParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_switch_state, false, false, slots)
-    //    /*readonly*/ property ArrayParam : registry.addScalarParam(MemoryRange.S32, paramId.controller_switch_current, false, false, slots)
+    //    /*readonly*/ property ArrayParam : ScalarParam { registry: root
+    // dataType:Param.S32
+    // addr:  paramId.controller_switch_state, false, false, slots)
+    //    /*readonly*/ property ArrayParam : ScalarParam { registry: root
+    // dataType:Param.S32
+    // addr:  paramId.controller_switch_current, false, false, slots)
 
     property ScalarMetaParamList transmissionShaftSpeedSensorPulseCount: ScalarMetaParamList {
         ScalarMetaParam {
@@ -1473,6 +1655,27 @@ ParamRegistry {
                 slot: slots.timeMilliseconds1
                 name: qsTr("ST Transfer Time 6-5")
             }
+        }
+    }
+
+    property ScalarMetaParam transmissionTSSpeedSyncTime: ScalarMetaParam {
+        param: ScalarParam { registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shift_ts_speed_sync_time
+            writable: true
+            saveable: true
+            slot: slots.timeMilliseconds1
+            name: qsTr("TS Speed Sync Time")
+        }
+    }
+    property ScalarMetaParam transmissionSTSpeedSyncTime: ScalarMetaParam {
+        param: ScalarParam { registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_shift_st_speed_sync_time
+            writable: true
+            saveable: true
+            slot: slots.timeMilliseconds1
+            name: qsTr("ST Speed Sync Time")
         }
     }
     property TableMetaParam transmissionTemperaturePressureCompensation: TableMetaParam {
@@ -2419,6 +2622,136 @@ ParamRegistry {
             }
         }
     ]
+
+    property ScalarMetaParam transmissionMainLinePressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_main_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Main Line Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionTccPressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_tcc_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("TCC Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch1Pressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_clutch_1_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Clutch 1 Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch2Pressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_clutch_2_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Clutch 2 Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch3Pressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_clutch_3_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Clutch 3 Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch4Pressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_clutch_4_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Clutch 4 Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch5Pressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_clutch_5_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Clutch 5 Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch6Pressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_clutch_6_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Clutch 6 Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch7Pressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_clutch_7_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Clutch 7 Pressure")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionClutch8Pressure: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType:Param.S32
+            addr:  paramId.transmission_clutch_8_pressure
+            writable: true
+            saveable: false
+            slot: slots.pressure
+            name: qsTr("Clutch 8 Pressure")
+        }
+    }
+
 
     property ScalarMetaParam pressureR2LBoostA: ScalarMetaParam {
         param: ScalarParam {
@@ -5470,6 +5803,18 @@ ParamRegistry {
             saveable: false
             slot: slots.evDriveFault
             name: qsTr("EV Drive Last Fault")
+        }
+    }
+
+    property ScalarMetaParam remoteMode: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.remote_mode
+            writable: true
+            saveable: true
+            slot: slots.booleanYesNo1
+            name: qsTr("Remote Mode")
         }
     }
 }
