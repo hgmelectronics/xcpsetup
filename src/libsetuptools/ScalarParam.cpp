@@ -2,8 +2,16 @@
 
 namespace SetupTools {
 
-ScalarParam::ScalarParam(QObject *parent) : Param(parent)
+ScalarParam::ScalarParam(QObject *parent):
+    Param(parent),
+    mConnectedSlot(nullptr)
 {
+    connect(this, &Param::slotChanged, this, &ScalarParam::onParamSlotChanged);
+    if(slot())
+    {
+        connect(slot(), &Slot::valueParamChanged, this, &ScalarParam::onSlotValueParamChanged);
+        mConnectedSlot = slot();
+    }
 }
 
 double ScalarParam::floatVal() const
@@ -95,6 +103,16 @@ bool ScalarParam::setSerializableRawValue(const QVariant &val)
 
     setRawVal(val);
     return true;
+}
+
+void ScalarParam::onParamSlotChanged()
+{
+    if(mConnectedSlot)
+        disconnect(mConnectedSlot, &Slot::valueParamChanged, this, &ScalarParam::onSlotValueParamChanged);
+    if(slot())
+        connect(slot(), &Slot::valueParamChanged, this, &ScalarParam::onSlotValueParamChanged);
+    mConnectedSlot = slot();
+    onSlotValueParamChanged();
 }
 
 void ScalarParam::onSlotValueParamChanged()
