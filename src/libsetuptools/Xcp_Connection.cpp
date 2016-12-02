@@ -976,7 +976,7 @@ OpResult Connection::uploadSegment(XcpPtr base, int len, std::vector<quint8> &ou
 
         mCalcMta = base + (len / mAddrGran);
 
-        out = std::move(std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len));
+        out = std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len);
         return OpResult::Success;
     };
 

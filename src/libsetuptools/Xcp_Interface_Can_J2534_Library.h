@@ -1,7 +1,6 @@
 #ifndef J2534LIBRARY_H
 #define J2534LIBRARY_H
 
-#ifdef J2534_INTFC
 #include <QString>
 #include <QLibrary>
 
@@ -16,6 +15,7 @@ namespace Can
 namespace J2534
 {
 
+#ifdef J2534_INTFC
 namespace detail
 {
 extern "C" typedef quint32  __attribute__((__stdcall__)) (* PassThruOpen)(const char * pName, quint32 * pDeviceId);
@@ -193,6 +193,14 @@ private:
     detail::PassThruIoctl mIoctlPtr;
     bool mCallTrace;
 };
+#else
+
+namespace detail
+{
+void doNothingFunctionToSuppressWarnings();
+}
+
+#endif
 
 }   // namespace J2534
 }   // namespace Can
@@ -200,5 +208,4 @@ private:
 }   // namespace Xcp
 }   // namespace SetupTools
 
-#endif
 #endif // J2534LIBRARY_H
