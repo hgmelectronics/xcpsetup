@@ -94,7 +94,7 @@ HEADERS += \
     ScalarParam.h \
     Xcp_ParamLayer.h
 
-unix:!android {
+unix:!android:!macx {
     target.path = /usr/lib
     INSTALLS += target
     DEFINES += SOCKETCAN
@@ -103,6 +103,7 @@ unix:!android {
 win32 {
     DEFINES += SPINWAIT
     DEFINES += J2534_INTFC
+    DEFINES += DEFAULT_SOFTWARE_RENDERER
 }
 
 #CONFIG(debug) DEFINES += ELM327_DEBUG

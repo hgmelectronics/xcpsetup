@@ -731,7 +731,7 @@ bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
     newDivisor = qRound(CAN_TQ_CLOCK_HZ / (mBitrate.get() * STD_TQ_PER_BIT));
     double calcBitrate = CAN_TQ_CLOCK_HZ / (newDivisor * STD_TQ_PER_BIT);
     double calcBitrateRatio = calcBitrate / mBitrate.get();
-    if(abs(calcBitrateRatio - 1) < CAN_BITRATE_TOL)
+    if(std::abs(calcBitrateRatio - 1) < CAN_BITRATE_TOL)
     {
         divisor = newDivisor;
         useOptTqPerBit = false;
@@ -741,7 +741,7 @@ bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
     {
         newDivisor = qRound(CAN_TQ_CLOCK_HZ / (mBitrate.get() * OPT_TQ_PER_BIT));
         calcBitrate = CAN_TQ_CLOCK_HZ / (divisor * OPT_TQ_PER_BIT);
-        if(abs(calcBitrate / mBitrate.get() - 1) < CAN_BITRATE_TOL)
+        if(std::abs(calcBitrate / mBitrate.get() - 1) < CAN_BITRATE_TOL)
         {
             divisor = newDivisor;
             useOptTqPerBit = true;
