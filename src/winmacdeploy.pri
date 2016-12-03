@@ -9,18 +9,7 @@ isEmpty(TARGET_EXT) {
     TARGET_CUSTOM_EXT = $${TARGET_EXT}
 }
 
-win32: DEPLOY_COMMAND = windeployqt --no-system-d3d-compiler --no-angle --no-opengl-sw
-macx: DEPLOY_COMMAND = macdeployqt
-linux: DEPLOY_COMMAND = echo
-
-win32 {
-    COPY_COMMAND = copy
-}
-else {
-    COPY_COMMAND = cp
-}
-
-CONFIG( release, debug|release ) {
+win32:CONFIG( release, debug|release ) {
     # deploy on release only
     DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
 
@@ -29,8 +18,8 @@ CONFIG( release, debug|release ) {
         dirs = $$eval($$in)
         cmd =
         for(dir, $$1) {
-            cmd += $${DEPLOY_COMMAND} --dir $$shell_quote($$shell_path($${dir})) --qmldir $${PWD} $${DEPLOY_TARGET} &
-            cmd += $${COPY_COMMAND} $${DEPLOY_TARGET} $$shell_quote($$shell_path($${dir})) &
+            cmd += windeployqt --no-system-d3d-compiler --no-angle --no-opengl-sw --dir $$shell_quote($$shell_path($${dir})) --qmldir $${PWD} $${DEPLOY_TARGET} &
+            cmd += copy $${DEPLOY_TARGET} $$shell_quote($$shell_path($${dir})) &
         }
         return($$cmd)
     }
@@ -44,8 +33,36 @@ CONFIG( release, debug|release ) {
         }
         return($$execs)
     }
-    win32 | macx {
-        QMAKE_CLEAN += $$deployexecs(DEPLOY_DIRS)
-        QMAKE_POST_LINK += $$deploycmds(DEPLOY_DIRS)
+    QMAKE_CLEAN += $$deployexecs(DEPLOY_DIRS)
+    QMAKE_POST_LINK += $$deploycmds(DEPLOY_DIRS)
+}
+
+macx:CONFIG( release, debug|release ) {
+    # deploy on release only
+    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/$${TARGET}$${TARGET_CUSTOM_EXT}))
+
+    defineReplace(deploycmds) {
+        in = $$1
+        dirs = $$eval($$in)
+        cmd =
+        for(dir, $$1) {
+            cmd += macdeployqt $${DEPLOY_TARGET} -always-overwrite -qmldir=$$shell_quote($$shell_path($${PWD})) &&
+            cmd += mkdir -p $$shell_quote($$shell_path($${dir})) &&
+            cmd += cp -a $${DEPLOY_TARGET} $$shell_quote($$shell_path($${dir})) &&
+        }
+        cmd += echo
+        return($$cmd)
     }
+
+    defineReplace(deployexecs) {
+        in = $$1
+        dirs = $$eval($$in)
+        execs =
+        for(dir, $$1) {
+            execs += $${dir}/$${TARGET}$${TARGET_CUSTOM_EXT}
+        }
+        return($$execs)
+    }
+    QMAKE_CLEAN += $$deployexecs(DEPLOY_DIRS)
+    QMAKE_POST_LINK += $$deploycmds(DEPLOY_DIRS)
 }

@@ -22,10 +22,10 @@ public:
     QString stringVal() const;
     void setStringVal(QString);
 
-    virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
-    virtual bool setSerializableValue(const QVariant &val);
-    virtual QVariant getSerializableRawValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
-    virtual bool setSerializableRawValue(const QVariant &val);
+    virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr) override;
+    virtual bool setSerializableValue(const QVariant &val) override;
+    virtual QVariant getSerializableRawValue(bool *allInRange = nullptr, bool *anyInRange = nullptr) override;
+    virtual bool setSerializableRawValue(const QVariant &val) override;
 
     virtual quint32 minSize() override;
     virtual quint32 maxSize() override;
@@ -34,12 +34,14 @@ signals:
     void valChanged();
 
 public slots:
+    void onParamSlotChanged();
     void onSlotValueParamChanged();
 
 private:
-    virtual void updateEngrFromRaw(quint32 begin, quint32 end);
+    virtual void updateEngrFromRaw(quint32 begin, quint32 end) override;
     QVariant rawVal() const;
     bool setRawVal(const QVariant & val);
+    Slot * mConnectedSlot;
 };
 
 } // namespace SetupTools

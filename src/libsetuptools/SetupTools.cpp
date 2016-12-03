@@ -68,6 +68,7 @@ void registerTypes()
 
 void setupEnvironment()
 {
+#ifdef DEFAULT_SOFTWARE_RENDERER
     if(!qEnvironmentVariableIsSet("QMLSCENE_DEVICE"))
     {
         qputenv("QMLSCENE_DEVICE", "softwarecontext");
@@ -77,6 +78,7 @@ void setupEnvironment()
     {
         qDebug() << "QMLSCENE_DEVICE is set, leaving as is";
     }
+#endif
 }
 
 }

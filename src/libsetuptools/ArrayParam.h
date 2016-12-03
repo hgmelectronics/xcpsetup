@@ -49,10 +49,10 @@ public:
         return mRawModel;
     }
 
-    virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
-    virtual bool setSerializableValue(const QVariant &val);
-    virtual QVariant getSerializableRawValue(bool *allInRange = nullptr, bool *anyInRange = nullptr);
-    virtual bool setSerializableRawValue(const QVariant &val);
+    virtual QVariant getSerializableValue(bool *allInRange = nullptr, bool *anyInRange = nullptr) override;
+    virtual bool setSerializableValue(const QVariant &val) override;
+    virtual QVariant getSerializableRawValue(bool *allInRange = nullptr, bool *anyInRange = nullptr) override;
+    virtual bool setSerializableRawValue(const QVariant &val) override;
 
     int count() const
     {
@@ -97,7 +97,7 @@ public slots:
     void onValidChanged();
 
 private:
-    virtual void updateEngrFromRaw(quint32 begin, quint32 end);
+    virtual void updateEngrFromRaw(quint32 begin, quint32 end) override;
     QVariant rawVal(int row) const;
     bool setRawVal(int row, const QVariant & val);
 

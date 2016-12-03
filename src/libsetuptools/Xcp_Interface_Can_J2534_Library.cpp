@@ -1,4 +1,3 @@
-#ifdef J2534_INTFC
 #include "Xcp_Interface_Can_J2534_Library.h"
 #include <QMap>
 #include <QDebug>
@@ -14,6 +13,8 @@ namespace Can
 {
 namespace J2534
 {
+
+#ifdef J2534_INTFC
 
 using namespace detail;
 
@@ -285,9 +286,22 @@ void Library::clearPtrs()
     mIoctlPtr = nullptr;
 }
 
+#else
+
+namespace detail
+{
+
+void doNothingFunctionToSuppressWarnings()
+{
+
+}
+
+}
+
+#endif
+
 }   // namespace J2534
 }   // namespace Can
 }   // namespace Interface
 }   // namespace Xcp
 }   // namespace SetupTools
-#endif

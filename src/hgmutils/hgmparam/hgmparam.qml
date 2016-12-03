@@ -14,6 +14,7 @@ ApplicationWindow {
     id: application
     property string programName: qsTr("COMPUSHIFT Parameter Editor")
     property string programVersion: ""
+    property alias enableBetaFeatures: enableBetaFeaturesAction.checked
     property alias useMetricUnits: paramReg.useMetricUnits
     property alias readParametersOnConnect: readParametersOnConnectAction.checked
     property alias saveReadOnlyParameters: saveReadOnlyParametersAction.checked
@@ -21,7 +22,15 @@ ApplicationWindow {
     property alias paramFileDir: paramFileDialog.folder
     property alias interfaceUri: interfaceChooser.saveUri
     property CS2Defaults cs2Defaults:  CS2Defaults {
-                                      }
+    }
+
+    title: programName
+    width: 800
+    height: 600
+    visible: true
+
+    signal connect
+
 
     function setStandardUnits() {
         var save = { metric: useMetricUnits }
@@ -33,12 +42,33 @@ ApplicationWindow {
         useMetricUnits = save.metric
     }
 
-    title: programName
-    width: 800
-    height: 600
-    visible: true
+    function isJsonParamFile(filename) {
+        return filename.search(/\.hgp$/i)
+    }
 
-    signal connect
+    function loadFileFromCommandLine() {
+        var arguments = Qt.application.arguments
+
+        if(arguments.length < 1) {
+            return
+        }
+
+        var filename = arguments[1]
+
+        if(isJsonParamFile(filename)) {
+            jsonParamFileIo.name = filename
+            loadJsonParamFile()
+        }
+
+    }
+
+
+    Component.onCompleted: {
+        // make sure the window doesn't completely disappear from the screen due to prefs save with a bigger monitor than current
+        x = Math.min(x, Screen.desktopAvailableWidth - 30)
+        y = Math.min(y, Screen.desktopAvailableWidth - 30)
+        loadFileFromCommandLine()
+    }
 
     onClosing: {
         Qt.quit()
@@ -51,6 +81,7 @@ ApplicationWindow {
 
     Settings {
         category: "application"
+        property alias enableBetaFeatures: application.enableBetaFeatures
         property alias readParametersOnConnect: application.readParametersOnConnect
         property alias saveReadOnlyParameters: application.saveReadOnlyParameters
         property alias useMetricUnits: application.useMetricUnits
@@ -219,42 +250,19 @@ ApplicationWindow {
 
         onAccepted: {
             folder = folder // dark magicks: documentation says folder is updated when dialog is closed, but if you don't do this it resets to the value bound above for next invocation
-            var name = UrlUtil.urlToLocalFile(fileUrl.toString())
-            if(name.match(/.hgp$/)) {
-                jsonParamFileIo.name = name
+            var filename = UrlUtil.urlToLocalFile(fileUrl.toString())
+            if(isJsonParamFile(filename)) {
+                jsonParamFileIo.name = filename
                 if (selectExisting) {
-                    var rawData = jsonParamFileIo.read()
-
-                    paramReg.beginHistoryElide()
-                    if(paramLayer.slaveConnected) {
-                        paramLayer.setData(rawData, true, ParamLayer.KeepExisting)
-                    }
-                    else {
-                        paramLayer.setData(rawData, true, ParamLayer.Union)
-                        paramLayer.setData(rawData, true, ParamLayer.SetToNew)    // second time in case of param dependencies in wrong order
-                    }
-                    paramReg.endHistoryElide()
+                    loadJsonParamFile()
                 } else {
                     saveJsonParamFile()
                 }
             }
             else {
-                csvParamFileIo.name = name
+                csvParamFileIo.name = filename
                 if (selectExisting) {
-                    var saveUnits = setStandardUnits()
-                    var data = csvParamFileIo.read()
-
-                    paramReg.beginHistoryElide()
-                    if(paramLayer.slaveConnected) {
-                        paramLayer.setData(data, false, ParamLayer.KeepExisting)
-                    }
-                    else {
-                        paramLayer.setData(data, false, ParamLayer.Union)
-                        paramLayer.setData(data, false, ParamLayer.SetToNew)    // second time in case of param dependencies in wrong order
-                    }
-                    paramReg.endHistoryElide()
-
-                    restoreUnits(saveUnits)
+                    loadCsvParamFile()
                 } else {
                     saveCsvParamFile()
                 }
@@ -262,22 +270,21 @@ ApplicationWindow {
         }
     }
 
-    MessageDialog {
-        id: resetNeededDialog
-        title: qsTr("Reset Needed")
-        text: readParametersOnConnect
-                ? qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete and then reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
-                : qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+    function loadJsonParamFile() {
+        var rawData = jsonParamFileIo.read()
+        paramReg.beginHistoryElide()
+        if(paramLayer.slaveConnected) {
+            paramLayer.setData(rawData, true, ParamLayer.KeepExisting)
+        }
+        else {
+            paramLayer.setData(rawData, true, ParamLayer.Union)
+            paramLayer.setData(rawData, true, ParamLayer.SetToNew)    // second time in case of param dependencies in wrong order
+        }
+        paramReg.endHistoryElide()
 
-        standardButtons: StandardButton.Ok
     }
-    MessageDialog {
-        id: confirmRestoreCalDialog
-        title: qsTr("Confirm Restore Calibration")
-        text: qsTr("This will erase all custom settings on the CS2 and restore the factory calibration. Are you sure you want to do this?")
-        standardButtons: StandardButton.Ok | StandardButton.Cancel
-        onAccepted: paramLayer.copyCalPage(0, 1, 0, 0)
-    }
+
+
     function saveJsonParamFile() {
         if (saveReadOnlyParameters) {
             jsonParamFileIo.write(paramLayer.rawData())
@@ -285,6 +292,25 @@ ApplicationWindow {
             jsonParamFileIo.write(paramLayer.saveableRawData())
         }
     }
+
+    function loadCsvParamFile() {
+
+        var saveUnits = setStandardUnits()
+        var data = csvParamFileIo.read()
+
+        paramReg.beginHistoryElide()
+        if(paramLayer.slaveConnected) {
+            paramLayer.setData(data, false, ParamLayer.KeepExisting)
+        }
+        else {
+            paramLayer.setData(data, false, ParamLayer.Union)
+            paramLayer.setData(data, false, ParamLayer.SetToNew)    // second time in case of param dependencies in wrong order
+        }
+        paramReg.endHistoryElide()
+
+        restoreUnits(saveUnits)
+    }
+
     function saveCsvParamFile() {
         var data
         var saveUnits = setStandardUnits()
@@ -295,6 +321,24 @@ ApplicationWindow {
         restoreUnits(saveUnits)
 
         csvParamFileIo.write(data, paramLayer.names())
+    }
+
+    MessageDialog {
+        id: resetNeededDialog
+        title: qsTr("Reset Needed")
+        text: readParametersOnConnect
+              ? qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete and then reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+              : qsTr("The CS2 will be restarted to apply the new settings. Please wait for this to complete, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+
+        standardButtons: StandardButton.Ok
+    }
+
+    MessageDialog {
+        id: confirmRestoreCalDialog
+        title: qsTr("Confirm Restore Calibration")
+        text: qsTr("This will erase all custom settings on the CS2 and restore the factory calibration. Are you sure you want to do this?")
+        standardButtons: StandardButton.Ok | StandardButton.Cancel
+        onAccepted: paramLayer.copyCalPage(0, 1, 0, 0)
     }
 
     Action {
@@ -391,6 +435,14 @@ ApplicationWindow {
         tooltip: qsTr("Saves read only data to the parameter file for review later.")
         checkable: true
         checked: true
+    }
+
+    Action {
+        id: enableBetaFeaturesAction
+        text: qsTr("Enable beta features");
+        tooltip: qsTr("Enables features for beta testing.")
+        checkable: true
+        checked: false
     }
 
     Action {
@@ -578,6 +630,9 @@ ApplicationWindow {
             MenuItem {
                 action: saveParametersOnWriteAction
             }
+            MenuItem {
+                action: enableBetaFeaturesAction
+            }
         }
 
         Menu {
@@ -679,6 +734,7 @@ ApplicationWindow {
         id: paramTabView
         anchors.fill: parent
         registry: paramReg
+        enableBetaFeatures: application.enableBetaFeatures
     }
 
     statusBar: StatusBar {
@@ -742,9 +798,4 @@ ApplicationWindow {
         id: helpDialog
     }
 
-    Component.onCompleted: {
-        // make sure the window doesn't completely disappear from the screen due to prefs save with a bigger monitor than current
-        x = Math.min(x, Screen.desktopAvailableWidth - 30)
-        y = Math.min(y, Screen.desktopAvailableWidth - 30)
-    }
 }
