@@ -49,7 +49,7 @@ ApplicationWindow {
     function loadFileFromCommandLine() {
         var arguments = Qt.application.arguments
 
-        if(arguments.length < 1) {
+        if(arguments.length < 2) {
             return
         }
 
