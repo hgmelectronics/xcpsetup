@@ -64,12 +64,15 @@ void ConnectionFacade::setIntfcUri(QUrl val)
 {
     if(mIntfcUri != val)
     {
+        Interface::Interface *intfcToDelete = nullptr; // must delete after calling mConn->setIntfc(), which needs the old interface to exist
         if(mIntfc && mIntfcOwned)
-            delete mIntfc;
+            intfcToDelete = mIntfc;
         mIntfcUri = val;
         mIntfc = Interface::Registry().make(mIntfcUri);
         mIntfcOwned = true;
         mConn->setIntfc(mIntfc);
+        if(intfcToDelete)
+            delete intfcToDelete;
     }
 }
 
