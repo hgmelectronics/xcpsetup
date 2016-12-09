@@ -22,6 +22,7 @@
 #include "ModelStringProxy.h"
 #include "RoleXYModelMapper.h"
 #include "XYSeriesAutoAxis.h"
+#include "Xcp_Interface_Ble_DeviceModel.h"
 
 namespace SetupTools
 {
@@ -64,6 +65,8 @@ void registerTypes()
     qmlRegisterType<SetupTools::ModelStringProxy>("com.hgmelectronics.setuptools", major, minor, "ModelStringProxy");
     qmlRegisterType<SetupTools::RoleXYModelMapper>("com.hgmelectronics.setuptools.ui", major, minor, "RoleXYModelMapper");
     qmlRegisterType<SetupTools::XYSeriesAutoAxis>("com.hgmelectronics.setuptools.ui", major, minor, "XYSeriesAutoAxis");
+
+    qmlRegisterType<SetupTools::Xcp::Interface::Ble::DeviceModel>("com.hgmelectronics.setuptools", major, minor, "XcpBleDeviceModel");
 }
 
 void setupEnvironment()

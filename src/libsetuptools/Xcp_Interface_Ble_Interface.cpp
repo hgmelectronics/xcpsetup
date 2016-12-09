@@ -5,9 +5,9 @@ namespace Xcp {
 namespace Interface {
 namespace Ble {
 
-static const QBluetoothUuid XCP_SERVICE_UUID(QString("e7fc7a82-5947-4aad-8e90-c88ac2deca6c"));
-static const QBluetoothUuid TX_CHAR_UUID(QString("89c5f9cf-b2a4-444f-ac01-8b87c8625a00"));
-static const QBluetoothUuid RX_CHAR_UUID(QString("89c5f9cf-b2a4-444f-ac01-8b87c8625a01"));
+//static const QBluetoothUuid XCP_SERVICE_UUID;
+//static const QBluetoothUuid TX_CHAR_UUID;
+//static const QBluetoothUuid RX_CHAR_UUID;
 
 InterfaceTask::InterfaceTask(QObject * parent) :
     QObject(parent),

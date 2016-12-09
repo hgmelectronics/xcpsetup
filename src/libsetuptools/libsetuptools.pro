@@ -55,7 +55,8 @@ SOURCES += \
     ArrayParam.cpp \
     ScalarParam.cpp \
     Xcp_Interface_Ble_Interface.cpp \
-    Xcp_Interface_Ble_Registry.cpp
+    Xcp_Interface_Ble_Registry.cpp \
+    Xcp_Interface_Ble_DeviceModel.cpp
 
 HEADERS += \
     util.h \
@@ -96,7 +97,8 @@ HEADERS += \
     ScalarParam.h \
     Xcp_ParamLayer.h \
     Xcp_Interface_Ble_Interface.h \
-    Xcp_Interface_Ble_Registry.h
+    Xcp_Interface_Ble_Registry.h \
+    Xcp_Interface_Ble_DeviceModel.h
 
 unix:!android:!macx {
     target.path = /usr/lib
