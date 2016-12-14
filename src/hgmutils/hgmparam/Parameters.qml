@@ -1491,6 +1491,32 @@ ParamRegistry {
         }
     }
 
+    property ScalarMetaParam transmissionTorqueSpeedSyncTime: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.transmission_ts_speed_sync_time
+            writable: true
+            saveable: true
+            slot: slots.timeMilliseconds1
+            name: qsTr("TS Speed Sync Time")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionSpeedTorqueSyncTime: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.transmission_st_speed_sync_time
+            writable: true
+            saveable: true
+            slot: slots.timeMilliseconds1
+            name: qsTr("ST Speed Sync Time")
+        }
+        immediateWrite: true
+    }
+
     property ScalarMetaParam garageShiftTime: ScalarMetaParam {
         param: ScalarParam {
             registry: root
