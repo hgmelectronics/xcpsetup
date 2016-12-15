@@ -66,7 +66,7 @@ void registerTypes()
     qmlRegisterType<SetupTools::RoleXYModelMapper>("com.hgmelectronics.setuptools.ui", major, minor, "RoleXYModelMapper");
     qmlRegisterType<SetupTools::XYSeriesAutoAxis>("com.hgmelectronics.setuptools.ui", major, minor, "XYSeriesAutoAxis");
 
-    qmlRegisterType<SetupTools::Xcp::Interface::Ble::DeviceModel>("com.hgmelectronics.setuptools", major, minor, "XcpBleDeviceModel");
+    qmlRegisterType<SetupTools::Xcp::Interface::Ble::DeviceModel>("com.hgmelectronics.setuptools.xcp", major, minor, "XcpBleDeviceModel");
 }
 
 void setupEnvironment()

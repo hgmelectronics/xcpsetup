@@ -246,7 +246,6 @@ void ConnectionFacade::getAvailSlavesStr(QString bcastId, QString filter)
 
 void ConnectionFacade::onConnConnectedTargetChanged(QString val)
 {
-    qDebug() << "ConnectionFacade::onConnConnectedTargetChanged";
     mConnectedTarget = val;
     emit connectedTargetChanged(val);
 }

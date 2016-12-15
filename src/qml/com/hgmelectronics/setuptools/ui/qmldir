@@ -17,3 +17,4 @@ singleton AutoRefreshIntervalDialog 1.0 AutoRefreshIntervalDialog.qml
 LogWindow 1.0 LogWindow.qml
 ShowLogButton 1.0 ShowLogButton.qml
 RoleModeledLineSeries 1.0 RoleModeledLineSeries.qml
+BleDeviceChooser 1.0 BleDeviceChooser.qml

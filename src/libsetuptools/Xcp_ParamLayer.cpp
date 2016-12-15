@@ -20,7 +20,7 @@ ParamLayer::ParamLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::uploadDone, this, &ParamLayer::onParamUploadDone);
     connect(mConn, &ConnectionFacade::downloadDone, this, &ParamLayer::onParamDownloadDone);
     connect(mConn, &ConnectionFacade::connectedTargetChanged, this, &ParamLayer::slaveIdChanged);
-    connect(mConn, &ConnectionFacade::setTargetDone, this, &ParamLayer::setSlaveIdDone);
+    connect(mConn, &ConnectionFacade::setTargetDone, this, &ParamLayer::onConnSetTargetDone);
 }
 
 QUrl ParamLayer::intfcUri()
@@ -66,7 +66,15 @@ QString ParamLayer::slaveId()
 
 void ParamLayer::setSlaveId(QString id)
 {
-    mConn->setTarget(id);
+    if(mState == State::Disconnected)
+    {
+        setState(State::SettingTarget);
+        mConn->setTarget(id);
+    }
+    else
+    {
+        qDebug() << "Attempted to set slave ID while param layer state ==" << int(mState);
+    }
 }
 
 bool ParamLayer::idle()
@@ -74,6 +82,7 @@ bool ParamLayer::idle()
     switch(mState)
     {
     case State::IntfcNotOk:     return true;
+    case State::SettingTarget:  return false;
     case State::Disconnected:   return true;
     case State::Connect:        return false;
     case State::Connected:      return true;
@@ -491,6 +500,7 @@ void ParamLayer::connectSlave()
     if(!(mState == State::Disconnected || mState == State::Connected)
             || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode))
     {
+        qDebug() << "connectSlave wrong paramlayer state" << int(mState) << "or wrong conn state" << int(mConn->state());
         emit connectSlaveDone(OpResult::InvalidOperation);
         return;
     }
@@ -502,6 +512,7 @@ void ParamLayer::connectSlave()
     {
         setState(State::Connected);
         emit connectSlaveDone(OpResult::Success);
+        qDebug() << "connectSlave cal mode";
     }
     else
     {
@@ -545,6 +556,7 @@ void ParamLayer::onConnSetStateDone(OpResult result)
         {
             setState(State::Disconnected);
         }
+        qDebug() << "onConnSetStateDone state" << int(mState) << "result" << int(result);
         emit connectSlaveDone(result);
         break;
     case State::Download:
@@ -816,6 +828,13 @@ void ParamLayer::onParamUploadDone(OpResult result, XcpPtr base, int len, const 
 void ParamLayer::onRegistryWriteCacheDirtyChanged()
 {
     emit writeCacheDirtyChanged();
+}
+
+void ParamLayer::onConnSetTargetDone(OpResult result)
+{
+    Q_ASSERT(mState == State::SettingTarget);
+    setState(State::Disconnected);
+    emit setSlaveIdDone(result);
 }
 
 void ParamLayer::downloadKey()

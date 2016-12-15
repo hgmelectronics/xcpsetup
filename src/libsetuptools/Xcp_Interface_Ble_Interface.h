@@ -29,6 +29,7 @@ public:
         Connecting,
         DiscoveringServices,
         DiscoveringCharacteristics,
+        SettingClientCharConfig,
         Connected,
         Disconnecting
     };
@@ -44,27 +45,32 @@ public:
 
     State state()
     {
-        QMutexLocker locker(&mStateMutex);
-        return mState;
+        State out;
+        {
+            QMutexLocker locker(&mStateMutex);
+            out = mState;
+        }
+        return out;
     }
 
-    QBluetoothAddress remoteAddress()
+    QString remoteAddress()
     {
-        QMutexLocker locker(&mStateMutex);
-        if(mState == State::Connected)
-            return mController->remoteAddress();
-        else
-            return QBluetoothAddress();
+        QString out;
+        {
+            QMutexLocker locker(&mRemoteAddressMutex);
+            out = mRemoteAddress;
+        }
+        return mRemoteAddress;
     }
 
 signals:
     void stateChanged();
 public slots:
-    void startConnect(QBluetoothAddress dev);
+    void startConnect(QBluetoothDeviceInfo dev);
     void startDisconnect();
     void transmit(const std::vector<quint8> & data);
     void onCharacteristicChanged(const QLowEnergyCharacteristic & characteristic, const QByteArray & newValue);
-
+    void onDescriptorWritten(const QLowEnergyDescriptor & descriptor, const QByteArray & newValue);
     void onControllerStateChanged(QLowEnergyController::ControllerState state);
     void onServiceStateChanged(QLowEnergyService::ServiceState state);
 private:
@@ -73,12 +79,20 @@ private:
     QMutex mStateMutex;
     QWaitCondition mStateCondition;
     State mState;
+#ifdef Q_OS_MAC
+    QString mRemoteDevUuid;
+#endif
+    QMutex mRemoteAddressMutex;
+    QString mRemoteAddress;
     OpResult mError;
 
+    QMutex mControllerMutex;
     QLowEnergyController * mController;
+    QMutex mXcpServiceMutex;
     QLowEnergyService * mXcpService;
     QLowEnergyCharacteristic mTxChar;
     QLowEnergyCharacteristic mRxChar;
+    QLowEnergyDescriptor mRxCharClientConfig;
     PythonicQueue<std::vector<quint8>> mRxQueue;
     bool mPacketLog;
 };
@@ -104,18 +118,18 @@ public:
 signals:
     void connectedChanged();
 
-    void taskStartConnect(QBluetoothAddress dev);
+    void taskStartConnect(QBluetoothDeviceInfo dev);
     void taskStartDisconnect();
     void taskTransmit(const std::vector<quint8> & data);
 public slots:
     void onTaskStateChanged();
 private:
-    OpResult connectToDevice(QBluetoothAddress);
+    OpResult connectToDevice(QBluetoothDeviceInfo);
     OpResult disconnectFromDevice();
 
     QThread * mThread;
     InterfaceTask * mTask;
-    QBluetoothAddress mRemoteAddress;
+    QString mRemoteAddress;
 };
 
 } // namespace Ble
