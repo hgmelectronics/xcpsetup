@@ -191,6 +191,44 @@ ColumnLayout {
         }
 
         Button {
+            text: "DTCs"
+            enabled: true
+            onClicked: {
+                dtcWindow.showNormal()
+                dtcWindow.raise()
+            }
+            Window {
+                id: dtcWindow
+                title: qsTr("DTCs")
+                width: 600
+                height: 600
+
+                RowLayout {
+                    id: dtcRowLayout
+                    anchors.fill: parent
+                    MultiroleTableParamEdit {
+                        Layout.margins: 10
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+
+                        tableMetaParam: parameters.dtcList
+                        roleNames: ["spn", "fmi", "oc", "active"]
+                        label: {
+                            "spn": "SPN",
+                            "fmi": "FMI",
+                            "oc": "Count",
+                            "active": "Active"
+                        }
+                    }
+                }
+
+                AutoRefreshArea {
+                    base: dtcRowLayout
+                }
+            }
+        }
+
+        Button {
             text: "Frequency Outputs"
             onClicked: {
                 frequencyOutputDialog.showNormal()

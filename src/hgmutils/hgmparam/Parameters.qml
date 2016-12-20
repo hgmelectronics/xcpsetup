@@ -5087,4 +5087,71 @@ ParamRegistry {
             name: qsTr("EV Drive Last Fault")
         }
     }
+
+    property ArrayParam dtcSPN: ArrayParam {
+        registry: root
+        dataType: Param.S32
+        addr: paramId.dtc_spn
+        minCount: 1
+        maxCount: 128
+        writable: false
+        saveable: false
+        slot: slots.hex32bit
+        name: qsTr("SPN")
+    }
+
+    property ArrayParam dtcFMI: ArrayParam {
+        registry: root
+        dataType: Param.S32
+        addr: paramId.dtc_fmi
+        minCount: 1
+        maxCount: 128
+        writable: false
+        saveable: false
+        slot: slots.failureModeIndicator
+        name: qsTr("FMI")
+    }
+
+    property ArrayParam dtcOC: ArrayParam {
+        registry: root
+        dataType: Param.S32
+        addr: paramId.dtc_oc
+        minCount: 1
+        maxCount: 128
+        writable: false
+        saveable: false
+        slot: slots.count
+        name: qsTr("Count")
+    }
+
+    property ArrayParam dtcActive: ArrayParam {
+        registry: root
+        dataType: Param.S32
+        addr: paramId.dtc_active
+        minCount: 1
+        maxCount: 128
+        writable: false
+        saveable: false
+        slot: slots.booleanYesNo1
+        name: qsTr("Active")
+    }
+
+
+    property SlotArrayModel dtcIndexModel: SlotArrayModel {
+        slot: slots.count
+        count: dtcSPN.count
+    }
+
+    property MultiroleTableMetaParam dtcList: MultiroleTableMetaParam {
+        param: MultiroleTableParam {
+            roleMapping: {
+                "x": dtcIndexModel,
+                        "spn": dtcSPN,
+                        "fmi": dtcFMI,
+                        "oc": dtcOC,
+                        "active": dtcActive
+            }
+        }
+        isLiveData: true
+    }
 }
