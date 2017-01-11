@@ -4612,6 +4612,18 @@ ParamRegistry {
         }
     }
 
+    property ScalarMetaParam tccUnlockTime: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tcc_unlock_time
+            writable: true
+            saveable: true
+            slot: slots.timeMilliseconds1
+            name: qsTr("TCC Unlock Time")
+        }
+    }
+
     property ScalarMetaParam tccPrefillPressure: ScalarMetaParam {
         param: ScalarParam {
             registry: root

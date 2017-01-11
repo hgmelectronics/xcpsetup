@@ -514,6 +514,7 @@ QtObject {
     readonly property string tcc_stroke_time: "065c0000"
     readonly property string tcc_stroke_pressure: "065d0000"
     readonly property string tcc_stroke_percentage: "065e0000"
+    readonly property string tcc_unlock_time: "065f0000"
 
     readonly property string tc_mult_speedratio: "06700000"
     readonly property string tc_mult_torqueratio: "06710000"
