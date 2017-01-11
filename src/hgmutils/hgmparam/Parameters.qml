@@ -1485,7 +1485,7 @@ ParamRegistry {
                 minCount: tempAxisModel.count
                 writable: true
                 saveable: true
-                slot: slots.percentage1
+                slot: slots.percentage2Ext
                 name: qsTr("Trans Temp Pressure Compensation")
             }
         }

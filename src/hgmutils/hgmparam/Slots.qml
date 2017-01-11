@@ -294,6 +294,16 @@ QtObject {
         precision: 1
     }
 
+    property LinearSlot percentage2Ext: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 50000
+        engrB: 5000
+        unit: "%"
+        precision: 1
+    }
+
+
     property LinearSlot percentage3: LinearSlot {
         rawA: 0
         engrA: 0
