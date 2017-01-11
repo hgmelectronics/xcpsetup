@@ -5,6 +5,7 @@ SUBDIRS += \
     ebussetuptools \
 	ibemparam \
     ibemtool \
+	ipcparam \
     multilist_demo \
 	ytbtool
 
