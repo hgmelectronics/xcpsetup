@@ -48,7 +48,6 @@ ApplicationWindow {
         paramFilePath: paramFileIo.name
         progressValue: paramLayer.opProgress
         onUserConnectParam: {
-            var slaveId = "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
             paramLayer.slaveId = slaveId
         }
         onUserDownloadParam: paramLayer.download()
@@ -60,6 +59,7 @@ ApplicationWindow {
         targetResId: "1F000091"
         registry: paramReg
         paramLayer: application.paramLayer
+        property var slaveId: "%1:%2".arg(targetCmdId).arg(targetResId)
     }
 
     property bool connecting: false
@@ -79,11 +79,16 @@ ApplicationWindow {
             }
         }
 
-        onSetSlaveIdDone: {
-            if(result === OpResult.Success)
+        onSlaveIdChanged: {
+            if(slaveId.toLowerCase() === mainForm.slaveId.toLowerCase())
                 connectSlave()
-            else
+        }
+
+        onSetSlaveIdDone: {
+            if(result !== OpResult.Success) {
+                slaveId = ""
                 errorDialog.show(qsTr("Setting slave ID failed: %1").arg(OpResult.asString(result)))
+            }
         }
 
         onConnectSlaveDone: {
@@ -99,6 +104,7 @@ ApplicationWindow {
         }
         onDisconnectSlaveDone: {
             ParamResetNeeded.set = false
+            slaveId = ""
         }
         onDownloadDone: {
             if(saveParametersOnWrite) {

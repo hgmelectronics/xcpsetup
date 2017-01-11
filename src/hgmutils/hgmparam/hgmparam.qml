@@ -74,8 +74,9 @@ ApplicationWindow {
         Qt.quit()
     }
 
+    property var slaveId: "%1:%2".arg(targetCmdId).arg(targetResId)
+
     onConnect: {
-        var slaveId = "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
         paramLayer.slaveId = slaveId
     }
 
@@ -114,11 +115,16 @@ ApplicationWindow {
             }
         }
 
-        onSetSlaveIdDone: {
-            if(result === OpResult.Success)
+        onSlaveIdChanged: {
+            if(slaveId.toLowerCase() === slaveId.toLowerCase())
                 connectSlave()
-            else
+        }
+
+        onSetSlaveIdDone: {
+            if(result !== OpResult.Success) {
+                slaveId = ""
                 errorDialog.show(qsTr("Setting slave ID failed: %1").arg(OpResult.asString(result)))
+            }
         }
 
         onConnectSlaveDone: {
@@ -135,6 +141,7 @@ ApplicationWindow {
         }
         onDisconnectSlaveDone: {
             ParamResetNeeded.set = false
+            slaveId = ""
         }
         onDownloadDone: {
             if(saveParametersOnWrite)
