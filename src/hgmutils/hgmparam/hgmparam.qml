@@ -74,7 +74,7 @@ ApplicationWindow {
         Qt.quit()
     }
 
-    property var slaveId: "%1:%2".arg(targetCmdId).arg(targetResId)
+    property var slaveId: "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
 
     onConnect: {
         paramLayer.slaveId = slaveId
