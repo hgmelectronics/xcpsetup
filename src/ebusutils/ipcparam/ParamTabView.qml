@@ -41,92 +41,177 @@ Item {
 //                    }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg1PhsAError
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg1PhsBError
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg1PhsCError
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg2PhsAError
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg2PhsBError
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg2PhsCError
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg1VoltError
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg1TempError
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg2Overtemp
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioCtc1Aux
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioCtc2Aux
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioCtc3Aux
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioSpareDi1
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioCtc1Coil
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioCtc2Coil
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioCtc3Coil
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg2FetEnable
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.dioSpareDo1
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dioSoftBaseblock
                         }
                     }
                 }
             }
         }
 
-//        Tab {
-//            title: "PWM"
-//            active: true
-//            AutoRefreshArea {
-//                base: this
-//                RowLayout {
-//                    Layout.alignment: Qt.AlignLeft
-//                    anchors.fill: parent
-//                    anchors.margins: 10
-//                    spacing: 10
-//                    MultiroleTableParamEdit {
-//                        Layout.margins: 10
-//                        Layout.fillHeight: true
-//                        Layout.fillWidth: true
-
-//                        tableMetaParam: registry.auxInv
-//                        roleNames: ["x", "cmdMode", "cmdSpeed", "cmdUpdated", "state", "speed", "faultCode", "alarmCode", "statusUpdated", "writeCmd", "readStatus", "readFault"]
-//                    }
-//                }
-//            }
-//        }
+        Tab {
+            title: "PWM"
+            active: true
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.pwmBridge1Deadband
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.pwmBridge1Freq
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1RotationCba
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.pwmBridge1Peak
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.pwmBridge1Zero
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1TopForce
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1BottomForce
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1PhaseAPeak
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1PhaseAZero
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1PhaseBPeak
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1PhaseBZero
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1PhaseCPeak
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1PhaseCZero
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.pwmBridge2Freq
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.pwmBridge2Duty
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2DutyA
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2DutyB
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2TopForce
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2BottomForce
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2PhaseADutyA
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2PhaseADutyB
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2PhaseBDutyA
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2PhaseBDutyB
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2PhaseCDutyA
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2PhaseCDutyB
+                        }
+                    }
+                }
+            }
+        }
 
 //        Tab {
 //            title: "CAN"
@@ -140,40 +225,40 @@ Item {
 //                    spacing: 10
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracMaxMotoringCurr
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracMaxBrakingCurr
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracCmdSpeed
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracCmdTorque
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracCmdMode
 //                        }
 //                    }
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracSpeed
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracTorque
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracDcCurr
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracState
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracFaultCode
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.canTracAlarmCode
 //                        }
 //                        TableParamEdit {
@@ -184,23 +269,23 @@ Item {
 //                    }
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            name: "XcpProgramRequested"
 //                            metaParam: registry.canXcpProgramRequested
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            name: "Can1RxErrCount"
 //                            metaParam: registry.canCan1RxErrCount
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            name: "Can1TxErrCount"
 //                            metaParam: registry.canCan1TxErrCount
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            name: "Can2RxErrCount"
 //                            metaParam: registry.canCan2RxErrCount
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            name: "Can2TxErrCount"
 //                            metaParam: registry.canCan2TxErrCount
 //                        }
@@ -221,109 +306,109 @@ Item {
 //                    spacing: 10
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvFwdMotoringTorqueLimit
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvRevMotoringTorqueLimit
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvFwdBrakingTorqueLimit
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvRevBrakingTorqueLimit
 //                        }
 //                        EncodingParamEdit {
 //                            metaParam: registry.tracInvCmdMode
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvReverseDir
 //                        }
 //                    }
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvFreqRef
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvMotorSpeed
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvDcBusVolt
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvTorqueRef
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvAlarmCode
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvFaultCode
 //                        }
 //                    }
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvInputS1
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvInputS2
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvInputS3
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvInputS4
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvInputA1
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvInputA2
 //                        }
 //                    }
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvDuringRun
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvDuringReverse
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvDuringFaultReset
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvDriveReady
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvDuringAlarm
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvDuringFault
 //                        }
 //                    }
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvStatusUpdateStarted
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvStatusUpdated
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvWriteTorqueLimitsResult
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvWriteAcceptResult
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvReadStatusResult
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvReadFaultResult
 //                        }
-//                        ScalarParamEdit {
+//                        ScalarParamSpinBox {
 //                            metaParam: registry.tracInvTorqueLimitsSet
 //                        }
 //                    }
@@ -343,7 +428,7 @@ Item {
                     spacing: 10
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.sysCycleIdle
                         }
                     }
@@ -364,19 +449,19 @@ Item {
                             metaParam: registry.sysFlags
                             bitMask: 0x00000002
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             name: "Heap Alloc Bytes"
                             metaParam: registry.sysHeapAllocBytes
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             name: "Heap Avail Bytes"
                             metaParam: registry.sysHeapFreeBytes
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             name: "Heap Free Count"
                             metaParam: registry.sysHeapNFrees
                         }
-                        ScalarParamEdit {
+                        ScalarParamSpinBox {
                             name: "RTDB rows"
                             metaParam: registry.sysRtDbRows
                         }
