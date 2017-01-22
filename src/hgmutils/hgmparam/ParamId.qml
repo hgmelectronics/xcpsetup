@@ -681,6 +681,10 @@ QtObject {
     readonly property string dtc_recorded_count: "8e010000"
     readonly property string dtc_active_count_by_type: "8ee20000"
     readonly property string dtc_recorded_count_by_type: "8e030000"
+    readonly property string dtc_spn: "8e040000"
+    readonly property string dtc_fmi: "8e050000"
+    readonly property string dtc_oc: "8e060000"
+    readonly property string dtc_active: "8e070000"
 
     // 0f00 control system config
     readonly property string reset_defaults: "0f000000"
