@@ -332,7 +332,7 @@ void InterfaceTask::setState(State val)
 #ifdef Q_OS_MAC
                 mRemoteAddress = QString::fromUtf16(mRemoteDevUuid.utf16());  // force deep copy
 #else
-                mRemoteAddress = mController->remoteAddress();
+                mRemoteAddress = mController->remoteAddress().toString();
 #endif
             else
                 mRemoteAddress = QString();
