@@ -120,7 +120,6 @@ ApplicationWindow {
 
         onSlaveIdChanged: {
             if(targetChooser.addr.toLowerCase() === paramLayer.slaveId.toLowerCase())
-                console.log("Connecting slave from onSlaveIdChanged because id is", slaveId)
                 connectSlave()
         }
 
