@@ -5488,6 +5488,28 @@ ParamRegistry {
             name: qsTr("J1939 CTL Source Address")
         }
     }
+    property ScalarMetaParam evBmsType: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ev_bms_type
+            writable: true
+            saveable: true
+            slot: slots.evBmsType
+            name: qsTr("BMS Type")
+        }
+    }
+    property ScalarMetaParam evMotorRatedTorque: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ev_motor_rated_torque
+            writable: true
+            saveable: true
+            slot: slots.torque
+            name: qsTr("Motor Rated Torque")
+        }
+    }
     property ScalarMetaParam evDriveFaultCount: ScalarMetaParam {
         param: ScalarParam {
             registry: root

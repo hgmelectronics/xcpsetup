@@ -654,6 +654,8 @@ QtObject {
     readonly property string clutch_stroke_pressure: "0b570000"
 
     readonly property string ev_j1939_ctl_source_address: "0b600000"
+    readonly property string ev_bms_type: "0b610000"
+    readonly property string ev_motor_rated_torque: "0b620000"
 
     // 8b00 ev data
     readonly property string ev_drive_fault_count: "8b000000"
