@@ -133,11 +133,11 @@ ApplicationWindow {
             var resId = boardId * 2 + 0x1F000101
             var slaveId = cmdId.toString(16) + ":" + resId.toString(16)
 
-            if(paramLayer.slaveId.toLowerCase() === slaveId.toLowerCase()) {
+            if(paramLayer.slaveId.toLowerCase() === mainForm.slaveId.toLowerCase()) {
                 paramLayer.connectSlave()
             }
             else {
-                paramLayer.slaveId = slaveId
+                paramLayer.slaveId = mainForm.slaveId
             }
         }
         onUserDownloadParam: paramLayer.download()

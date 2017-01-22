@@ -77,7 +77,7 @@ ApplicationWindow {
     property var slaveId: "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
 
     onConnect: {
-        paramLayer.slaveId = slaveId
+        paramLayer.slaveId = application.slaveId
     }
 
     Settings {
@@ -116,13 +116,13 @@ ApplicationWindow {
         }
 
         onSlaveIdChanged: {
-            if(slaveId.toLowerCase() === slaveId.toLowerCase())
+            if(application.slaveId.toLowerCase() === paramLayer.slaveId.toLowerCase())
                 connectSlave()
         }
 
         onSetSlaveIdDone: {
             if(result !== OpResult.Success) {
-                slaveId = ""
+                paramLayer.slaveId = ""
                 errorDialog.show(qsTr("Setting slave ID failed: %1").arg(OpResult.asString(result)))
             }
         }
@@ -141,7 +141,7 @@ ApplicationWindow {
         }
         onDisconnectSlaveDone: {
             ParamResetNeeded.set = false
-            slaveId = ""
+            paramLayer.slaveId = ""
         }
         onDownloadDone: {
             if(saveParametersOnWrite)

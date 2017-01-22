@@ -48,7 +48,7 @@ ApplicationWindow {
         paramFilePath: paramFileIo.name
         progressValue: paramLayer.opProgress
         onUserConnectParam: {
-            paramLayer.slaveId = slaveId
+            paramLayer.slaveId = mainForm.slaveId
         }
         onUserDownloadParam: paramLayer.download()
         onUserUploadParam: paramLayer.upload()
@@ -80,13 +80,13 @@ ApplicationWindow {
         }
 
         onSlaveIdChanged: {
-            if(slaveId.toLowerCase() === mainForm.slaveId.toLowerCase())
+            if(paramLayer.slaveId.toLowerCase() === mainForm.slaveId.toLowerCase())
                 connectSlave()
         }
 
         onSetSlaveIdDone: {
             if(result !== OpResult.Success) {
-                slaveId = ""
+                paramLayer.slaveId = ""
                 errorDialog.show(qsTr("Setting slave ID failed: %1").arg(OpResult.asString(result)))
             }
         }
@@ -104,7 +104,7 @@ ApplicationWindow {
         }
         onDisconnectSlaveDone: {
             ParamResetNeeded.set = false
-            slaveId = ""
+            paramLayer.slaveId = ""
         }
         onDownloadDone: {
             if(saveParametersOnWrite) {
