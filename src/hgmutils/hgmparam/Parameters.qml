@@ -1485,10 +1485,36 @@ ParamRegistry {
                 minCount: tempAxisModel.count
                 writable: true
                 saveable: true
-                slot: slots.percentage1
+                slot: slots.percentage2Ext
                 name: qsTr("Trans Temp Pressure Compensation")
             }
         }
+    }
+
+    property ScalarMetaParam transmissionTorqueSpeedSyncTime: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.transmission_ts_speed_sync_time
+            writable: true
+            saveable: true
+            slot: slots.timeMilliseconds1
+            name: qsTr("TS Speed Sync Time")
+        }
+        immediateWrite: true
+    }
+
+    property ScalarMetaParam transmissionSpeedTorqueSyncTime: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.transmission_st_speed_sync_time
+            writable: true
+            saveable: true
+            slot: slots.timeMilliseconds1
+            name: qsTr("ST Speed Sync Time")
+        }
+        immediateWrite: true
     }
 
     property ScalarMetaParam garageShiftTime: ScalarMetaParam {
@@ -4586,6 +4612,18 @@ ParamRegistry {
         }
     }
 
+    property ScalarMetaParam tccUnlockTime: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tcc_unlock_time
+            writable: true
+            saveable: true
+            slot: slots.timeMilliseconds1
+            name: qsTr("TCC Unlock Time")
+        }
+    }
+
     property ScalarMetaParam tccPrefillPressure: ScalarMetaParam {
         param: ScalarParam {
             registry: root
@@ -5450,6 +5488,28 @@ ParamRegistry {
             name: qsTr("J1939 CTL Source Address")
         }
     }
+    property ScalarMetaParam evBmsType: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ev_bms_type
+            writable: true
+            saveable: true
+            slot: slots.evBmsType
+            name: qsTr("BMS Type")
+        }
+    }
+    property ScalarMetaParam evMotorRatedTorque: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.ev_motor_rated_torque
+            writable: true
+            saveable: true
+            slot: slots.torque
+            name: qsTr("Motor Rated Torque")
+        }
+    }
     property ScalarMetaParam evDriveFaultCount: ScalarMetaParam {
         param: ScalarParam {
             registry: root
@@ -5471,5 +5531,72 @@ ParamRegistry {
             slot: slots.evDriveFault
             name: qsTr("EV Drive Last Fault")
         }
+    }
+
+    property ArrayParam dtcSPN: ArrayParam {
+        registry: root
+        dataType: Param.S32
+        addr: paramId.dtc_spn
+        minCount: 1
+        maxCount: 128
+        writable: false
+        saveable: false
+        slot: slots.hex32bit
+        name: qsTr("SPN")
+    }
+
+    property ArrayParam dtcFMI: ArrayParam {
+        registry: root
+        dataType: Param.S32
+        addr: paramId.dtc_fmi
+        minCount: 1
+        maxCount: 128
+        writable: false
+        saveable: false
+        slot: slots.failureModeIndicator
+        name: qsTr("FMI")
+    }
+
+    property ArrayParam dtcOC: ArrayParam {
+        registry: root
+        dataType: Param.S32
+        addr: paramId.dtc_oc
+        minCount: 1
+        maxCount: 128
+        writable: false
+        saveable: false
+        slot: slots.count
+        name: qsTr("Count")
+    }
+
+    property ArrayParam dtcActive: ArrayParam {
+        registry: root
+        dataType: Param.S32
+        addr: paramId.dtc_active
+        minCount: 1
+        maxCount: 128
+        writable: false
+        saveable: false
+        slot: slots.booleanYesNo1
+        name: qsTr("Active")
+    }
+
+
+    property SlotArrayModel dtcIndexModel: SlotArrayModel {
+        slot: slots.count
+        count: dtcSPN.count
+    }
+
+    property MultiroleTableMetaParam dtcList: MultiroleTableMetaParam {
+        param: MultiroleTableParam {
+            roleMapping: {
+                "x": dtcIndexModel,
+                        "spn": dtcSPN,
+                        "fmi": dtcFMI,
+                        "oc": dtcOC,
+                        "active": dtcActive
+            }
+        }
+        isLiveData: true
     }
 }

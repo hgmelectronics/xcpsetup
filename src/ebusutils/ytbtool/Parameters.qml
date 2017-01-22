@@ -1313,6 +1313,54 @@ ParamRegistry {
         }
     }
 
+    property ScalarMetaParam tracAccelDampingFilterLength: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00080004
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("Trac Accel Filter Length")
+        }
+    }
+
+    property ScalarMetaParam tracAccelDampingCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00080005
+            writable: true
+            saveable: true
+            slot: slots.torquePerAccel
+            name: qsTr("Trac Accel Damp Coeff")
+        }
+    }
+
+    property ScalarMetaParam tracAccelDampingMaxIncrease: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00080006
+            writable: true
+            saveable: true
+            slot: slots.deciPercent
+            name: qsTr("Trac Accel Damp Max Inc")
+        }
+    }
+
+    property ScalarMetaParam tracAccelDampingMaxDecrease: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x00080007
+            writable: true
+            saveable: true
+            slot: slots.deciPercent
+            name: qsTr("Trac Accel Damp Max Dec")
+        }
+    }
+
     property ScalarMetaParam tracAnalogSpeedOffset: ScalarMetaParam {
         param: ScalarParam {
             registry: root
@@ -1454,6 +1502,18 @@ ParamRegistry {
             saveable: false
             slot: slots.tracState
             name: qsTr("Trac State")
+        }
+    }
+
+    property ScalarMetaParam tracMotorAccel: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: 4 * 0x0008100C
+            writable: false
+            saveable: false
+            slot: slots.rpmPerSecSigned
+            name: qsTr("Trac Motor Accel")
         }
     }
 

@@ -10,7 +10,7 @@ import com.hgmelectronics.setuptools.ui 1.0
 
 ApplicationWindow {
     id: application
-    title: qsTr("CDA2 Param Tool")
+    title: qsTr("IPC Param Tool")
     width: 1200
     height: 850
     visible: true
@@ -19,7 +19,6 @@ ApplicationWindow {
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property alias paramFileDir: paramLoadFileDialog.folder
     property alias interfaceSaveUri: mainForm.interfaceSaveUri
-    property alias paramLayer: paramLayer
 
     Settings {
         category: "application"
@@ -48,21 +47,18 @@ ApplicationWindow {
         paramFilePath: paramFileIo.name
         progressValue: paramLayer.opProgress
         onUserConnectParam: {
-            paramLayer.slaveId = mainForm.slaveId
+            paramLayer.slaveId = slaveId
         }
         onUserDownloadParam: paramLayer.download()
         onUserUploadParam: paramLayer.upload()
         onUserNvWriteParam: paramLayer.nvWrite()
         onUserDisconnectParam: paramLayer.disconnectSlave()
         onUserShowParamEdit: paramWindow.show()
-        targetCmdId: "1F000090"
-        targetResId: "1F000091"
+        targetCmdId: "1F0000B0"
+        targetResId: "1F0000B1"
         registry: paramReg
-        paramLayer: application.paramLayer
         property var slaveId: "%1:%2".arg(targetCmdId).arg(targetResId)
     }
-
-    property bool connecting: false
 
     ParamLayer {
         id: paramLayer
@@ -80,13 +76,13 @@ ApplicationWindow {
         }
 
         onSlaveIdChanged: {
-            if(paramLayer.slaveId.toLowerCase() === mainForm.slaveId.toLowerCase())
+            if(slaveId.toLowerCase() === mainForm.slaveId.toLowerCase())
                 connectSlave()
         }
 
         onSetSlaveIdDone: {
             if(result !== OpResult.Success) {
-                paramLayer.slaveId = ""
+                slaveId = ""
                 errorDialog.show(qsTr("Setting slave ID failed: %1").arg(OpResult.asString(result)))
             }
         }
@@ -104,7 +100,7 @@ ApplicationWindow {
         }
         onDisconnectSlaveDone: {
             ParamResetNeeded.set = false
-            paramLayer.slaveId = ""
+            slaveId = ""
         }
         onDownloadDone: {
             if(saveParametersOnWrite) {
@@ -207,8 +203,8 @@ ApplicationWindow {
         id: resetNeededDialog
         title: qsTr("Reset Needed")
         text: readParametersOnConnect
-                ? qsTr("The CDA2 needs to be restarted to apply the new settings. Please cycle power and reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
-                : qsTr("The CDA2 needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+                ? qsTr("The IPC needs to be restarted to apply the new settings. Please cycle power and reconnect. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
+                : qsTr("The IPC needs to be restarted to apply the new settings. Please cycle power, reconnect, and read parameters again. Then, if you are programming the controller using settings from a file, reload the file and write to the controller again.")
         standardButtons: StandardButton.Ok
     }
 

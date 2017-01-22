@@ -34,6 +34,13 @@ QtObject {
             { raw: 2, engr: "Z"}
         ]
     }
+    property EncodingSlot evBmsType: EncodingSlot {
+        encodingList: [
+            { raw: 0, engr: "None" },
+            { raw: 1, engr: "Ebus Gen 3" }
+        ]
+        unencodedSlot: count
+    }
 
     property EncodingSlot booleanManualMode: EncodingSlot {
         encodingList: [
@@ -293,6 +300,16 @@ QtObject {
         unit: "%"
         precision: 1
     }
+
+    property LinearSlot percentage2Ext: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 50000
+        engrB: 5000
+        unit: "%"
+        precision: 1
+    }
+
 
     property LinearSlot percentage3: LinearSlot {
         rawA: 0
@@ -603,7 +620,9 @@ QtObject {
             { raw: 18, engr: "VW GTI MKV" },
             { raw: 19, engr: "Ebus Yaskawa G5" },
             { raw: 20, engr: "Nissan ZD30" },
-            { raw: 21, engr: "Ebus YTB" }
+            { raw: 21, engr: "Ebus YTB" },
+            { raw: 22, engr: "Ford Coyote 2" },
+            { raw: 23, engr: "Ebus UQM" }
         ]
         unencodedSlot: count
     }

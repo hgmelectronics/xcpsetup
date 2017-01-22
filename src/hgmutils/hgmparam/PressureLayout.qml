@@ -403,6 +403,14 @@ RowLayout {
                 valueLabel: qsTr("Limit")
                 tableParam: parameters.shiftTorqueLimits
             }
+
+            ScalarParamSpinBox {
+                metaParam: parameters.transmissionTorqueSpeedSyncTime
+            }
+
+            ScalarParamSpinBox {
+                metaParam: parameters.transmissionSpeedTorqueSyncTime
+            }
         }
     }
 }

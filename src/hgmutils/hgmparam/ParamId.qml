@@ -291,6 +291,9 @@ QtObject {
     readonly property string transmission_shift_5_6_st_transfer_time: "03e2000c"
     readonly property string transmission_shift_6_5_st_transfer_time: "03e2000d"
 
+    readonly property string transmission_ts_speed_sync_time: "03e70000"
+    readonly property string transmission_st_speed_sync_time: "03eb0000"
+
     readonly property string garage_shift_time: "03f00000"
     readonly property string garage_shift_max_pressure: "03f40000"
     readonly property string garage_shift_max_percentage: "03f50000"
@@ -511,6 +514,7 @@ QtObject {
     readonly property string tcc_stroke_time: "065c0000"
     readonly property string tcc_stroke_pressure: "065d0000"
     readonly property string tcc_stroke_percentage: "065e0000"
+    readonly property string tcc_unlock_time: "065f0000"
 
     readonly property string tc_mult_speedratio: "06700000"
     readonly property string tc_mult_torqueratio: "06710000"
@@ -650,6 +654,8 @@ QtObject {
     readonly property string clutch_stroke_pressure: "0b570000"
 
     readonly property string ev_j1939_ctl_source_address: "0b600000"
+    readonly property string ev_bms_type: "0b610000"
+    readonly property string ev_motor_rated_torque: "0b620000"
 
     // 8b00 ev data
     readonly property string ev_drive_fault_count: "8b000000"
@@ -681,6 +687,10 @@ QtObject {
     readonly property string dtc_recorded_count: "8e010000"
     readonly property string dtc_active_count_by_type: "8ee20000"
     readonly property string dtc_recorded_count_by_type: "8e030000"
+    readonly property string dtc_spn: "8e040000"
+    readonly property string dtc_fmi: "8e050000"
+    readonly property string dtc_oc: "8e060000"
+    readonly property string dtc_active: "8e070000"
 
     // 0f00 control system config
     readonly property string reset_defaults: "0f000000"

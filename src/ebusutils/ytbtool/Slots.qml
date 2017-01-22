@@ -280,6 +280,14 @@ Item {
         unit: "rpm"
         precision: 0
     }
+    property LinearSlot rpmPerSecSigned: LinearSlot {
+        rawA: -1E9
+        engrA: -1E9
+        rawB: 1E9
+        engrB: 1E9
+        unit: "rpm/s"
+        precision: 0
+    }
     property LinearSlot rpm1Signed: LinearSlot {
         rawA: -64255
         engrA: -64255
@@ -310,6 +318,22 @@ Item {
         rawB: 1E9
         engrB: 1E8
         unit: "%"
+        precision: 1
+    }
+    property LinearSlot deciPercent: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1E9
+        engrB: 1E8
+        unit: "%"
+        precision: 1
+    }
+    property LinearSlot torquePerAccel: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1E9
+        engrB: 1E8
+        unit: "%/krpm/sec"
         precision: 1
     }
     property EncodingSlot thermistorCurve: EncodingSlot {

@@ -445,6 +445,18 @@ Item {
                         ScalarParamEdit {
                             metaParam: registry.tracCurrentRegRatedTorque
                         }
+                        ScalarParamEdit {
+                            metaParam: registry.tracAccelDampingFilterLength
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracAccelDampingCoeff
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracAccelDampingMaxIncrease
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.tracAccelDampingMaxDecrease
+                        }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
@@ -470,6 +482,9 @@ Item {
                             metaParam: registry.tracMotorSpeed
                         }
                         ScalarParamEdit {
+                            metaParam: registry.tracMotorAccel
+                        }
+                        ScalarParamEdit {
                             metaParam: registry.tracMotorTorque
                         }
                         ScalarParamEdit {
@@ -483,14 +498,14 @@ Item {
             }
         }
 
-        Tab {
-            title: "Event Log"
-            active: true
+//        Tab {
+//            title: "Event Log"
+//            active: true
 
-            EventLogTab {
-                paramLayer: root.paramLayer
-                parameters: root.registry
-            }
-        }
+//            EventLogTab {
+//                paramLayer: root.paramLayer
+//                parameters: root.registry
+//            }
+//        }
     }
 }

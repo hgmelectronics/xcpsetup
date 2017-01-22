@@ -78,6 +78,9 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.tccApplyTime
         }
+        ScalarParamSpinBox {
+            metaParam: parameters.tccUnlockTime
+        }
         Button {
             Layout.margins: 8
             text: "Percentage and PID"

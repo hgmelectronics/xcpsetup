@@ -76,7 +76,10 @@ ApplicationWindow {
         Qt.quit()
     }
 
-    onConnect: paramLayer.slaveId = targetChooser.addr
+
+    onConnect: {
+        paramLayer.slaveId = targetChooser.addr
+    }
 
     Settings {
         category: "application"
@@ -116,23 +119,19 @@ ApplicationWindow {
         }
 
         onSlaveIdChanged: {
-            if(slaveId) {
+            if(targetChooser.addr.toLowerCase() === paramLayer.slaveId.toLowerCase())
                 console.log("Connecting slave from onSlaveIdChanged because id is", slaveId)
                 connectSlave()
-
-            }
         }
 
         onSetSlaveIdDone: {
-            console.log("setSlaveIdDone", result)
             if(result !== OpResult.Success) {
-                slaveId = ""
+                paramLayer.slaveId = ""
                 errorDialog.show(qsTr("Setting slave ID failed: %1").arg(OpResult.asString(result)))
             }
         }
 
         onConnectSlaveDone: {
-            console.log("connectSlaveDone", result)
             if(result === OpResult.Success) {
                 ParamResetNeeded.set = false
                 forceSlaveSupportCalPage()
@@ -146,9 +145,8 @@ ApplicationWindow {
             }
         }
         onDisconnectSlaveDone: {
-            console.log("disconnectSlaveDone", result)
             ParamResetNeeded.set = false
-            slaveId = ""
+            paramLayer.slaveId = ""
         }
         onDownloadDone: {
             if(saveParametersOnWrite)
@@ -176,7 +174,7 @@ ApplicationWindow {
         }
         onProgramResetSlaveDone: {
             ParamResetNeeded.set = false
-            slaveId = ""
+            paramLayer.slaveId = ""
             if(result !== OpResult.Success) {
                 errorDialog.show(qsTr("Program mode reset failed: %1").arg(
                                      OpResult.asString(result)))
@@ -184,7 +182,7 @@ ApplicationWindow {
         }
         onCalResetSlaveDone: {
             ParamResetNeeded.set = false
-            slaveId = ""
+            paramLayer.slaveId = ""
             if(result === OpResult.Success) {
                 paramLayer.programResetSlave()
             }
