@@ -10,6 +10,10 @@ namespace Ble {
 
 QList<QUrl> Registry::avail()
 {
+#ifdef Q_OS_WIN
+    return QList<QUrl>();   // API does not appear to allow discovering whether BLE backend is functional, so need to short circuit
+#endif
+
     static const QList<QUrl> defaultList {QUrl("qtble:default")};
 
     QLowEnergyController * controller = QLowEnergyController::createCentral(QBluetoothDeviceInfo());
@@ -22,6 +26,10 @@ QList<QUrl> Registry::avail()
 
 Interface * Registry::make(QUrl uri)
 {
+#ifdef Q_OS_WIN
+    return nullptr;
+#endif
+
     if(QString::compare(uri.scheme(), "qtble", Qt::CaseInsensitive) != 0
             || QString::compare(uri.fileName(), "default", Qt::CaseInsensitive) != 0)
         return nullptr;
@@ -31,6 +39,10 @@ Interface * Registry::make(QUrl uri)
 
 QString Registry::desc(QUrl uri)
 {
+#ifdef Q_OS_WIN
+    return QString("");
+#endif
+
     if(QString::compare(uri.scheme(), "qtble", Qt::CaseInsensitive) != 0
             || QString::compare(uri.fileName(), "default", Qt::CaseInsensitive) != 0)
         return QString("");
