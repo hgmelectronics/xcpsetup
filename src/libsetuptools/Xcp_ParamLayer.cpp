@@ -498,9 +498,10 @@ void ParamLayer::calResetSlave()
 void ParamLayer::connectSlave()
 {
     if(!(mState == State::Disconnected || mState == State::Connected)
-            || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode))
+            || !(mConn->state() == Connection::State::Closed || mConn->state() == Connection::State::CalMode)
+            || mConn->connectedTarget().isEmpty())
     {
-        qDebug() << "connectSlave wrong paramlayer state" << int(mState) << "or wrong conn state" << int(mConn->state());
+        qDebug() << "connectSlave wrong paramlayer state" << int(mState) << "or wrong conn state" << int(mConn->state()) << "or no target";
         emit connectSlaveDone(OpResult::InvalidOperation);
         return;
     }
