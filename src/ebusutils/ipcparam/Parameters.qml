@@ -24,7 +24,7 @@ ParamRegistry {
             maxCount: 24
             writable: false
             saveable: false
-            slot: slots.aiVolts
+            slot: slots.volts
             name: qsTr("AI Voltage")
         }
     }
@@ -45,6 +45,84 @@ ParamRegistry {
             saveable: false
             slot: slots.aoVolts
             name: qsTr("AO Voltage")
+        }
+    }
+
+    property ScalarMetaParam aioDcdcRegCurrA: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00014000
+            writable: false
+            saveable: false
+            slot: slots.amps
+            name: qsTr("DC6 Reg Curr A")
+        }
+    }
+
+    property ScalarMetaParam aioDcdcRegCurrB: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00014001
+            writable: false
+            saveable: false
+            slot: slots.amps
+            name: qsTr("DC6 Reg Curr B")
+        }
+    }
+
+    property ScalarMetaParam aioDcdcRegCurrC: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00014002
+            writable: false
+            saveable: false
+            slot: slots.amps
+            name: qsTr("DC6 Reg Curr C")
+        }
+    }
+
+    property ScalarMetaParam aioDcdcRegInVolt: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00014003
+            writable: false
+            saveable: false
+            slot: slots.volts
+            name: qsTr("DC6 Reg In Volt")
+        }
+    }
+
+    property ScalarMetaParam aioDcdcRegOutVolt: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00014004
+            writable: false
+            saveable: false
+            slot: slots.volts
+            name: qsTr("DC6 Reg Out Volt")
+        }
+    }
+
+    property ScalarMetaParam aioDcdcLvCapCenterVolt: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00014005
+            writable: false
+            saveable: false
+            slot: slots.volts
+            name: qsTr("DC6 LV Cap Center Volt")
         }
     }
 

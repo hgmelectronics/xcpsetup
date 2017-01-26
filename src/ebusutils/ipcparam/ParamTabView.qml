@@ -42,6 +42,27 @@ Item {
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamSpinBox {
+                            metaParam: registry.aioDcdcRegCurrA
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.aioDcdcRegCurrB
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.aioDcdcRegCurrC
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.aioDcdcRegInVolt
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.aioDcdcRegOutVolt
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.aioDcdcLvCapCenterVolt
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
                             metaParam: registry.dioBrdg1PhsAError
                         }
                         ScalarParamSpinBox {

@@ -29,12 +29,21 @@ Item {
         precision: 0
         storageType: Slot.F32
     }
-    property LinearSlot aiVolts: LinearSlot {
-        rawA: 0
-        engrA: 0
-        rawB: 65536
-        engrB: 2.5
+    property LinearSlot volts: LinearSlot {
+        rawA: -1e9
+        engrA: -1e9
+        rawB: 1e9
+        engrB: 1e9
         unit: "V"
+        precision: 4
+        storageType: Slot.F32
+    }
+    property LinearSlot amps: LinearSlot {
+        rawA: -1e9
+        engrA: -1e9
+        rawB: 1e9
+        engrB: 1e9
+        unit: "A"
         precision: 4
         storageType: Slot.F32
     }
