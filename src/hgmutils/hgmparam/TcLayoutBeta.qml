@@ -468,6 +468,13 @@ RowLayout {
                     ScalarParamSpinBox {
                         metaParam: parameters.tccApplyTime
                     }
+                    ScalarParamSpinBox {
+                        metaParam: parameters.tccUnlockTime
+                    }
+                    EncodingParamEdit {
+                        name: qsTr("Always Locked")
+                        metaParam: parameters.tccAlwaysLocked
+                    }
                 }
                 RowLayout {
                     Button {

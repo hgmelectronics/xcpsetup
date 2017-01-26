@@ -480,6 +480,8 @@ QtObject {
     readonly property string pressure_diagnostic_percentage: "85020000"
 
     // 0600 tcc settings
+    readonly property string tcc_always_locked: "06000000"
+
     readonly property string tcc_downshift_offset_a: "06200000"
     readonly property string tcc_disable_toss_percent_a: "06210000"
     readonly property string tcc_enable_gear_a: "06220000"
