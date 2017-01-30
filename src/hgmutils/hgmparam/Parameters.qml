@@ -2878,6 +2878,18 @@ ParamRegistry {
         }
     }
 
+    property ScalarMetaParam tccAlwaysLocked: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tcc_always_locked
+            writable: true
+            saveable: true
+            slot: slots.booleanYesNo1
+            name: qsTr("TCC Always Locked")
+        }
+    }
+
     property ScalarMetaParam tccManualModeA: ScalarMetaParam {
         param: ScalarParam {
             registry: root
