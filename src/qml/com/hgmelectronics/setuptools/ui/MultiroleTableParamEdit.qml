@@ -155,7 +155,8 @@ Rectangle {
                                         if(model[styleData.role] != text)
                                             model[styleData.role] = text
                                         if(root.tableMetaParam.immediateWrite)
-                                            ImmediateWrite.trigger(root.tableParam.roleMapper[styleData.role].key)
+                                            ImmediateWrite.trigger(root.tableParam.roleMapping[styleData.role].key)
+
                                     }
 
                                     onEditingFinished: updateValue()
