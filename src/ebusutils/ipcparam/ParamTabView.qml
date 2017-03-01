@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
@@ -20,145 +21,366 @@ Item {
         anchors.fill: parent
 
         Tab {
-            title: "AIO/DIO"
+            title: "AIO/DIO/PWM"
             active: true
             AutoRefreshArea {
                 base: this
                 RowLayout {
                     Layout.alignment: Qt.AlignLeft
                     anchors.fill: parent
-                    anchors.margins: 10
-                    spacing: 10
-                    TableParamEdit {
+                    anchors.margins: 5
+                    spacing: 5
+                    SplitView {
                         Layout.fillHeight: true
-                        xLabel: "AI #"
-                        tableParam: registry.aioAiCts
-                    }
-//                    TableParamEdit {
-//                        Layout.fillHeight: true
-//                        xLabel: "AO #"
-//                        tableParam: registry.aioAoCts
-//                    }
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignTop
-                        ScalarParamSpinBox {
-                            metaParam: registry.aioDcdcRegCurrA
+                        orientation: Qt.Vertical
+                        TableParamEdit {
+                            Layout.fillHeight: true
+                            xLabel: "AI #"
+                            tableMetaParam: registry.aioAiCts
                         }
-                        ScalarParamSpinBox {
-                            metaParam: registry.aioDcdcRegCurrB
+                        TableParamEdit {
+                            xLabel: "AO #"
+                            tableMetaParam: registry.aioAoCts
                         }
-                        ScalarParamSpinBox {
-                            metaParam: registry.aioDcdcRegCurrC
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.aioDcdcRegInVolt
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.aioDcdcRegOutVolt
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.aioDcdcLvCapCenterVolt
-                        }
+
                     }
                     ColumnLayout {
-                        Layout.alignment: Qt.AlignTop
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg1PhsAError
+                        RowLayout {
+                            Layout.alignment: Qt.AlignLeft
+                            spacing: 5
+
+//                            ColumnLayout {
+//                                Layout.alignment: Qt.AlignTop
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioMagneticsTemp
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioColdplateTemp
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioIgbt1Temp
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioIgbt2Temp
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioVbatVolt
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioVref2V5Volt
+//                                }
+//                            }
+
+//                            ColumnLayout {
+//                                Layout.alignment: Qt.AlignTop
+//                                Label {
+//                                    text: "Stage 1 Current"
+//                                }
+//                                TableParamEdit {
+//                                    xLabel: "Phase"
+//                                    tableMetaParam: registry.aioDcdcRegCurr
+//                                    encodingColumnWidth: 70
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioDcdcRegInVolt
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioDcdcRegOutVolt
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioDcdcLvCapCenterVolt
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioDcdcRectOutVolt
+//                                }
+//                                ScalarParamEdit {
+//                                    metaParam: registry.aioDcdcLvCtcOutVolt
+//                                }
+//                            }
+
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                ScalarParamEdit {
+                                    metaParam: registry.aioCurrZeroCalibStart
+                                }
+                                ScalarParamEdit {
+                                    metaParam: registry.aioCurrZeroCalibDone
+                                }
+                            }
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                Label {
+                                    text: "Bridge 1 Phase Error"
+                                }
+
+                                TableParamEdit {
+                                    xLabel: "Phase"
+                                    tableMetaParam: registry.dioBrdg1PhsError
+                                    encodingColumnWidth: 70
+                                }
+                                Label {
+                                    text: "Bridge 2 Phase Error"
+                                }
+                                TableParamEdit {
+                                    xLabel: "Phase"
+                                    tableMetaParam: registry.dioBrdg2PhsError
+                                    encodingColumnWidth: 70
+                                }
+                            }
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                ScalarParamEdit {
+                                    metaParam: registry.dioBrdg1VoltError
+                                }
+                                ScalarParamEdit {
+                                    metaParam: registry.dioBrdg1TempError
+                                }
+                                ScalarParamEdit {
+                                    metaParam: registry.dioBrdg2Overtemp
+                                }
+                                ScalarParamEdit {
+                                    metaParam: registry.dioCtc1Aux
+                                }
+                                ScalarParamEdit {
+                                    metaParam: registry.dioCtc2Aux
+                                }
+                                ScalarParamEdit {
+                                    metaParam: registry.dioCtc3Aux
+                                }
+                                ScalarParamEdit {
+                                    metaParam: registry.dioSpareDi1
+                                }
+                            }
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                ScalarParamSpinBox {
+                                    metaParam: registry.dioCtc1Coil
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.dioCtc2Coil
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.dioCtc3Coil
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.dioBrdg2FetEnable
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.dioSpareDo1
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.dioSoftBaseblock
+                                }
+                            }
                         }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg1PhsBError
+
+                        ToolSeparator {
+                            Layout.fillWidth: true
+                            orientation: Qt.Horizontal
                         }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg1PhsCError
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg2PhsAError
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg2PhsBError
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg2PhsCError
+
+                        RowLayout {
+                            Layout.alignment: Qt.AlignLeft
+                            spacing: 5
+
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                ScalarParamSpinBox {
+                                    metaParam: registry.pwmBridge1Deadband
+                                }
+                            }
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                ScalarParamSpinBox {
+                                    metaParam: registry.pwmBridge1Freq
+                                }
+                                EncodingParamEdit {
+                                    metaParam: registry.pwmBridge1RotationCba
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.pwmBridge1Peak
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.pwmBridge1Zero
+                                }
+                                EncodingParamEdit {
+                                    metaParam: registry.pwmBridge1TopForce
+                                }
+                                EncodingParamEdit {
+                                    metaParam: registry.pwmBridge1BottomForce
+                                }
+                            }
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                Label {
+                                    text: "Bridge 1 Phase Peak"
+                                }
+                                TableParamEdit {
+                                    xLabel: "Phase"
+                                    tableMetaParam: registry.pwmBridge1PhasePeak
+                                    encodingColumnWidth: 70
+                                }
+                                Label {
+                                    text: "Bridge 1 Phase Zero"
+                                }
+                                TableParamEdit {
+                                    xLabel: "Phase"
+                                    tableMetaParam: registry.pwmBridge1PhaseZero
+                                    encodingColumnWidth: 70
+                                }
+                            }
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                ScalarParamSpinBox {
+                                    metaParam: registry.pwmBridge2Freq
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.pwmBridge2Duty
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.pwmBridge2DutyA
+                                }
+                                ScalarParamSpinBox {
+                                    metaParam: registry.pwmBridge2DutyB
+                                }
+                                EncodingParamEdit {
+                                    metaParam: registry.pwmBridge2TopForce
+                                }
+                                EncodingParamEdit {
+                                    metaParam: registry.pwmBridge2BottomForce
+                                }
+                            }
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                Label {
+                                    text: "Bridge 2 Phase Duty A"
+                                }
+                                TableParamEdit {
+                                    xLabel: "Phase"
+                                    tableMetaParam: registry.pwmBridge2PhaseDutyA
+                                    encodingColumnWidth: 70
+                                }
+                                Label {
+                                    text: "Bridge 2 Phase Duty B"
+                                }
+                                TableParamEdit {
+                                    xLabel: "Phase"
+                                    tableMetaParam: registry.pwmBridge2PhaseDutyB
+                                    encodingColumnWidth: 70
+                                }
+                            }
                         }
                     }
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignTop
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg1VoltError
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg1TempError
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg2Overtemp
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioCtc1Aux
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioCtc2Aux
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioCtc3Aux
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioSpareDi1
-                        }
-                    }
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignTop
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioCtc1Coil
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioCtc2Coil
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioCtc3Coil
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioBrdg2FetEnable
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioSpareDo1
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.dioSoftBaseblock
-                        }
-                    }
+
                 }
             }
         }
 
         Tab {
-            title: "PWM"
+            title: "DCDC"
             active: true
             AutoRefreshArea {
                 base: this
                 RowLayout {
                     Layout.alignment: Qt.AlignLeft
                     anchors.fill: parent
-                    anchors.margins: 10
-                    spacing: 10
+                    anchors.margins: 5
+                    spacing: 5
+
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            metaParam: registry.aioMagneticsTemp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioColdplateTemp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioIgbt1Temp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioIgbt2Temp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioVbatVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioVref2V5Volt
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        Label {
+                            text: "Stage 1 Current"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.aioDcdcRegCurr
+                            encodingColumnWidth: 70
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.aioDcdcXfmrAbsCurr
+                            encodingColumnWidth: 70
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.aioDcdcXfmrAvgCurr
+                            encodingColumnWidth: 70
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioDcdcRegInVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioDcdcRegOutVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioDcdcLvCapCenterVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioDcdcRectOutVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioDcdcLvCtcOutVolt
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        Label {
+                            text: "Bridge 1 Phase Error"
+                        }
+
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.dioBrdg1PhsError
+                            encodingColumnWidth: 70
+                        }
+                        Label {
+                            text: "Bridge 2 Phase Error"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.dioBrdg2PhsError
+                            encodingColumnWidth: 70
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dioBrdg2Overtemp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dioCtc1Aux
+                        }
                         ScalarParamSpinBox {
-                            metaParam: registry.pwmBridge1Deadband
+                            metaParam: registry.dioCtc1Coil
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dioBrdg2FetEnable
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamSpinBox {
-                            metaParam: registry.pwmBridge1Freq
-                        }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge1RotationCba
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.pwmBridge1Peak
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.pwmBridge1Zero
+                            metaParam: registry.pwmBridge1Deadband
                         }
                         EncodingParamEdit {
                             metaParam: registry.pwmBridge1TopForce
@@ -166,41 +388,16 @@ Item {
                         EncodingParamEdit {
                             metaParam: registry.pwmBridge1BottomForce
                         }
-                    }
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignTop
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge1PhaseAPeak
+                        Label {
+                            text: "Bridge 1 Phase Zero"
                         }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge1PhaseAZero
-                        }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge1PhaseBPeak
-                        }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge1PhaseBZero
-                        }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge1PhaseCPeak
-                        }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge1PhaseCZero
-                        }
-                    }
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignTop
-                        ScalarParamSpinBox {
-                            metaParam: registry.pwmBridge2Freq
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.pwmBridge1PhaseZero
+                            encodingColumnWidth: 70
                         }
                         ScalarParamSpinBox {
                             metaParam: registry.pwmBridge2Duty
-                        }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge2DutyA
-                        }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge2DutyB
                         }
                         EncodingParamEdit {
                             metaParam: registry.pwmBridge2TopForce
@@ -211,83 +408,426 @@ Item {
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge2PhaseADutyA
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcReducedCurrOutVolt
                         }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge2PhaseADutyB
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcFullCurrOutVolt
                         }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge2PhaseBDutyA
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcReducedMaxOutCurr
                         }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge2PhaseBDutyB
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcFullMaxOutCurr
                         }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge2PhaseCDutyA
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcCurrLimIntCoeff
                         }
-                        EncodingParamEdit {
-                            metaParam: registry.pwmBridge2PhaseCDutyB
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcOutVoltRegPropCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcOutVoltRegIntCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcIgbtDrop
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcLinkVoltRegIntCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcStage1CurrBalIntCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dcdcStage1CurrBalMaxAdj
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcOutVoltCmd
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcEnableCmd
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcState
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcOutVoltCmd
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcCurrLimIntegrator
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcAdjOutVoltCmd
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcOutVoltRegIntegrator
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcLinkVoltCmd
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcStage1AvgPhaseDuty
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcLinkVoltRegIntegrator
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcLinkPowerBasedOutputCurrent
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcXfmrPrimaryBasedOutputCurrent
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dcdcLinkPowerBasedInputCurrent
                         }
                     }
                 }
             }
         }
 
-//        Tab {
-//            title: "CAN"
-//            active: true
-//            AutoRefreshArea {
-//                base: this
-//                RowLayout {
-//                    Layout.alignment: Qt.AlignLeft
-//                    anchors.fill: parent
-//                    anchors.margins: 10
-//                    spacing: 10
+        Tab {
+            title: "BC"
+            active: true
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 5
+                    spacing: 5
+
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcAcVoltageAB
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcAcVoltageCB
+                        }
+                        Label {
+                            text: "Line Volt Phase-Mid"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.aioBcAcVoltageMid
+                            encodingColumnWidth: 70
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcDcOutCurr
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcConnSizeMon
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcRectVoltNeg
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcRectVoltPos
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcDcOutVolt
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        Label {
+                            text: "Line Current"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.aioBcAcCurrent
+                            encodingColumnWidth: 70
+                        }
+                        Label {
+                            text: "Inv Abs Current"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.aioBcInvAbsCurr
+                            encodingColumnWidth: 70
+                        }
+                        Label {
+                            text: "Inv Avg Current"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.aioBcInvAvgCurr
+                            encodingColumnWidth: 70
+                        }
+                        Label {
+                            text: "Trap Abs Current"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.aioBcTrapAbsCurr
+                            encodingColumnWidth: 70
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            metaParam: registry.aioMagneticsTemp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioColdplateTemp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioIgbt1Temp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioIgbt2Temp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioVbatVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioVref2V5Volt
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        Label {
+                            text: "Bridge 1 Phase Error"
+                        }
+
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.dioBrdg1PhsError
+                            encodingColumnWidth: 70
+                        }
+                        Label {
+                            text: "Bridge 2 Phase Error"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.dioBrdg2PhsError
+                            encodingColumnWidth: 70
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dioBrdg2Overtemp
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.aioCurrZeroCalibStart
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dioCtc1Coil
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.dioCtc2Coil
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.pwmBridge1Deadband
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1TopForce
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge1BottomForce
+                        }
+                        Label {
+                            text: "Bridge 1 Phase Zero"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.pwmBridge1PhaseZero
+                            encodingColumnWidth: 70
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.pwmBridge2Duty
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2TopForce
+                        }
+                        EncodingParamEdit {
+                            metaParam: registry.pwmBridge2BottomForce
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcMinLineLockFreq
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcMaxLineLockFreq
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcSinePllPropCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcSinePllIntCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcSinePllDerivCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcSinePllStartCmd
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcSinePllPhaseAdjCmd
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcSinePllLocked
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcSinePllRawPhaseError
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcSinePllFiltPhaseError
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcSinePllIntegrator
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcSinePllFreq
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            metaParam: registry.bcLineRealPower
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcLineReactivePower
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcLineRmsVolts
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcLineRmsAmps
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcLineRealCurrent
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcLineReactiveCurrent
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcFiltLineRealPower
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcFiltLineReactivePower
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcFiltLineRmsVolts
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcFiltLineRmsAmps
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineRealCurrentCmd
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineReactiveCurrentCmd
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcTestingErrorCode
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcTestingEngage
+                        }
+                    }
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
 //                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracMaxMotoringCurr
+//                            metaParam: registry.canDcdcOutVoltCmd
 //                        }
 //                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracMaxBrakingCurr
+//                            metaParam: registry.canDcdcEnableCmd
 //                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracCmdSpeed
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcState
 //                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracCmdTorque
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcOutVoltCmd
 //                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracCmdMode
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcCurrLimIntegrator
+//                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcAdjOutVoltCmd
+//                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcOutVoltRegIntegrator
+//                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcLinkVoltCmd
+//                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcStage1AvgPhaseDuty
+//                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcLinkVoltRegIntegrator
+//                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcLinkPowerBasedOutputCurrent
+//                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcXfmrPrimaryBasedOutputCurrent
+//                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.dcdcLinkPowerBasedInputCurrent
 //                        }
 //                    }
-//                    ColumnLayout {
-//                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracSpeed
-//                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracTorque
-//                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracDcCurr
-//                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracState
-//                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracFaultCode
-//                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canTracAlarmCode
-//                        }
-//                        TableParamEdit {
-//                            xLabel: "#"
-//                            valueLabel: "degC"
-//                            tableParam: registry.canTracMotorTemp
-//                        }
-//                    }
+                }
+            }
+        }
+
+        Tab {
+            title: "CAN"
+            active: true
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 5
+                    spacing: 5
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcOutVoltCmd
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcEnableCmd
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcEnabled
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcOvertemp
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcElecFlt
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcOutVolt
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcOutCurr
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcOutPwr
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcInCurr
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.canDcdcHeatsinkTemp
+                        }
+                    }
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
 //                        ScalarParamSpinBox {
@@ -311,9 +851,9 @@ Item {
 //                            metaParam: registry.canCan2TxErrCount
 //                        }
 //                    }
-//                }
-//            }
-//        }
+                }
+            }
+        }
 
 //        Tab {
 //            title: "Trac Inverter"
@@ -323,8 +863,8 @@ Item {
 //                RowLayout {
 //                    Layout.alignment: Qt.AlignLeft
 //                    anchors.fill: parent
-//                    anchors.margins: 10
-//                    spacing: 10
+//                    anchors.margins: 5
+//                    spacing: 5
 //                    ColumnLayout {
 //                        Layout.alignment: Qt.AlignTop
 //                        ScalarParamSpinBox {
@@ -445,8 +985,8 @@ Item {
                 RowLayout {
                     Layout.alignment: Qt.AlignLeft
                     anchors.fill: parent
-                    anchors.margins: 10
-                    spacing: 10
+                    anchors.margins: 5
+                    spacing: 5
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamSpinBox {

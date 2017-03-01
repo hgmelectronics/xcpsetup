@@ -38,6 +38,51 @@ Item {
         precision: 4
         storageType: Slot.F32
     }
+    property LinearSlot watts: LinearSlot {
+        rawA: -1e9
+        engrA: -1e9
+        rawB: 1e9
+        engrB: 1e9
+        unit: "W"
+        precision: 0
+        storageType: Slot.F32
+    }
+    property LinearSlot coeffVoltsPerAmp: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1e9
+        engrB: 1e9
+        unit: "V/A"
+        precision: 5
+        storageType: Slot.F32
+    }
+    property LinearSlot coeffVoltsPerVolt: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1e9
+        engrB: 1e9
+        unit: "V/V"
+        precision: 3
+        storageType: Slot.F32
+    }
+    property LinearSlot coeffVoltsPerVoltSec: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1e9
+        engrB: 1e9
+        unit: "V/V-s"
+        precision: 3
+        storageType: Slot.F32
+    }
+    property LinearSlot coeffVoltsPerAmpSec: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1e9
+        engrB: 1e9
+        unit: "V/A-s"
+        precision: 3
+        storageType: Slot.F32
+    }
     property LinearSlot amps: LinearSlot {
         rawA: -1e9
         engrA: -1e9
@@ -45,6 +90,33 @@ Item {
         engrB: 1e9
         unit: "A"
         precision: 4
+        storageType: Slot.F32
+    }
+    property LinearSlot radians: LinearSlot {
+        rawA: -1e9
+        engrA: -1e9
+        rawB: 1e9
+        engrB: 1e9
+        unit: "rad"
+        precision: 4
+        storageType: Slot.F32
+    }
+    property LinearSlot voltAmps: LinearSlot {
+        rawA: -1e9
+        engrA: -1e9
+        rawB: 1e9
+        engrB: 1e9
+        unit: "VA"
+        precision: 0
+        storageType: Slot.F32
+    }
+    property LinearSlot degC: LinearSlot {
+        rawA: -1e9
+        engrA: -1e9
+        rawB: 1e9
+        engrB: 1e9
+        unit: "C"
+        precision: 1
         storageType: Slot.F32
     }
     property LinearSlot aoVolts: LinearSlot {
@@ -92,6 +164,33 @@ Item {
         precision: 2
         storageType: Slot.F32
     }
+    property LinearSlot freqHzSigned: LinearSlot {
+        rawA: -1e9
+        engrA: -1e9
+        rawB: 1e9
+        engrB: 1e9
+        unit: "Hz"
+        precision: 2
+        storageType: Slot.F32
+    }
+    property LinearSlot freqRad: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1e9
+        engrB: 1e9
+        unit: "rad/s"
+        precision: 2
+        storageType: Slot.F32
+    }
+    property LinearSlot freqRadSigned: LinearSlot {
+        rawA: -1e9
+        engrA: -1e9
+        rawB: 1e9
+        engrB: 1e9
+        unit: "rad/s"
+        precision: 2
+        storageType: Slot.F32
+    }
     property LinearSlot rawu32hex: LinearSlot {
         rawA: 0
         engrA: 0
@@ -108,6 +207,14 @@ Item {
         ]
         storageType: Slot.F32
     }
+    property EncodingSlot phaseName: EncodingSlot {
+        encodingList: [
+            { raw: 0, engr: qsTr("A") },
+            { raw: 1, engr: qsTr("B") },
+            { raw: 2, engr: qsTr("C") }
+        ]
+        storageType: Slot.F32
+    }
     property EncodingSlot bridgeForce: EncodingSlot {
         encodingList: [
             { raw: -1, engr: qsTr("Low") },
@@ -116,18 +223,50 @@ Item {
         ]
         storageType: Slot.F32
     }
-    property EncodingSlot pwmPercentage: EncodingSlot {
+    property EncodingSlot dcdcState: EncodingSlot {
         encodingList: [
-            { raw: -1, engr: qsTr("Released") }
+            { raw: 0, engr: qsTr("Init") },
+            { raw: 1, engr: qsTr("Idle") },
+            { raw: 2, engr: qsTr("SafetyCheck") },
+            { raw: 3, engr: qsTr("Stage2Startup") },
+            { raw: 4, engr: qsTr("Stage1Startup") },
+            { raw: 5, engr: qsTr("CtcClose") },
+            { raw: 6, engr: qsTr("Run") },
+            { raw: 7, engr: qsTr("Shutdown") },
+            { raw: 8, engr: qsTr("Fault") }
         ]
-        unencodedSlot: percentage
+        storageType: Slot.F32
+    }
+//    property EncodingSlot pwmPercentage: EncodingSlot {
+//        encodingList: [
+//            { raw: -1, engr: qsTr("Released") }
+//        ]
+//        unencodedSlot: percentage
+//        unit: "%"
+//        precision: 2
+//        storageType: Slot.F32
+//    }
+    property LinearSlot percentage: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1
+        engrB: 100
         unit: "%"
         precision: 2
         storageType: Slot.F32
     }
-    property LinearSlot percentage: LinearSlot {
-        rawA: 0
-        engrA: 0
+    property LinearSlot pwmPercentage: LinearSlot {
+        rawA: -1
+        engrA: -100
+        rawB: 1
+        engrB: 100
+        unit: "%"
+        precision: 2
+        storageType: Slot.F32
+    }
+    property LinearSlot signedPercentage: LinearSlot {
+        rawA: -1
+        engrA: -100
         rawB: 1
         engrB: 100
         unit: "%"
