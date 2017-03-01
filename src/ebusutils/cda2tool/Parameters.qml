@@ -1340,6 +1340,50 @@ ParamRegistry {
             name: qsTr("")
         }
     }
+    property ScalarMetaParam packDataLossTripCyc: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packDataLossTripCyc
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
+    }
+    property ScalarMetaParam packDataLossDecayCyc: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packDataLossDecayCyc
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
+    }
+    property ScalarMetaParam packHasUqmTracPrechg: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packHasUqmTracPrechg
+            writable: true
+            saveable: true
+            slot: slots.bool01
+            name: qsTr("")
+        }
+    }
+    property ScalarMetaParam packHasAuxBusPrechg: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.packHasAuxBusPrechg
+            writable: true
+            saveable: true
+            slot: slots.bool01
+            name: qsTr("")
+        }
+    }
     property ScalarMetaParam packTracCurrDecayCyc: ScalarMetaParam {
         param: ScalarParam {
             registry: root

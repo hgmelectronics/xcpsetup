@@ -785,6 +785,22 @@ Item {
                             name: "Low Voltage Reset"
                             metaParam: registry.packLowStringVoltReset
                         }
+                        ScalarParamEdit {
+                            name: "Data Loss Trip Cyc"
+                            metaParam: registry.packDataLossTripCyc
+                        }
+                        ScalarParamEdit {
+                            name: "Data Loss Decay Cyc"
+                            metaParam: registry.packDataLossDecayCyc
+                        }
+                        ScalarParamEdit {
+                            name: "Has UQM Trac Prechg"
+                            metaParam: registry.packHasUqmTracPrechg
+                        }
+                        ScalarParamEdit {
+                            name: "Has Aux Bus Prechg"
+                            metaParam: registry.packHasAuxBusPrechg
+                        }
                     }
                 }
             }

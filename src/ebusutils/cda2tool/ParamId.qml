@@ -145,6 +145,10 @@ QtObject {
     readonly property double packBalDischAllCyc:                4*0x0009001D
     readonly property double packBalMinVolt:                    4*0x0009001E
     readonly property double packGndFltTripConductExtChg:       4*0x0009001F
+    readonly property double packDataLossTripCyc:               4*0x00090020
+    readonly property double packDataLossDecayCyc:              4*0x00090021
+    readonly property double packHasUqmTracPrechg:              4*0x00090022
+    readonly property double packHasAuxBusPrechg:               4*0x00090023
     readonly property double packMaxCurr_DischCellTemp:         4*0x00090110
     readonly property double packMaxCurr_DischCurr:             4*0x00090120
     readonly property double packMaxCurr_ChgCellTemp:           4*0x00090130
