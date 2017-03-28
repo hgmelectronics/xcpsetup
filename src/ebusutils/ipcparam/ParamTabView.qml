@@ -506,7 +506,10 @@ Item {
                             metaParam: registry.aioBcAcVoltageAB
                         }
                         ScalarParamEdit {
-                            metaParam: registry.aioBcAcVoltageCB
+                            metaParam: registry.aioBcAcVoltageBC
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcAcVoltageCA
                         }
                         Label {
                             text: "Line Volt Phase-Mid"
@@ -694,6 +697,45 @@ Item {
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
+                            metaParam: registry.bcRealCurrRegPropCoeff
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcRealCurrRegIntCoeff
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcReactiveCurrRegPropCoeff
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcReactiveCurrRegIntCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineRealCurrentCmd
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineReactiveCurrentCmd
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineRealCurrentOpenLoopCmd
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineReactiveCurrentOpenLoopCmd
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineReactorInductance
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineReactorResistance
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcZeroPhaseAdj
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcZeroPeakScale
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
                             metaParam: registry.bcLineRealPower
                         }
                         ScalarParamEdit {
@@ -706,10 +748,10 @@ Item {
                             metaParam: registry.bcLineRmsAmps
                         }
                         ScalarParamEdit {
-                            metaParam: registry.bcLineRealCurrent
+                            metaParam: registry.bcLineRealAmps
                         }
                         ScalarParamEdit {
-                            metaParam: registry.bcLineReactiveCurrent
+                            metaParam: registry.bcLineReactiveAmps
                         }
                         ScalarParamEdit {
                             metaParam: registry.bcFiltLineRealPower
@@ -724,10 +766,10 @@ Item {
                             metaParam: registry.bcFiltLineRmsAmps
                         }
                         ScalarParamSpinBox {
-                            metaParam: registry.bcLineRealCurrentCmd
+                            metaParam: registry.bcLineRealPowerCmd
                         }
                         ScalarParamSpinBox {
-                            metaParam: registry.bcLineReactiveCurrentCmd
+                            metaParam: registry.bcLineReactivePowerCmd
                         }
                         ScalarParamEdit {
                             metaParam: registry.bcTestingErrorCode

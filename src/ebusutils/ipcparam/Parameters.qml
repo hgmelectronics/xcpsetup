@@ -173,7 +173,7 @@ ParamRegistry {
         }
     }
 
-    property ScalarMetaParam aioBcAcVoltageCB: ScalarMetaParam {
+    property ScalarMetaParam aioBcAcVoltageBC: ScalarMetaParam {
         param: ScalarParam {
             registry: root
             bigEndian: true
@@ -182,7 +182,20 @@ ParamRegistry {
             writable: false
             saveable: false
             slot: slots.volts
-            name: qsTr("BC Line Volt C-B")
+            name: qsTr("BC Line Volt B-C")
+        }
+    }
+
+    property ScalarMetaParam aioBcAcVoltageCA: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00013002
+            writable: false
+            saveable: false
+            slot: slots.volts
+            name: qsTr("BC Line Volt C-A")
         }
     }
 
@@ -196,7 +209,7 @@ ParamRegistry {
                 registry: root
                 bigEndian: true
                 dataType: Param.F32
-                addr: 4 * 0x00013002
+                addr: 4 * 0x00013003
                 minCount: 3
                 maxCount: 3
                 writable: false
@@ -218,7 +231,7 @@ ParamRegistry {
                 registry: root
                 bigEndian: true
                 dataType: Param.F32
-                addr: 4 * 0x00013005
+                addr: 4 * 0x00013006
                 minCount: 3
                 maxCount: 3
                 writable: false
@@ -240,7 +253,7 @@ ParamRegistry {
                 registry: root
                 bigEndian: true
                 dataType: Param.F32
-                addr: 4 * 0x00013008
+                addr: 4 * 0x00013009
                 minCount: 3
                 maxCount: 3
                 writable: false
@@ -262,7 +275,7 @@ ParamRegistry {
                 registry: root
                 bigEndian: true
                 dataType: Param.F32
-                addr: 4 * 0x0001300B
+                addr: 4 * 0x0001300C
                 minCount: 3
                 maxCount: 3
                 writable: false
@@ -279,7 +292,7 @@ ParamRegistry {
             registry: root
             bigEndian: true
             dataType: Param.F32
-            addr: 4 * 0x0001300E
+            addr: 4 * 0x0001300F
             writable: false
             saveable: false
             slot: slots.amps
@@ -292,7 +305,7 @@ ParamRegistry {
             registry: root
             bigEndian: true
             dataType: Param.F32
-            addr: 4 * 0x0001300F
+            addr: 4 * 0x00013010
             writable: false
             saveable: false
             slot: slots.volts
@@ -305,7 +318,7 @@ ParamRegistry {
             registry: root
             bigEndian: true
             dataType: Param.F32
-            addr: 4 * 0x00013010
+            addr: 4 * 0x00013011
             writable: false
             saveable: false
             slot: slots.volts
@@ -318,7 +331,7 @@ ParamRegistry {
             registry: root
             bigEndian: true
             dataType: Param.F32
-            addr: 4 * 0x00013011
+            addr: 4 * 0x00013012
             writable: false
             saveable: false
             slot: slots.volts
@@ -331,7 +344,7 @@ ParamRegistry {
             registry: root
             bigEndian: true
             dataType: Param.F32
-            addr: 4 * 0x00013012
+            addr: 4 * 0x00013013
             writable: false
             saveable: false
             slot: slots.volts
@@ -349,7 +362,7 @@ ParamRegistry {
                 registry: root
                 bigEndian: true
                 dataType: Param.F32
-                addr: 4 * 0x00013013
+                addr: 4 * 0x00013014
                 minCount: 3
                 maxCount: 3
                 writable: false
@@ -1429,7 +1442,7 @@ ParamRegistry {
         }
     }
 
-    property ScalarMetaParam bcMinLineLockFreq: ScalarMetaParam {
+    property ScalarMetaParam bcNomLineFreq: ScalarMetaParam {
         param: ScalarParam {
             registry: root
             bigEndian: true
@@ -1438,10 +1451,10 @@ ParamRegistry {
             writable: true
             saveable: true
             slot: slots.freqHz
-            name: qsTr("BC Min Line Lock Freq")
+            name: qsTr("BC Nom Line Lock Freq")
         }
     }
-    property ScalarMetaParam bcMaxLineLockFreq: ScalarMetaParam {
+    property ScalarMetaParam bcMaxLineLockFreqDelta: ScalarMetaParam {
         param: ScalarParam {
             registry: root
             bigEndian: true
@@ -1450,7 +1463,7 @@ ParamRegistry {
             writable: true
             saveable: true
             slot: slots.freqHz
-            name: qsTr("BC Max Line Lock Freq")
+            name: qsTr("BC Max Line Lock Freq Delta")
         }
     }
     property ScalarMetaParam bcSinePllPropCoeff: ScalarMetaParam {
@@ -1841,11 +1854,12 @@ ParamRegistry {
             bigEndian: true
             dataType: Param.F32
             addr: 4 * 0x00061205
-            writable: false
+            writable: true
             saveable: false
             slot: slots.amps
             name: qsTr("BC Line Real Curr OL Cmd")
         }
+        immediateWrite: true
     }
     property ScalarMetaParam bcLineReactiveCurrentOpenLoopCmd: ScalarMetaParam {
         param: ScalarParam {
@@ -1853,11 +1867,12 @@ ParamRegistry {
             bigEndian: true
             dataType: Param.F32
             addr: 4 * 0x00061206
-            writable: false
+            writable: true
             saveable: false
             slot: slots.amps
             name: qsTr("BC Line Reactive Curr OL Cmd")
         }
+        immediateWrite: true
     }
     property ScalarMetaParam bcTestingErrorCode: ScalarMetaParam {
         param: ScalarParam {

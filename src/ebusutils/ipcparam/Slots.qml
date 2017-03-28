@@ -83,6 +83,24 @@ Item {
         precision: 3
         storageType: Slot.F32
     }
+    property LinearSlot milliOhms: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1e6
+        engrB: 1e9
+        unit: "mOhm"
+        precision: 3
+        storageType: Slot.F32
+    }
+    property LinearSlot microHenries: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 1e3
+        engrB: 1e9
+        unit: "uH"
+        precision: 3
+        storageType: Slot.F32
+    }
     property LinearSlot amps: LinearSlot {
         rawA: -1e9
         engrA: -1e9
