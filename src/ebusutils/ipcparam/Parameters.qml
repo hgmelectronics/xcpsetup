@@ -374,6 +374,19 @@ ParamRegistry {
         isLiveData: true
     }
 
+    property ScalarMetaParam aioBcVehDcVolt: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00013017
+            writable: false
+            saveable: false
+            slot: slots.volts
+            name: qsTr("BC Veh DC Volt")
+        }
+    }
+
     property TableMetaParam aioDcdcRegCurr: TableMetaParam {
         param: TableParam {
             x: SlotArrayModel {
@@ -918,7 +931,7 @@ ParamRegistry {
             addr: 4 * 0x00041004
             writable: true
             saveable: false
-            slot: slots.bridgeForce
+            slot: slots.rawf32
             name: qsTr("Bridge 1 Top Force")
         }
         immediateWrite: true
@@ -931,7 +944,7 @@ ParamRegistry {
             addr: 4 * 0x00041005
             writable: true
             saveable: false
-            slot: slots.bridgeForce
+            slot: slots.rawf32
             name: qsTr("Bridge 1 Bottom Force")
         }
         immediateWrite: true
@@ -1040,7 +1053,7 @@ ParamRegistry {
             addr: 4 * 0x00041010
             writable: true
             saveable: false
-            slot: slots.bridgeForce
+            slot: slots.rawf32
             name: qsTr("Bridge 2 Top Force")
         }
         immediateWrite: true
@@ -1053,7 +1066,7 @@ ParamRegistry {
             addr: 4 * 0x00041011
             writable: true
             saveable: false
-            slot: slots.bridgeForce
+            slot: slots.rawf32
             name: qsTr("Bridge 2 Bottom Force")
         }
         immediateWrite: true
@@ -1505,6 +1518,409 @@ ParamRegistry {
         }
         immediateWrite: true
     }
+    property ScalarMetaParam bcLinkVoltRegPropCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060005
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Link Volt Reg P Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLinkVoltRegIntCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060006
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Link Volt Reg I Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLinkVoltRegDerivCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060007
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Link Volt Reg D Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcRealCurrRegPropCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060008
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Real Curr Reg P Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcRealCurrRegIntCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060009
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Real Curr Reg I Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcRealCurrRegDerivCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006000A
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Real Curr Reg D Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcReactiveCurrRegPropCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006000B
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Reactive Curr Reg P Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcReactiveCurrRegIntCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006000C
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Reactive Curr Reg I Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcReactiveCurrRegDerivCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006000D
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Reactive Curr Reg D Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLineReactorInductance: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006000E
+            writable: true
+            saveable: true
+            slot: slots.microHenries
+            name: qsTr("BC Line Reactor L")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLineReactorResistance: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006000F
+            writable: true
+            saveable: true
+            slot: slots.milliOhms
+            name: qsTr("BC Line Reactor R")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcZeroPhaseAdj: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060010
+            writable: true
+            saveable: true
+            slot: slots.radians
+            name: qsTr("BC Zero Phase Adj")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcZeroPeakScale: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060011
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Zero Peak Scale")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLineMaxDcCurr: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060012
+            writable: true
+            saveable: true
+            slot: slots.amps
+            name: qsTr("BC Line Max DC Curr")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLineMaxAcCurr: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060013
+            writable: true
+            saveable: true
+            slot: slots.amps
+            name: qsTr("BC Line Max AC Curr")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcOutCurrRegPropCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060014
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Out Curr Reg P Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcOutCurrRegIntCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060015
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Out Curr Reg I Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcOutCurrRegDerivCoeff: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060016
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Out Curr Reg D Coeff")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcDcOutVoltMin: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060017
+            writable: true
+            saveable: true
+            slot: slots.volts
+            name: qsTr("BC DC Out Volt Min")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcDcOutVoltMax: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060018
+            writable: true
+            saveable: true
+            slot: slots.volts
+            name: qsTr("BC DC Out Volt Max")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLineVoltMin: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060019
+            writable: true
+            saveable: true
+            slot: slots.volts
+            name: qsTr("BC Line Volt Min")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLineVoltMax: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006001A
+            writable: true
+            saveable: true
+            slot: slots.volts
+            name: qsTr("BC Line Volt Max")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcInvDutyRampTime: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006001B
+            writable: true
+            saveable: true
+            slot: slots.seconds
+            name: qsTr("BC Inv Duty Ramp Time")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcInvMaxDuty: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006001C
+            writable: true
+            saveable: true
+            slot: slots.percentage
+            name: qsTr("BC Inv Max Duty")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLinkVoltMin: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006001D
+            writable: true
+            saveable: true
+            slot: slots.volts
+            name: qsTr("BC Link Volt Min")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLinkVoltMax: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006001E
+            writable: true
+            saveable: true
+            slot: slots.volts
+            name: qsTr("BC Link Volt Max")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcLinkVoltFastMax: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x0006001F
+            writable: true
+            saveable: true
+            slot: slots.volts
+            name: qsTr("BC Link Volt Fast Max")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcIgbt1TempMax: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060020
+            writable: true
+            saveable: true
+            slot: slots.degC
+            name: qsTr("BC IGBT 1 Temp Max")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcIgbt2TempMax: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060021
+            writable: true
+            saveable: true
+            slot: slots.degC
+            name: qsTr("BC IGBT 2 Temp Max")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcPhaseMeasureCorrD: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060022
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Phase Measure Corr D")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcPhaseMeasureCorrQ: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00060023
+            writable: true
+            saveable: true
+            slot: slots.rawf32
+            name: qsTr("BC Phase Measure Corr Q")
+        }
+        immediateWrite: true
+    }
     property ScalarMetaParam bcSinePllStartCmd: ScalarMetaParam {
         param: ScalarParam {
             registry: root
@@ -1874,30 +2290,100 @@ ParamRegistry {
         }
         immediateWrite: true
     }
-    property ScalarMetaParam bcTestingErrorCode: ScalarMetaParam {
+
+    property TableMetaParam bcLineFiltDcCurr: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+               slot: slots.phaseName
+               count: 3
+            }
+            value: ArrayParam {
+                registry: root
+                bigEndian: true
+                dataType: Param.F32
+                addr: 4 * 0x00061300
+                minCount: 3
+                maxCount: 3
+                writable: false
+                saveable: false
+                slot: slots.amps
+                name: qsTr("BC Line Filt DC Curr")
+            }
+        }
+        isLiveData: true
+    }
+
+    property TableMetaParam bcLineFiltAcCurr: TableMetaParam {
+        param: TableParam {
+            x: SlotArrayModel {
+               slot: slots.phaseName
+               count: 3
+            }
+            value: ArrayParam {
+                registry: root
+                bigEndian: true
+                dataType: Param.F32
+                addr: 4 * 0x00061303
+                minCount: 3
+                maxCount: 3
+                writable: false
+                saveable: false
+                slot: slots.amps
+                name: qsTr("BC Line Filt AC Curr")
+            }
+        }
+        isLiveData: true
+    }
+    property ScalarMetaParam bcCtrlState: ScalarMetaParam {
         param: ScalarParam {
             registry: root
             bigEndian: true
             dataType: Param.F32
-            addr: 4 * 0x00061F00
+            addr: 4 * 0x00061306
             writable: false
             saveable: false
-            slot: slots.rawf32
-            name: qsTr("BC Testing Error Code")
+            slot: slots.count
+            name: qsTr("BC Ctrl State")
         }
     }
-    property ScalarMetaParam bcTestingEngage: ScalarMetaParam {
+
+    property ScalarMetaParam bcOutCurrCmd: ScalarMetaParam {
         param: ScalarParam {
             registry: root
             bigEndian: true
             dataType: Param.F32
-            addr: 4 * 0x00061F01
+            addr: 4 * 0x00062000
             writable: true
             saveable: false
-            slot: slots.bool01
-            name: qsTr("BC Testing Engage")
+            slot: slots.ampsLowRes
+            name: qsTr("BC Out Curr Cmd")
         }
         immediateWrite: true
+    }
+    property ScalarMetaParam canBcOutCurrCmd: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00022000
+            writable: true
+            saveable: false
+            slot: slots.ampsLowRes
+            name: qsTr("CAN BC Out Curr Cmd")
+        }
+        immediateWrite: true
+    }
+    property ScalarMetaParam bcFaultCode: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            bigEndian: true
+            dataType: Param.F32
+            addr: 4 * 0x00062001
+            writable: false
+            saveable: false
+            slot: slots.bcFaultCode
+            name: qsTr("BC Fault Code")
+        }
     }
 
 

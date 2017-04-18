@@ -203,10 +203,10 @@ Item {
                                 ScalarParamSpinBox {
                                     metaParam: registry.pwmBridge1Zero
                                 }
-                                EncodingParamEdit {
+                                ScalarParamSpinBox {
                                     metaParam: registry.pwmBridge1TopForce
                                 }
-                                EncodingParamEdit {
+                                ScalarParamSpinBox {
                                     metaParam: registry.pwmBridge1BottomForce
                                 }
                             }
@@ -243,10 +243,10 @@ Item {
                                 ScalarParamSpinBox {
                                     metaParam: registry.pwmBridge2DutyB
                                 }
-                                EncodingParamEdit {
+                                ScalarParamSpinBox {
                                     metaParam: registry.pwmBridge2TopForce
                                 }
-                                EncodingParamEdit {
+                                ScalarParamSpinBox {
                                     metaParam: registry.pwmBridge2BottomForce
                                 }
                             }
@@ -382,10 +382,10 @@ Item {
                         ScalarParamSpinBox {
                             metaParam: registry.pwmBridge1Deadband
                         }
-                        EncodingParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.pwmBridge1TopForce
                         }
-                        EncodingParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.pwmBridge1BottomForce
                         }
                         Label {
@@ -399,10 +399,10 @@ Item {
                         ScalarParamSpinBox {
                             metaParam: registry.pwmBridge2Duty
                         }
-                        EncodingParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.pwmBridge2TopForce
                         }
-                        EncodingParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.pwmBridge2BottomForce
                         }
                     }
@@ -489,7 +489,7 @@ Item {
         }
 
         Tab {
-            title: "BC"
+            title: "BC I/O"
             active: true
             AutoRefreshArea {
                 base: this
@@ -500,8 +500,6 @@ Item {
                     spacing: 5
 
                     ColumnLayout {
-                        Layout.alignment: Qt.AlignTop
-
                         ScalarParamEdit {
                             metaParam: registry.aioBcAcVoltageAB
                         }
@@ -533,6 +531,9 @@ Item {
                         }
                         ScalarParamEdit {
                             metaParam: registry.aioBcDcOutVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcVehDcVolt
                         }
                     }
 
@@ -593,7 +594,6 @@ Item {
                             metaParam: registry.aioVref2V5Volt
                         }
                     }
-
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         Label {
@@ -631,10 +631,10 @@ Item {
                         ScalarParamSpinBox {
                             metaParam: registry.pwmBridge1Deadband
                         }
-                        EncodingParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.pwmBridge1TopForce
                         }
-                        EncodingParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.pwmBridge1BottomForce
                         }
                         Label {
@@ -648,20 +648,35 @@ Item {
                         ScalarParamSpinBox {
                             metaParam: registry.pwmBridge2Duty
                         }
-                        EncodingParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.pwmBridge2TopForce
                         }
-                        EncodingParamEdit {
+                        ScalarParamSpinBox {
                             metaParam: registry.pwmBridge2BottomForce
                         }
                     }
+                }
+            }
+        }
+
+        Tab {
+            title: "BC"
+            active: true
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 5
+                    spacing: 5
+
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
                         ScalarParamSpinBox {
-                            metaParam: registry.bcMinLineLockFreq
+                            metaParam: registry.bcNomLineFreq
                         }
                         ScalarParamSpinBox {
-                            metaParam: registry.bcMaxLineLockFreq
+                            metaParam: registry.bcMaxLineLockFreqDelta
                         }
                         ScalarParamSpinBox {
                             metaParam: registry.bcSinePllPropCoeff
@@ -673,53 +688,35 @@ Item {
                             metaParam: registry.bcSinePllDerivCoeff
                         }
                         ScalarParamSpinBox {
-                            metaParam: registry.bcSinePllStartCmd
+                            metaParam: registry.bcLinkVoltRegPropCoeff
                         }
                         ScalarParamSpinBox {
-                            metaParam: registry.bcSinePllPhaseAdjCmd
+                            metaParam: registry.bcLinkVoltRegIntCoeff
                         }
-                        ScalarParamEdit {
-                            metaParam: registry.bcSinePllLocked
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLinkVoltRegDerivCoeff
                         }
-                        ScalarParamEdit {
-                            metaParam: registry.bcSinePllRawPhaseError
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcRealCurrRegPropCoeff
                         }
-                        ScalarParamEdit {
-                            metaParam: registry.bcSinePllFiltPhaseError
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcRealCurrRegIntCoeff
                         }
-                        ScalarParamEdit {
-                            metaParam: registry.bcSinePllIntegrator
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcRealCurrRegDerivCoeff
                         }
-                        ScalarParamEdit {
-                            metaParam: registry.bcSinePllFreq
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcReactiveCurrRegPropCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcReactiveCurrRegIntCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcReactiveCurrRegDerivCoeff
                         }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
-                        ScalarParamEdit {
-                            metaParam: registry.bcRealCurrRegPropCoeff
-                        }
-                        ScalarParamEdit {
-                            metaParam: registry.bcRealCurrRegIntCoeff
-                        }
-                        ScalarParamEdit {
-                            metaParam: registry.bcReactiveCurrRegPropCoeff
-                        }
-                        ScalarParamEdit {
-                            metaParam: registry.bcReactiveCurrRegIntCoeff
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.bcLineRealCurrentCmd
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.bcLineReactiveCurrentCmd
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.bcLineRealCurrentOpenLoopCmd
-                        }
-                        ScalarParamSpinBox {
-                            metaParam: registry.bcLineReactiveCurrentOpenLoopCmd
-                        }
                         ScalarParamSpinBox {
                             metaParam: registry.bcLineReactorInductance
                         }
@@ -732,27 +729,107 @@ Item {
                         ScalarParamSpinBox {
                             metaParam: registry.bcZeroPeakScale
                         }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineMaxDcCurr
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineMaxAcCurr
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcOutCurrRegPropCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcOutCurrRegIntCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcOutCurrRegDerivCoeff
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcDcOutVoltMin
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcDcOutVoltMax
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineVoltMin
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineVoltMax
+                        }
                     }
                     ColumnLayout {
                         Layout.alignment: Qt.AlignTop
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcInvDutyRampTime
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcInvMaxDuty
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLinkVoltMin
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLinkVoltMax
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLinkVoltFastMax
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcIgbt1TempMax
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcIgbt2TempMax
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcPhaseMeasureCorrD
+                        }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcPhaseMeasureCorrQ
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        Label {
+                            text: "Line Filt DC Curr"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.bcLineFiltDcCurr
+                            encodingColumnWidth: 70
+                        }
+                        Label {
+                            text: "Line Filt AC Curr"
+                        }
+                        TableParamEdit {
+                            xLabel: "Phase"
+                            tableMetaParam: registry.bcLineFiltAcCurr
+                            encodingColumnWidth: 70
+                        }
+                        Label {}
                         ScalarParamEdit {
-                            metaParam: registry.bcLineRealPower
+                            metaParam: registry.bcSinePllStartCmd
                         }
                         ScalarParamEdit {
-                            metaParam: registry.bcLineReactivePower
+                            metaParam: registry.bcSinePllPhaseAdjCmd
                         }
                         ScalarParamEdit {
-                            metaParam: registry.bcLineRmsVolts
+                            metaParam: registry.bcSinePllLocked
                         }
                         ScalarParamEdit {
-                            metaParam: registry.bcLineRmsAmps
+                            metaParam: registry.bcSinePllFreq
                         }
-                        ScalarParamEdit {
-                            metaParam: registry.bcLineRealAmps
+                        Label {
+
                         }
-                        ScalarParamEdit {
-                            metaParam: registry.bcLineReactiveAmps
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineRealCurrentOpenLoopCmd
                         }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcLineReactiveCurrentOpenLoopCmd
+                        }
+                    }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
                         ScalarParamEdit {
                             metaParam: registry.bcFiltLineRealPower
                         }
@@ -771,55 +848,61 @@ Item {
                         ScalarParamSpinBox {
                             metaParam: registry.bcLineReactivePowerCmd
                         }
+                        ScalarParamSpinBox {
+                            metaParam: registry.bcOutCurrCmd
+                        }
                         ScalarParamEdit {
-                            metaParam: registry.bcTestingErrorCode
+                            metaParam: registry.bcFaultCode
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.bcCtrlState
                         }
                         ScalarParamSpinBox {
-                            metaParam: registry.bcTestingEngage
+                            metaParam: registry.canBcOutCurrCmd
                         }
                     }
-//                    ColumnLayout {
-//                        Layout.alignment: Qt.AlignTop
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canDcdcOutVoltCmd
-//                        }
-//                        ScalarParamSpinBox {
-//                            metaParam: registry.canDcdcEnableCmd
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcDcOutCurr
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcRectVoltNeg
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcRectVoltPos
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcDcOutVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioBcVehDcVolt
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioIgbt1Temp
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.aioIgbt2Temp
+                        }
+//                        ScalarParamEdit {
+//                            metaParam: registry.aioVbatVolt
 //                        }
 //                        ScalarParamEdit {
-//                            metaParam: registry.dcdcState
+//                            metaParam: registry.aioVref2V5Volt
 //                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcOutVoltCmd
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcCurrLimIntegrator
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcAdjOutVoltCmd
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcOutVoltRegIntegrator
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcLinkVoltCmd
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcStage1AvgPhaseDuty
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcLinkVoltRegIntegrator
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcLinkPowerBasedOutputCurrent
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcXfmrPrimaryBasedOutputCurrent
-//                        }
-//                        ScalarParamEdit {
-//                            metaParam: registry.dcdcLinkPowerBasedInputCurrent
-//                        }
-//                    }
+                        ScalarParamEdit {
+                            metaParam: registry.dioCtc1Coil
+                            name: "DC Neg/Precharge Ctc"
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dioCtc2Coil
+                            name: "DC Pos Ctc"
+                        }
+                        ScalarParamEdit {
+                            metaParam: registry.dioCtc3Coil
+                            name: "AC Ctc"
+                        }
+                    }
                 }
             }
         }
