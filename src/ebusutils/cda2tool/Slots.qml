@@ -136,8 +136,8 @@ Item {
     property EncodingSlot ctcCtrlState: EncodingSlot {
         encodingList: [
             { raw: 0, engr: "Standby" },
-            { raw: 1, engr: "Batt Check" },
-            { raw: 2, engr: "Ready" },
+            { raw: 1, engr: "Ready" },
+            { raw: 2, engr: "Trac Precharge" },
             { raw: 3, engr: "Run" },
             { raw: 4, engr: "Run Stop" },
             { raw: 5, engr: "Charge" },
