@@ -521,33 +521,33 @@ QtObject {
     readonly property string tc_mult_speedratio: "06700000"
     readonly property string tc_mult_torqueratio: "06710000"
 
-    readonly property double tcc_tables_lock_a_1: 0x06800000
-    readonly property double tcc_tables_lock_a_2: 0x06810000
-    readonly property double tcc_tables_lock_a_3: 0x06820000
-    readonly property double tcc_tables_lock_a_4: 0x06830000
-    readonly property double tcc_tables_lock_a_5: 0x06840000
-    readonly property double tcc_tables_lock_a_6: 0x06850000
+    readonly property string tcc_tables_lock_a_1: "06800000"
+    readonly property string tcc_tables_lock_a_2: "06810000"
+    readonly property string tcc_tables_lock_a_3: "06820000"
+    readonly property string tcc_tables_lock_a_4: "06830000"
+    readonly property string tcc_tables_lock_a_5: "06840000"
+    readonly property string tcc_tables_lock_a_6: "06850000"
 
-    readonly property double tcc_tables_unlock_a_1: 0x06900000
-    readonly property double tcc_tables_unlock_a_2: 0x06910000
-    readonly property double tcc_tables_unlock_a_3: 0x06920000
-    readonly property double tcc_tables_unlock_a_4: 0x06930000
-    readonly property double tcc_tables_unlock_a_5: 0x06940000
-    readonly property double tcc_tables_unlock_a_6: 0x06950000
+    readonly property string tcc_tables_unlock_a_1: "06900000"
+    readonly property string tcc_tables_unlock_a_2: "06910000"
+    readonly property string tcc_tables_unlock_a_3: "06920000"
+    readonly property string tcc_tables_unlock_a_4: "06930000"
+    readonly property string tcc_tables_unlock_a_5: "06940000"
+    readonly property string tcc_tables_unlock_a_6: "06950000"
 
-    readonly property double tcc_tables_lock_b_1: 0x06a00000
-    readonly property double tcc_tables_lock_b_2: 0x06a10000
-    readonly property double tcc_tables_lock_b_3: 0x06a20000
-    readonly property double tcc_tables_lock_b_4: 0x06a30000
-    readonly property double tcc_tables_lock_b_5: 0x06a40000
-    readonly property double tcc_tables_lock_b_6: 0x06a50000
+    readonly property string tcc_tables_lock_b_1: "06a00000"
+    readonly property string tcc_tables_lock_b_2: "06a10000"
+    readonly property string tcc_tables_lock_b_3: "06a20000"
+    readonly property string tcc_tables_lock_b_4: "06a30000"
+    readonly property string tcc_tables_lock_b_5: "06a40000"
+    readonly property string tcc_tables_lock_b_6: "06a50000"
 
-    readonly property double tcc_tables_unlock_b_1: 0x06b00000
-    readonly property double tcc_tables_unlock_b_2: 0x06b10000
-    readonly property double tcc_tables_unlock_b_3: 0x06b20000
-    readonly property double tcc_tables_unlock_b_4: 0x06b30000
-    readonly property double tcc_tables_unlock_b_5: 0x06b40000
-    readonly property double tcc_tables_unlock_b_6: 0x06b50000
+    readonly property string tcc_tables_unlock_b_1: "06b00000"
+    readonly property string tcc_tables_unlock_b_2: "06b10000"
+    readonly property string tcc_tables_unlock_b_3: "06b20000"
+    readonly property string tcc_tables_unlock_b_4: "06b30000"
+    readonly property string tcc_tables_unlock_b_5: "06b40000"
+    readonly property string tcc_tables_unlock_b_6: "06b50000"
 
 
     // 8600 tcc data
@@ -702,5 +702,6 @@ QtObject {
     // ab mode
     readonly property string controller_mode: "8f000000"
     readonly property string diagnostic_mode: "8f010000"
+    readonly property string remote_mode: "8f020000"
     readonly property string security_level: "8f800000"
 }

@@ -7,21 +7,17 @@ import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
 import com.hgmelectronics.setuptools.ui 1.0
 
-ColumnLayout {
+Flow {
     property Parameters parameters
     anchors.fill: parent
     anchors.margins: 10
     spacing: 10
 
-    Flow {
-        spacing: 10
-
-        Button {
-            text: "Bus Voltages"
-            onClicked: {
-                busVoltageDialog.showNormal()
-                busVoltageDialog.raise()
-            }
+    Button {
+        text: "Bus Voltages"
+        onClicked: {
+            busVoltageDialog.showNormal()
+            busVoltageDialog.raise()
         }
 
         ScalarListDialog {
@@ -39,13 +35,13 @@ ColumnLayout {
                 }
             ]
         }
+    }
 
-        Button {
-            text: "Frequency Sensors"
-            onClicked: {
-                frequencySensorsDialog.showNormal()
-                frequencySensorsDialog.raise()
-            }
+    Button {
+        text: "Frequency Sensors"
+        onClicked: {
+            frequencySensorsDialog.showNormal()
+            frequencySensorsDialog.raise()
         }
 
         ScalarListDialog {
@@ -62,13 +58,13 @@ ColumnLayout {
                 }
             ]
         }
+    }
 
-        Button {
-            text: "Voltage Sensors"
-            onClicked: {
-                voltageSensorsDialog.showNormal()
-                voltageSensorsDialog.raise()
-            }
+    Button {
+        text: "Voltage Sensors"
+        onClicked: {
+            voltageSensorsDialog.showNormal()
+            voltageSensorsDialog.raise()
         }
 
         ScalarListDialog {
@@ -88,13 +84,13 @@ ColumnLayout {
                 }
             ]
         }
+    }
 
-        Button {
-            text: "Heap"
-            onClicked: {
-                heapDialog.showNormal()
-                heapDialog.raise()
-            }
+    Button {
+        text: "Heap"
+        onClicked: {
+            heapDialog.showNormal()
+            heapDialog.raise()
         }
 
         ScalarListDialog {
@@ -111,13 +107,13 @@ ColumnLayout {
                 }
             ]
         }
+    }
 
-        Button {
-            text: "Digital I/O"
-            onClicked: {
-                dioDialog.showNormal()
-                dioDialog.raise()
-            }
+    Button {
+        text: "Digital I/O"
+        onClicked: {
+            dioDialog.showNormal()
+            dioDialog.raise()
         }
 
         Window {
@@ -189,51 +185,51 @@ ColumnLayout {
                 base: rowLayout
             }
         }
+    }
 
-        Button {
-            text: "DTCs"
-            enabled: true
-            onClicked: {
-                dtcWindow.showNormal()
-                dtcWindow.raise()
-            }
-            Window {
-                id: dtcWindow
-                title: qsTr("DTCs")
-                width: 600
-                height: 600
+    Button {
+        text: "DTCs"
+        enabled: true
+        onClicked: {
+            dtcWindow.showNormal()
+            dtcWindow.raise()
+        }
+        Window {
+            id: dtcWindow
+            title: qsTr("DTCs")
+            width: 600
+            height: 600
 
-                RowLayout {
-                    id: dtcRowLayout
-                    anchors.fill: parent
-                    MultiroleTableParamEdit {
-                        Layout.margins: 10
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
+            RowLayout {
+                id: dtcRowLayout
+                anchors.fill: parent
+                MultiroleTableParamEdit {
+                    Layout.margins: 10
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
 
-                        tableMetaParam: parameters.dtcList
-                        roleNames: ["spn", "fmi", "oc", "active"]
-                        label: {
-                            "spn": "SPN",
-                            "fmi": "FMI",
-                            "oc": "Count",
-                            "active": "Active"
-                        }
+                    tableMetaParam: parameters.dtcList
+                    roleNames: ["spn", "fmi", "oc", "active"]
+                    label: {
+                        "spn": "SPN",
+                                "fmi": "FMI",
+                                "oc": "Count",
+                                "active": "Active"
                     }
                 }
+            }
 
-                AutoRefreshArea {
-                    base: dtcRowLayout
-                }
+            AutoRefreshArea {
+                base: dtcRowLayout
             }
         }
+    }
 
-        Button {
-            text: "Frequency Outputs"
-            onClicked: {
-                frequencyOutputDialog.showNormal()
-                frequencyOutputDialog.raise()
-            }
+    Button {
+        text: "Frequency Outputs"
+        onClicked: {
+            frequencyOutputDialog.showNormal()
+            frequencyOutputDialog.raise()
         }
 
         ScalarListDialog {
@@ -248,86 +244,165 @@ ColumnLayout {
                 }
             ]
         }
+    }
 
-        Button {
-            text: "PWM Drivers"
-            enabled: true
-            onClicked: {
-                pwmDriversWindow.showNormal()
-                pwmDriversWindow.raise()
-            }
-            Window {
-                id: pwmDriversWindow
-                title: qsTr("PWM Drivers")
-                width: 480
-                height: 400
-
-                RowLayout {
-                    id: pwmRowLayout
-                    anchors.fill: parent
-                    MultiroleTableParamEdit {
-                        Layout.margins: 10
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-
-                        tableMetaParam: parameters.controllerPWMDrivers
-                        roleNames: ["x", "frequency", "dutyCycle", "mode"]
-                    }
-                }
-
-                AutoRefreshArea {
-                    base: pwmRowLayout
-                }
-            }
+    Button {
+        text: "PWM Drivers"
+        enabled: true
+        onClicked: {
+            pwmDriversWindow.showNormal()
+            pwmDriversWindow.raise()
         }
+        Window {
+            id: pwmDriversWindow
+            title: qsTr("PWM Drivers")
+            width: 480
+            height: 400
 
-        Button {
-            text: "Switch Monitor"
-            enabled: true
-            onClicked: {
-                switchMonitorWindow.showNormal()
-                switchMonitorWindow.raise()
+            RowLayout {
+                id: pwmRowLayout
+                anchors.fill: parent
+                MultiroleTableParamEdit {
+                    Layout.margins: 10
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    tableMetaParam: parameters.controllerPWMDrivers
+                    roleNames: ["x", "frequency", "dutyCycle", "mode"]
+                }
             }
-            Window {
-                id: switchMonitorWindow
-                title: qsTr("Switch Monitor")
-                width: 520
-                height: 400
 
-                RowLayout {
-                    id: switchMonitorRowLayout
-                    anchors.fill: parent
-                    MultiroleTableParamEdit {
-                        Layout.margins: 10
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-
-                        tableMetaParam: parameters.controllerSwitchMonitor
-                        roleNames: ["x", "input", "output"]
-                        label: ({"x": "Switch", "input": "Input", "output": "Output"})
-                    }
-                }
-
-                AutoRefreshArea {
-                    base: switchMonitorRowLayout
-                }
+            AutoRefreshArea {
+                base: pwmRowLayout
             }
         }
     }
 
-    Flow {
-        spacing: 10
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-        Layout.fillHeight: true
-        GroupBox {
-            enabled: parameters.controllerSoftwareVersionArray.valid
-            title: "Software Version"
-            TextField {
-                text: parameters.controllerSoftwareVersion
-                enabled: parameters.controllerSoftwareVersionArray.valid
-                readOnly: true
-                horizontalAlignment: TextInput.AlignLeft
+    Button {
+        text: "Switch Monitor"
+        enabled: true
+        onClicked: {
+            switchMonitorWindow.showNormal()
+            switchMonitorWindow.raise()
+        }
+        Window {
+            id: switchMonitorWindow
+            title: qsTr("Switch Monitor")
+            width: 520
+            height: 400
+
+            RowLayout {
+                id: switchMonitorRowLayout
+                anchors.fill: parent
+                MultiroleTableParamEdit {
+                    Layout.margins: 10
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    tableMetaParam: parameters.controllerSwitchMonitor
+                    roleNames: ["x", "input", "output"]
+                    label: ({"x": "Switch", "input": "Input", "output": "Output"})
+                }
             }
+
+            AutoRefreshArea {
+                base: switchMonitorRowLayout
+            }
+        }
+    }
+
+    Button {
+        text: qsTr("Pressures")
+        onClicked: {
+            pressureDialog.showNormal()
+            pressureDialog.raise()
+        }
+
+        ScalarListDialog {
+            id: pressureDialog
+            title: qsTr("Pressures")
+            paramLists: [
+                ScalarMetaParamList {
+                    params: [
+                        parameters.transmissionMainLinePressure,
+                        parameters.transmissionTccPressure,
+                        parameters.transmissionClutch1Pressure,
+                        parameters.transmissionClutch2Pressure,
+                        parameters.transmissionClutch3Pressure,
+                        parameters.transmissionClutch4Pressure,
+                        parameters.transmissionClutch5Pressure,
+                        parameters.transmissionClutch6Pressure,
+                        parameters.transmissionClutch7Pressure,
+                        parameters.transmissionClutch8Pressure
+                    ]
+                }
+            ]
+        }
+    }
+
+    Button {
+        text: qsTr("Shaft Speeds")
+        onClicked: {
+            shaftSpeedsDialog.showNormal()
+            shaftSpeedsDialog.raise()
+        }
+
+        ScalarListDialog {
+            id: shaftSpeedsDialog
+            title: qsTr("Shaft Speeds")
+            paramLists: [
+                ScalarMetaParamList {
+                    params: [
+                        parameters.transmissionInputShaftSpeed,
+                        parameters.transmissionTurbineShaftSpeed,
+                        parameters.transmissionOutputShaftSpeed,
+                        parameters.transmissionShaft1Speed,
+                        parameters.transmissionShaft2Speed,
+                        parameters.transmissionShaft3Speed,
+                        parameters.transmissionShaft4Speed,
+                        parameters.transmissionShaft5Speed,
+                        parameters.transmissionShaft6Speed,
+                        parameters.transmissionShaft7Speed,
+                        parameters.transmissionShaft8Speed
+                    ]
+                }
+            ]
+        }
+    }
+
+    Button {
+        text: qsTr("Wheel Speeds")
+        onClicked: {
+            wheelSpeedsDialog.showNormal()
+            wheelSpeedsDialog.raise()
+        }
+
+        ScalarListDialog {
+            id: wheelSpeedsDialog
+            title: qsTr("Wheel Speeds")
+            paramLists: [
+                ScalarMetaParamList {
+                    params: [
+                        parameters.leftFrontWheelSpeed,
+                        parameters.rightFrontWheelSpeed,
+                        parameters.leftRearWheelSpeed,
+                        parameters.rightRearWheelSpeed
+                    ]
+                }
+            ]
+        }
+    }
+
+
+    GroupBox {
+        enabled: parameters.controllerSoftwareVersionArray.valid
+        title: "Software Version"
+        TextField {
+            text: parameters.controllerSoftwareVersion
+            enabled: parameters.controllerSoftwareVersionArray.valid
+            readOnly: true
+            horizontalAlignment: TextInput.AlignLeft
         }
     }
 }
+
