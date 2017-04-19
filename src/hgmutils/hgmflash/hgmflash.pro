@@ -46,7 +46,7 @@ DEPENDPATH += $$PWD/../../libsetuptools
 HEADERS += \
     Cs2Tool.h
 
-win32:RC_ICONS += ../qml/com/hgmelectronics/utils/hgmutils.ico
+win32:RC_ICONS += ../qml/com/hgmelectronics/utils/hgmflash-icon.ico
 
 DEPLOY_DIRS = $$OUT_PWD/../../deploy $${OUT_PWD}/../deploy
 include($$PWD/../../winmacdeploy.pri)
