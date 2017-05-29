@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += network serialport quick qml charts
+QT       += network serialport quick qml charts bluetooth
 
 QT       -= gui
 
@@ -53,7 +53,10 @@ SOURCES += \
     Param.cpp \
     Exception.cpp \
     ArrayParam.cpp \
-    ScalarParam.cpp
+    ScalarParam.cpp \
+    Xcp_Interface_Ble_Interface.cpp \
+    Xcp_Interface_Ble_Registry.cpp \
+    Xcp_Interface_Ble_DeviceModel.cpp
 
 HEADERS += \
     util.h \
@@ -92,7 +95,10 @@ HEADERS += \
     Exception.h \
     ArrayParam.h \
     ScalarParam.h \
-    Xcp_ParamLayer.h
+    Xcp_ParamLayer.h \
+    Xcp_Interface_Ble_Interface.h \
+    Xcp_Interface_Ble_Registry.h \
+    Xcp_Interface_Ble_DeviceModel.h
 
 unix:!android:!macx {
     target.path = /usr/lib

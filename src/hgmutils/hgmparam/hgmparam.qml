@@ -21,6 +21,8 @@ ApplicationWindow {
     property alias saveParametersOnWrite: saveParametersOnWriteAction.checked
     property alias paramFileDir: paramFileDialog.folder
     property alias interfaceUri: interfaceChooser.saveUri
+    property alias bleDeviceSaveAddr: bleDeviceChooser.saveAddr
+    property alias bleDeviceSaveList: bleDeviceChooser.saveList
     property CS2Defaults cs2Defaults:  CS2Defaults {
     }
 
@@ -74,10 +76,9 @@ ApplicationWindow {
         Qt.quit()
     }
 
-    property var slaveId: "%1:%2".arg(targetCmdId.value).arg(targetResId.value)
 
     onConnect: {
-        paramLayer.slaveId = application.slaveId
+        paramLayer.slaveId = targetChooser.addr
     }
 
     Settings {
@@ -93,6 +94,8 @@ ApplicationWindow {
         property alias windowX: application.x
         property alias windowY: application.y
         property alias interfaceSaveUri: application.interfaceUri
+        property alias bleDeviceSaveList: application.bleDeviceSaveList
+        property alias bleDeviceSaveAddr: application.bleDeviceSaveAddr
     }
 
     Parameters {
@@ -101,7 +104,7 @@ ApplicationWindow {
 
     ParamLayer {
         id: paramLayer
-        slaveTimeout: 100
+        slaveTimeout: interfaceChooser.selectedIsBle ? 120000 : 100;
         slaveNvWriteTimeout: 1000
         slaveBootDelay: 2000
         slaveProgResetIsAcked: false
@@ -116,7 +119,7 @@ ApplicationWindow {
         }
 
         onSlaveIdChanged: {
-            if(application.slaveId.toLowerCase() === paramLayer.slaveId.toLowerCase())
+            if(targetChooser.addr.toLowerCase() === paramLayer.slaveId.toLowerCase())
                 connectSlave()
         }
 
@@ -137,6 +140,7 @@ ApplicationWindow {
             else {
                 errorDialog.show(qsTr("Connect failed: %1").arg(
                                      OpResult.asString(result)))
+                slaveId = ""
             }
         }
         onDisconnectSlaveDone: {
@@ -169,6 +173,7 @@ ApplicationWindow {
         }
         onProgramResetSlaveDone: {
             ParamResetNeeded.set = false
+            paramLayer.slaveId = ""
             if(result !== OpResult.Success) {
                 errorDialog.show(qsTr("Program mode reset failed: %1").arg(
                                      OpResult.asString(result)))
@@ -176,6 +181,7 @@ ApplicationWindow {
         }
         onCalResetSlaveDone: {
             ParamResetNeeded.set = false
+            paramLayer.slaveId = ""
             if(result === OpResult.Success) {
                 paramLayer.programResetSlave()
             }
@@ -485,7 +491,11 @@ ApplicationWindow {
         id: paramConnectAction
         text: qsTr("Connect")
         tooltip: qsTr("Connects to the COMPUSHIFT")
-        onTriggered: application.connect()
+        onTriggered: {
+            if(interfaceChooser.selectedIsBle)
+                bleDeviceChooser.saveAddr = bleDeviceChooser.addr
+            application.connect()
+        }
         enabled: paramLayer.intfcOk && !paramLayer.slaveConnected
     }
 
@@ -655,13 +665,16 @@ ApplicationWindow {
 
     toolBar: ColumnLayout {
         anchors.fill: parent
+        id: targetChooser
+        property string addr: interfaceChooser.selectedIsCan ? "%1:%2".arg(targetCmdId.value).arg(targetResId.value) :
+                              interfaceChooser.selectedIsBle ? bleDeviceChooser.addr : ""
 
         RowLayout {
             Layout.topMargin: 5
             Layout.fillWidth: true
             Layout.leftMargin: 5
             Layout.rightMargin: 5
-            spacing: 0
+            spacing: 5
 
             XcpInterfaceChooser {
                 id: interfaceChooser
@@ -673,6 +686,7 @@ ApplicationWindow {
                 id: bitRateChooser
                 width: 100
                 enabled: !paramLayer.intfcOk
+                visible: interfaceChooser.selectedIsCan
             }
 
             HexEntryField {
@@ -681,6 +695,7 @@ ApplicationWindow {
                 title: qsTr("Command ID")
                 value: cs2Defaults.targetCmdId
                 enabled: !paramLayer.slaveConnected
+                visible: interfaceChooser.selectedIsCan
             }
 
             HexEntryField {
@@ -689,6 +704,14 @@ ApplicationWindow {
                 title: qsTr("Response ID")
                 value: cs2Defaults.targetResId
                 enabled: !paramLayer.slaveConnected
+                visible: interfaceChooser.selectedIsCan
+            }
+
+            BleDeviceChooser {
+                visible: interfaceChooser.selectedIsBle
+                id: bleDeviceChooser
+                width: 500
+                Layout.fillWidth: true
             }
         }
 

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core testlib quick
+QT       += core testlib quick bluetooth
 
 QT       -= gui
 

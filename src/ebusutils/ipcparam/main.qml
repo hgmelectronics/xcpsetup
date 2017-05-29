@@ -96,6 +96,7 @@ ApplicationWindow {
             else {
                 errorDialog.show(qsTr("Connect failed: %1").arg(
                                      OpResult.asString(result)))
+                paramLayer.slaveId = ""
             }
         }
         onDisconnectSlaveDone: {

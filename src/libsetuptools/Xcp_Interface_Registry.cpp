@@ -1,4 +1,5 @@
 #include "Xcp_Interface_Registry.h"
+#include "Xcp_Interface_Ble_Registry.h"
 #include "Xcp_Interface_Can_Registry.h"
 #include <QDebug>
 
@@ -10,6 +11,8 @@ QList<QUrl> Registry::avail()
 {
     QList<QUrl> ret;
     ret.append(Can::Registry::avail());
+    ret.append(Ble::Registry::avail());
+    /*ret.append(Usb::Registry::avail());*/
     return ret;
 }
 
@@ -17,6 +20,8 @@ Interface *Registry::make(QUrl uri)
 {
     Interface *ret = nullptr;
     ret = Can::Registry::make(uri);
+    if(!ret)
+        ret = Ble::Registry::make(uri);
     /*if(!ret)
         ret = Usb::Registry::make(uri);*/
     return ret;
@@ -26,6 +31,8 @@ QString Registry::desc(QUrl uri)
 {
     QString ret;
     ret = Can::Registry::desc(uri);
+    if(!ret.length())
+        ret = Ble::Registry::desc(uri);
     /*if(!ret.length())
         ret = Usb::Registry::desc(uri);*/
     return ret;

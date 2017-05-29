@@ -69,7 +69,7 @@ ApplicationWindow {
         registry: paramReg
         intfcUri: mainForm.intfcUri
         slaveTimeout: 100
-        slaveNvWriteTimeout: 400
+        slaveNvWriteTimeout: 1000
 
         function checkImmediateWrite() {
             if(slaveConnected && idle && ImmediateWrite.keys.length > 0) {

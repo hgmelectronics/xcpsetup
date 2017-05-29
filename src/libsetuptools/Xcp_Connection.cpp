@@ -322,7 +322,8 @@ OpResult Connection::setTarget(QString val)
     if(mConnected)
         EMIT_RETURN(setTargetDone, OpResult::InvalidOperation);
 
-    EMIT_RETURN(setTargetDone, mIntfc->setTarget(val));
+    OpResult out = mIntfc->setTarget(val);
+    EMIT_RETURN(setTargetDone, out);
 }
 
 OpResult Connection::setState(State val)

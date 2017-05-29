@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core serialport testlib quick
+QT       += core serialport testlib quick bluetooth
 
 QT       -= gui
 

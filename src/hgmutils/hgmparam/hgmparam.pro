@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets serialport charts
+QT += qml quick widgets serialport charts bluetooth
 
 SOURCES += main.cpp
 

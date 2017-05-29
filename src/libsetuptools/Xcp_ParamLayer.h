@@ -123,10 +123,12 @@ private:
     void onParamDownloadDone(SetupTools::OpResult result, XcpPtr base, const std::vector<quint8> &data);
     void onParamUploadDone(SetupTools::OpResult result, XcpPtr base, int len, const std::vector<quint8> &data);
     void onRegistryWriteCacheDirtyChanged();
+    void onConnSetTargetDone(SetupTools::OpResult result);
 
     enum class State
     {
         IntfcNotOk,
+        SettingTarget,
         Disconnected,
         Connect,
         Connected,

@@ -33,6 +33,7 @@
         <file>ui/LogWindow.qml</file>
         <file>ui/ShowLogButton.qml</file>
         <file>ui/RoleModeledLineSeries.qml</file>
+        <file>ui/BleDeviceChooser.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
