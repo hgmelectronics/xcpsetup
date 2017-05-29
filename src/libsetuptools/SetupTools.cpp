@@ -1,5 +1,6 @@
 #include <QQmlApplicationEngine>
 #include <QtQml>
+#include <QQuickWindow>
 #include "SetupTools.h"
 #include "ParamRegistry.h"
 #include "ProgFile.h"
@@ -22,7 +23,6 @@
 #include "ModelStringProxy.h"
 #include "RoleXYModelMapper.h"
 #include "XYSeriesAutoAxis.h"
-
 namespace SetupTools
 {
 
@@ -68,7 +68,7 @@ void registerTypes()
 
 void setupEnvironment()
 {
-
+    QQuickWindow::setSceneGraphBackend(QSGRendererInterface::Software);
 }
 
 }
