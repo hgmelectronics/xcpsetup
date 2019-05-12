@@ -1,13 +1,13 @@
 TEMPLATE = app
 
-QT += qml quick widgets serialport charts
+QT += qml quick widgets serialport charts bluetooth
 
 SOURCES += main.cpp
 
 RESOURCES += qml.qrc \
     $$PWD/../../qml/com/hgmelectronics/setuptools/setuptools.qrc
 
-QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
+QMAKE_CXXFLAGS += -std=c++14 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 
 static {
     QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections
@@ -39,6 +39,23 @@ else:unix: {
 INCLUDEPATH += $$PWD/../../libsetuptools
 DEPENDPATH += $$PWD/../../libsetuptools
 
+win32:CONFIG(release, debug|release): {
+    LIBS += -L$$OUT_PWD/../ebussetuptools/release/ -lebussetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../ebussetuptools/release/libebussetuptools.a
+}
+else:win32:CONFIG(debug, debug|release): {
+    LIBS += -L$$OUT_PWD/../ebussetuptools/debug/ -lebussetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../ebussetuptools/debug/libebussetuptools.a
+}
+else:unix: {
+    LIBS += -L$$OUT_PWD/../ebussetuptools/ -lebussetuptools
+    PRE_TARGETDEPS += $$OUT_PWD/../ebussetuptools/libebussetuptools.a
+}
+
+INCLUDEPATH += $$PWD/../ebussetuptools
+DEPENDPATH += $$PWD/../ebussetuptools
+
 HEADERS +=
 
+DEPLOY_DIRS = $$OUT_PWD/../../deploy
 include($$PWD/../../winmacdeploy.pri)

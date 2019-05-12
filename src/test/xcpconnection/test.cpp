@@ -6,7 +6,7 @@
 namespace QTest
 {
 template<>
-char *toString(const SetupTools::Xcp::OpResult &res)
+char *toString(const SetupTools::OpResult &res)
 {
     QByteArray ba = "OpResult(";
     ba += QByteArray::number(static_cast<int>(res));
@@ -213,9 +213,9 @@ void Test::downloadUploadSmall()
     QCOMPARE(mConn->open(), OpResult::Success);
     std::vector<quint8> downloadData(reinterpret_cast<const quint8 *>(downloadDataArr.begin()), reinterpret_cast<const quint8 *>(downloadDataArr.end()));
     std::vector<quint8> uploadData(reinterpret_cast<const quint8 *>(uploadDataArr.begin()), reinterpret_cast<const quint8 *>(uploadDataArr.end()));
-    QCOMPARE(mConn->download(XcpPtr({quint32(downloadBase), 0}), downloadData), OpResult::Success);
+    QCOMPARE(mConn->download(XcpPtr(quint32(downloadBase), 0), downloadData), OpResult::Success);
     std::vector<quint8> uploadedData;
-    QCOMPARE(mConn->upload(XcpPtr({quint32(uploadBase), 0}), uploadData.size(), &uploadedData), OpResult::Success);
+    QCOMPARE(mConn->upload(XcpPtr(quint32(uploadBase), 0), uploadData.size(), &uploadedData), OpResult::Success);
     QCOMPARE(uploadData, uploadedData);
     QCOMPARE(mConn->close(), OpResult::Success);
 }

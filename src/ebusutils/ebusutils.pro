@@ -5,7 +5,10 @@ SUBDIRS += \
     ebussetuptools \
 	ibemparam \
     ibemtool \
-    multilist_demo
+	ipcparam \
+    multilist_demo \
+	ytbtool
 
+cda2tool.depends = ebussetuptools
 ibemtool.depends = ebussetuptools
 multilist_demo.depends = ebussetuptools

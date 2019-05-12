@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets serialport charts
+QT += qml quick widgets serialport charts bluetooth
 
 SOURCES += main.cpp \
     IbemTool.cpp
@@ -8,7 +8,7 @@ SOURCES += main.cpp \
 RESOURCES += qml.qrc \
     $$PWD/../../qml/com/hgmelectronics/setuptools/setuptools.qrc
 
-QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
+QMAKE_CXXFLAGS += -std=c++14 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 
 static {
     QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections
@@ -42,4 +42,5 @@ DEPENDPATH += $$PWD/../ebussetuptools
 HEADERS += \
     IbemTool.h
 
+DEPLOY_DIRS = $$OUT_PWD/../../deploy
 include($$PWD/../../winmacdeploy.pri)

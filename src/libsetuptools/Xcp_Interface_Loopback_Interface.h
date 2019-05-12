@@ -20,12 +20,14 @@ class Interface : public ::SetupTools::Xcp::Interface::Interface
 public:
     Interface(QObject *parent = NULL);
     virtual ~Interface() {}
-    virtual OpResult transmit(const std::vector<quint8> & data, bool replyExpected = true);             //!< Send one XCP packet to the slave
-    virtual OpResult receive(int timeoutMsec, std::vector<std::vector<quint8> > &out);   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
-    virtual OpResult clearReceived();
+    virtual OpResult setTarget(const QString &target) override;
+    virtual OpResult transmit(const std::vector<quint8> & data, bool replyExpected = true) override;             //!< Send one XCP packet to the slave
+    virtual OpResult receive(int timeoutMsec, std::vector<std::vector<quint8> > &out) override;   //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
+    virtual OpResult clearReceived() override;
     void slaveTransmit(const std::vector<quint8> & data);             //!< Send one XCP packet to the master
     std::vector<std::vector<quint8> > slaveReceive(int timeoutMsec);   //!< Fetch all packets from the master currently in the Tx buffer, returning after timeout if no packets
-    virtual SetupTools::Xcp::OpResult setPacketLog(bool enable);
+    virtual SetupTools::OpResult setPacketLog(bool enable) override;
+    QString connectedTarget() override;
     void setHasReliableTx(bool val);
     virtual bool hasReliableTx() override;
     virtual bool allowsMultipleReplies() override;

@@ -99,6 +99,12 @@ RowLayout {
         ScalarParamEdit {
             metaParam: parameters.evJ1939CtlSourceAddress
         }
+        EncodingParamEdit {
+            metaParam: parameters.evBmsType
+        }
+        ScalarParamSpinBox {
+            metaParam: parameters.evMotorRatedTorque
+        }
         ScalarParamEdit {
             metaParam: parameters.evDriveFaultCount
         }

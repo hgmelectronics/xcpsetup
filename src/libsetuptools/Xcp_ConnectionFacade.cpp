@@ -16,11 +16,13 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(mConnThread, &QThread::finished, mConn, &ConnectionFacade::deleteLater);
     mConnThread->start();
 
+    connect(this, &ConnectionFacade::connSetTarget, mConn, &Connection::setTarget, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connSetState, mConn, &Connection::setState, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connUpload, mConn, &Connection::upload, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connDownload, mConn, &Connection::download, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connNvWrite, mConn, &Connection::nvWrite, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connSetCalPage, mConn, &Connection::setCalPage, Qt::QueuedConnection);
+    connect(this, &ConnectionFacade::connCopyCalPage, mConn, &Connection::copyCalPage, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connProgramClear, mConn, &Connection::programClear, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connProgramRange, mConn, &Connection::programRange, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connProgramVerify, mConn, &Connection::programVerify, Qt::QueuedConnection);
@@ -28,20 +30,23 @@ ConnectionFacade::ConnectionFacade(QObject *parent) :
     connect(this, &ConnectionFacade::connBuildChecksum, mConn, &Connection::buildChecksum, Qt::QueuedConnection);
     connect(this, &ConnectionFacade::connGetAvailSlavesStr, mConn, &Connection::getAvailSlavesStr, Qt::QueuedConnection);
 
-    connect(mConn, &Connection::setStateDone, this, &ConnectionFacade::onConnSetStateDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::uploadDone, this, &ConnectionFacade::onConnUploadDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::downloadDone, this, &ConnectionFacade::onConnDownloadDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::nvWriteDone, this, &ConnectionFacade::onConnNvWriteDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::setCalPageDone, this, &ConnectionFacade::onConnSetCalPageDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::programClearDone, this, &ConnectionFacade::onConnProgramClearDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::programRangeDone, this, &ConnectionFacade::onConnProgramRangeDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::programVerifyDone, this, &ConnectionFacade::onConnProgramVerifyDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::programResetDone, this, &ConnectionFacade::onConnProgramResetDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::buildChecksumDone, this, &ConnectionFacade::onConnBuildChecksumDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::getAvailSlavesStrDone, this, &ConnectionFacade::onConnGetAvailSlavesStrDone, Qt::QueuedConnection);
-    connect(mConn, &Connection::opMsg, this, &ConnectionFacade::onConnOpMsg, Qt::QueuedConnection);
-    connect(mConn, &Connection::stateChanged, this, &ConnectionFacade::onConnStateChanged, Qt::QueuedConnection);
-    connect(mConn, &Connection::opProgressChanged, this, &ConnectionFacade::onConnOpProgressChanged, Qt::QueuedConnection);
+    connect(mConn, &Connection::setTargetDone, this, &ConnectionFacade::setTargetDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::setStateDone, this, &ConnectionFacade::setStateDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::uploadDone, this, &ConnectionFacade::uploadDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::downloadDone, this, &ConnectionFacade::downloadDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::nvWriteDone, this, &ConnectionFacade::nvWriteDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::setCalPageDone, this, &ConnectionFacade::setCalPageDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::copyCalPageDone, this, &ConnectionFacade::copyCalPageDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::programClearDone, this, &ConnectionFacade::programClearDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::programRangeDone, this, &ConnectionFacade::programRangeDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::programVerifyDone, this, &ConnectionFacade::programVerifyDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::programResetDone, this, &ConnectionFacade::programResetDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::buildChecksumDone, this, &ConnectionFacade::buildChecksumDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::getAvailSlavesStrDone, this, &ConnectionFacade::getAvailSlavesStrDone, Qt::QueuedConnection);
+    connect(mConn, &Connection::opMsg, this, &ConnectionFacade::opMsg, Qt::QueuedConnection);
+    connect(mConn, &Connection::stateChanged, this, &ConnectionFacade::stateChanged, Qt::QueuedConnection);
+    connect(mConn, &Connection::opProgressChanged, this, &ConnectionFacade::opProgressChanged, Qt::QueuedConnection);
+    connect(mConn, &Connection::connectedTargetChanged, this, &ConnectionFacade::onConnConnectedTargetChanged, Qt::QueuedConnection);
 }
 
 ConnectionFacade::~ConnectionFacade()
@@ -59,12 +64,15 @@ void ConnectionFacade::setIntfcUri(QUrl val)
 {
     if(mIntfcUri != val)
     {
+        Interface::Interface *intfcToDelete = nullptr; // must delete after calling mConn->setIntfc(), which needs the old interface to exist
         if(mIntfc && mIntfcOwned)
-            delete mIntfc;
+            intfcToDelete = mIntfc;
         mIntfcUri = val;
         mIntfc = Interface::Registry().make(mIntfcUri);
         mIntfcOwned = true;
         mConn->setIntfc(mIntfc);
+        if(intfcToDelete)
+            delete intfcToDelete;
     }
 }
 
@@ -84,30 +92,6 @@ void ConnectionFacade::setIntfc(Interface::Interface *intfc, QUrl uri)
         mIntfcOwned = false;
         mConn->setIntfc(intfc);
     }
-}
-
-QString ConnectionFacade::slaveId()
-{
-    SetupTools::Xcp::Interface::Can::Interface *canIntfc = qobject_cast<SetupTools::Xcp::Interface::Can::Interface *>(mIntfc);
-    if(!canIntfc)
-        return QString("");
-
-    boost::optional<Interface::Can::SlaveId> id = canIntfc->getSlaveId();
-    if(!id)
-        return QString("");
-
-    return Xcp::Interface::Can::SlaveIdToStr(id.get());
-}
-
-void ConnectionFacade::setSlaveId(QString val)
-{
-    SetupTools::Xcp::Interface::Can::Interface *canIntfc = qobject_cast<SetupTools::Xcp::Interface::Can::Interface *>(mIntfc);
-    if(!canIntfc)
-        return;
-
-    boost::optional<Interface::Can::SlaveId> slaveId = Interface::Can::StrToSlaveId(val);
-    if(slaveId)
-        canIntfc->connect(slaveId.get());
 }
 
 int ConnectionFacade::timeout()
@@ -180,6 +164,11 @@ void ConnectionFacade::setState(Connection::State val)
     emit connSetState(val);
 }
 
+void ConnectionFacade::setTarget(QString val)
+{
+    emit connSetTarget(val);
+}
+
 double ConnectionFacade::opProgress()
 {
     return mConn->opProgress();
@@ -220,6 +209,11 @@ void ConnectionFacade::setCalPage(quint8 segment, quint8 page)
     emit connSetCalPage(segment, page);
 }
 
+void ConnectionFacade::copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    emit connCopyCalPage(fromSegment, fromPage, toSegment, toPage);
+}
+
 void ConnectionFacade::programClear(XcpPtr base, int len)
 {
     emit connProgramClear(base, len);
@@ -250,147 +244,12 @@ void ConnectionFacade::getAvailSlavesStr(QString bcastId, QString filter)
     emit connGetAvailSlavesStr(bcastId, filter, NULL);
 }
 
-void ConnectionFacade::onConnOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext)
+void ConnectionFacade::onConnConnectedTargetChanged(QString val)
 {
-    emit opMsg(result, info, ext);
+    if(updateDelta<>(mConnectedTarget, val))
+        emit connectedTargetChanged(val);
 }
 
-void ConnectionFacade::onConnStateChanged()
-{
-    emit stateChanged();
-}
-
-void ConnectionFacade::onConnOpProgressChanged()
-{
-    emit opProgressChanged();
-}
-
-void ConnectionFacade::onConnSetStateDone(OpResult result)
-{
-    emit setStateDone(result);
-}
-
-void ConnectionFacade::onConnUploadDone(OpResult result, XcpPtr base, int len, std::vector<quint8> data)
-{
-    emit uploadDone(result, base, len, data);
-}
-
-void ConnectionFacade::onConnDownloadDone(OpResult result, XcpPtr base, std::vector<quint8> data)
-{
-    emit downloadDone(result, base, data);
-}
-
-void ConnectionFacade::onConnNvWriteDone(OpResult result)
-{
-    emit nvWriteDone(result);
-}
-
-void ConnectionFacade::onConnSetCalPageDone(OpResult result, quint8 segment, quint8 page)
-{
-    emit setCalPageDone(result, segment, page);
-}
-
-void ConnectionFacade::onConnProgramClearDone(OpResult result, XcpPtr base, int len)
-{
-    emit programClearDone(result, base, len);
-}
-
-void ConnectionFacade::onConnProgramRangeDone(OpResult result, XcpPtr base, std::vector<quint8> data, bool finalEmptyPacket)
-{
-    emit programRangeDone(result, base, data, finalEmptyPacket);
-}
-
-void ConnectionFacade::onConnProgramVerifyDone(OpResult result, XcpPtr mta, quint32 crc)
-{
-    emit programVerifyDone(result, mta, crc);
-}
-
-void ConnectionFacade::onConnProgramResetDone(OpResult result)
-{
-    emit programResetDone(result);
-}
-
-void ConnectionFacade::onConnBuildChecksumDone(OpResult result, XcpPtr base, int len, CksumType type, quint32 cksum)
-{
-    emit buildChecksumDone(result, base, len, type, cksum);
-}
-
-void ConnectionFacade::onConnGetAvailSlavesStrDone(OpResult result, QString bcastId, QString filter, QList<QString> slaveIds)
-{
-    emit getAvailSlavesStrDone(result, bcastId, filter, slaveIds);
-}
-
-
-SimpleDataLayer::SimpleDataLayer() : mConn(new ConnectionFacade(this))
-{
-    connect(mConn, &ConnectionFacade::uploadDone, this, &SimpleDataLayer::onConnUploadDone);
-    connect(mConn, &ConnectionFacade::downloadDone, this, &SimpleDataLayer::onConnDownloadDone);
-    mConn->setTimeout(100);
-}
-
-QUrl SimpleDataLayer::intfcUri()
-{
-    return mConn->intfcUri();
-}
-
-void SimpleDataLayer::setIntfcUri(QUrl val)
-{
-    mConn->setIntfcUri(val);
-}
-
-QString SimpleDataLayer::slaveId()
-{
-    return mConn->slaveId();
-}
-
-void SimpleDataLayer::setSlaveId(QString val)
-{
-    if(val.size() == 0)
-    {
-        mConn->setState(Connection::State::Closed);
-    }
-    else
-    {
-        mConn->setSlaveId(val);
-        mConn->setState(Connection::State::CalMode);    // normally would have something more sophisticated, like open only when needed and close during cleanup
-    }
-}
-
-void SimpleDataLayer::uploadUint32(quint32 base)
-{
-    mConn->setCalPage(0, 0);
-    SetupTools::Xcp::XcpPtr ptr = {base, 0};
-    mConn->upload(ptr, 4); // ignoring return values for this test case
-}
-
-void SimpleDataLayer::onConnUploadDone(OpResult result, XcpPtr base, int len, const std::vector<quint8> &dataVec)
-{
-    Q_UNUSED(base);
-    Q_UNUSED(len);
-    if(result != OpResult::Success)
-        emit uploadUint32Done(static_cast<int>(result), 0);
-    else if(dataVec.size() != 4)
-        emit uploadUint32Done(static_cast<int>(OpResult::BadReply), 0);
-    else
-        emit uploadUint32Done(static_cast<int>(OpResult::Success), mConn->fromSlaveEndian<quint32>(dataVec.data()));
-}
-
-void SimpleDataLayer::downloadUint32(quint32 base, quint32 data)
-{
-    mConn->setCalPage(0, 0);
-    SetupTools::Xcp::XcpPtr ptr = {base, 0};
-    std::vector<quint8> dataVec;
-    dataVec.assign(4, 0);
-    mConn->toSlaveEndian<quint32>(data, dataVec.data());
-    mConn->download(ptr, dataVec);
-}
-
-void SimpleDataLayer::onConnDownloadDone(OpResult result, XcpPtr base, const std::vector<quint8> &data)
-{
-    Q_UNUSED(base);
-    Q_UNUSED(data);
-    emit downloadUint32Done(static_cast<int>(result));
-}
 
 } // namespace Xcp
 } // namespace SetupTools

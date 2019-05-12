@@ -24,6 +24,8 @@ ProgramLayer::ProgramLayer(QObject *parent) :
     connect(mConn, &ConnectionFacade::stateChanged, this, &ProgramLayer::onConnStateChanged);
     connect(mConn, &ConnectionFacade::opProgressChanged, this, &ProgramLayer::onConnOpProgressChanged);
     connect(mConn, &ConnectionFacade::opMsg, this, &ProgramLayer::onConnOpMsg);
+    connect(mConn, &ConnectionFacade::connectedTargetChanged, this, &ProgramLayer::slaveIdChanged);
+    connect(mConn, &ConnectionFacade::setTargetDone, this, &ProgramLayer::setSlaveIdDone);
 }
 
 ProgramLayer::~ProgramLayer()
@@ -37,6 +39,13 @@ QUrl ProgramLayer::intfcUri()
 void ProgramLayer::setIntfcUri(QUrl uri)
 {
     mConn->setIntfcUri(uri);
+    if(mConn->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mConn->intfc()->setPacketLog(true);
+        else
+            mConn->intfc()->setPacketLog(false);
+    }
     emit intfcChanged();
 }
 
@@ -48,17 +57,24 @@ Interface::Interface *ProgramLayer::intfc()
 void ProgramLayer::setIntfc(Interface::Interface *intfc, QUrl uri)
 {
     mConn->setIntfc(intfc, uri);
+    if(mConn->intfc())
+    {
+        if(QProcessEnvironment::systemEnvironment().value("XCP_PACKET_LOG", "0") == "1")
+            mConn->intfc()->setPacketLog(true);
+        else
+            mConn->intfc()->setPacketLog(false);
+    }
     emit intfcChanged();
 }
 
 QString ProgramLayer::slaveId()
 {
-    return mConn->slaveId();
+    return mConn->connectedTarget();
 }
 
 void ProgramLayer::setSlaveId(QString id)
 {
-    mConn->setSlaveId(id);
+    mConn->setTarget(id);
 }
 
 bool ProgramLayer::idle()
@@ -308,7 +324,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         {
             mState = State::Idle;
             emit stateChanged();
-            emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+            emit programDone(SetupTools::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mActiveProgBlock = mActiveProg->blocks().begin();
         mActiveBytesErased = 0;
@@ -326,7 +342,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         {
             mState = State::Idle;
             emit stateChanged();
-            emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+            emit programDone(SetupTools::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         {
             Q_ASSERT(mActiveProg->blocks().size() == 1);
@@ -349,7 +365,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         {
             mState = State::Idle;
             emit stateChanged();
-            emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+            emit programDone(SetupTools::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mActiveProgBlock = mActiveProg->blocks().begin();
         mConn->buildChecksum({(*mActiveProgBlock)->base, mActiveAddrExt}, (*mActiveProgBlock)->data.size());
@@ -367,7 +383,7 @@ void ProgramLayer::onConnSetStateDone(OpResult result)
         {
             mState = State::Idle;
             emit stateChanged();
-            emit programDone(SetupTools::Xcp::OpResult::BadReply, mActiveProg, mActiveAddrExt);
+            emit programDone(SetupTools::OpResult::BadReply, mActiveProg, mActiveAddrExt);
         }
         mConn->programReset();
         break;

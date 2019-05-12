@@ -16,6 +16,11 @@ Window {
     minimumWidth: 500
     minimumHeight: 220 + speedPlot.height
 
+    onVisibleChanged: {
+        width = width + 1   // hack to force redraw of plot - there is a bug with the QPainter scenegraph renderer that causes it to not show on closing and reopening window
+        width = width - 1
+    }
+
     function isDefined(val) {
         return (typeof(val) !== "undefined") && (val !== null)
     }
@@ -224,9 +229,9 @@ Window {
             tabSeparated.text = Clipboard.text
             if(tabSeparated.rows == speedTableParam.param.value.count && tabSeparated.columns == tableColumns) {
                 for(var i = 0; i < tabSeparated.rows; ++i) {
-                    if(speedTableParam.param.xModel.flags(i) & Qt.ItemIsEditable)
+                    if(speedTableParam.param.xStringModel.flags(i) & Qt.ItemIsEditable)
                         speedTableParam.param.x.set(i, tabSeparated.get(i, 0));
-                    if(speedTableParam.param.valueModel.flags(i) & Qt.ItemIsEditable)
+                    if(speedTableParam.param.valueStringModel.flags(i) & Qt.ItemIsEditable)
                         speedTableParam.param.value.set(i, tabSeparated.get(i, 1));
                 }
             }
@@ -300,7 +305,7 @@ Window {
             RoleModeledLineSeries {
                 id: series1
                 visible: root.speedTableParam.param.value.valid
-                model: root.speedTableParam.param.stringModel
+                model: root.speedTableParam.param.floatModel
 
                 axisX: autoAxis.xAxis
                 axisY: autoAxis.yAxis

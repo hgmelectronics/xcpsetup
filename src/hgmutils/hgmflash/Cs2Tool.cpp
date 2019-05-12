@@ -18,6 +18,7 @@ Cs2Tool::Cs2Tool(QObject *parent) :
     connect(mProgLayer, &Xcp::ProgramLayer::programResetDone, this, &Cs2Tool::onProgramResetDone);
     connect(mProgLayer, &Xcp::ProgramLayer::opProgressChanged, this, &Cs2Tool::onProgLayerProgressChanged);
     connect(mProgLayer, &Xcp::ProgramLayer::opMsg, this, &Cs2Tool::onProgLayerOpMsg);
+    connect(mProgLayer, &Xcp::ProgramLayer::disconnectDone, this, &Cs2Tool::onProgLayerDisconnectDone);
     mProgLayer->setSlaveTimeout(TIMEOUT_MSEC);
     mProgLayer->setSlaveBootDelay(BOOT_DELAY_MSEC);
     mProgLayer->setSlaveProgResetIsAcked(false);
@@ -197,7 +198,7 @@ void Cs2Tool::startProgramming()
             || !mProgFileOkToFlash
             || mState != State::Idle)
     {
-        emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
+        emit programmingDone(static_cast<int>(SetupTools::OpResult::InvalidOperation));
         return;
     }
 
@@ -205,7 +206,14 @@ void Cs2Tool::startProgramming()
 
     setState(State::Program_InitialConnect);
     
-    mProgLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
+    QString slaveId = mSlaveCmdId + ":" + mSlaveResId;
+    mProgLayer->setSlaveId(slaveId);
+    if(mProgLayer->slaveId().toLower() != slaveId.toLower())
+    {
+        setState(State::Idle);
+        emit programmingDone(static_cast<int>(SetupTools::OpResult::NoIntfc));
+        return;
+    }
     mProgLayer->calMode();
 }
 
@@ -213,21 +221,28 @@ void Cs2Tool::startReset()
 {
     if(mState != State::Idle)
     {
-        emit resetDone(static_cast<int>(SetupTools::Xcp::OpResult::InvalidOperation));
+        emit resetDone(static_cast<int>(SetupTools::OpResult::InvalidOperation));
         return;
     }
 
     setState(State::Reset_Reset);
 
-    mProgLayer->setSlaveId(mSlaveCmdId + ":" + mSlaveResId);
+    QString slaveId = mSlaveCmdId + ":" + mSlaveResId;
+    mProgLayer->setSlaveId(slaveId);
+    if(mProgLayer->slaveId().toLower() != slaveId.toLower())
+    {
+        emit resetDone(static_cast<int>(SetupTools::OpResult::NoIntfc));
+        setState(State::Idle);
+        return;
+    }
     mProgLayer->programReset();
 }
 
-void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
+void Cs2Tool::onProgCalModeDone(OpResult result)
 {
     if(mState == State::Program_InitialConnect)
     {
-        if(result != SetupTools::Xcp::OpResult::Success)
+        if(result != SetupTools::OpResult::Success)
         {
             setState(State::Idle);
             emit programmingDone(static_cast<int>(result));
@@ -248,9 +263,9 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
             }
         }
     }
-    if(mState == State::Program_Reconnect)
+    else if(mState == State::Program_Reconnect)
     {
-        if(result != SetupTools::Xcp::OpResult::Success)
+        if(result != SetupTools::OpResult::Success)
         {
             setState(State::Idle);
             emit programmingDone(static_cast<int>(result));
@@ -266,16 +281,16 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
             else
             {
                 setState(State::Idle);
-                emit programmingDone(static_cast<int>(Xcp::OpResult::BadReply));
+                emit programmingDone(static_cast<int>(OpResult::BadReply));
             }
         }
     }
     else if(mState == State::Program_CalMode)
     {
-        if(result == SetupTools::Xcp::OpResult::Success)
+        if(result == SetupTools::OpResult::Success)
         {
-            setState(State::Idle);
-            emit programmingDone(static_cast<int>(SetupTools::Xcp::OpResult::Success));
+            setState(State::Program_Disconnect);
+            mProgLayer->disconnect();
         }
         else
         {
@@ -293,16 +308,16 @@ void Cs2Tool::onProgCalModeDone(Xcp::OpResult result)
     }
     else
     {
-        Q_ASSERT(0);
+        Q_ASSERT(mState == State::Program_InitialConnect || mState == State::Program_Reconnect || mState == State::Program_CalMode);
     }
 }
 
-void Cs2Tool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt)
+void Cs2Tool::onProgramDone(SetupTools::OpResult result, FlashProg *prog, quint8 addrExt)
 {
     Q_UNUSED(prog);
     Q_UNUSED(addrExt);
     Q_ASSERT(mState == State::Program_Program);
-    if(result != SetupTools::Xcp::OpResult::Success)
+    if(result != SetupTools::OpResult::Success)
     {
         setState(State::Idle);
         emit programmingDone(static_cast<int>(result));
@@ -313,13 +328,13 @@ void Cs2Tool::onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, q
     mProgLayer->programVerify(&mInfilledProgData, CKSUM_TYPE);
 }
 
-void Cs2Tool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
+void Cs2Tool::onProgramVerifyDone(SetupTools::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt)
 {
     Q_UNUSED(prog);
     Q_UNUSED(type);
     Q_UNUSED(addrExt);
     Q_ASSERT(mState == State::Program_Verify);
-    if(result != SetupTools::Xcp::OpResult::Success)
+    if(result != SetupTools::OpResult::Success)
     {
         setState(State::Idle);
         emit programmingDone(static_cast<int>(result));
@@ -329,11 +344,11 @@ void Cs2Tool::onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *p
     setState(State::Program_CalMode);
     mProgLayer->calMode();
 }
-void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
+void Cs2Tool::onProgramResetDone(SetupTools::OpResult result)
 {
     if(mState == State::Program_ResetToBootloader)
     {
-        if(result != SetupTools::Xcp::OpResult::Success)
+        if(result != SetupTools::OpResult::Success)
         {
             setState(State::Idle);
             emit programmingDone(static_cast<int>(result));
@@ -349,7 +364,7 @@ void Cs2Tool::onProgramResetDone(SetupTools::Xcp::OpResult result)
     }
     else
     {
-        Q_ASSERT(0);
+        Q_ASSERT(mState == State::Program_ResetToBootloader || mState == State::Reset_Reset);
     }
 }
 
@@ -366,10 +381,23 @@ void Cs2Tool::onProgLayerProgressChanged()
     emit stateChanged();
 }
 
-void Cs2Tool::onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
+void Cs2Tool::onProgLayerOpMsg(SetupTools::OpResult result, QString str, SetupTools::Xcp::Connection::OpExtInfo ext)
 {
     Q_UNUSED(ext);
     emit fault(result, str);
+}
+
+void Cs2Tool::onProgLayerDisconnectDone(OpResult result)
+{
+    Q_UNUSED(result);
+
+    Q_ASSERT(mState == State::Program_Disconnect);
+
+    if(mState == State::Program_Disconnect)
+    {
+        setState(State::Idle);
+        emit programmingDone(static_cast<int>(SetupTools::OpResult::Success));
+    }
 }
 
 void Cs2Tool::updateProgClear()

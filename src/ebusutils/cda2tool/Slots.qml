@@ -11,6 +11,14 @@ Item {
         unit: ""
         precision: 0
     }
+    property LinearSlot rawu32: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 0xFFFFFFFF
+        engrB: 0xFFFFFFFF
+        unit: ""
+        precision: 0
+    }
     property LinearSlot bool01: LinearSlot {
         rawA: 0
         engrA: 0
@@ -24,6 +32,15 @@ Item {
         engrA: -0x7FFFFFFF
         rawB: 0x7FFFFFFF
         engrB: 0x7FFFFFFF
+        unit: ""
+        precision: 0
+        base: 16
+    }
+    property LinearSlot rawu32hex: LinearSlot {
+        rawA: 0
+        engrA: 0
+        rawB: 0xFFFFFFFF
+        engrB: 0xFFFFFFFF
         unit: ""
         precision: 0
         base: 16
@@ -119,8 +136,8 @@ Item {
     property EncodingSlot ctcCtrlState: EncodingSlot {
         encodingList: [
             { raw: 0, engr: "Standby" },
-            { raw: 1, engr: "Batt Check" },
-            { raw: 2, engr: "Ready" },
+            { raw: 1, engr: "Ready" },
+            { raw: 2, engr: "Trac Precharge" },
             { raw: 3, engr: "Run" },
             { raw: 4, engr: "Run Stop" },
             { raw: 5, engr: "Charge" },
@@ -176,9 +193,9 @@ Item {
         precision: 0
     }
     property LinearSlot timeSysTick: LinearSlot {
-        rawA: -9000000
+        rawA: -1000000
         engrA: -1000
-        rawB: 9000000
+        rawB: 1000000
         engrB: 1000
         unit: "ms"
         precision: 4

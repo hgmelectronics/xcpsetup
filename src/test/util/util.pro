@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core testlib quick serialport charts
+QT       += core testlib quick serialport charts bluetooth
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11 -Wall -Wuninitialized
+QMAKE_CXXFLAGS += -std=c++14 -Wall -Wuninitialized
 
 TARGET = util
 CONFIG   += console

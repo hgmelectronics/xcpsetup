@@ -28,7 +28,7 @@ GroupBox {
             width: groupBox.width - label.implicitWidth - 16
             Layout.fillWidth: true
             text: param.stringVal
-            readOnly: !param.range.writable
+            readOnly: !param.writable
             horizontalAlignment: TextInput.AlignRight
             onEditingFinished: {
                 if(param.stringVal != text) {

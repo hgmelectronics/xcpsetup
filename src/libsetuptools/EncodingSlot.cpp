@@ -96,46 +96,44 @@ double EncodingSlot::asFloat(QVariant raw) const
     if(!convOk)
         rawDouble = NAN;
 
+    if(mUnencodedSlot)
+        return mUnencodedSlot->asFloat(raw);
     if(mRawToEngr.count(rawDouble))
         return rawDouble;
-    else if(mUnencodedSlot)
-        return mUnencodedSlot->asFloat(raw);
-    else
-        return oorFloat;
+    return oorFloat;
 }
 
 QString EncodingSlot::asString(QVariant raw) const
 {
     bool convOk;
     double rawDouble = raw.toDouble(&convOk);
-    if(!convOk)
-        rawDouble = NAN;
 
-    if(mRawToEngr.count(rawDouble))
-        return mRawToEngr[rawDouble];
-    else if(mUnencodedSlot)
-        return mUnencodedSlot->asString(raw);
-    else
-        return oorString;
+    QString str = oorString;
+
+    if(convOk)
+    {
+        if(mRawToEngr.count(rawDouble))
+            str = mRawToEngr[rawDouble];
+        else if(mUnencodedSlot)
+            str = mUnencodedSlot->asString(raw);
+    }
+
+    return str;
 }
 
 QVariant EncodingSlot::asRaw(QVariant engr) const
 {
-    QString engrString = engr.toString();
-    if(mEngrToRaw.count(engrString))
+    if(engr.type() == QVariant::Type::String && mEngrToRaw.count(engr.toString()))
     {
-        QVariant rawVar = mEngrToRaw[engrString];
+        QVariant rawVar = mEngrToRaw[engr.toString()];
         rawVar.convert(storageType());
         return rawVar;
     }
-    else if(mUnencodedSlot)
-    {
+
+    if(mUnencodedSlot)
         return mUnencodedSlot->asRaw(engr);
-    }
-    else
-    {
-        return oorRaw;
-    }
+
+    return oorRaw;
 }
 
 bool EncodingSlot::rawInRange(QVariant raw) const

@@ -56,9 +56,9 @@ signals:
     void programmingDone(int result);
     void resetDone(int result);
 
-    void fault(SetupTools::Xcp::OpResult result, QString info);
-    void warn(SetupTools::Xcp::OpResult result, QString info);
-    void info(SetupTools::Xcp::OpResult result, QString info);
+    void fault(SetupTools::OpResult result, QString info);
+    void warn(SetupTools::OpResult result, QString info);
+    void info(SetupTools::OpResult result, QString info);
 
 public slots:
     void startProgramming();
@@ -66,14 +66,15 @@ public slots:
     void startReset();
 
 private:
-    void onProgCalModeDone(SetupTools::Xcp::OpResult result);
-    void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
-    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, SetupTools::Xcp::CksumType type, quint8 addrExt);
-    void onProgramResetDone(SetupTools::Xcp::OpResult result);
+    void onProgCalModeDone(SetupTools::OpResult result);
+    void onProgramDone(SetupTools::OpResult result, FlashProg *prog, quint8 addrExt);
+    void onProgramVerifyDone(SetupTools::OpResult result, FlashProg *prog, SetupTools::Xcp::CksumType type, quint8 addrExt);
+    void onProgramResetDone(SetupTools::OpResult result);
 
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();
-    void onProgLayerOpMsg(SetupTools::Xcp::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void onProgLayerOpMsg(SetupTools::OpResult result, QString info, SetupTools::Xcp::Connection::OpExtInfo ext);
+    void onProgLayerDisconnectDone(SetupTools::OpResult result);
 
     enum class State
     {                               // Precond                                  Action
@@ -85,6 +86,7 @@ private:
         Program_Program,            // Cal mode, slave in bootloader
         Program_Verify,
         Program_CalMode,
+        Program_Disconnect,
         Reset_Reset,
         _N_STATES
     };

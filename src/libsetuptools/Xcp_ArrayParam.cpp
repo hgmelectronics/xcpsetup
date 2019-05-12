@@ -44,7 +44,7 @@ int ArrayParam::count() const
 
 QVariant ArrayParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 {
-    if(!mRange || !slot())
+    if(!mRange || !slot() || !mRange->valid())
         return QVariant();
 
     QStringList ret;
@@ -74,6 +74,11 @@ bool ArrayParam::setSerializableValue(const QVariant &val)
 {
     if(!mRange || !slot())
         return false;
+    if(val.isValid())
+    {
+        mRange->setValid(false);
+        return true;
+    }
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     QStringList stringList = val.toStringList();
@@ -91,12 +96,13 @@ bool ArrayParam::setSerializableValue(const QVariant &val)
     for(QString str : stringList)
         rawList.push_back(slot()->asRaw(str));
 
+    mRange->setValid(true);
     return mRange->setDataRange(rawList, 0);
 }
 
 QVariant ArrayParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
 {
-    if(!mRange || !slot())
+    if(!mRange || !slot() || !mRange->valid())
         return QVariant();
 
     QVariantList ret;
@@ -126,6 +132,11 @@ bool ArrayParam::setSerializableRawValue(const QVariant &val)
 {
     if(!mRange || !slot())
         return false;
+    if(!val.isValid())
+    {
+        mRange->setValid(false);
+        return true;
+    }
     if(val.type() != QVariant::StringList && val.type() != QVariant::List)
         return false;
     if(val.toList().size() != mRange->count())
@@ -137,15 +148,16 @@ bool ArrayParam::setSerializableRawValue(const QVariant &val)
             return false;
     }
 
+    mRange->setValid(true);
     return mRange->setDataRange(val.toList(), 0);
 }
 
-void ArrayParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
+void ArrayParam::onRangeUploadDone(SetupTools::OpResult result)
 {
     emit uploadDone(result);
 }
 
-void ArrayParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
+void ArrayParam::onRangeDownloadDone(SetupTools::OpResult result)
 {
     emit downloadDone(result);
 }
@@ -155,6 +167,7 @@ void ArrayParam::onRangeDataChanged(quint32 beginChanged, quint32 endChanged)
     Q_UNUSED(beginChanged);
     Q_UNUSED(endChanged);
     emit modelChanged();
+    emit rawValueChanged(key);
 }
 
 void ArrayParam::upload()

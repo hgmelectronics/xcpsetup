@@ -28,7 +28,7 @@ RowLayout {
         ScalarParamSpinBox {
             metaParam: parameters.engineRunningDetectionSpeed
         }
-        ScalarParamSpinBox {
+        EncodingParamEdit {
             metaParam: parameters.engineIdleShutdownTime
         }
         EncodingParamEdit {

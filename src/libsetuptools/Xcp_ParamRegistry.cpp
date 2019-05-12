@@ -1,4 +1,4 @@
-#include "Xcp_ParamRegistry.h"
+/*#include "Xcp_ParamRegistry.h"
 #include "Xcp_ScalarMemoryRange.h"
 #include "Xcp_ScalarParam.h"
 #include "Xcp_ArrayMemoryRange.h"
@@ -7,13 +7,83 @@
 namespace SetupTools {
 namespace Xcp {
 
+bool operator <(const ParamRegistry::Revision & lhs, int rhs)
+{
+    return lhs.revNum < rhs;
+}
+
+bool operator <(int lhs, const ParamRegistry::Revision & rhs)
+{
+    return lhs < rhs.revNum;
+}
+
+
+void ParamAddrRangeMap::insert(XcpPtr base, quint32 size, Param * param)
+{
+    mVector.insert(lowerBound(base), {base, size, param});
+}
+
+QPair<Param *, int> ParamAddrRangeMap::find(XcpPtr base)
+{
+    auto upperIt = upperBound(base);
+    if(upperIt != mVector.begin())
+    {
+        auto matchIt = upperIt - 1;
+        int offset = int(qint64(base.addr) - qint64(matchIt->base.addr));
+        if(offset < int(matchIt->size))
+            return {matchIt->param, offset};
+    }
+    return {nullptr, 0};
+}
+
+QVector<ParamAddrRangeMap::ArrayAddrEntry>::iterator ParamAddrRangeMap::lowerBound(XcpPtr base)
+{
+    return std::lower_bound(mVector.begin(), mVector.end(), base);
+}
+
+QVector<ParamAddrRangeMap::ArrayAddrEntry>::iterator ParamAddrRangeMap::upperBound(XcpPtr base)
+{
+    return std::upper_bound(mVector.begin(), mVector.end(), base);
+}
+
+
+ParamRegistryHistoryElide::ParamRegistryHistoryElide(ParamRegistry & registry) :
+    mRegistry(&registry)
+{
+    mRegistry->beginHistoryElide();
+}
+
+ParamRegistryHistoryElide::ParamRegistryHistoryElide(const ParamRegistryHistoryElide & other) :
+    mRegistry(other.mRegistry)
+{
+    mRegistry->beginHistoryElide(); // increment because other is about to be destroyed, at which time it will decrement
+}
+
+ParamRegistryHistoryElide & ParamRegistryHistoryElide::operator =(const ParamRegistryHistoryElide & rhs)
+{
+    rhs.mRegistry->beginHistoryElide();
+    mRegistry->endHistoryElide();
+    mRegistry = rhs.mRegistry;
+
+    return *this;
+}
+
+ParamRegistryHistoryElide::~ParamRegistryHistoryElide()
+{
+    mRegistry->endHistoryElide();
+}
+
 ParamRegistry::ParamRegistry(QObject *parent) :
     QObject(parent)
 {}
 
 ParamRegistry::ParamRegistry(quint32 addrGran, QObject *parent) :
     QObject(parent),
-    mTable(new MemoryRangeTable(addrGran, this))
+    mTable(new MemoryRangeTable(addrGran, this)),
+    mHistoryElideCount(),
+    mHistoryIgnore(),
+    mRevNum(),
+    mRevHistoryLength(5000)
 {
     connect(mTable, &MemoryRangeTable::connectionChanged, this, &ParamRegistry::onTableConnectionChanged);
 }
@@ -58,6 +128,78 @@ bool ParamRegistry::writeCacheDirty() const
     return !mWriteCacheDirtyKeys.empty();
 }
 
+QPair<Param *, int> ParamRegistry::findParamByAddr(XcpPtr base)
+{
+    auto scalarIt = mScalarAddrMap.find(base);
+    if(scalarIt != mScalarAddrMap.end())
+        return {*scalarIt, -1};
+
+    return mArrayAddrMap.find(base);
+}
+
+int ParamRegistry::minRevNum()
+{
+    if(mRevHistory.empty())
+        return mRevNum;
+
+    return mRevHistory.front().revNum - 1;  // we can reconstruct the revision before the first one stored, since we store old and new values
+}
+
+int ParamRegistry::maxRevNum()
+{
+    if(mRevHistory.empty())
+        return mRevNum;
+
+    return mRevHistory.back().revNum;
+}
+
+int ParamRegistry::currentRevNum()
+{
+    return mRevNum;
+}
+
+void ParamRegistry::setCurrentRevNum(int revNum)
+{
+    Q_ASSERT(mHistoryElideCount == 0);
+
+    if(mRevHistory.empty()
+            || revNum < (mRevHistory.first().revNum - 1)
+            || revNum > mRevHistory.last().revNum
+            || mHistoryElideCount)
+        return;
+
+    QMap<QString, QVariant> newParamValues;
+
+    auto curRevNumEnd = std::upper_bound(mRevHistory.begin(), mRevHistory.end(), mRevNum);
+
+    // Collect all param changes
+    if(revNum < mRevNum)
+    {
+        // play backwards (undo)
+        auto newRevNumBegin = std::upper_bound(mRevHistory.begin(), mRevHistory.end(), revNum);
+        for(auto it = curRevNumEnd - 1; it >= newRevNumBegin; --it)
+            newParamValues[it->param->key] = it->oldValue;
+    }
+    else if(revNum > mRevNum)
+    {
+        // play forwards (redo)
+        auto newRevNumEnd = std::upper_bound(mRevHistory.begin(), mRevHistory.end(), revNum);
+        for(auto it = curRevNumEnd; it < newRevNumEnd; ++it)
+            newParamValues[it->param->key] = it->newValue;
+    }
+
+    mHistoryIgnore = true;  // do not record history while writing values to params
+    for(auto key : newParamValues.keys())
+    {
+        mParams[key]->setSerializableRawValue(newParamValues[key]);
+        mParamValues[key] = newParamValues[key];
+    }
+    mHistoryIgnore = false;
+
+    mRevNum = revNum;
+    emit currentRevNumChanged();
+}
+
 ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable, bool saveable, SetupTools::Slot *slot, QString keyIn, QString nameIn)
 {
     QString key = keyIn.isEmpty() ? base.toString() : keyIn;
@@ -100,11 +242,9 @@ ScalarParam *ParamRegistry::addScalarParam(int type, XcpPtr base, bool writable,
     param->saveable = saveable;
     param->key = key;
     param->name = name;
-    mParams[key] = param;
-    mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key), key);
-    if(saveable)
-        mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), key), key);
-    connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
+
+    mScalarAddrMap[base] = param;
+    insertParam(param, saveable);
     return param;
 }
 
@@ -150,7 +290,7 @@ ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool 
         return nullptr;
     }
 
-     ArrayMemoryRange *tableRange = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
+    ArrayMemoryRange *tableRange = mTable->addTableRange(MemoryRange::MemoryRangeType(type), base, count, writable);
     if(tableRange == nullptr)
     {
         qDebug() << QString("Failed to create array param with key %1, failed to create range").arg(key);
@@ -162,11 +302,9 @@ ArrayParam *ParamRegistry::addArrayParam(int type, XcpPtr base, int count, bool 
     param->saveable = saveable;
     param->key = key;
     param->name = name;
-    mParams[key] = param;
-    mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key), key);
-    if(saveable)
-        mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), key), key);
-    connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
+
+    mArrayAddrMap.insert(base, tableRange->size() / mTable->addrGran(), param);
+    insertParam(param, saveable);
     return param;
 }
 
@@ -240,11 +378,9 @@ VarArrayParam *ParamRegistry::addVarArrayParam(int type, XcpPtr base, int minCou
     param->saveable = saveable;
     param->key = key;
     param->name = name;
-    mParams[key] = param;
-    mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), key), key);
-    if(saveable)
-        mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), key), key);
-    connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
+
+    mArrayAddrMap.insert(base, baseRange->size() / minCount * maxCount / mTable->addrGran(), param);
+    insertParam(param, saveable);
     return param;
 }
 
@@ -283,6 +419,7 @@ void ParamRegistry::resetCaches()
 
 void ParamRegistry::setValidAll(bool valid)
 {
+    ParamRegistryHistoryElide elide = historyElide();
     for(Param *param : mParams)
         param->setValid(valid);
 }
@@ -291,6 +428,69 @@ void ParamRegistry::setWriteCacheDirtyAll(bool dirty)
 {
     for(Param *param : mParams)
         param->setWriteCacheDirty(dirty);
+}
+
+ParamRegistryHistoryElide ParamRegistry::historyElide()
+{
+    return ParamRegistryHistoryElide(*this);
+}
+
+bool ParamRegistry::Revision::compareNumAndParam(const Revision & lhs, const Revision & rhs)
+{
+    if(lhs.revNum < rhs.revNum)
+        return true;
+    if(lhs.revNum > rhs.revNum)
+        return false;
+    return (lhs.param < rhs.param);
+}
+
+void ParamRegistry::onParamRawValueChanged(QString key)
+{
+    Q_ASSERT(mParams.count(key));
+    Q_ASSERT(mParamValues.count(key));
+
+    if(mHistoryIgnore)
+        return;
+
+    Param * param = mParams[key];
+
+    int oldMinRevNum = minRevNum();
+    int oldMaxRevNum = maxRevNum();
+    int oldRevNum = mRevNum;
+
+    auto curRevNumRange = std::equal_range(mRevHistory.begin(), mRevHistory.end(), mRevNum);
+
+    // Delete any revisions past the current one
+    mRevHistory.erase(curRevNumRange.second, mRevHistory.end());
+
+    if(!mHistoryElideCount)
+        ++mRevNum;
+
+    Revision rev { mRevNum, param, mParamValues[key], param->getSerializableRawValue() };
+    mParamValues[key] = rev.newValue;
+
+    auto insertIt = std::lower_bound(curRevNumRange.first, curRevNumRange.second, rev, &Revision::compareNumAndParam);
+
+    // If eliding multiple changes into one revision number, see if there is already a change for this key
+    if(mHistoryElideCount
+            && insertIt != mRevHistory.end()
+            && insertIt->revNum == rev.revNum
+            && insertIt->param == rev.param)
+        insertIt->newValue = rev.newValue;
+    else
+        mRevHistory.insert(insertIt, rev);
+
+    int numToDelete = std::max(mRevHistory.size() - mRevHistoryLength, 0);
+    auto itToDelete = mRevHistory.begin() + numToDelete;
+    auto clampedItToDelete = std::min(itToDelete, std::lower_bound(mRevHistory.begin(), mRevHistory.end(), mRevNum));   // Don't delete part of the currently accumulated revision
+    mRevHistory.erase(mRevHistory.begin(), clampedItToDelete);
+
+    if(oldMinRevNum != minRevNum())
+        emit minRevNumChanged();
+    if(oldMaxRevNum != maxRevNum())
+        emit maxRevNumChanged();
+    if(oldRevNum != mRevNum)
+        emit currentRevNumChanged();
 }
 
 void ParamRegistry::onTableConnectionChanged()
@@ -320,6 +520,42 @@ void ParamRegistry::onParamWriteCacheDirtyChanged(QString key)
         emit writeCacheDirtyChanged();
 }
 
+void ParamRegistry::beginHistoryElide()
+{
+    if(mHistoryElideCount == 0)
+    {
+        ++mRevNum;
+        emit currentRevNumChanged();
+    }
+    ++mHistoryElideCount;
+}
+
+void ParamRegistry::endHistoryElide()
+{
+    --mHistoryElideCount;
+
+    if(mHistoryElideCount == 0)
+    {
+        if(updateDelta<>(mRevNum, std::min(mRevNum, maxRevNum())))  // nothing happened during the history elide
+            emit currentRevNumChanged();
+    }
+
+    Q_ASSERT(mHistoryElideCount >= 0);
+}
+
+void ParamRegistry::insertParam(Param * param, bool saveable)
+{
+    mParams[param->key] = param;
+    mParamKeys.insert(std::lower_bound(mParamKeys.begin(), mParamKeys.end(), param->key), param->key);
+    if(saveable)
+        mSaveableParamKeys.insert(std::lower_bound(mSaveableParamKeys.begin(), mSaveableParamKeys.end(), param->key), param->key);
+    mParamValues[param->key] = QVariant();
+
+    connect(param, &Param::writeCacheDirtyChanged, this, &ParamRegistry::onParamWriteCacheDirtyChanged);
+    connect(param, &Param::rawValueChanged, this, &ParamRegistry::onParamRawValueChanged);
+}
+
 } // namespace Xcp
 } // namespace SetupTools
 
+*/

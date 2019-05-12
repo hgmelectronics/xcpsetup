@@ -42,7 +42,7 @@ void MemoryRange::onConnectionChanged(bool ok)
     Q_UNUSED(ok);
 }
 
-void MemoryRange::onDownloadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data)
+void MemoryRange::onDownloadDone(SetupTools::OpResult result, Xcp::XcpPtr base, const std::vector<quint8> &data)
 {
     if(result == OpResult::Success)
     {

@@ -7,15 +7,20 @@
 QT       -= gui
 QT       += quick
 
-QMAKE_CXXFLAGS += -std=c++11 -ffunction-sections -fdata-sections
+QMAKE_CXXFLAGS += -std=c++14 -ffunction-sections -fdata-sections
 
 TARGET = ebussetuptools
 TEMPLATE = lib
 CONFIG += staticlib
 
-SOURCES += MultiselectList.cpp
+INCLUDEPATH += $$PWD/../../libsetuptools
+DEPENDPATH += $$PWD/../../libsetuptools
 
-HEADERS += MultiselectList.h
+SOURCES += MultiselectList.cpp \
+    Xcp_EbusEventLogInterface.cpp
+
+HEADERS += MultiselectList.h \
+    Xcp_EbusEventLogInterface.h
 
 unix {
     target.path = /usr/lib

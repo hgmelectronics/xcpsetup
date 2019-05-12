@@ -23,6 +23,9 @@ RowLayout {
         EncodingParamEdit {
             metaParam: parameters.transmissionType
         }
+        EncodingParamEdit {
+            metaParam: parameters.remoteMode
+        }
         ScalarParamSpinBox {
             metaParam: parameters.vehicleMass
         }
@@ -45,9 +48,6 @@ RowLayout {
         }
         ScalarParamSpinBox {
             metaParam: parameters.vehicleSpeedSensorPulseCount
-        }
-        EncodingParamEdit {
-            metaParam: parameters.startInhibitRelayType
         }
         EncodingParamEdit {
             metaParam: parameters.shiftSelectorODCancelAtStartup

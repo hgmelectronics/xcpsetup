@@ -1,6 +1,12 @@
 #include "Xcp_Interface_Can_Elm327_Interface.h"
 #include <algorithm>
 #include <QUrl>
+#include <boost/logic/tribool.hpp>
+
+#ifdef Q_OS_WIN
+    #include <windows.h>
+    #include <shellapi.h>
+#endif
 
 #ifdef ELM327_DEBUG
 #include <QDebug>
@@ -37,6 +43,7 @@ void IoTask::init()
     mPort->setParent(this);
     connect(mPort, &SerialPort::readyRead, this, &IoTask::portReadyRead);
     connect(mPort, &SerialPort::bytesWritten, this, &IoTask::portBytesWritten);
+    connect(mPort, static_cast<void(SerialPort::*)(SerialPort::SerialPortError)>(&SerialPort::error), this, &IoTask::portError);
 }
 
 std::vector<Frame> IoTask::getRcvdFrames(int timeoutMsec)
@@ -92,7 +99,7 @@ void IoTask::portReadyRead()
                 {
                     mLines.push_back(newLine);
 #ifdef ELM327_DEBUG
-                    qDebug() << TIMESTAMP_STR << "RX" << ToHexString(newLine.begin(), newLine.end());
+                    qDebug() << TIMESTAMP_STR << "RX" << QByteArray(reinterpret_cast<char *>(newLine.data()), newLine.size()) << ToHexString(newLine.begin(), newLine.end());
 #endif
                     newLine.clear();
                 }
@@ -102,7 +109,7 @@ void IoTask::portReadyRead()
         {
             mLines.push_back(newLine);
 #ifdef ELM327_DEBUG
-            qDebug() << TIMESTAMP_STR << "RX" << ToHexString(newLine.begin(), newLine.end());
+            qDebug() << TIMESTAMP_STR << "RX" << QByteArray(reinterpret_cast<char *>(newLine.data()), newLine.size()) << ToHexString(newLine.begin(), newLine.end());
 #endif
         }
     }
@@ -167,6 +174,38 @@ void IoTask::portReadyRead()
     mLines.swap(incompleteLines);
 }
 
+void IoTask::portBytesWritten(qint64 bytes)
+{
+    QMutexLocker locker(&mPendingTxBytesMutex);
+    mPendingTxBytes = std::max(mPendingTxBytes - bytes, qint64(0)); // coerce since first call to this function always seems to be a spurious one with bytes==1
+    if(mPendingTxBytes == 0)
+        mWriteComplete.set();
+}
+
+void IoTask::portError(SerialPort::SerialPortError error)
+{
+    if(error == SerialPort::NoError)    // results from clearError() call later in this func
+        return;
+
+    switch(error)
+    {
+    case SerialPort::TimeoutError:
+    case SerialPort::ReadError:     // problem with input data, higher levels will handle this as a timeout
+    case SerialPort::ParityError:   // include the old enum values even though they are deprecated, since documentation doesn't clearly state they will never be sent
+    case SerialPort::FramingError:
+    case SerialPort::BreakConditionError:
+        break;
+    default:    // something has gone wrong with a write, or the device has been disconnected
+    {
+        QMutexLocker locker(&mPendingTxBytesMutex);
+        mPendingTxBytes = 0;
+        mWriteComplete.set();
+    }
+    }
+
+    mPort->clearError();
+}
+
 void IoTask::write(std::vector<quint8> data)
 {
     {
@@ -175,16 +214,8 @@ void IoTask::write(std::vector<quint8> data)
     }
     mPort->write(data.data(), data.size());
 #ifdef ELM327_DEBUG
-    qDebug() << TIMESTAMP_STR << "TX" << ToHexString(data.begin(), data.end());
+    qDebug() << TIMESTAMP_STR << "TX" << QByteArray(reinterpret_cast<char *>(data.data()), data.size()) << ToHexString(data.begin(), data.end());
 #endif
-}
-
-void IoTask::portBytesWritten(qint64 bytes)
-{
-    QMutexLocker locker(&mPendingTxBytesMutex);
-    mPendingTxBytes = std::max(mPendingTxBytes - bytes, qint64(0)); // coerce since first call to this function always seems to be a spurious one with bytes==1
-    if(mPendingTxBytes == 0)
-        mWriteComplete.set();
 }
 
 void IoTask::setSerialLog(bool on)
@@ -289,13 +320,82 @@ Interface::Interface(const QSerialPortInfo portInfo, QObject *parent) :
 Interface::~Interface() {
 }
 
+#ifdef Q_OS_WIN
+static std::vector<wchar_t> wideString(const QString & str)
+{
+    std::vector<wchar_t> out;
+    out.resize(str.size() + 1);
+    str.toWCharArray(out.data());
+    out[str.size()] = 0;
+    return out;
+}
+#endif
+
+static void checkFixWinLatencyTimer(const QSerialPortInfo & info)
+{
+#ifdef Q_OS_WIN
+    QString winFtdiRegKey = QString("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\FTDIBUS\\VID_%1+PID_%2+%3\\0000\\Device Parameters")
+            .arg(info.vendorIdentifier(), 4, 16, QChar('0'))
+            .arg(info.productIdentifier(), 4, 16, QChar('0'))
+            .arg(info.serialNumber());
+    QSettings winFtdiReg(winFtdiRegKey, QSettings::NativeFormat);
+    bool latencyTimerReadOk;
+    quint32 latencyTimerSetting = winFtdiReg.value("LatencyTimer").toUInt(&latencyTimerReadOk);
+    if(latencyTimerReadOk && latencyTimerSetting > 1)
+    {
+        qDebug() << "FTDI USB-serial latency timer is set to" << latencyTimerSetting << "ms";
+        qDebug() << "Attempting to fix latency timer";
+
+        // Use regedit to do the change since it handles elevation automatically
+        QString fileName = QDir::tempPath() + "/Fix for FTDI latency timer on " + info.portName() + ".reg";
+        {
+            QFile regfile(fileName);
+            if(!regfile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+                return;
+            regfile.write("Windows Registry Editor Version 5.00\r\n");
+            regfile.write("\r\n");
+            regfile.write("[" + winFtdiRegKey.toUtf8() + "]\r\n");
+            regfile.write("\"LatencyTimer\"=dword:00000001");
+            regfile.close();
+        }
+        // File must be not only closed but also have its references disposed before regedit will deign to open it.
+
+        // Start regedit by invoking ShellExecuteEx on the file.
+        // ShellExecuteEx is used because we need to get a handle to the process so we can wait for it to finish before deleting the file.
+
+        auto verb = wideString("open");
+        auto file = wideString("\"" + QDir::toNativeSeparators(fileName) + "\"");
+        SHELLEXECUTEINFO shellExecInfo;
+        shellExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+        shellExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+        shellExecInfo.hwnd = nullptr;
+        shellExecInfo.lpVerb = verb.data();
+        shellExecInfo.lpFile = file.data();
+        shellExecInfo.lpParameters = nullptr;
+        shellExecInfo.lpDirectory = nullptr;
+        shellExecInfo.nShow = SW_SHOW;
+        shellExecInfo.hInstApp = nullptr;
+        if(ShellExecuteEx(&shellExecInfo))
+            WaitForSingleObject(shellExecInfo.hProcess, INFINITE);
+
+        QFile regfile(fileName);
+        regfile.remove();
+    }
+#else
+    Q_UNUSED(info);
+#endif
+}
+
 OpResult Interface::setup(const QSerialPortInfo *portInfo)
 {
-    if(portInfo)
-        mPort = new SerialPort(*portInfo);
-    else if(mPortInfo)
-        mPort = new SerialPort(*mPortInfo);
-    else
+    const QSerialPortInfo *info = portInfo ? portInfo : mPortInfo;
+    if(!info)
+        return OpResult::InvalidOperation;
+
+    checkFixWinLatencyTimer(*info);
+
+    mPort = new SerialPort(*info);
+    if(!mPort)
         return OpResult::InvalidOperation;
 
     if(!mPort->open(QIODevice::ReadWrite))
@@ -402,11 +502,13 @@ OpResult Interface::connect(SlaveId addr)
     if(res == OpResult::Success)
     {
         mSlaveAddr = addr;
+        emit slaveIdChanged();
         return OpResult::Success;
     }
     else
     {
         mSlaveAddr.reset();
+        emit slaveIdChanged();
         return res;
     }
 }
@@ -415,6 +517,7 @@ OpResult Interface::disconnect()
 {
     Q_ASSERT(mPort);
     mSlaveAddr.reset();
+    emit slaveIdChanged();
     return doSetFilter(mFilter);
 }
 
@@ -487,7 +590,10 @@ OpResult Interface::receiveFrames(int timeoutMsec, std::vector<Frame> &out, cons
         }
     } while(timer.nsecsElapsed() <= timeoutNsec && !out.size());
 
-    return OpResult::Success;
+    if(out.size() > 0)
+        return OpResult::Success;
+    else
+        return OpResult::Timeout;
 }
 
 OpResult Interface::clearReceived()
@@ -510,7 +616,7 @@ void  Interface::setSerialLog(bool on)
 {
     mIo->setSerialLog(on);
 }
-OpResult  Interface::setPacketLog(bool enable)
+OpResult Interface::setPacketLog(bool enable)
 {
     mPacketLogEnabled = enable;
     return OpResult::Success;
@@ -625,7 +731,7 @@ bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
     newDivisor = qRound(CAN_TQ_CLOCK_HZ / (mBitrate.get() * STD_TQ_PER_BIT));
     double calcBitrate = CAN_TQ_CLOCK_HZ / (newDivisor * STD_TQ_PER_BIT);
     double calcBitrateRatio = calcBitrate / mBitrate.get();
-    if(abs(calcBitrateRatio - 1) < CAN_BITRATE_TOL)
+    if(std::abs(calcBitrateRatio - 1) < CAN_BITRATE_TOL)
     {
         divisor = newDivisor;
         useOptTqPerBit = false;
@@ -635,7 +741,7 @@ bool Interface::calcBitrateParams(int &divisor, bool &useOptTqPerBit)
     {
         newDivisor = qRound(CAN_TQ_CLOCK_HZ / (mBitrate.get() * OPT_TQ_PER_BIT));
         calcBitrate = CAN_TQ_CLOCK_HZ / (divisor * OPT_TQ_PER_BIT);
-        if(abs(calcBitrate / mBitrate.get() - 1) < CAN_BITRATE_TOL)
+        if(std::abs(calcBitrate / mBitrate.get() - 1) < CAN_BITRATE_TOL)
         {
             divisor = newDivisor;
             useOptTqPerBit = true;
@@ -693,12 +799,25 @@ OpResult Interface::updateBitrateTxType()
     return OpResult::Success;
 }
 
+boost::logic::tribool portIsElm(const QSerialPortInfo & info)
+{
+    static constexpr quint16 ELM_STN_VID = 0x0403;
+    static constexpr quint16 ELM_STN_PID = 0x6015;
+    if(!info.hasProductIdentifier() || !info.hasVendorIdentifier())
+        return boost::indeterminate;
+    if(info.productIdentifier() == ELM_STN_PID && info.vendorIdentifier() == ELM_STN_VID)
+        return true;
+    else
+        return false;
+}
+
 QList<QSerialPortInfo> getPortsAvail()
 {
     QList<QSerialPortInfo> ret;
     for(const auto &portInfo : QSerialPortInfo::availablePorts())
     {
-        if(!portInfo.isBusy()) {
+        if(!portInfo.isBusy() && portIsElm(portInfo) != false)
+        {
             QSerialPort port(portInfo);
             if(port.open(QIODevice::ReadWrite)) {
                 port.close();
@@ -713,7 +832,7 @@ QList<QUrl> Registry::avail()
 {
     QList<QUrl> ret;
     for(QSerialPortInfo portInfo : getPortsAvail())
-        ret.append(QString("elm327:%1?bitrate=250000&filter=00000000:00000000").arg(portInfo.portName()));
+        ret.append(QString("elm327:%1").arg(portInfo.portName()));
     return ret;
 }
 

@@ -22,6 +22,11 @@ Window {
     property double steeperFlatterRatio: 1.1
     property double increaseDecreaseDelta: 1.0
 
+    onVisibleChanged: {
+        width = width + 1   // hack to force redraw of plot - there is a bug with the QPainter scenegraph renderer that causes it to not show on closing and reopening window
+        width = width - 1
+    }
+
     title: name
     width: (hasShapers || hasPlot) ? 420 : 240
     height: 350 + plot.height
@@ -175,9 +180,9 @@ Window {
             tabSeparated.text = Clipboard.text
             if(tabSeparated.rows == tableParam.param.value.count && tabSeparated.columns == tableColumns) {
                 for(var i = 0; i < tabSeparated.rows; ++i) {
-                    if(tableParam.param.xModel.flags(i) & Qt.ItemIsEditable)
+                    if(tableParam.param.xStringModel.flags(i) & Qt.ItemIsEditable)
                         tableParam.param.x.set(i, tabSeparated.get(i, 0));
-                    if(tableParam.param.valueModel.flags(i) & Qt.ItemIsEditable)
+                    if(tableParam.param.valueStringModel.flags(i) & Qt.ItemIsEditable)
                         tableParam.param.value.set(i, tabSeparated.get(i, 1));
                 }
             }
@@ -234,14 +239,6 @@ Window {
                 event.accepted = false
         }
 
-          // dreadful hack because making chart invisible causes QML to hang
-        handleDelegate: Rectangle {
-            SystemPalette { id: pal }
-            width: 1
-            height: 1
-            color: hasPlot ? Qt.darker(pal.window, 1.5) : "transparent"
-        }
-
         ChartView {
             id: plot
 
@@ -261,7 +258,7 @@ Window {
             RoleModeledLineSeries {
                 id: series1
                 visible: root.tableParam.param.value.valid
-                model: root.tableParam.param.stringModel
+                model: root.tableParam.param.floatModel
 
                 axisX: autoAxis.xAxis
                 axisY: autoAxis.yAxis

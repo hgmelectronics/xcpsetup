@@ -28,7 +28,7 @@ Rectangle {
     property var editableRoleNames: {
         var ret = []
         tableParam.roleNames.forEach(function(role) {
-            if(tableParam.model[role].flags(0) & Qt.ItemIsEditable)
+            if(tableParam.stringModelMapping[role].flags(0) & Qt.ItemIsEditable)
                 ret.push(role)
         })
         return ret
@@ -87,13 +87,13 @@ Rectangle {
                             if(typeof(root.tableParam.roleMapping[styleData.role].slot.encodingStringList) == "undefined") {
                                 // Not encoding
                                 if(styleData.selected
-                                        && (root.tableParam.model[styleData.role].flags(0) & Qt.ItemIsEditable))
+                                        && (root.tableParam.stringModelMapping[styleData.role].flags(0) & Qt.ItemIsEditable))
                                     return editDelegate
                                 else
                                     return displayDelegate
                             }
                             else {
-                                if(root.tableParam.model[styleData.role].flags(0) & Qt.ItemIsEditable)
+                                if(root.tableParam.stringModelMapping[styleData.role].flags(0) & Qt.ItemIsEditable)
                                     return encodingDelegate
                                 else
                                     return readOnlyEncodingDelegate
@@ -155,7 +155,8 @@ Rectangle {
                                         if(model[styleData.role] != text)
                                             model[styleData.role] = text
                                         if(root.tableMetaParam.immediateWrite)
-                                            ImmediateWrite.trigger(root.tableParam.roleMapper[styleData.role].key)
+                                            ImmediateWrite.trigger(root.tableParam.roleMapping[styleData.role].key)
+
                                     }
 
                                     onEditingFinished: updateValue()

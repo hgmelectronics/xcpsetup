@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core testlib quick
+QT       += core testlib quick bluetooth
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -Wall -Wuninitialized
+QMAKE_CXXFLAGS += -std=c++14 -Wno-unused-local-typedefs -Wall -Wuninitialized
 
 static {
     QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections

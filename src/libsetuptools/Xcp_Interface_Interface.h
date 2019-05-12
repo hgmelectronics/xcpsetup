@@ -4,7 +4,7 @@
 #include <QtCore>
 #include <list>
 #include <QException>
-#include "Xcp_Exception.h"
+#include "Exception.h"
 #include "util.h"
 
 namespace SetupTools
@@ -14,7 +14,7 @@ namespace Xcp
 namespace Interface
 {
 
-class Exception : public ::SetupTools::Xcp::Exception {};
+class Exception : public ::SetupTools::Exception {};
 
 /*!
  * \brief Base class for interfaces (not abstract so dummies can be created by QML, but will fail assertion if dummy used.)
@@ -28,6 +28,8 @@ class Interface : public QObject
 public:
     Interface(QObject *parent = NULL);
     virtual ~Interface() {}
+    virtual QString connectedTarget() = 0;
+    virtual OpResult setTarget(const QString & target) = 0;
     virtual OpResult transmit(const std::vector<quint8> & data, bool replyExpected = true);         //!< Send one XCP packet to the slave
     virtual OpResult receive(int timeoutMsec, std::vector<std::vector<quint8> > &out); //!< Fetch all packets from the slave currently in the Rx buffer, returning after timeout if no packets
     virtual OpResult clearReceived() = 0;
@@ -35,6 +37,8 @@ public:
     virtual bool hasReliableTx() = 0;
     virtual bool allowsMultipleReplies() = 0;
     virtual int maxReplyTimeout() = 0;
+signals:
+    void connectedTargetChanged(QString val);
 };
 
 }   // namespace Interface

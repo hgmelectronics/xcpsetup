@@ -57,7 +57,7 @@ void ScalarParam::setStringVal(QString val)
 
 QVariant ScalarParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 {
-    if(slot() && mRange)
+    if(slot() && mRange && mRange->valid())
     {
         bool inRange = slot()->rawInRange(mRange->value());
         if(allInRange)
@@ -74,7 +74,7 @@ QVariant ScalarParam::getSerializableValue(bool *allInRange, bool *anyInRange)
 
 QVariant ScalarParam::getSerializableRawValue(bool *allInRange, bool *anyInRange)
 {
-    if(slot() && mRange)
+    if(slot() && mRange && mRange->valid())
     {
         bool inRange = slot()->rawInRange(mRange->value());
         if(allInRange)
@@ -92,10 +92,16 @@ bool ScalarParam::setSerializableValue(const QVariant &val)
 {
     if(slot() && mRange)
     {
+        if(!val.isValid())
+        {
+            mRange->setValid(false);
+            return true;
+        }
         QString str = val.toString();
         if(!slot()->engrInRange(str))
             return false;
 
+        mRange->setValid(true);
         setStringVal(str);
         return true;
     }
@@ -109,9 +115,15 @@ bool ScalarParam::setSerializableRawValue(const QVariant &val)
 {
     if(slot() && mRange)
     {
+        if(!val.isValid())
+        {
+            mRange->setValid(false);
+            return true;
+        }
         if(!slot()->rawInRange(val))
             return false;
 
+        mRange->setValid(true);
         mRange->setValue(val);
         return true;
     }
@@ -124,6 +136,7 @@ bool ScalarParam::setSerializableRawValue(const QVariant &val)
 void ScalarParam::onRangeValChanged()
 {
     emit valChanged();
+    emit rawValueChanged(key);
 }
 
 void ScalarParam::onSlotValueParamChanged()
@@ -131,12 +144,12 @@ void ScalarParam::onSlotValueParamChanged()
     emit valChanged();
 }
 
-void ScalarParam::onRangeUploadDone(SetupTools::Xcp::OpResult result)
+void ScalarParam::onRangeUploadDone(SetupTools::OpResult result)
 {
     emit uploadDone(result);
 }
 
-void ScalarParam::onRangeDownloadDone(SetupTools::Xcp::OpResult result)
+void ScalarParam::onRangeDownloadDone(SetupTools::OpResult result)
 {
     emit downloadDone(result);
 }

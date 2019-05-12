@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
+import Qt.labs.settings 1.0
 import com.hgmelectronics.utils.cs2tool 1.0
 import com.hgmelectronics.setuptools.xcp 1.0
 import com.hgmelectronics.setuptools 1.0
@@ -15,11 +16,12 @@ ApplicationWindow {
     property string programName: qsTr("HGM Flash Tool")
     property string programVersion: ""
 
+    property alias progFileDir: progFileDialog.folder
+
     property FlashProg progFileData
 
     property alias targetCmdId: cs2Tool.slaveCmdId
     property alias targetResId: cs2Tool.slaveResId
-    property string intfcUri: ""
 
     title: programName
     visible: true
@@ -28,10 +30,20 @@ ApplicationWindow {
         Qt.quit()
     }
 
+    Settings {
+        category: "application"
+        property alias progFileDir: application.progFileDir
+        property alias windowWidth: application.width
+        property alias windowHeight: application.height
+        property alias windowX: application.x
+        property alias windowY: application.y
+        property alias interfaceUri: interfaceChooser.saveUri
+    }
+
     Cs2Tool {
         id: cs2Tool
         programData: application.progFileData
-        intfcUri: application.intfcUri
+        intfcUri: ""
         onProgrammingDone: {
             if (result === OpResult.Success)
                 messageDialog.show(qsTr("Programming complete"))
@@ -64,8 +76,9 @@ ApplicationWindow {
         title: qsTr("Select program file")
         modality: Qt.NonModal
         nameFilters: ["S-record files (*.srec)", "All files (*)"]
-        folder: shortcuts.home
+        folder: shortcuts.documents
         onAccepted: {
+            folder = folder
             filePath = UrlUtil.urlToLocalFile(fileUrl.toString())
             if (selectedNameFilter == "S-record files (*.srec)")
                 application.progFileData = ProgFile.readSrec(filePath)
@@ -115,11 +128,8 @@ ApplicationWindow {
         text: qsTr("Open")
         enabled: !cs2Tool.intfcOk
         onTriggered: {
-            if (interfaceChooser.uri !== "") {
-                application.intfcUri = interfaceChooser.uri.replace(
-                            /bitrate=[0-9]*/,
-                            "bitrate=%1".arg(bitRateChooser.bps))
-            }
+                interfaceChooser.saveUri = interfaceChooser.uri
+                cs2Tool.intfcUri = interfaceChooser.uri + "?bitrate=%1".arg(bitRateChooser.bps)
         }
     }
 
@@ -127,7 +137,7 @@ ApplicationWindow {
         id: intfcCloseAction
         text: qsTr("Close")
         onTriggered: {
-            application.intfcUri = ""
+            cs2Tool.intfcUri = ""
         }
         enabled: cs2Tool.intfcOk && cs2Tool.idle
     }
@@ -423,6 +433,9 @@ ApplicationWindow {
         id: helpDialog
     }
 
-    Splash {
+    Component.onCompleted: {
+        // make sure the window doesn't completely disappear from the screen due to prefs save with a bigger monitor than current
+        x = Math.min(x, Screen.desktopAvailableWidth - 30)
+        y = Math.min(y, Screen.desktopAvailableWidth - 30)
     }
 }

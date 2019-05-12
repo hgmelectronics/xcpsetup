@@ -56,7 +56,7 @@ signals:
 public slots:
     virtual void download();
     void download(quint32 beginIndex, const QList<QVariant> &data);
-    virtual void onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
+    virtual void onUploadDone(SetupTools::OpResult result, Xcp::XcpPtr base, int len, std::vector<quint8> data = std::vector<quint8> ());
 
 private:
     bool inRange(int index) const;

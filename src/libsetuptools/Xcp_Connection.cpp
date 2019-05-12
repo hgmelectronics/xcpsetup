@@ -25,40 +25,88 @@ QString XcpPtr::toString() const
 
 XcpPtr XcpPtr::fromString(QString str, bool *ok)
 {
+    XcpPtr out;
+    bool isOk = false;
+
     QStringList split = str.split(QChar(':'));
 
-    if(split.size() < 1 || split.size() > 2)
+    if(split.size() >= 1 && split.size() << 2)
     {
-        if(ok)
-            *ok = false;
-        return XcpPtr();
-    }
-
-    QList<quint32> num;
-    for(const QString &splitStr : split)
-    {
-        bool convOk;
-        num.push_back(splitStr.toULong(&convOk, 16));
-        if(!convOk)
+        QList<quint32> num;
+        bool convOk = true;
+        for(const QString &splitStr : split)
         {
-            if(ok)
-                *ok = false;
-            return XcpPtr();
+            num.push_back(splitStr.toULong(&convOk, 16));
+            if(!convOk)
+                break;
+        }
+
+        if(convOk)
+        {
+            Q_ASSERT(num.size() == split.size());
+            if(num.size() == 1)
+            {
+                out = XcpPtr(num[0]);
+                isOk = true;
+            }
+            else if(num[0] <= std::numeric_limits<quint8>::max())
+            {
+                Q_ASSERT(num.size() == 2);
+                out = XcpPtr(num[1], quint8(num[0]));
+                isOk = true;
+            }
         }
     }
 
-    Q_ASSERT(num.size() == split.size());
-    if(num.size() == 2 && num[0] > std::numeric_limits<quint8>::max())
+    if(ok)
+        *ok = isOk;
+    return out;
+}
+
+static bool isNumType(QVariant::Type type)
+{
+    return type == QVariant::Type::Int
+            || type == QVariant::Type::UInt
+            || type == QVariant::Type::LongLong
+            || type == QVariant::Type::ULongLong
+            || type == QVariant::Type::Double;
+}
+
+XcpPtr XcpPtr::fromVariant(const QVariant & var, bool * ok)
+{
+    XcpPtr out;
+    bool isOk = false;
+    if(isNumType(var.type()))
     {
-        if(ok)
-            *ok = false;
-        return XcpPtr();
+        quint32 addr = var.toUInt(&isOk);
+        out = XcpPtr(addr);
+    }
+    else if(var.type() == QVariant::Type::List)
+    {
+        QVariantList list = var.toList();
+        if(list.size() == 1 && isNumType(list[0].type()))
+        {
+            quint32 addr = var.toUInt(&isOk);
+            out = XcpPtr(addr);
+        }
+        else if(list.size() == 2 && isNumType(list[0].type()) && isNumType(list[1].type()))
+        {
+            bool extOk = false;
+            quint32 ext = list[0].toUInt(&extOk);
+            if(extOk)
+            {
+                quint32 addr = list[1].toUInt(&isOk);
+                out = XcpPtr(addr, quint8(ext));
+            }
+        }
     }
 
-    if(num.size() == 1)
-        return XcpPtr(num[0]);
-    else
-        return XcpPtr(num[1], quint8(num[0]));
+    if(!isOk)
+        out = fromString(var.toString(), &isOk);
+
+    if(ok)
+        *ok = isOk;
+    return out;
 }
 
 #define RESETMTA_RETURN_ON_FAIL(value) { OpResult EMIT_RETURN__ret = value; if(EMIT_RETURN__ret != OpResult::Success) { mCalcMta.reset(); return EMIT_RETURN__ret; } }
@@ -154,8 +202,8 @@ Connection::Connection(QObject *parent) :
     mOpProgressFracs(0)
 {
     qRegisterMetaType<SetupTools::Xcp::XcpPtr>("XcpPtr");
-    qRegisterMetaType<SetupTools::Xcp::OpResult>();
-    qRegisterMetaType<SetupTools::Xcp::OpResultWrapper::OpResult>();
+    qRegisterMetaType<SetupTools::OpResult>();
+    qRegisterMetaType<SetupTools::OpResultWrapper::OpResult>();
     qRegisterMetaType<SetupTools::Xcp::Connection::OpExtInfo>();
     qRegisterMetaType<SetupTools::Xcp::CksumType>();
     qRegisterMetaType<std::vector<quint8> >();
@@ -171,8 +219,13 @@ void Connection::setIntfc(QObject *intfc)
 {
     {
         QWriteLocker lock(&mIntfcLock);
+        if(mIntfc)
+            disconnect(mIntfc, &Interface::Interface::connectedTargetChanged, this, &Connection::connectedTargetChanged);
         mIntfc = qobject_cast<Interface::Interface *>(intfc);
+        if(mIntfc)
+            connect(mIntfc, &Interface::Interface::connectedTargetChanged, this, &Connection::connectedTargetChanged);
     }
+
     emit stateChanged();
 }
 
@@ -260,6 +313,17 @@ Connection::State Connection::state()
         return State::CalMode;
     else
         return State::PgmMode;
+}
+
+OpResult Connection::setTarget(QString val)
+{
+    if(mIntfc == nullptr)
+        EMIT_RETURN(setTargetDone, OpResult::IntfcConfigError);
+    if(mConnected)
+        EMIT_RETURN(setTargetDone, OpResult::InvalidOperation);
+
+    OpResult out = mIntfc->setTarget(val);
+    EMIT_RETURN(setTargetDone, out);
 }
 
 OpResult Connection::setState(State val)
@@ -383,8 +447,10 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
         OpResult segResult = uploadSegment(packetPtr, packetBytes, seg, OpType::Upload);
         if(segResult != OpResult::Success)
         {
+            if(out)
+                *out = data;
             updateEmitOpProgress(0);
-            emit uploadDone(segResult, base, len);
+            emit uploadDone(segResult, base, len, data);
             return segResult;
         }
         data.insert(data.end(), seg.begin(), seg.end());
@@ -392,10 +458,10 @@ OpResult Connection::upload(XcpPtr base, int len, std::vector<quint8> *out)
         packetPtr.addr += packetBytes / mAddrGran;
         updateEmitOpProgress(double(len - remBytes) / len);
     }
-    emit uploadDone(OpResult::Success, base, len, data);
-    updateEmitOpProgress(0);
     if(out)
         *out = data;
+    emit uploadDone(OpResult::Success, base, len, data);
+    updateEmitOpProgress(0);
     return OpResult::Success;
 }
 
@@ -575,6 +641,34 @@ OpResult Connection::setCalPage(quint8 segment, quint8 page)
     };
 
     EMIT_RETURN(setCalPageDone, tryQuery(action, OpType::SetCalPage), segment, page);
+}
+
+OpResult Connection::copyCalPage(quint8 fromSegment, quint8 fromPage, quint8 toSegment, quint8 toPage)
+{
+    if(!mConnected)
+        EMIT_RETURN(copyCalPageDone, OpResult::NotConnected, fromSegment, fromPage, toSegment, toPage);
+    if(mPgmStarted)
+        EMIT_RETURN(copyCalPageDone, OpResult::WrongMode, fromSegment, fromPage, toSegment, toPage);
+    if(!mSupportsCalPage)
+        EMIT_RETURN(copyCalPageDone, OpResult::InvalidOperation, fromSegment, fromPage, toSegment, toPage);
+
+    std::vector<quint8> query({CmdCode_CopyCalPage, fromSegment, fromPage, toSegment, toPage});
+
+    mCalcMta.reset();   // standard does not define what happens to MTA
+
+    std::function<OpResult (void)> action = [this, query]()
+    {
+        QString msg = tr("copying calibration page");
+
+        std::vector<quint8> reply;
+        RETURN_ON_FAIL(transact(query, 1, reply, msg, {OpType::CopyCalPage, CmdCode_CopyCalPage}));
+        if(reply[0] != 0xFF)
+            return getReplyResult(reply, msg, {OpType::CopyCalPage, CmdCode_CopyCalPage});
+
+        return OpResult::Success;
+    };
+
+    EMIT_RETURN(copyCalPageDone, tryQuery(action, OpType::CopyCalPage), fromSegment, fromPage, toSegment, toPage);
 }
 
 OpResult Connection::programStart()
@@ -883,7 +977,7 @@ OpResult Connection::uploadSegment(XcpPtr base, int len, std::vector<quint8> &ou
 
         mCalcMta = base + (len / mAddrGran);
 
-        out = std::move(std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len));
+        out = std::vector<quint8>(reply.begin() + mAddrGran, reply.begin() + mAddrGran + len);
         return OpResult::Success;
     };
 
@@ -975,7 +1069,14 @@ OpResult Connection::programBlock(XcpPtr base, const std::vector<quint8> &data, 
         {
             // check for a pre-existing error (from a previous operation, or a previous iter of this operation)
             std::vector<std::vector<quint8> > replies;
-            RESETMTA_RETURN_ON_FAIL(mIntfc->receive(0, replies));
+            {
+                OpResult readResult = mIntfc->receive(0, replies);
+                if(readResult != OpResult::Success && readResult != OpResult::Timeout)
+                {
+                    mCalcMta.reset();
+                    return readResult;
+                }
+            }
             // if no replies, everything is OK
             if(replies.size() > 0)
             {

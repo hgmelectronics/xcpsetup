@@ -19,7 +19,9 @@ ColumnLayout {
     property string targetResId
     property string intfcUri: ""
     property alias progressValue: progressBar.value
+    property alias paramLayer: paramTabView.paramLayer
     property alias registry: paramTabView.registry
+    property alias interfaceSaveUri: interfaceChooser.saveUri
     property bool intfcOpen
     property bool slaveConnected
     property bool paramBusy
@@ -82,11 +84,10 @@ ColumnLayout {
                     id: intfcOpenButton
                     text: qsTr("Open")
                     onClicked: {
-                        if (interfaceChooser.uri !== "")
-                            root.intfcUri = interfaceChooser.uri.replace(
-                                        /bitrate=[0-9]*/,
-                                        "bitrate=" + bitRateChooser.bps.toString(
-                                            ))
+                        if (interfaceChooser.uri !== "") {
+                            interfaceChooser.saveUri = interfaceChooser.uri
+                            root.intfcUri = interfaceChooser.uri + "?bitrate=%1".arg(bitRateChooser.bps)
+                        }
                     }
                     enabled: !intfcOpen
                 }

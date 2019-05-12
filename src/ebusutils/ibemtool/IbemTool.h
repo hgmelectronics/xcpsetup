@@ -68,13 +68,13 @@ public slots:
     void abort();
 
 private:
-    void onGetAvailSlavesStrDone(SetupTools::Xcp::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
-    void onProgramDone(SetupTools::Xcp::OpResult result, FlashProg *prog, quint8 addrExt);
-    void onProgramVerifyDone(SetupTools::Xcp::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
+    void onGetAvailSlavesStrDone(SetupTools::OpResult result, QString bcastId, QString filter, QList<QString> slaveIds);
+    void onProgramDone(SetupTools::OpResult result, FlashProg *prog, quint8 addrExt);
+    void onProgramVerifyDone(SetupTools::OpResult result, FlashProg *prog, Xcp::CksumType type, quint8 addrExt);
     void onWatchdogExpired();
-    void onProgramResetDone(SetupTools::Xcp::OpResult result);
-    void onProgramModeDone(SetupTools::Xcp::OpResult result);
-    void onDisconnectDone(SetupTools::Xcp::OpResult result);
+    void onProgramResetDone(SetupTools::OpResult result);
+    void onProgramModeDone(SetupTools::OpResult result);
+    void onDisconnectDone(SetupTools::OpResult result);
     void onProgFileChanged();
     void onProgLayerStateChanged();
     void onProgLayerProgressChanged();
@@ -100,15 +100,17 @@ private:
     static constexpr SetupTools::Xcp::Interface::Can::SlaveId IBEM_RECOVERY_ID = {{0x1F000010, SetupTools::Xcp::Interface::Can::Id::Type::Ext}, {0x1F000011, SetupTools::Xcp::Interface::Can::Id::Type::Ext}};
     static constexpr SetupTools::Xcp::Interface::Can::SlaveId CDA_ID = {{0x1F000080, SetupTools::Xcp::Interface::Can::Id::Type::Ext}, {0x1F000081, SetupTools::Xcp::Interface::Can::Id::Type::Ext}};
     static constexpr SetupTools::Xcp::Interface::Can::SlaveId CDA2_ID = {{0x1F000090, SetupTools::Xcp::Interface::Can::Id::Type::Ext}, {0x1F000091, SetupTools::Xcp::Interface::Can::Id::Type::Ext}};
+    static constexpr SetupTools::Xcp::Interface::Can::SlaveId YTB_ID = {{0x1F0000A0, SetupTools::Xcp::Interface::Can::Id::Type::Ext}, {0x1F0000A1, SetupTools::Xcp::Interface::Can::Id::Type::Ext}};
+    static constexpr SetupTools::Xcp::Interface::Can::SlaveId IPC_ID = {{0x1F0000B0, SetupTools::Xcp::Interface::Can::Id::Type::Ext}, {0x1F0000B1, SetupTools::Xcp::Interface::Can::Id::Type::Ext}};
     static constexpr quint32 IBEM_ID_MAX = 0x7F;
     static constexpr int TIMEOUT_MSEC = 100;
     static constexpr int WATCHDOG_MSEC = 2000;
     static constexpr int RESET_TIMEOUT_MSEC = 2000;
     static constexpr int PROG_CLEAR_BASE_TIMEOUT_MSEC = TIMEOUT_MSEC;
     static constexpr int PROG_CLEAR_TIMEOUT_PER_PAGE_MSEC = 40;
-    static constexpr int PAGE_SIZE = 2048;
+    static constexpr int ST_PAGE_SIZE = 2048;
     static constexpr Xcp::CksumType CKSUM_TYPE = Xcp::CksumType::ST_CRC_32;
-    static constexpr int N_POLL_ITER = 20;
+    static constexpr int N_POLL_ITER = 2;
     static constexpr int N_PROGRAMMODE_TRIES = 25;
     static constexpr int N_PROGRAM_STATES = static_cast<int>(State::ProgramReset2) - static_cast<int>(State::Program) + 1;
     static constexpr double PROGRAM_STATE_PROGRESS_CREDIT = 0.0625;

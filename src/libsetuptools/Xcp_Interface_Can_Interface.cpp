@@ -135,7 +135,18 @@ bool validateXcp(const Frame &frame)
 Interface::Interface(QObject *parent) :
     ::SetupTools::Xcp::Interface::Interface(parent),
     mPacketLogEnabled(false)
-{}
+{
+    QObject::connect(this, &Interface::slaveIdChanged, this, &Interface::slaveIdToTargetThunk);
+}
+
+OpResult Interface::setTarget(const QString &target)
+{
+    boost::optional<SlaveId> id = StrToSlaveId(target);
+    if(id)
+        return connect(id.get());
+    else
+        return disconnect();
+}
 
 OpResult Interface::transmit(const std::vector<quint8> & data, bool replyExpected)
 {
@@ -166,6 +177,19 @@ OpResult Interface::setPacketLog(bool enable)
 boost::optional<SlaveId> Interface::getSlaveId()
 {
     return mSlaveAddr;
+}
+
+QString Interface::connectedTarget()
+{
+    if(mSlaveAddr)
+        return SlaveIdToStr(mSlaveAddr.get());
+    else
+        return QString();
+}
+
+void Interface::slaveIdToTargetThunk()
+{
+    emit connectedTargetChanged(connectedTarget());
 }
 
 }   // namespace Can

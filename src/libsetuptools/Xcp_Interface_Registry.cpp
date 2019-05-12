@@ -1,5 +1,7 @@
 #include "Xcp_Interface_Registry.h"
+#include "Xcp_Interface_Ble_Registry.h"
 #include "Xcp_Interface_Can_Registry.h"
+#include <QDebug>
 
 namespace SetupTools {
 namespace Xcp {
@@ -9,13 +11,17 @@ QList<QUrl> Registry::avail()
 {
     QList<QUrl> ret;
     ret.append(Can::Registry::avail());
+    ret.append(Ble::Registry::avail());
+    /*ret.append(Usb::Registry::avail());*/
     return ret;
 }
 
 Interface *Registry::make(QUrl uri)
 {
-    Interface *ret;
+    Interface *ret = nullptr;
     ret = Can::Registry::make(uri);
+    if(!ret)
+        ret = Ble::Registry::make(uri);
     /*if(!ret)
         ret = Usb::Registry::make(uri);*/
     return ret;
@@ -25,6 +31,8 @@ QString Registry::desc(QUrl uri)
 {
     QString ret;
     ret = Can::Registry::desc(uri);
+    if(!ret.length())
+        ret = Ble::Registry::desc(uri);
     /*if(!ret.length())
         ret = Usb::Registry::desc(uri);*/
     return ret;
@@ -90,6 +98,16 @@ QUrl QmlRegistry::uri(int index) const
         return mAvail[index].first;
 }
 
+int QmlRegistry::find(QUrl url) const
+{
+    for(int i = 0; i < mAvail.size(); ++i)
+    {
+        if(url.toString() == mAvail[i].first.toString())
+            return i;
+    }
+    return -1;
+}
+
 void QmlRegistry::updateAvail()
 {
     QList<QUrl> newUris = Registry::avail();
@@ -100,7 +118,7 @@ void QmlRegistry::updateAvail()
     if(newCount == oldCount)
     {
         bool equal = true;
-        for(int i = newCount; i < newCount; ++i)
+        for(int i = 0; i < newCount; ++i)
         {
             if(newUris[i] != mAvail[i].first)
             {

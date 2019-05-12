@@ -70,11 +70,11 @@ void ScalarMemoryRange::download(QVariant value)
     }
 }
 
-void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpPtr baseAddr, int len, std::vector<quint8> data)
+void ScalarMemoryRange::onUploadDone(SetupTools::OpResult result, Xcp::XcpPtr baseAddr, int len, std::vector<quint8> data)
 {
     Q_UNUSED(len);
 
-    if(result == SetupTools::Xcp::OpResult::Success)
+    if(result == SetupTools::OpResult::Success)
     {
         if(baseAddr.ext != base().ext)
             return;
@@ -115,7 +115,7 @@ void ScalarMemoryRange::onUploadDone(SetupTools::Xcp::OpResult result, Xcp::XcpP
         }
         emit uploadDone(result);
     }
-    else if(result == SetupTools::Xcp::OpResult::SlaveErrorOutOfRange)
+    else if(result == SetupTools::OpResult::SlaveErrorOutOfRange)
     {
         mValue = QVariant();
         mSlaveValue = QVariant();

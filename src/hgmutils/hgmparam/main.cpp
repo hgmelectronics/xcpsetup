@@ -2,13 +2,22 @@
 #include <QQmlApplicationEngine>
 #include <QtQml>
 #include <SetupTools.h>
+#include <QPixmap>
+#include <QSplashScreen>
 
 int main(int argc, char *argv[])
 {
+    SetupTools::setupEnvironment();
+
     QApplication app(argc, argv);
     app.setOrganizationName("HGM Automotive Electronics");
     app.setOrganizationDomain("hgmelectronics.com");
-    app.setApplicationName("CS2 Parameter Editor");
+    app.setApplicationName("COMPUSHIFT Parameter Editor");
+
+    QPixmap logo(":/com/hgmelectronics/utils/COMPUSHIFT logo.png");
+    QSplashScreen splash(logo);
+    splash.show();
+    QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
     QQmlApplicationEngine engine;
 
@@ -19,8 +28,10 @@ int main(int argc, char *argv[])
 #endif
 
     SetupTools::registerTypes();
+    engine.load(QUrl(QStringLiteral("qrc:/hgmparam.qml")));
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    QGuiApplication::restoreOverrideCursor();
+    splash.close();
 
     return app.exec();
 }

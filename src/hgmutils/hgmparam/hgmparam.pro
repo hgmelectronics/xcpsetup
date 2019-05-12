@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets serialport charts
+QT += qml quick widgets serialport charts bluetooth
 
 SOURCES += main.cpp
 
@@ -8,7 +8,7 @@ RESOURCES += qml.qrc \
     $$PWD/../qml/com/hgmelectronics/utils/hgmutils.qrc \
     $$PWD/../../qml/com/hgmelectronics/setuptools/setuptools.qrc
 
-QMAKE_CXXFLAGS += -std=c++11 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
+QMAKE_CXXFLAGS += -std=c++14 -Wno-unused-local-typedefs -ffunction-sections -fdata-sections
 
 static {
     QMAKE_CXXFLAGS +=  -ffunction-sections -fdata-sections
@@ -45,6 +45,7 @@ DEPENDPATH += $$PWD/../../libsetuptools
 HEADERS +=
 
 
-win32:RC_ICONS += ../qml/com/hgmelectronics/utils/hgmutils.ico
+win32:RC_ICONS += ../qml/com/hgmelectronics/utils/hgmparam-icon.ico
 
+DEPLOY_DIRS = $$OUT_PWD/../../deploy $${OUT_PWD}/../deploy
 include($$PWD/../../winmacdeploy.pri)
