@@ -8,6 +8,8 @@ QT       += core testlib quick bluetooth
 
 QT       -= gui
 
+INCLUDEPATH += $$PWD/../../../../cots/boost_1_60_0
+
 QMAKE_CXXFLAGS += -std=c++14 -Wno-unused-local-typedefs -Wall -Wuninitialized
 
 static {

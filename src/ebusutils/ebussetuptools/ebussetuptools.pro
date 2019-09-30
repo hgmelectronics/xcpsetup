@@ -9,6 +9,8 @@ QT       += quick
 
 QMAKE_CXXFLAGS += -std=c++14 -ffunction-sections -fdata-sections
 
+INCLUDEPATH += $$PWD/../../../../cots/boost_1_60_0
+
 TARGET = ebussetuptools
 TEMPLATE = lib
 CONFIG += staticlib

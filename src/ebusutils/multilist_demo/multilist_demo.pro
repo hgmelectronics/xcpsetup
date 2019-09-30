@@ -2,6 +2,8 @@ TEMPLATE = app
 
 QT += qml quick widgets
 
+INCLUDEPATH += $$PWD/../../../../cots/boost_1_60_0
+
 SOURCES += main.cpp
 
 RESOURCES += qml.qrc

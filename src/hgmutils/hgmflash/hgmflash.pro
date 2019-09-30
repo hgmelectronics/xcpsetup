@@ -2,6 +2,8 @@ TEMPLATE = app
 
 QT += qml quick widgets serialport charts bluetooth
 
+INCLUDEPATH += $$PWD/../../../../cots/boost_1_60_0
+
 SOURCES += main.cpp \
     Cs2Tool.cpp
 

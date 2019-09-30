@@ -14,6 +14,8 @@ TARGET = setuptools
 TEMPLATE = lib
 CONFIG += staticlib
 
+INCLUDEPATH += $$PWD/../../../cots/boost_1_60_0
+
 DEFINES += GIT_VERSION=\\\"$$system(git log --pretty=format:%h -n 1)\\\"
 
 SOURCES += \
