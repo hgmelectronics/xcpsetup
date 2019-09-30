@@ -344,7 +344,7 @@ ScopeExit::~ScopeExit()
     mFunc();
 }
 
-const QString AppVersion::HASH = QString(HG_VERSION);
+const QString AppVersion::HASH = QString(GIT_VERSION);
 
 QObject *AppVersion::create(QQmlEngine *engine, QJSEngine *scriptEngine)
 {

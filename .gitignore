@@ -1,0 +1,11 @@
+__pycache__
+*.pyc
+build*
+dist
+MANIFEST
+local
+*.user
+deploy/installer/*/packages/*/data
+deploy/installer/*/*.exe
+deploy/installer/*/*.zip
+Thumbs.db

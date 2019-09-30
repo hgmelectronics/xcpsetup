@@ -14,7 +14,7 @@ TARGET = setuptools
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += HG_VERSION=\\\"$$system(hg id -i)\\\"
+DEFINES += GIT_VERSION=\\\"$$system(git log --pretty=format:%h -n 1)\\\"
 
 SOURCES += \
     util.cpp \
