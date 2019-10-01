@@ -40,15 +40,13 @@ ColumnLayout {
 
     ParamTabView {
         id: paramTabView
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         Layout.fillHeight: true
     }
 
     RowLayout {
         id: commandsRow
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
         spacing: 5
         ColumnLayout {
             spacing: 5
@@ -59,8 +57,7 @@ ColumnLayout {
 
             RowLayout {
                 id: intfcConfigRow
-                anchors.left: parent.left
-                anchors.right: parent.right
+                Layout.fillWidth: true
                 spacing: 5
 
                 XcpInterfaceChooser {
@@ -76,8 +73,7 @@ ColumnLayout {
             }
             RowLayout {
                 id: intfcActionRow
-                anchors.left: parent.left
-                anchors.right: parent.right
+                Layout.fillWidth: true;
                 Button {
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                     Layout.fillWidth: true
@@ -111,8 +107,7 @@ ColumnLayout {
 
                 RowLayout {
                     id: targetConfigRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    Layout.fillWidth: true
 
                     Label {
                         text: qsTr("Command ID")
@@ -196,7 +191,6 @@ ColumnLayout {
 
     ProgressBar {
         id: progressBar
-        anchors.left: parent.left
-        anchors.right: parent.right
+        Layout.fillWidth: true
     }
 }

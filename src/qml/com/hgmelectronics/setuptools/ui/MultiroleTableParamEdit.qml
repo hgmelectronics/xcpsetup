@@ -28,7 +28,8 @@ Rectangle {
     property var editableRoleNames: {
         var ret = []
         tableParam.roleNames.forEach(function(role) {
-            if(tableParam.stringModelMapping[role].flags(0) & Qt.ItemIsEditable)
+            const m = tableParam.stringModelMapping[role]
+            if(m.flags(m.index(0, 0)) & Qt.ItemIsEditable)
                 ret.push(role)
         })
         return ret
@@ -93,7 +94,8 @@ Rectangle {
                                     return displayDelegate
                             }
                             else {
-                                if(root.tableParam.stringModelMapping[styleData.role].flags(0) & Qt.ItemIsEditable)
+                                const m = root.tableParam.stringModelMapping[styleData.role];
+                                if(m.flags(m.index(0, 0)) & Qt.ItemIsEditable)
                                     return encodingDelegate
                                 else
                                     return readOnlyEncodingDelegate

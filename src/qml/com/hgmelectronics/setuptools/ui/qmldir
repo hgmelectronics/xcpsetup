@@ -1,5 +1,6 @@
 module com.hgmelectronics.setuptools.ui
 
+AutoRefreshOverlay 1.0 AutoRefreshOverlay.qml
 XYTrace 1.0 XYTrace.qml
 TablePlot 1.0 TablePlot.qml
 ScalarParamCheckBox 1.0 ScalarParamCheckBox.qml

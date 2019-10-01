@@ -12,8 +12,6 @@ Item {
     id: root
     property Parameters registry
     property ParamLayer paramLayer
-    anchors.left: parent.left
-    anchors.right: parent.right
     TabView {
         id: tabView
         anchors.fill: parent

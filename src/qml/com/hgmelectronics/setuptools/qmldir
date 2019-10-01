@@ -2,6 +2,7 @@ module com.hgmelectronics.setuptools
 
 TableParam 1.0 TableParam.qml
 MultiroleTableParam 1.0 MultiroleTableParam.qml
+MetaParam 1.0 MetaParam.qml
 ScalarMetaParam 1.0 ScalarMetaParam.qml
 TableMetaParam 1.0 TableMetaParam.qml
 MultiroleTableMetaParam 1.0 MultiroleTableMetaParam.qml

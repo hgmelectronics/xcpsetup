@@ -54,7 +54,7 @@ Window {
                     "along with this program.  If not, see <a href=\"http://www.gnu.org/licenses/\">http://www.gnu.org/licenses/</a>."
         }
         Button {
-            anchors.right: parent.right
+            Layout.alignment: Qt.AlignRight
             text: "Close"
             isDefault: true
             onClicked: aboutDialog.visible = false
