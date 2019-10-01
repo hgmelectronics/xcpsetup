@@ -42,10 +42,25 @@ QtObject {
     readonly property double cbtmIsospi2LastBoard:              4*0x00030009
     readonly property double cbtmCommFaultTripCyc:              4*0x0003000A
     readonly property double cbtmCommFaultClearCyc:             4*0x0003000B
+    readonly property double tbtFaultDecayCyc:                  4*0x00030200
+    readonly property double tbtCommFaultTripCyc:               4*0x00030201
+    readonly property double tbtCommFaultClearCyc:              4*0x00030202
+    readonly property double tbtModulesPerBus:                  4*0x00030203
+    readonly property double tbtModuleTypes:                    4*0x00030204
+    readonly property double tbtNBuses:                         4*0x00030205
     readonly property double cbtmCellVolt:                      4*0x00031000
     readonly property double cbtmTabTemp:                       4*0x00032000
     readonly property double cbtmDisch:                         4*0x00033000
     readonly property double cbtmStatus:                        4*0x00033100
+    readonly property double tbtCellVoltString0:                4*0x00034000
+    readonly property double tbtCellVoltString1:                4*0x00034100
+    readonly property double tbtCoolantInletTemp:               4*0x00035000
+    readonly property double tbtCoolantOutletTemp0:             4*0x00035001
+    readonly property double tbtCoolantOutletTemp1:             4*0x00035002
+    readonly property double tbtDischString0:                   4*0x00036000
+    readonly property double tbtDischString1:                   4*0x00036100
+    readonly property double tbtStatusString0:                  4*0x00036800
+    readonly property double tbtStatusString1:                  4*0x00036900
 
 
     readonly property double ctcMaxSimulPickup:                 4*0x00040000

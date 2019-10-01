@@ -236,7 +236,7 @@ Item {
                         tableParam: registry.cbtmTabTemp
                     }
                     ColumnLayout {
-                        id: graphsLayout
+                        id: cbtmGraphsLayout
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Label {
@@ -245,7 +245,7 @@ Item {
                             font.bold: true
                         }
                         ChartView {
-                            id: cellPlot
+                            id: cbtmCellPlot
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             antialiasing: true
@@ -255,7 +255,7 @@ Item {
                             margins.top: 0
 
                             RoleModeledLineSeries {
-                                id: cellVoltSeries
+                                id: cbtmCellVoltSeries
                                 visible: registry.cbtmCellVolt.value.valid
                                 model: registry.cbtmCellVolt.stringModel
                                 name: qsTr("Cell Voltage")
@@ -267,11 +267,11 @@ Item {
                                     labelFormat: "%d"
                                 }
 
-                                axisY: cellVoltAutoAxis.yAxis
+                                axisY: cbtmCellVoltAutoAxis.yAxis
                             }
 
                             RoleModeledLineSeries {
-                                id: tabTempSeries
+                                id: cbtmTabTempSeries
                                 visible: registry.cbtmTabTemp.value.valid
                                 model: registry.cbtmTabTemp.stringModel
                                 name: qsTr("Tab Temp degC")
@@ -283,18 +283,18 @@ Item {
                                     labelFormat: "%d"
                                 }
 
-                                axisY: tabTempAutoAxis.yAxis
+                                axisY: cbtmTabTempAutoAxis.yAxis
                             }
                         }
 
                         XYSeriesAutoAxis {
-                            id: cellVoltAutoAxis
-                            series: [ cellVoltSeries ]
+                            id: cbtmCellVoltAutoAxis
+                            series: [ cbtmCellVoltSeries ]
                         }
 
                         XYSeriesAutoAxis {
-                            id: tabTempAutoAxis
-                            series: [ tabTempSeries ]
+                            id: cbtmTabTempAutoAxis
+                            series: [ cbtmTabTempSeries ]
                         }
                     }
                 }
@@ -402,6 +402,138 @@ Item {
                         name: "IAI #4 Pulldown"
                         metaParam: registry.iai4Pulldown
                     }
+                }
+            }
+        }
+
+        Tab {
+            title: "TBT"
+            active: true
+            AutoRefreshArea {
+                base: this
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignTop
+                        ScalarParamEdit {
+                            name: "Fault Decay"
+                            metaParam: registry.tbtFaultDecayCyc
+                        }
+                        ScalarParamEdit {
+                            name: "Comm Fault Trip Cycles"
+                            metaParam: registry.tbtCommFaultTripCyc
+                        }
+                        ScalarParamEdit {
+                            name: "Comm Fault Clear Cycles"
+                            metaParam: registry.tbtCommFaultClearCyc
+                        }
+                        ScalarParamEdit {
+                            name: "# Modules Per Bus"
+                            metaParam: registry.tbtModulesPerBus
+                        }
+                        ScalarParamEdit {
+                            name: "Module Type Word"
+                            metaParam: registry.tbtModuleTypes
+                        }
+                        ScalarParamEdit {
+                            name: "# Strings"
+                            metaParam: registry.tbtNBuses
+                        }
+                    }
+                    MultiroleTableParamEdit {
+                        Layout.margins: 10
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+
+                        tableMetaParam: registry.tbtDischAndStatus
+                        roleNames: ["x", "disch0", "disch1", "status0", "status1"]
+                        label: {
+                            "x": "Section #",
+                            "disch0": "Str 0 Disch",
+                            "disch1": "Str 1 Disch",
+                            "status0": "Str 0 Status",
+                            "status1": "Str 1 Status"
+                        }
+                    }
+
+                    MultiroleTableParamEdit {
+                        Layout.margins: 10
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+
+                        tableMetaParam: registry.tbtCellVolt
+                        roleNames: ["x", "v0", "v1"]
+                        label: {
+                            "x": "Cell #",
+                            "v0": "Str 0",
+                            "v1": "Str 1"
+                        }
+                    }
+//                    ColumnLayout {
+//                        id: tbtGraphsLayout
+//                        Layout.fillWidth: true
+//                        Layout.fillHeight: true
+//                        Label {
+//                            Layout.alignment: Qt.AlignLeft
+//                            text: "Cell Voltages"
+//                            font.bold: true
+//                        }
+//                        ChartView {
+//                            id: cellPlot
+//                            Layout.fillWidth: true
+//                            Layout.fillHeight: true
+//                            antialiasing: true
+//                            margins.left: 0
+//                            margins.right: 0
+//                            margins.bottom: 0
+//                            margins.top: 0
+
+//                            RoleModeledLineSeries {
+//                                id: tbtCellVoltSeries
+//                                visible: registry.cbtmCellVolt.value.valid
+//                                model: registry.cbtmCellVolt.stringModel
+//                                name: qsTr("Cell Voltage")
+
+//                                axisX: ValueAxis {
+//                                    min: 0
+//                                    max: registry.cbtmCellVolt.value.count
+//                                    tickCount: registry.cbtmCellVolt.value.count / 8 + 1
+//                                    labelFormat: "%d"
+//                                }
+
+//                                axisY: cellVoltAutoAxis.yAxis
+//                            }
+
+//                            RoleModeledLineSeries {
+//                                id: tabTempSeries
+//                                visible: registry.cbtmTabTemp.value.valid
+//                                model: registry.cbtmTabTemp.stringModel
+//                                name: qsTr("Tab Temp degC")
+
+//                                axisX: ValueAxis {
+//                                    min: 0
+//                                    max: registry.cbtmTabTemp.value.count
+//                                    tickCount: registry.cbtmTabTemp.value.count / 9 + 1
+//                                    labelFormat: "%d"
+//                                }
+
+//                                axisY: tabTempAutoAxis.yAxis
+//                            }
+//                        }
+
+//                        XYSeriesAutoAxis {
+//                            id: cellVoltAutoAxis
+//                            series: [ cellVoltSeries ]
+//                        }
+
+//                        XYSeriesAutoAxis {
+//                            id: tabTempAutoAxis
+//                            series: [ tabTempSeries ]
+//                        }
+//                    }
                 }
             }
         }

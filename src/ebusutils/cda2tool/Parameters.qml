@@ -12,6 +12,9 @@ ParamRegistry {
     property int cbtmCellsPerBoard: 8
     property int cbtmTabsPerBoard: 9
     property int cbtmMaxBoards: 32
+    property int tbtMinCellsPerBoard: 23
+    property int tbtMaxCellsPerString: 192
+    property int tbtMaxSectionsPerString: 16
     property SlotArrayModel cbtmCellAxisModel: SlotArrayModel {
         slot: slots.raw32
         count: cbtmCellsPerBoard * cbtmMaxBoards
@@ -43,6 +46,14 @@ ParamRegistry {
     property SlotArrayModel iaiAxisModel: SlotArrayModel {
         slot: slots.raw32
         count: 4
+    }
+    property SlotArrayModel tbtCellAxisModel: SlotArrayModel {
+        slot: slots.raw32
+        count: tbtMaxCellsPerString
+    }
+    property SlotArrayModel tbtSectionAxisModel: SlotArrayModel {
+        slot: slots.raw32
+        count: tbtMaxSectionsPerString
     }
 
     property ScalarMetaParam aioVbatEv01: ScalarMetaParam {
@@ -445,6 +456,72 @@ ParamRegistry {
             name: qsTr("")
         }
     }
+    property ScalarMetaParam tbtFaultDecayCyc: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtFaultDecayCyc
+            writable: true
+            saveable: true
+            slot: slots.timeCycle
+            name: qsTr("")
+        }
+    }
+    property ScalarMetaParam tbtCommFaultTripCyc: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtCommFaultTripCyc
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
+    }
+    property ScalarMetaParam tbtCommFaultClearCyc: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtCommFaultClearCyc
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
+    }
+    property ScalarMetaParam tbtModulesPerBus: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtModulesPerBus
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
+    }
+    property ScalarMetaParam tbtModuleTypes: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtModuleTypes
+            writable: true
+            saveable: true
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
+    }
+    property ScalarMetaParam tbtNBuses: ScalarMetaParam {
+        param: ScalarParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtNBuses
+            writable: true
+            saveable: true
+            slot: slots.raw32
+            name: qsTr("")
+        }
+    }
 
     property TableParam cbtmCellVolt: TableParam {
         x: SlotArrayModel {
@@ -457,6 +534,32 @@ ParamRegistry {
             addr: paramId.cbtmCellVolt
             minCount: cbtmCellsPerBoard
             maxCount: cbtmCellAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
+    }
+    property TableParam tbtCellVoltString0: TableParam {
+        x: tbtCellAxisModel
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtCellVoltString0
+            maxCount: tbtCellAxisModel.count
+            writable: false
+            saveable: false
+            slot: slots.ltcCellv
+            name: qsTr("")
+        }
+    }
+    property TableParam tbtCellVoltString1: TableParam {
+        x: tbtCellAxisModel
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtCellVoltString1
+            maxCount: tbtCellAxisModel.count
             writable: false
             saveable: false
             slot: slots.ltcCellv
@@ -499,6 +602,32 @@ ParamRegistry {
             name: qsTr("")
         }
     }
+    property TableParam tbtDischString0: TableParam {
+        x: tbtSectionAxisModel
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtDischString0
+            maxCount: tbtSectionAxisModel.count
+            writable: true
+            saveable: false
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
+    }
+    property TableParam tbtDischString1: TableParam {
+        x: tbtSectionAxisModel
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtDischString1
+            maxCount: tbtSectionAxisModel.count
+            writable: true
+            saveable: false
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
+    }
 
     property TableParam cbtmStatus: TableParam {
         x: SlotArrayModel {
@@ -516,6 +645,56 @@ ParamRegistry {
             slot: slots.raw32hex
             name: qsTr("")
         }
+    }
+    property TableParam tbtStatusString0: TableParam {
+        x: tbtSectionAxisModel
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtStatusString0
+            maxCount: tbtSectionAxisModel.count
+            writable: true
+            saveable: false
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
+    }
+    property TableParam tbtStatusString1: TableParam {
+        x: tbtSectionAxisModel
+        value: ArrayParam {
+            registry: root
+            dataType: Param.S32
+            addr: paramId.tbtStatusString1
+            maxCount: tbtSectionAxisModel.count
+            writable: true
+            saveable: false
+            slot: slots.raw32hex
+            name: qsTr("")
+        }
+    }
+
+    property MultiroleTableMetaParam tbtCellVolt: MultiroleTableMetaParam {
+        param: MultiroleTableParam {
+            roleMapping: {
+                "x": tbtCellAxisModel,
+                "v0": tbtCellVoltString0.value,
+                "v1": tbtCellVoltString1.value
+            }
+        }
+        isLiveData: true
+    }
+
+    property MultiroleTableMetaParam tbtDischAndStatus: MultiroleTableMetaParam {
+        param: MultiroleTableParam {
+            roleMapping: {
+                "x": tbtSectionAxisModel,
+                "disch0": tbtDischString0.value,
+                "disch1": tbtDischString1.value,
+                "status0": tbtStatusString0.value,
+                "status1": tbtStatusString1.value
+            }
+        }
+        isLiveData: true
     }
 
     property ScalarMetaParam ctcMaxSimulPickup: ScalarMetaParam {
