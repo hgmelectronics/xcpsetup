@@ -337,32 +337,39 @@ QList<QUrl> Registry::avail()
 {
     QList<QUrl> uris;
 
-    QSettings passthru("HKEY_LOCAL_MACHINE\\SOFTWARE\\PassThruSupport.04.04", QSettings::NativeFormat);
-    for(QString name : passthru.childGroups())
+    const std::array<QString, 2> keys {
+        "HKEY_LOCAL_MACHINE\\SOFTWARE\\PassThruSupport.04.04",
+        "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\PassThruSupport.04.04"
+    };
+    for(QString regkey : keys)
     {
-        passthru.beginGroup(name);
-        QString dllPath = passthru.value("FunctionLibrary").toString();
-        passthru.endGroup();
+        QSettings passthru(regkey, QSettings::NativeFormat);
+        for(QString name : passthru.childGroups())
+        {
+            passthru.beginGroup(name);
+            QString dllPath = passthru.value("FunctionLibrary").toString();
+            passthru.endGroup();
 
-        Library library;
-        if(!library.setDllPath(dllPath))
-            continue;
+            Library library;
+            if(!library.setDllPath(dllPath))
+                continue;
 
-        // Check if it can actually be opened - this may or may not be a good idea,
-        // if multiple devices of the same flavor are attached the user will get a dialog every time we refresh the menu
-        // Unfortunately there is no "silently check if any device is present" function in the PassThru API
-        Library::DeviceId deviceId;
-        Library::Result openResult = library.open(nullptr, &deviceId);
-        if(openResult != Library::Result::NoError)
-            continue;
-        library.close(deviceId);
+            // Check if it can actually be opened - this may or may not be a good idea,
+            // if multiple devices of the same flavor are attached the user will get a dialog every time we refresh the menu
+            // Unfortunately there is no "silently check if any device is present" function in the PassThru API
+            Library::DeviceId deviceId;
+            Library::Result openResult = library.open(nullptr, &deviceId);
+            if(openResult != Library::Result::NoError)
+                continue;
+            library.close(deviceId);
 
-        QUrl uri = QUrl::fromLocalFile(dllPath);
-        uri.setScheme("j2534");
-        QUrlQuery nameQuery;
-        nameQuery.addQueryItem("name", QUrl::toPercentEncoding(name));
-        uri.setQuery(nameQuery);
-        uris.append(uri);
+            QUrl uri = QUrl::fromLocalFile(dllPath);
+            uri.setScheme("j2534");
+            QUrlQuery nameQuery;
+            nameQuery.addQueryItem("name", QUrl::toPercentEncoding(name));
+            uri.setQuery(nameQuery);
+            uris.append(uri);
+        }
     }
 
     return uris;
