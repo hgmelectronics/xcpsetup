@@ -30,7 +30,7 @@ XcpPtr XcpPtr::fromString(QString str, bool *ok)
 
     QStringList split = str.split(QChar(':'));
 
-    if(split.size() >= 1 && split.size() << 2)
+    if(split.size() >= 1 && split.size() < 2)
     {
         QList<quint32> num;
         bool convOk = true;
